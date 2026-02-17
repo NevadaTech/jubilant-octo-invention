@@ -41,6 +41,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
   const updateProduct = useUpdateProduct();
 
   const isSubmitting = createProduct.isPending || updateProduct.isPending;
+  const mutationError = createProduct.error || updateProduct.error;
 
   const {
     register,
@@ -54,10 +55,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
       name: "",
       description: "",
       unitOfMeasure: "unit",
-      cost: 0,
       price: 0,
-      minStock: 0,
-      maxStock: 100,
     },
   });
 
@@ -68,13 +66,8 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
         sku: existingProduct.sku,
         name: existingProduct.name,
         description: existingProduct.description || "",
-        categoryId: existingProduct.categoryId || "",
         unitOfMeasure: existingProduct.unitOfMeasure,
-        cost: existingProduct.cost,
         price: existingProduct.price,
-        minStock: existingProduct.minStock,
-        maxStock: existingProduct.maxStock,
-        imageUrl: existingProduct.imageUrl || "",
       });
     }
   }, [isEditing, existingProduct, reset]);
@@ -133,9 +126,10 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {(createProduct.isError || updateProduct.isError) && (
+            {mutationError && (
               <div className="rounded-md bg-error-100 p-3 text-sm text-error-700 dark:bg-error-900/20 dark:text-error-400">
-                {t("form.error")}
+                {(mutationError as Error & { response?: { data?: { message?: string } } })
+                  ?.response?.data?.message || t("form.error")}
               </div>
             )}
 
@@ -146,6 +140,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
                 <Input
                   id="sku"
                   placeholder={t("fields.skuPlaceholder")}
+                  disabled={isEditing}
                   {...register("sku")}
                 />
               </FormField>
@@ -179,76 +174,17 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
                 />
               </FormField>
 
-              <FormField error={errors.categoryId?.message}>
-                <Label htmlFor="categoryId">{t("fields.category")}</Label>
+              <FormField error={errors.price?.message}>
+                <Label htmlFor="price">{t("fields.price")}</Label>
                 <Input
-                  id="categoryId"
-                  placeholder={t("fields.categoryPlaceholder")}
-                  {...register("categoryId")}
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  {...register("price", { valueAsNumber: true })}
                 />
               </FormField>
-            </div>
-
-            {/* Pricing */}
-            <div className="border-t pt-6">
-              <h3 className="mb-4 font-medium text-neutral-900 dark:text-neutral-100">
-                {t("form.pricing")}
-              </h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <FormField error={errors.cost?.message}>
-                  <Label htmlFor="cost">{t("fields.cost")} *</Label>
-                  <Input
-                    id="cost"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    {...register("cost", { valueAsNumber: true })}
-                  />
-                </FormField>
-
-                <FormField error={errors.price?.message}>
-                  <Label htmlFor="price">{t("fields.price")} *</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    {...register("price", { valueAsNumber: true })}
-                  />
-                </FormField>
-              </div>
-            </div>
-
-            {/* Stock Levels */}
-            <div className="border-t pt-6">
-              <h3 className="mb-4 font-medium text-neutral-900 dark:text-neutral-100">
-                {t("form.stockLevels")}
-              </h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <FormField error={errors.minStock?.message}>
-                  <Label htmlFor="minStock">{t("fields.minStock")} *</Label>
-                  <Input
-                    id="minStock"
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    {...register("minStock", { valueAsNumber: true })}
-                  />
-                </FormField>
-
-                <FormField error={errors.maxStock?.message}>
-                  <Label htmlFor="maxStock">{t("fields.maxStock")} *</Label>
-                  <Input
-                    id="maxStock"
-                    type="number"
-                    min="0"
-                    placeholder="100"
-                    {...register("maxStock", { valueAsNumber: true })}
-                  />
-                </FormField>
-              </div>
             </div>
 
             {/* Actions */}

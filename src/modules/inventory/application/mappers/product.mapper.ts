@@ -19,6 +19,11 @@ export class ProductMapper {
       imageUrl: typeof dto.imageUrl === "string" ? dto.imageUrl : null,
       createdAt: new Date(dto.createdAt),
       updatedAt: new Date(dto.updatedAt),
+      averageCost: dto.averageCost ?? 0,
+      totalStock: dto.totalStock ?? 0,
+      margin: dto.margin ?? 0,
+      profit: dto.profit ?? 0,
+      safetyStock: dto.safetyStock ?? 0,
     });
   }
 
@@ -39,6 +44,11 @@ export class ProductMapper {
       imageUrl: entity.imageUrl,
       createdAt: entity.createdAt.toISOString(),
       updatedAt: entity.updatedAt.toISOString(),
+      averageCost: entity.averageCost,
+      totalStock: entity.totalStock,
+      margin: entity.margin,
+      profit: entity.profit,
+      safetyStock: entity.safetyStock,
     };
   }
 }

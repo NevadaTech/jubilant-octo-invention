@@ -100,7 +100,7 @@ export function DashboardMetricsGrid() {
 
       <StatCard
         title={t("inventoryValue.title")}
-        value={formatCurrency(metrics.inventory.totalValue, "USD", locale)}
+        value={formatCurrency(metrics.inventory.totalValue, metrics.inventory.currency, locale)}
         description={t("inventoryValue.description")}
         icon={DollarSign}
         color="success"

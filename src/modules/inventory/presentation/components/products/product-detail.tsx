@@ -11,6 +11,9 @@ import {
   BarChart3,
   Calendar,
   Layers,
+  TrendingUp,
+  ShieldCheck,
+  Warehouse,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -21,10 +24,10 @@ interface ProductDetailProps {
   productId: string;
 }
 
-function formatCurrency(amount: number): string {
+function formatCurrency(amount: number, currency = "USD"): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency,
   }).format(amount);
 }
 
@@ -121,9 +124,20 @@ export function ProductDetail({ productId }: ProductDetailProps) {
     );
   }
 
-  const margin = product.cost > 0
-    ? (((product.price - product.cost) / product.cost) * 100).toFixed(1)
-    : "0";
+  const margin = product.margin ?? 0;
+  const averageCost = product.averageCost ?? 0;
+  const profit = product.profit ?? 0;
+  const totalStock = product.totalStock ?? 0;
+  const minStock = product.minStock ?? 0;
+  const maxStock = product.maxStock ?? 0;
+  const safetyStock = product.safetyStock ?? 0;
+
+  const marginColor =
+    margin > 0
+      ? "text-success-600 dark:text-success-400"
+      : margin < 0
+        ? "text-destructive"
+        : "text-neutral-600 dark:text-neutral-300";
 
   return (
     <div className="space-y-6">
@@ -184,18 +198,28 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           <CardContent className="space-y-4">
             <DetailItem
               icon={DollarSign}
-              label={t("fields.cost")}
-              value={formatCurrency(product.cost)}
-            />
-            <DetailItem
-              icon={DollarSign}
               label={t("fields.price")}
               value={formatCurrency(product.price)}
             />
             <DetailItem
-              icon={BarChart3}
+              icon={DollarSign}
+              label={t("fields.cost")}
+              value={formatCurrency(averageCost)}
+            />
+            <DetailItem
+              icon={TrendingUp}
               label={t("detail.margin")}
-              value={`${margin}%`}
+              value={
+                <span className={marginColor}>
+                  {margin > 0 ? "+" : ""}
+                  {margin}%
+                </span>
+              }
+            />
+            <DetailItem
+              icon={BarChart3}
+              label={t("detail.profit")}
+              value={formatCurrency(profit)}
             />
           </CardContent>
         </Card>
@@ -212,14 +236,24 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               value={product.unitOfMeasure}
             />
             <DetailItem
+              icon={Warehouse}
+              label={t("detail.totalStock")}
+              value={totalStock.toLocaleString()}
+            />
+            <DetailItem
               icon={BarChart3}
               label={t("fields.minStock")}
-              value={product.minStock != null ? product.minStock.toString() : "-"}
+              value={minStock > 0 ? minStock.toString() : "-"}
             />
             <DetailItem
               icon={BarChart3}
               label={t("fields.maxStock")}
-              value={product.maxStock != null ? product.maxStock.toString() : "-"}
+              value={maxStock > 0 ? maxStock.toString() : "-"}
+            />
+            <DetailItem
+              icon={ShieldCheck}
+              label={t("detail.safetyStock")}
+              value={safetyStock > 0 ? safetyStock.toString() : "-"}
             />
           </CardContent>
         </Card>

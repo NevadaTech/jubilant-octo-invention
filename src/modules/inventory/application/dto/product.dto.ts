@@ -2,14 +2,21 @@
  * API Response DTOs for Products
  */
 
-/** Forma real de la respuesta del backend (puede variar del DTO interno) */
+/** Unit object as returned/expected by the backend */
+export interface ProductUnitDto {
+  code: string;
+  name: string;
+  precision: number;
+}
+
+/** Forma real de la respuesta del backend */
 export interface ProductApiRawDto {
   id: string;
   sku: string;
   name: string;
   description?: string | null;
-  /** Objeto unidad (backend) o no presente si viene unitOfMeasure */
-  unit?: { code?: string; name?: string; precision?: number };
+  /** Objeto unidad (backend) */
+  unit?: ProductUnitDto;
   unitOfMeasure?: string;
   barcode?: string;
   brand?: string;
@@ -17,11 +24,19 @@ export interface ProductApiRawDto {
   status?: string;
   isActive?: boolean;
   costMethod?: string;
-  orgId?: string;
-  cost?: number;
   price?: number;
+  currency?: string;
+  orgId?: string;
+  // Computed fields from GetProductById (stock + reorder rules)
+  averageCost?: number;
+  totalStock?: number;
+  margin?: number;
+  profit?: number;
   minStock?: number;
   maxStock?: number;
+  safetyStock?: number;
+  // Legacy alias
+  cost?: number;
   categoryId?: string | null;
   categoryName?: string | null;
   imageUrl?: string | null;
@@ -45,6 +60,12 @@ export interface ProductResponseDto {
   imageUrl: string | null;
   createdAt: string;
   updatedAt: string;
+  // Computed fields
+  averageCost: number;
+  totalStock: number;
+  margin: number;
+  profit: number;
+  safetyStock: number;
 }
 
 export interface ProductListResponseDto {
@@ -57,6 +78,34 @@ export interface ProductListResponseDto {
   };
 }
 
+/** What the backend actually accepts for CREATE */
+export interface CreateProductApiDto {
+  sku: string;
+  name: string;
+  unit: ProductUnitDto;
+  description?: string;
+  barcode?: string;
+  brand?: string;
+  model?: string;
+  status?: string;
+  costMethod?: string;
+}
+
+/** What the backend actually accepts for UPDATE */
+export interface UpdateProductApiDto {
+  name?: string;
+  description?: string;
+  unit?: ProductUnitDto;
+  barcode?: string;
+  brand?: string;
+  model?: string;
+  status?: string;
+  costMethod?: string;
+  price?: number;
+  currency?: string;
+}
+
+/** Legacy DTOs kept for form compatibility */
 export interface CreateProductDto {
   sku: string;
   name: string;

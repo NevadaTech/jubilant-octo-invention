@@ -113,6 +113,9 @@
         "description": "Descripción",
         "pricing": "Precios",
         "margin": "Margen",
+        "profit": "Ganancia",
+        "totalStock": "Stock Total",
+        "safetyStock": "Stock de Seguridad",
         "inventory": "Inventario",
         "classification": "Clasificación",
         "dates": "Fechas",
@@ -181,6 +184,9 @@
         "info": "Información",
         "stats": "Estadísticas",
         "totalProducts": "Total de productos",
+        "totalQuantity": "Total de unidades",
+        "totalValue": "Valor del inventario",
+        "avgCost": "Costo prom. por unidad",
         "productsInWarehouse": "Productos en Almacén",
         "noProducts": "Sin productos en este almacén",
         "createdAt": "Creado el",
@@ -231,7 +237,8 @@
         "available": "Disponible",
         "avgCost": "Costo Prom.",
         "totalValue": "Valor Total",
-        "lastMovement": "Último Movimiento"
+        "lastMovement": "Último Movimiento",
+        "actions": "Acciones"
       },
       "search": {
         "placeholder": "Buscar por producto o SKU..."
@@ -248,6 +255,26 @@
       },
       "error": {
         "loading": "Error al cargar datos de stock"
+      },
+      "summary": {
+        "totalQuantity": "Total Unidades",
+        "totalValue": "Valor Total"
+      },
+      "actions": {
+        "setRule": "Configurar Regla"
+      },
+      "reorderRule": {
+        "createTitle": "Crear Regla de Reorden",
+        "editTitle": "Editar Regla de Reorden",
+        "fields": {
+          "minQty": "Cantidad Mínima",
+          "maxQty": "Cantidad Máxima",
+          "safetyQty": "Stock de Seguridad"
+        },
+        "create": "Crear",
+        "update": "Actualizar",
+        "delete": "Eliminar",
+        "cancel": "Cancelar"
       }
     },
     "categories": {

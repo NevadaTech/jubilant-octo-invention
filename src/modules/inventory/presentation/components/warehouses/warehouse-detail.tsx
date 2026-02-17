@@ -10,6 +10,9 @@ import {
   Calendar,
   Package,
   Search,
+  DollarSign,
+  TrendingUp,
+  Boxes,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
@@ -17,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import { useWarehouse } from "../../hooks/use-warehouses";
 import { useStock } from "../../hooks/use-stock";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 interface WarehouseDetailProps {
   warehouseId: string;
@@ -29,6 +32,14 @@ function formatDate(date: Date): string {
     month: "long",
     day: "numeric",
   }).format(date);
+}
+
+function formatCurrency(value: number, currency: string): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency || "USD",
+    minimumFractionDigits: 2,
+  }).format(value);
 }
 
 function DetailItem({
@@ -79,8 +90,16 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
   const { data: stockData, isLoading: isLoadingStock } = useStock({
     warehouseId,
     search: search || undefined,
-    limit: 20,
+    limit: 100,
   });
+
+  const warehouseMetrics = useMemo(() => {
+    if (!stockData?.data.length) return { totalQuantity: 0, totalValue: 0, currency: "USD" };
+    const totalQuantity = stockData.data.reduce((sum, s) => sum + s.quantity, 0);
+    const totalValue = stockData.data.reduce((sum, s) => sum + s.totalValue, 0);
+    const currency = stockData.data.find(s => s.currency)?.currency || "USD";
+    return { totalQuantity, totalValue, currency };
+  }, [stockData]);
 
   if (isLoading) {
     return (
@@ -183,6 +202,20 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
               label={t("detail.totalProducts")}
               value={stockData?.pagination.total.toString() || "0"}
             />
+            <DetailItem
+              icon={Boxes}
+              label={t("detail.totalQuantity")}
+              value={warehouseMetrics.totalQuantity.toLocaleString()}
+            />
+            <DetailItem
+              icon={DollarSign}
+              label={t("detail.totalValue")}
+              value={
+                <span className="text-lg font-semibold text-success-600 dark:text-success-400">
+                  {formatCurrency(warehouseMetrics.totalValue, warehouseMetrics.currency)}
+                </span>
+              }
+            />
           </CardContent>
         </Card>
       </div>
@@ -232,7 +265,8 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
                   <tr className="border-b border-neutral-200 text-left text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
                     <th className="px-4 py-3">{tStock("fields.product")}</th>
                     <th className="px-4 py-3 text-right">{tStock("fields.quantity")}</th>
-                    <th className="px-4 py-3 text-right">{tStock("fields.reserved")}</th>
+                    <th className="px-4 py-3 text-right">{tStock("fields.avgCost")}</th>
+                    <th className="px-4 py-3 text-right">{tStock("fields.totalValue")}</th>
                     <th className="px-4 py-3 text-right">{tStock("fields.available")}</th>
                   </tr>
                 </thead>
@@ -265,8 +299,11 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
                       <td className="px-4 py-3 text-right font-medium">
                         {stock.quantity}
                       </td>
-                      <td className="px-4 py-3 text-right text-neutral-500 dark:text-neutral-400">
-                        {stock.reservedQuantity}
+                      <td className="px-4 py-3 text-right text-neutral-600 dark:text-neutral-300">
+                        {formatCurrency(stock.averageCost, stock.currency)}
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium text-neutral-900 dark:text-neutral-100">
+                        {formatCurrency(stock.totalValue, stock.currency)}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <span

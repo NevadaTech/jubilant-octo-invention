@@ -50,11 +50,16 @@ export class DashboardApiService {
       0
     );
 
+    // Extract currency from first row or default to USD
+    const inventoryRows = inventoryData.data.rows || [];
+    const detectedCurrency = (inventoryRows[0]?.currency as string) || "USD";
+
     return {
       inventory: {
         totalProducts: inventoryData.data.summary?.totalItems ?? inventoryData.data.metadata.totalRecords,
         totalValue: inventoryData.data.summary?.totalValue ?? 0,
         totalQuantity: inventoryData.data.summary?.totalQuantity ?? 0,
+        currency: detectedCurrency,
       },
       lowStock: {
         criticalCount: lowStockData.data.metadata.totalRecords,

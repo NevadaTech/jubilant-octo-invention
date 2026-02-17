@@ -16,6 +16,12 @@ export interface ProductProps {
   imageUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
+  // Computed fields from backend
+  averageCost: number;
+  totalStock: number;
+  margin: number;
+  profit: number;
+  safetyStock: number;
 }
 
 export class Product extends Entity<string> {
@@ -42,6 +48,11 @@ export class Product extends Entity<string> {
       imageUrl: props.imageUrl,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
+      averageCost: props.averageCost,
+      totalStock: props.totalStock,
+      margin: props.margin,
+      profit: props.profit,
+      safetyStock: props.safetyStock,
     });
   }
 
@@ -101,13 +112,24 @@ export class Product extends Entity<string> {
     return this.props.updatedAt;
   }
 
+  get averageCost(): number {
+    return this.props.averageCost;
+  }
+
+  get totalStock(): number {
+    return this.props.totalStock;
+  }
+
   get margin(): number {
-    if (this.props.cost === 0) return 0;
-    return ((this.props.price - this.props.cost) / this.props.cost) * 100;
+    return this.props.margin;
   }
 
   get profit(): number {
-    return this.props.price - this.props.cost;
+    return this.props.profit;
+  }
+
+  get safetyStock(): number {
+    return this.props.safetyStock;
   }
 
   isLowStock(currentQuantity: number): boolean {

@@ -113,6 +113,9 @@
         "description": "Description",
         "pricing": "Pricing",
         "margin": "Margin",
+        "profit": "Profit",
+        "totalStock": "Total Stock",
+        "safetyStock": "Safety Stock",
         "inventory": "Inventory",
         "classification": "Classification",
         "dates": "Dates",
@@ -181,6 +184,9 @@
         "info": "Information",
         "stats": "Statistics",
         "totalProducts": "Total products",
+        "totalQuantity": "Total units",
+        "totalValue": "Inventory value",
+        "avgCost": "Avg cost per unit",
         "productsInWarehouse": "Products in Warehouse",
         "noProducts": "No products in this warehouse",
         "createdAt": "Created at",
@@ -231,7 +237,8 @@
         "available": "Available",
         "avgCost": "Avg Cost",
         "totalValue": "Total Value",
-        "lastMovement": "Last Movement"
+        "lastMovement": "Last Movement",
+        "actions": "Actions"
       },
       "search": {
         "placeholder": "Search by product or SKU..."
@@ -248,6 +255,26 @@
       },
       "error": {
         "loading": "Failed to load stock data"
+      },
+      "summary": {
+        "totalQuantity": "Total Units",
+        "totalValue": "Total Value"
+      },
+      "actions": {
+        "setRule": "Set Rule"
+      },
+      "reorderRule": {
+        "createTitle": "Create Reorder Rule",
+        "editTitle": "Edit Reorder Rule",
+        "fields": {
+          "minQty": "Minimum Quantity",
+          "maxQty": "Maximum Quantity",
+          "safetyQty": "Safety Stock"
+        },
+        "create": "Create",
+        "update": "Update",
+        "delete": "Delete",
+        "cancel": "Cancel"
       }
     },
     "categories": {

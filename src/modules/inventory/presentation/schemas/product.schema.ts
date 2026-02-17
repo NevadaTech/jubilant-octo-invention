@@ -18,21 +18,8 @@ export const createProductSchema = z.object({
     .string()
     .max(500, "Description cannot exceed 500 characters")
     .optional(),
-  categoryId: z
-    .string()
-    .uuid()
-    .optional()
-    .or(z.literal("")),
   unitOfMeasure: z.string().min(1, "Unit of measure is required"),
-  cost: z.number().min(0, "Cost cannot be negative"),
   price: z.number().min(0, "Price cannot be negative"),
-  minStock: z.number().int().min(0, "Minimum stock cannot be negative"),
-  maxStock: z.number().int().min(0, "Maximum stock cannot be negative"),
-  imageUrl: z
-    .string()
-    .url()
-    .optional()
-    .or(z.literal("")),
 });
 
 export const updateProductSchema = createProductSchema.partial().extend({
@@ -44,13 +31,8 @@ export interface CreateProductFormData {
   sku: string;
   name: string;
   description?: string;
-  categoryId?: string;
   unitOfMeasure: string;
-  cost: number;
   price: number;
-  minStock: number;
-  maxStock: number;
-  imageUrl?: string;
 }
 
 export interface UpdateProductFormData extends Partial<CreateProductFormData> {
@@ -63,41 +45,22 @@ export function toCreateProductDto(data: CreateProductFormData): CreateProductDt
     sku: data.sku,
     name: data.name,
     description: data.description || undefined,
-    categoryId: data.categoryId || undefined,
     unitOfMeasure: data.unitOfMeasure,
-    cost: data.cost,
+    cost: 0,
     price: data.price,
-    minStock: data.minStock,
-    maxStock: data.maxStock,
-    imageUrl: data.imageUrl || undefined,
+    minStock: 0,
+    maxStock: 0,
   };
 }
 
 export function toUpdateProductDto(data: UpdateProductFormData): UpdateProductDto {
   const dto: UpdateProductDto = {};
 
-  if (data.sku !== undefined) dto.sku = data.sku;
   if (data.name !== undefined) dto.name = data.name;
   if (data.description !== undefined) dto.description = data.description || undefined;
-  if (data.categoryId !== undefined) dto.categoryId = data.categoryId || undefined;
   if (data.unitOfMeasure !== undefined) dto.unitOfMeasure = data.unitOfMeasure;
-  if (data.cost !== undefined) dto.cost = data.cost;
   if (data.price !== undefined) dto.price = data.price;
-  if (data.minStock !== undefined) dto.minStock = data.minStock;
-  if (data.maxStock !== undefined) dto.maxStock = data.maxStock;
   if (data.isActive !== undefined) dto.isActive = data.isActive;
-  if (data.imageUrl !== undefined) dto.imageUrl = data.imageUrl || undefined;
 
   return dto;
 }
-
-// Validation that maxStock >= minStock
-export const validateStockRange = (data: CreateProductFormData) => {
-  if (data.maxStock < data.minStock) {
-    return {
-      success: false,
-      error: "Maximum stock must be greater than or equal to minimum stock",
-    };
-  }
-  return { success: true };
-};

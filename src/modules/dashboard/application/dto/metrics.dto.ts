@@ -47,6 +47,7 @@ export interface DashboardMetricsDto {
     totalProducts: number;
     totalValue: number;
     totalQuantity: number;
+    currency: string;
   };
   lowStock: {
     criticalCount: number;

@@ -10,6 +10,8 @@ import type {
   ProductApiRawDto,
   CreateProductDto,
   UpdateProductDto,
+  CreateProductApiDto,
+  UpdateProductApiDto,
   ProductFilters,
 } from "../../application/dto/product.dto";
 import { ProductMapper } from "../../application/mappers/product.mapper";
@@ -35,7 +37,7 @@ function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
     categoryId: raw.categoryId ?? null,
     categoryName: raw.categoryName ?? null,
     unitOfMeasure,
-    cost: raw.cost ?? 0,
+    cost: raw.averageCost ?? raw.cost ?? 0,
     price: raw.price ?? 0,
     minStock: raw.minStock ?? 0,
     maxStock: raw.maxStock ?? 0,
@@ -43,7 +45,48 @@ function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
     imageUrl: raw.imageUrl ?? null,
     createdAt: raw.createdAt,
     updatedAt: raw.updatedAt,
+    // Computed fields from backend
+    averageCost: raw.averageCost ?? 0,
+    totalStock: raw.totalStock ?? 0,
+    margin: raw.margin ?? 0,
+    profit: raw.profit ?? 0,
+    safetyStock: raw.safetyStock ?? 0,
   };
+}
+
+/** Transforma form data al formato que el backend espera para CREATE */
+function toCreateApiDto(data: CreateProductDto): CreateProductApiDto {
+  return {
+    sku: data.sku,
+    name: data.name,
+    unit: {
+      code: data.unitOfMeasure.toUpperCase().replace(/\s+/g, "_"),
+      name: data.unitOfMeasure,
+      precision: 0,
+    },
+    description: data.description || undefined,
+  };
+}
+
+/** Transforma form data al formato que el backend espera para UPDATE */
+function toUpdateApiDto(data: UpdateProductDto): UpdateProductApiDto {
+  const dto: UpdateProductApiDto = {};
+
+  if (data.name !== undefined) dto.name = data.name;
+  if (data.description !== undefined) dto.description = data.description || undefined;
+  if (data.unitOfMeasure !== undefined) {
+    dto.unit = {
+      code: data.unitOfMeasure.toUpperCase().replace(/\s+/g, "_"),
+      name: data.unitOfMeasure,
+      precision: 0,
+    };
+  }
+  if (data.price !== undefined) dto.price = data.price;
+  if (data.isActive !== undefined) {
+    dto.status = data.isActive ? "ACTIVE" : "INACTIVE";
+  }
+
+  return dto;
 }
 
 export class ProductApiAdapter implements ProductRepositoryPort {
@@ -82,19 +125,23 @@ export class ProductApiAdapter implements ProductRepositoryPort {
   }
 
   async create(data: CreateProductDto): Promise<Product> {
-    const response = await apiClient.post<ApiResponse<ProductResponseDto>>(
+    const apiDto = toCreateApiDto(data);
+    const response = await apiClient.post<ApiResponse<ProductApiRawDto>>(
       this.basePath,
-      data
+      apiDto
     );
-    return ProductMapper.toDomain(response.data.data);
+    const dto = mapApiProductToDto(response.data.data);
+    return ProductMapper.toDomain(dto);
   }
 
   async update(id: string, data: UpdateProductDto): Promise<Product> {
-    const response = await apiClient.put<ApiResponse<ProductResponseDto>>(
+    const apiDto = toUpdateApiDto(data);
+    const response = await apiClient.put<ApiResponse<ProductApiRawDto>>(
       `${this.basePath}/${id}`,
-      data
+      apiDto
     );
-    return ProductMapper.toDomain(response.data.data);
+    const dto = mapApiProductToDto(response.data.data);
+    return ProductMapper.toDomain(dto);
   }
 
   private buildQueryParams(filters?: ProductFilters): Record<string, unknown> {
