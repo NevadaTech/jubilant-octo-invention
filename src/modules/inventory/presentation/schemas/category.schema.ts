@@ -12,7 +12,6 @@ export const createCategorySchema = z.object({
     .optional(),
   parentId: z
     .string()
-    .uuid()
     .optional()
     .or(z.literal("")),
 });

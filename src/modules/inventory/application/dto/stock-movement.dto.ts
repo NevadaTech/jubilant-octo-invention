@@ -16,7 +16,7 @@ export interface MovementLineResponseDto {
 export interface StockMovementResponseDto {
   id: string;
   warehouseId: string;
-  warehouseName: string;
+  warehouseName?: string;
   type: MovementType;
   status: MovementStatus;
   reference: string | null;
@@ -51,6 +51,15 @@ export interface CreateStockMovementDto {
   reason?: string;
   note?: string;
   lines: CreateMovementLineDto[];
+}
+
+export interface UpdateStockMovementDto {
+  warehouseId?: string;
+  type?: MovementType;
+  reference?: string;
+  reason?: string;
+  note?: string;
+  lines?: CreateMovementLineDto[];
 }
 
 export interface StockMovementFilters {

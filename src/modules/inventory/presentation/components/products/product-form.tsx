@@ -10,6 +10,7 @@ import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { CategoryMultiSelector } from "../categories/category-multi-selector";
 import {
   createProductSchema,
   toCreateProductDto,
@@ -41,6 +42,8 @@ export function ProductForm() {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<CreateProductFormData>({
     resolver: zodResolver(createProductSchema),
@@ -48,10 +51,13 @@ export function ProductForm() {
       sku: "",
       name: "",
       description: "",
+      categoryIds: [],
       unitOfMeasure: "unit",
       price: 0,
     },
   });
+
+  const selectedCategoryIds = watch("categoryIds");
 
   // Populate form when editing
   useEffect(() => {
@@ -60,6 +66,7 @@ export function ProductForm() {
         sku: existingProduct.sku,
         name: existingProduct.name,
         description: existingProduct.description || "",
+        categoryIds: existingProduct.categories.map((c) => c.id),
         unitOfMeasure: existingProduct.unitOfMeasure,
         price: existingProduct.price,
       });
@@ -68,6 +75,7 @@ export function ProductForm() {
         sku: "",
         name: "",
         description: "",
+        categoryIds: [],
         unitOfMeasure: "unit",
         price: 0,
       });
@@ -149,6 +157,14 @@ export function ProductForm() {
                   id="description"
                   placeholder={t("fields.descriptionPlaceholder")}
                   {...register("description")}
+                />
+              </FormField>
+
+              <FormField>
+                <Label>{t("fields.category")}</Label>
+                <CategoryMultiSelector
+                  value={selectedCategoryIds || []}
+                  onChange={(ids) => setValue("categoryIds", ids)}
                 />
               </FormField>
 

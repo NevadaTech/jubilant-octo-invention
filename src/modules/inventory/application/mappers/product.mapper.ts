@@ -8,8 +8,7 @@ export class ProductMapper {
       sku: dto.sku,
       name: dto.name,
       description: typeof dto.description === "string" ? dto.description : null,
-      categoryId: typeof dto.categoryId === "string" ? dto.categoryId : null,
-      categoryName: typeof dto.categoryName === "string" ? dto.categoryName : null,
+      categories: dto.categories ?? [],
       unitOfMeasure: dto.unitOfMeasure,
       cost: dto.cost,
       price: dto.price,
@@ -24,6 +23,12 @@ export class ProductMapper {
       margin: dto.margin ?? 0,
       profit: dto.profit ?? 0,
       safetyStock: dto.safetyStock ?? 0,
+      totalIn30d: dto.totalIn30d ?? 0,
+      totalOut30d: dto.totalOut30d ?? 0,
+      avgDailyConsumption: dto.avgDailyConsumption ?? 0,
+      daysOfStock: dto.daysOfStock ?? null,
+      turnoverRate: dto.turnoverRate ?? 0,
+      lastMovementDate: dto.lastMovementDate ?? null,
     });
   }
 
@@ -33,8 +38,7 @@ export class ProductMapper {
       sku: entity.sku,
       name: entity.name,
       description: entity.description,
-      categoryId: entity.categoryId,
-      categoryName: entity.categoryName,
+      categories: entity.categories,
       unitOfMeasure: entity.unitOfMeasure,
       cost: entity.cost,
       price: entity.price,
@@ -49,6 +53,12 @@ export class ProductMapper {
       margin: entity.margin,
       profit: entity.profit,
       safetyStock: entity.safetyStock,
+      totalIn30d: entity.totalIn30d,
+      totalOut30d: entity.totalOut30d,
+      avgDailyConsumption: entity.avgDailyConsumption,
+      daysOfStock: entity.daysOfStock,
+      turnoverRate: entity.turnoverRate,
+      lastMovementDate: entity.lastMovementDate,
     };
   }
 }

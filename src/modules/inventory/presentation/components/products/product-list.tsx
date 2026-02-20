@@ -51,7 +51,17 @@ function ProductRow({ product }: { product: Product }) {
         </Link>
       </td>
       <td className="px-4 py-3 text-sm text-foreground">
-        {product.categoryName || <span className="text-muted-foreground">N/A</span>}
+        {product.categories.length > 0 ? (
+          <div className="flex flex-wrap gap-1">
+            {product.categories.map((c) => (
+              <Badge key={c.id} variant="outline" className="text-xs">
+                {c.name}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        )}
       </td>
       <td className="px-4 py-3 text-sm font-medium text-foreground">
         {formatCurrency(product.cost)}

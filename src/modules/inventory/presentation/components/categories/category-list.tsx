@@ -9,6 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import { Skeleton } from "@/ui/components/skeleton";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/ui/components/dropdown-menu";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -34,7 +40,6 @@ export function CategoryList() {
   const [searchValue, setSearchValue] = useState(filters.search || "");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
@@ -52,7 +57,6 @@ export function CategoryList() {
   const openDeleteDialog = (id: string) => {
     setCategoryToDelete(id);
     setDeleteDialogOpen(true);
-    setOpenMenuId(null);
   };
 
   if (isError) {
@@ -143,37 +147,27 @@ export function CategoryList() {
                           </Badge>
                         </td>
                         <td className="py-4 text-right">
-                          <div className="relative inline-block">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setOpenMenuId(openMenuId === category.id ? null : category.id)}
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                            {openMenuId === category.id && (
-                              <div className="absolute right-0 z-10 mt-2 w-48 rounded-md border bg-popover p-1 shadow-md">
-                                <button
-                                  className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm hover:bg-accent"
-                                  onClick={() => {
-                                    open(category.id);
-                                    setOpenMenuId(null);
-                                  }}
-                                >
-                                  <Pencil className="mr-2 h-4 w-4" />
-                                  {t("actions.edit")}
-                                </button>
-                                <button
-                                  className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm text-destructive hover:bg-accent"
-                                  onClick={() => openDeleteDialog(category.id)}
-                                  disabled={category.productCount > 0}
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  {tCommon("delete")}
-                                </button>
-                              </div>
-                            )}
-                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => open(category.id)}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                {t("actions.edit")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => openDeleteDialog(category.id)}
+                                disabled={category.productCount > 0}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                {tCommon("delete")}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </td>
                       </tr>
                     ))}

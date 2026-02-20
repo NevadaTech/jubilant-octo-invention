@@ -11,6 +11,7 @@ import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
 import { Textarea } from "@/ui/components/textarea";
+import { CurrencyInput } from "@/ui/components/currency-input";
 import {
   createMovementSchema,
   toCreateMovementDto,
@@ -229,15 +230,15 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
 
                         <FormField error={errors.lines?.[index]?.unitCost?.message}>
                           <Label className="text-xs">{t("fields.unitCost")}</Label>
-                          <Input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="0.00"
-                            {...register(`lines.${index}.unitCost`, {
-                              valueAsNumber: true,
-                              setValueAs: (v) => v === "" ? undefined : parseFloat(v),
-                            })}
+                          <Controller
+                            name={`lines.${index}.unitCost`}
+                            control={control}
+                            render={({ field }) => (
+                              <CurrencyInput
+                                value={field.value}
+                                onChange={(val) => field.onChange(val === 0 ? undefined : val)}
+                              />
+                            )}
                           />
                         </FormField>
                       </div>

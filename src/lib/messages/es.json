@@ -122,7 +122,19 @@
         "createdAt": "Creado el",
         "updatedAt": "Actualizado el",
         "notFound": "Producto no encontrado",
-        "backToList": "Volver a productos"
+        "backToList": "Volver a productos",
+        "rotation": "Rotación",
+        "totalIn30d": "Entradas (30d)",
+        "totalOut30d": "Salidas (30d)",
+        "avgDailyConsumption": "Consumo Diario Promedio",
+        "daysOfStock": "Días de Stock",
+        "turnoverRate": "Índice de Rotación",
+        "lastMovementDate": "Último Movimiento",
+        "noMovements": "Sin movimientos",
+        "daysUnit": "{days} días",
+        "timesPerYear": "{rate}x / año",
+        "reorderRules": "Reglas de Reorden",
+        "noReorderRules": "No hay reglas de reorden configuradas. Agrega reglas por almacén para activar alertas de stock bajo."
       },
       "search": {
         "placeholder": "Buscar productos..."
@@ -331,7 +343,9 @@
       "selector": {
         "label": "Seleccionar categoría",
         "all": "Todas las Categorías",
-        "loading": "Cargando..."
+        "loading": "Cargando...",
+        "none": "Sin categorías seleccionadas",
+        "add": "Agregar categoría"
       },
       "messages": {
         "created": "Categoría creada exitosamente",
@@ -381,6 +395,8 @@
         "filter": "Filtrar",
         "post": "Confirmar",
         "void": "Anular",
+        "edit": "Editar",
+        "delete": "Eliminar",
         "view": "Ver Detalles",
         "addLine": "Agregar Producto",
         "removeLine": "Eliminar"
@@ -404,10 +420,13 @@
       "form": {
         "createTitle": "Registrar Movimiento de Stock",
         "createDescription": "Ingresa los detalles para registrar un nuevo movimiento de inventario",
+        "editTitle": "Editar Movimiento de Stock",
+        "editDescription": "Actualiza los detalles de este movimiento en borrador",
         "movementInfo": "Detalles del Movimiento",
         "linesSection": "Productos",
         "noLines": "No hay productos agregados",
-        "error": "Ocurrió un error al registrar el movimiento."
+        "error": "Ocurrió un error al registrar el movimiento.",
+        "updateError": "Ocurrió un error al actualizar el movimiento."
       },
       "filters": {
         "type": "Tipo de Movimiento",
@@ -420,8 +439,14 @@
       },
       "messages": {
         "created": "Movimiento registrado exitosamente",
+        "updated": "Movimiento actualizado exitosamente",
+        "deleted": "Movimiento eliminado exitosamente",
         "posted": "Movimiento confirmado exitosamente",
         "voided": "Movimiento anulado exitosamente"
+      },
+      "confirmDelete": {
+        "title": "Eliminar Movimiento",
+        "description": "¿Estás seguro de que deseas eliminar este movimiento? Esta acción no se puede deshacer."
       },
       "confirmPost": {
         "title": "Confirmar Movimiento",

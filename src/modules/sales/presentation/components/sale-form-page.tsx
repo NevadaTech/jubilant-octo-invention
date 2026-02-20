@@ -7,6 +7,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
+import { CurrencyInput } from "@/ui/components/currency-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -207,12 +208,15 @@ export function SaleFormPage() {
 
                       <FormField error={errors.lines?.[index]?.salePrice?.message}>
                         <Label>{t("fields.salePrice")} *</Label>
-                        <Input
-                          type="number"
-                          min="0.01"
-                          step="0.01"
-                          placeholder="0.00"
-                          {...register(`lines.${index}.salePrice`, { valueAsNumber: true })}
+                        <Controller
+                          name={`lines.${index}.salePrice`}
+                          control={control}
+                          render={({ field }) => (
+                            <CurrencyInput
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
+                          )}
                         />
                       </FormField>
                     </div>

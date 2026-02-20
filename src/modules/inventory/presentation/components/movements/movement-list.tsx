@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Search, ArrowRightLeft, CheckCircle, XCircle, MoreHorizontal } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import { Plus, Search, ArrowRightLeft, CheckCircle, XCircle, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -11,6 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/ui/components/dropdown-menu";
 import {
@@ -23,7 +25,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
-import { useMovements, usePostMovement, useVoidMovement } from "../../hooks/use-movements";
+import {
+  useMovements,
+  usePostMovement,
+  useVoidMovement,
+  useDeleteMovement,
+} from "../../hooks/use-movements";
 import { MovementTypeBadge } from "./movement-type-badge";
 import { MovementStatusBadge } from "./movement-status-badge";
 import { MovementFilters } from "./movement-filters";
@@ -42,10 +49,12 @@ export function MovementList() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [postConfirm, setPostConfirm] = useState<StockMovement | null>(null);
   const [voidConfirm, setVoidConfirm] = useState<StockMovement | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<StockMovement | null>(null);
 
   const { data, isLoading, isError } = useMovements(filters);
   const postMovement = usePostMovement();
   const voidMovement = useVoidMovement();
+  const deleteMovement = useDeleteMovement();
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
@@ -74,6 +83,16 @@ export function MovementList() {
     try {
       await voidMovement.mutateAsync(voidConfirm.id);
       setVoidConfirm(null);
+    } catch {
+      // Error handled by mutation
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteConfirm) return;
+    try {
+      await deleteMovement.mutateAsync(deleteConfirm.id);
+      setDeleteConfirm(null);
     } catch {
       // Error handled by mutation
     }
@@ -145,6 +164,7 @@ export function MovementList() {
                       <th className="pb-3 pr-4">{t("fields.totalQuantity")}</th>
                       <th className="pb-3 pr-4">{t("fields.reference")}</th>
                       <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
+                      <th className="pb-3 pr-4">{t("fields.postedAt")}</th>
                       <th className="pb-3 pr-4 text-right">{tCommon("actions")}</th>
                     </tr>
                   </thead>
@@ -184,6 +204,11 @@ export function MovementList() {
                         <td className="py-4 pr-4 text-sm text-muted-foreground">
                           {formatDate(movement.createdAt)}
                         </td>
+                        <td className="py-4 pr-4 text-sm text-muted-foreground">
+                          {movement.postedAt ? formatDate(movement.postedAt) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </td>
                         <td className="py-4 text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -192,11 +217,27 @@ export function MovementList() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              {movement.canPost && (
-                                <DropdownMenuItem onClick={() => setPostConfirm(movement)}>
-                                  <CheckCircle className="mr-2 h-4 w-4" />
-                                  {t("actions.post")}
-                                </DropdownMenuItem>
+                              {movement.isDraft && (
+                                <>
+                                  <DropdownMenuItem asChild>
+                                    <Link href={`/dashboard/inventory/movements/${movement.id}/edit`}>
+                                      <Pencil className="mr-2 h-4 w-4" />
+                                      {t("actions.edit")}
+                                    </Link>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => setPostConfirm(movement)}>
+                                    <CheckCircle className="mr-2 h-4 w-4" />
+                                    {t("actions.post")}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => setDeleteConfirm(movement)}
+                                    className="text-destructive"
+                                  >
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    {t("actions.delete")}
+                                  </DropdownMenuItem>
+                                </>
                               )}
                               {movement.canVoid && (
                                 <DropdownMenuItem
@@ -254,6 +295,28 @@ export function MovementList() {
       </Card>
 
       <MovementForm open={isFormOpen} onOpenChange={setIsFormOpen} />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("confirmDelete.title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("confirmDelete.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleteMovement.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMovement.isPending ? tCommon("loading") : tCommon("delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Post Confirmation Dialog */}
       <AlertDialog open={!!postConfirm} onOpenChange={(open) => !open && setPostConfirm(null)}>

@@ -9,6 +9,7 @@ import { useRouter } from "@/i18n/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
+import { CurrencyInput } from "@/ui/components/currency-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -23,6 +24,7 @@ import {
   useUpdateProduct,
   useProduct,
 } from "../../hooks/use-products";
+import { CategoryMultiSelector } from "../categories/category-multi-selector";
 
 interface ProductFormPageProps {
   productId?: string;
@@ -47,6 +49,8 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<CreateProductFormData>({
     resolver: zodResolver(createProductSchema),
@@ -56,8 +60,11 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
       description: "",
       unitOfMeasure: "unit",
       price: 0,
+      categoryIds: [],
     },
   });
+
+  const selectedCategoryIds = watch("categoryIds");
 
   // Populate form when editing
   useEffect(() => {
@@ -68,6 +75,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
         description: existingProduct.description || "",
         unitOfMeasure: existingProduct.unitOfMeasure,
         price: existingProduct.price,
+        categoryIds: existingProduct.categories.map((c) => c.id),
       });
     }
   }, [isEditing, existingProduct, reset]);
@@ -164,6 +172,14 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
               />
             </FormField>
 
+            <FormField>
+              <Label>{t("fields.category")}</Label>
+              <CategoryMultiSelector
+                value={selectedCategoryIds || []}
+                onChange={(ids) => setValue("categoryIds", ids)}
+              />
+            </FormField>
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField error={errors.unitOfMeasure?.message}>
                 <Label htmlFor="unitOfMeasure">{t("fields.unitOfMeasure")} *</Label>
@@ -176,13 +192,10 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
 
               <FormField error={errors.price?.message}>
                 <Label htmlFor="price">{t("fields.price")}</Label>
-                <Input
+                <CurrencyInput
                   id="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  {...register("price", { valueAsNumber: true })}
+                  value={watch("price")}
+                  onChange={(val) => setValue("price", val)}
                 />
               </FormField>
             </div>

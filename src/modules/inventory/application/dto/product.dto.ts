@@ -35,10 +35,16 @@ export interface ProductApiRawDto {
   minStock?: number;
   maxStock?: number;
   safetyStock?: number;
+  // Rotation metrics
+  totalIn30d?: number;
+  totalOut30d?: number;
+  avgDailyConsumption?: number;
+  daysOfStock?: number | null;
+  turnoverRate?: number;
+  lastMovementDate?: string | null;
   // Legacy alias
   cost?: number;
-  categoryId?: string | null;
-  categoryName?: string | null;
+  categories?: { id: string; name: string }[];
   imageUrl?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -49,8 +55,7 @@ export interface ProductResponseDto {
   sku: string;
   name: string;
   description: string | null;
-  categoryId: string | null;
-  categoryName: string | null;
+  categories: { id: string; name: string }[];
   unitOfMeasure: string;
   cost: number;
   price: number;
@@ -66,6 +71,13 @@ export interface ProductResponseDto {
   margin: number;
   profit: number;
   safetyStock: number;
+  // Rotation metrics
+  totalIn30d: number;
+  totalOut30d: number;
+  avgDailyConsumption: number;
+  daysOfStock: number | null;
+  turnoverRate: number;
+  lastMovementDate: string | null;
 }
 
 export interface ProductListResponseDto {
@@ -84,9 +96,12 @@ export interface CreateProductApiDto {
   name: string;
   unit: ProductUnitDto;
   description?: string;
+  categoryIds?: string[];
   barcode?: string;
   brand?: string;
   model?: string;
+  price?: number;
+  currency?: string;
   status?: string;
   costMethod?: string;
 }
@@ -95,6 +110,7 @@ export interface CreateProductApiDto {
 export interface UpdateProductApiDto {
   name?: string;
   description?: string;
+  categoryIds?: string[];
   unit?: ProductUnitDto;
   barcode?: string;
   brand?: string;
@@ -110,7 +126,7 @@ export interface CreateProductDto {
   sku: string;
   name: string;
   description?: string;
-  categoryId?: string;
+  categoryIds?: string[];
   unitOfMeasure: string;
   cost: number;
   price: number;
@@ -123,7 +139,7 @@ export interface UpdateProductDto {
   sku?: string;
   name?: string;
   description?: string;
-  categoryId?: string;
+  categoryIds?: string[];
   unitOfMeasure?: string;
   cost?: number;
   price?: number;

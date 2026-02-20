@@ -3,7 +3,7 @@ import type { CreateStockMovementDto, CreateMovementLineDto } from "../../applic
 import type { MovementType } from "../../domain/entities/stock-movement.entity";
 
 export const movementLineSchema = z.object({
-  productId: z.string().uuid("Please select a product"),
+  productId: z.string().min(1, "Please select a product"),
   quantity: z
     .number()
     .int("Quantity must be a whole number")
@@ -12,7 +12,7 @@ export const movementLineSchema = z.object({
 });
 
 export const createMovementSchema = z.object({
-  warehouseId: z.string().uuid("Please select a warehouse"),
+  warehouseId: z.string().min(1, "Please select a warehouse"),
   type: z.enum(
     ["IN", "OUT", "ADJUST_IN", "ADJUST_OUT", "TRANSFER_IN", "TRANSFER_OUT"] as const,
     { message: "Please select a movement type" }

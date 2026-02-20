@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
@@ -14,11 +15,27 @@ import {
   TrendingUp,
   ShieldCheck,
   Warehouse,
+  RefreshCw,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Clock,
+  Plus,
+  Pencil,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/ui/components/dropdown-menu";
 import { useProduct } from "../../hooks/use-products";
+import { useReorderRules } from "../../hooks/use-reorder-rules";
+import { useWarehouses } from "../../hooks/use-warehouses";
+import { ReorderRuleDialog } from "../stock/reorder-rule-dialog";
+import type { Warehouse as WarehouseEntity } from "../../../domain/entities/warehouse.entity";
 
 interface ProductDetailProps {
   productId: string;
@@ -55,9 +72,9 @@ function DetailItem({
       </div>
       <div>
         <p className="text-sm text-neutral-500 dark:text-neutral-400">{label}</p>
-        <p className="font-medium text-neutral-900 dark:text-neutral-100">
+        <div className="font-medium text-neutral-900 dark:text-neutral-100">
           {value}
-        </p>
+        </div>
       </div>
     </div>
   );
@@ -131,6 +148,13 @@ export function ProductDetail({ productId }: ProductDetailProps) {
   const minStock = product.minStock ?? 0;
   const maxStock = product.maxStock ?? 0;
   const safetyStock = product.safetyStock ?? 0;
+  // Rotation metrics
+  const totalIn30d = product.totalIn30d ?? 0;
+  const totalOut30d = product.totalOut30d ?? 0;
+  const avgDailyConsumption = product.avgDailyConsumption ?? 0;
+  const daysOfStock = product.daysOfStock ?? null;
+  const turnoverRate = product.turnoverRate ?? 0;
+  const lastMovementDate = product.lastMovementDate;
 
   const marginColor =
     margin > 0
@@ -258,7 +282,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           </CardContent>
         </Card>
 
-        {/* Category */}
+        {/* Classification & Dates */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">{t("detail.classification")}</CardTitle>
@@ -267,17 +291,20 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             <DetailItem
               icon={Tag}
               label={t("fields.category")}
-              value={product.categoryName || "-"}
+              value={
+                product.categories.length > 0 ? (
+                  <div className="flex flex-wrap gap-1 mt-0.5">
+                    {product.categories.map((c) => (
+                      <Badge key={c.id} variant="outline" className="text-xs">
+                        {c.name}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  "—"
+                )
+              }
             />
-          </CardContent>
-        </Card>
-
-        {/* Dates */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t("detail.dates")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
             <DetailItem
               icon={Calendar}
               label={t("detail.createdAt")}
@@ -290,7 +317,203 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             />
           </CardContent>
         </Card>
+
+        {/* Rotation */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">{t("detail.rotation")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <DetailItem
+              icon={ArrowDownToLine}
+              label={t("detail.totalIn30d")}
+              value={totalIn30d.toLocaleString()}
+            />
+            <DetailItem
+              icon={ArrowUpFromLine}
+              label={t("detail.totalOut30d")}
+              value={totalOut30d.toLocaleString()}
+            />
+            <DetailItem
+              icon={BarChart3}
+              label={t("detail.avgDailyConsumption")}
+              value={avgDailyConsumption.toLocaleString()}
+            />
+            <DetailItem
+              icon={Layers}
+              label={t("detail.daysOfStock")}
+              value={
+                daysOfStock !== null
+                  ? t("detail.daysUnit", { days: daysOfStock })
+                  : "-"
+              }
+            />
+            <DetailItem
+              icon={RefreshCw}
+              label={t("detail.turnoverRate")}
+              value={
+                turnoverRate > 0
+                  ? t("detail.timesPerYear", { rate: turnoverRate })
+                  : "-"
+              }
+            />
+            <DetailItem
+              icon={Clock}
+              label={t("detail.lastMovementDate")}
+              value={
+                lastMovementDate
+                  ? formatDate(new Date(lastMovementDate))
+                  : t("detail.noMovements")
+              }
+            />
+          </CardContent>
+        </Card>
+
       </div>
+
+      {/* Reorder Rules */}
+      <ProductReorderRules productId={productId} productName={product.name} />
     </div>
+  );
+}
+
+/* ─── Reorder Rules sub-component ─── */
+
+interface ProductReorderRulesProps {
+  productId: string;
+  productName: string;
+}
+
+function ProductReorderRules({ productId, productName }: ProductReorderRulesProps) {
+  const t = useTranslations("inventory.products");
+  const tRule = useTranslations("inventory.stock.reorderRule");
+  const { data: allRules, isLoading: rulesLoading } = useReorderRules();
+  const { data: warehousesResult } = useWarehouses();
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedWarehouseId, setSelectedWarehouseId] = useState<string | null>(null);
+
+  const warehouses = warehousesResult?.data ?? [];
+  const productRules = (allRules ?? []).filter((r) => r.productId === productId);
+
+  // Build a warehouse name lookup
+  const warehouseNameMap = new Map<string, string>();
+  for (const w of warehouses) {
+    warehouseNameMap.set(w.id, w.name);
+  }
+
+  // Warehouses that don't have a rule yet
+  const usedWarehouseIds = new Set(productRules.map((r) => r.warehouseId));
+  const availableWarehouses = warehouses.filter((w) => !usedWarehouseIds.has(w.id));
+
+  const handleAddRule = (warehouseId: string) => {
+    setSelectedWarehouseId(warehouseId);
+    setDialogOpen(true);
+  };
+
+  const handleEditRule = (warehouseId: string) => {
+    setSelectedWarehouseId(warehouseId);
+    setDialogOpen(true);
+  };
+
+  return (
+    <>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <CardTitle className="text-lg">{t("detail.reorderRules")}</CardTitle>
+          {availableWarehouses.length > 0 && (
+            <WarehouseAddDropdown
+              warehouses={availableWarehouses}
+              onSelect={handleAddRule}
+            />
+          )}
+        </CardHeader>
+        <CardContent>
+          {rulesLoading ? (
+            <div className="space-y-3">
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="h-12 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700" />
+              ))}
+            </div>
+          ) : productRules.length === 0 ? (
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              {t("detail.noReorderRules")}
+            </p>
+          ) : (
+            <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
+              {productRules.map((rule) => (
+                <div
+                  key={rule.id}
+                  className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                >
+                  <div className="flex items-center gap-3">
+                    <Warehouse className="h-4 w-4 text-neutral-400" />
+                    <div>
+                      <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                        {warehouseNameMap.get(rule.warehouseId) ?? rule.warehouseId}
+                      </p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                        {tRule("fields.minQty")}: {rule.minQty} &middot;{" "}
+                        {tRule("fields.maxQty")}: {rule.maxQty} &middot;{" "}
+                        {tRule("fields.safetyQty")}: {rule.safetyQty}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleEditRule(rule.warehouseId)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {selectedWarehouseId && (
+        <ReorderRuleDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          productId={productId}
+          warehouseId={selectedWarehouseId}
+          productName={productName}
+          warehouseName={warehouseNameMap.get(selectedWarehouseId) ?? selectedWarehouseId}
+        />
+      )}
+    </>
+  );
+}
+
+/* ─── Add rule dropdown (warehouse picker) ─── */
+
+function WarehouseAddDropdown({
+  warehouses,
+  onSelect,
+}: {
+  warehouses: WarehouseEntity[];
+  onSelect: (warehouseId: string) => void;
+}) {
+  const tRule = useTranslations("inventory.stock.reorderRule");
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Plus className="mr-2 h-4 w-4" />
+          {tRule("create")}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {warehouses.map((w) => (
+          <DropdownMenuItem key={w.id} onClick={() => onSelect(w.id)}>
+            <Warehouse className="mr-2 h-4 w-4" />
+            {w.name}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

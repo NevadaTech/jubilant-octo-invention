@@ -122,7 +122,19 @@
         "createdAt": "Created at",
         "updatedAt": "Updated at",
         "notFound": "Product not found",
-        "backToList": "Back to products"
+        "backToList": "Back to products",
+        "rotation": "Rotation",
+        "totalIn30d": "Entries (30d)",
+        "totalOut30d": "Exits (30d)",
+        "avgDailyConsumption": "Avg. Daily Consumption",
+        "daysOfStock": "Days of Stock",
+        "turnoverRate": "Turnover Rate",
+        "lastMovementDate": "Last Movement",
+        "noMovements": "No movements",
+        "daysUnit": "{days} days",
+        "timesPerYear": "{rate}x / year",
+        "reorderRules": "Reorder Rules",
+        "noReorderRules": "No reorder rules configured. Add rules per warehouse to enable low stock alerts."
       },
       "search": {
         "placeholder": "Search products..."
@@ -331,7 +343,9 @@
       "selector": {
         "label": "Select category",
         "all": "All Categories",
-        "loading": "Loading..."
+        "loading": "Loading...",
+        "none": "No categories selected",
+        "add": "Add category"
       },
       "messages": {
         "created": "Category created successfully",
@@ -381,6 +395,8 @@
         "filter": "Filter",
         "post": "Post",
         "void": "Void",
+        "edit": "Edit",
+        "delete": "Delete",
         "view": "View Details",
         "addLine": "Add Product",
         "removeLine": "Remove"
@@ -404,10 +420,13 @@
       "form": {
         "createTitle": "Record Stock Movement",
         "createDescription": "Enter the details to record a new inventory movement",
+        "editTitle": "Edit Stock Movement",
+        "editDescription": "Update the details of this draft movement",
         "movementInfo": "Movement Details",
         "linesSection": "Products",
         "noLines": "No products added yet",
-        "error": "An error occurred while recording the movement."
+        "error": "An error occurred while recording the movement.",
+        "updateError": "An error occurred while updating the movement."
       },
       "filters": {
         "type": "Movement Type",
@@ -420,8 +439,14 @@
       },
       "messages": {
         "created": "Movement recorded successfully",
+        "updated": "Movement updated successfully",
+        "deleted": "Movement deleted successfully",
         "posted": "Movement posted successfully",
         "voided": "Movement voided successfully"
+      },
+      "confirmDelete": {
+        "title": "Delete Movement",
+        "description": "Are you sure you want to delete this movement? This action cannot be undone."
       },
       "confirmPost": {
         "title": "Post Movement",

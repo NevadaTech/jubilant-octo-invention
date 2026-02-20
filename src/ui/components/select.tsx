@@ -9,6 +9,7 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  isValidElement,
   type HTMLAttributes,
   type ReactNode,
 } from "react";
@@ -22,6 +23,8 @@ interface SelectContextValue {
   value: string;
   onValueChange: (value: string) => void;
   triggerRef: React.RefObject<HTMLButtonElement | null>;
+  displayText: string;
+  setDisplayText: (text: string) => void;
 }
 
 const SelectContext = createContext<SelectContextValue | undefined>(undefined);
@@ -55,6 +58,7 @@ function Select({
 }: SelectProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const [displayText, setDisplayText] = useState("");
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const isOpenControlled = controlledOpen !== undefined;
@@ -86,7 +90,7 @@ function Select({
 
   return (
     <SelectContext.Provider
-      value={{ open, onOpenChange: handleOpenChange, value, onValueChange: handleValueChange, triggerRef }}
+      value={{ open, onOpenChange: handleOpenChange, value, onValueChange: handleValueChange, triggerRef, displayText, setDisplayText }}
     >
       {children}
     </SelectContext.Provider>
@@ -124,7 +128,7 @@ const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
           "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
           className
         )}
-        onClick={() => onOpenChange(!open)}
+        onClick={() => !props.disabled && onOpenChange(!open)}
         {...props}
       >
         {children}
@@ -137,11 +141,15 @@ SelectTrigger.displayName = "SelectTrigger";
 
 interface SelectValueProps {
   placeholder?: string;
+  children?: ReactNode;
 }
 
-function SelectValue({ placeholder }: SelectValueProps) {
-  const { value } = useSelectContext();
-  return <span>{value || placeholder}</span>;
+function SelectValue({ placeholder, children }: SelectValueProps) {
+  const { value, displayText } = useSelectContext();
+  if (children) {
+    return <span>{children}</span>;
+  }
+  return <span>{(value ? displayText || value : null) || placeholder}</span>;
 }
 
 interface SelectContentProps extends HTMLAttributes<HTMLDivElement> {
@@ -237,6 +245,14 @@ const SelectLabel = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
 );
 SelectLabel.displayName = "SelectLabel";
 
+function extractText(node: ReactNode): string {
+  if (typeof node === "string") return node;
+  if (typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  if (isValidElement(node)) return extractText((node.props as { children?: ReactNode }).children);
+  return "";
+}
+
 interface SelectItemProps extends HTMLAttributes<HTMLDivElement> {
   value: string;
   disabled?: boolean;
@@ -244,8 +260,18 @@ interface SelectItemProps extends HTMLAttributes<HTMLDivElement> {
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
   ({ className, children, value, disabled, ...props }, ref) => {
-    const { value: selectedValue, onValueChange } = useSelectContext();
+    const { value: selectedValue, onValueChange, setDisplayText } = useSelectContext();
     const isSelected = selectedValue === value;
+
+    // Extract text content from children for display
+    useEffect(() => {
+      if (isSelected) {
+        const text = extractText(children);
+        if (text) {
+          setDisplayText(text);
+        }
+      }
+    }, [isSelected, children, setDisplayText]);
 
     return (
       <div
@@ -259,7 +285,13 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
           !disabled && "cursor-pointer hover:bg-accent hover:text-accent-foreground",
           className
         )}
-        onClick={() => !disabled && onValueChange(value)}
+        onClick={() => {
+          if (!disabled) {
+            const text = extractText(children);
+            if (text) setDisplayText(text);
+            onValueChange(value);
+          }
+        }}
         {...props}
       >
         <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">

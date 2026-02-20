@@ -18,6 +18,7 @@ export const createProductSchema = z.object({
     .string()
     .max(500, "Description cannot exceed 500 characters")
     .optional(),
+  categoryIds: z.array(z.string()).optional(),
   unitOfMeasure: z.string().min(1, "Unit of measure is required"),
   price: z.number().min(0, "Price cannot be negative"),
 });
@@ -31,6 +32,7 @@ export interface CreateProductFormData {
   sku: string;
   name: string;
   description?: string;
+  categoryIds?: string[];
   unitOfMeasure: string;
   price: number;
 }
@@ -45,6 +47,7 @@ export function toCreateProductDto(data: CreateProductFormData): CreateProductDt
     sku: data.sku,
     name: data.name,
     description: data.description || undefined,
+    categoryIds: data.categoryIds,
     unitOfMeasure: data.unitOfMeasure,
     cost: 0,
     price: data.price,
@@ -58,6 +61,7 @@ export function toUpdateProductDto(data: UpdateProductFormData): UpdateProductDt
 
   if (data.name !== undefined) dto.name = data.name;
   if (data.description !== undefined) dto.description = data.description || undefined;
+  if (data.categoryIds !== undefined) dto.categoryIds = data.categoryIds;
   if (data.unitOfMeasure !== undefined) dto.unitOfMeasure = data.unitOfMeasure;
   if (data.price !== undefined) dto.price = data.price;
   if (data.isActive !== undefined) dto.isActive = data.isActive;

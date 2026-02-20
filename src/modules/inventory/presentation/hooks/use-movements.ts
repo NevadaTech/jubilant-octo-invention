@@ -5,6 +5,7 @@ import { stockMovementApiAdapter } from "../../infrastructure/adapters/stock-mov
 import type {
   StockMovementFilters,
   CreateStockMovementDto,
+  UpdateStockMovementDto,
 } from "../../application/dto/stock-movement.dto";
 import { stockKeys } from "./use-stock";
 
@@ -40,6 +41,30 @@ export function useCreateMovement() {
 
   return useMutation({
     mutationFn: (data: CreateStockMovementDto) => stockMovementApiAdapter.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
+    },
+  });
+}
+
+export function useUpdateMovement() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateStockMovementDto }) =>
+      stockMovementApiAdapter.update(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: movementKeys.detail(id) });
+    },
+  });
+}
+
+export function useDeleteMovement() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => stockMovementApiAdapter.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
     },

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
@@ -8,34 +9,51 @@ import { useRouter } from "@/i18n/navigation";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
+import { CurrencyInput } from "@/ui/components/currency-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import { Skeleton } from "@/ui/components/skeleton";
 import { Textarea } from "@/ui/components/textarea";
 import {
   createMovementSchema,
   toCreateMovementDto,
   type CreateMovementFormData,
 } from "../../schemas/movement.schema";
-import { useCreateMovement } from "../../hooks/use-movements";
+import {
+  useCreateMovement,
+  useUpdateMovement,
+  useMovement,
+} from "../../hooks/use-movements";
 import { useProducts } from "../../hooks/use-products";
 import { useWarehouses } from "../../hooks/use-warehouses";
+import type { UpdateStockMovementDto } from "../../../application/dto/stock-movement.dto";
 
-export function MovementFormPage() {
+interface MovementFormPageProps {
+  movementId?: string;
+}
+
+export function MovementFormPage({ movementId }: MovementFormPageProps) {
+  const isEditing = Boolean(movementId);
   const t = useTranslations("inventory.movements");
   const tCommon = useTranslations("common");
   const router = useRouter();
+
   const createMovement = useCreateMovement();
+  const updateMovement = useUpdateMovement();
+  const { data: existingMovement, isLoading: isLoadingMovement } = useMovement(movementId ?? "");
   const { data: productsData } = useProducts({ limit: 100, isActive: true });
   const { data: warehousesData } = useWarehouses({ limit: 100, isActive: true });
 
-  const isSubmitting = createMovement.isPending;
+  const isSubmitting = isEditing ? updateMovement.isPending : createMovement.isPending;
+  const isError = isEditing ? updateMovement.isError : createMovement.isError;
 
   const {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<CreateMovementFormData>({
     resolver: zodResolver(createMovementSchema),
@@ -49,6 +67,24 @@ export function MovementFormPage() {
     },
   });
 
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (isEditing && existingMovement) {
+      reset({
+        warehouseId: existingMovement.warehouseId,
+        type: existingMovement.type,
+        reference: existingMovement.reference ?? "",
+        reason: existingMovement.reason ?? "",
+        note: existingMovement.note ?? "",
+        lines: existingMovement.lines.map((l) => ({
+          productId: l.productId,
+          quantity: l.quantity,
+          unitCost: l.unitCost ?? undefined,
+        })),
+      });
+    }
+  }, [isEditing, existingMovement, reset]);
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "lines",
@@ -56,8 +92,22 @@ export function MovementFormPage() {
 
   const onSubmit = async (data: CreateMovementFormData) => {
     try {
-      const dto = toCreateMovementDto(data);
-      await createMovement.mutateAsync(dto);
+      if (isEditing && movementId) {
+        const dto: UpdateStockMovementDto = {
+          reference: data.reference || undefined,
+          reason: data.reason || undefined,
+          note: data.note || undefined,
+          lines: data.lines.map((line) => ({
+            productId: line.productId,
+            quantity: line.quantity,
+            unitCost: line.unitCost,
+          })),
+        };
+        await updateMovement.mutateAsync({ id: movementId, data: dto });
+      } else {
+        const dto = toCreateMovementDto(data);
+        await createMovement.mutateAsync(dto);
+      }
       router.push("/dashboard/inventory/movements");
     } catch {
       // Error is handled by the mutation
@@ -67,6 +117,16 @@ export function MovementFormPage() {
   const addLine = () => {
     append({ productId: "", quantity: 1, unitCost: undefined });
   };
+
+  if (isEditing && isLoadingMovement) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-48 w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -79,18 +139,18 @@ export function MovementFormPage() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            {t("form.createTitle")}
+            {isEditing ? t("form.editTitle") : t("form.createTitle")}
           </h1>
           <p className="text-neutral-500 dark:text-neutral-400">
-            {t("form.createDescription")}
+            {isEditing ? t("form.editDescription") : t("form.createDescription")}
           </p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {createMovement.isError && (
+        {isError && (
           <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
-            {t("form.error")}
+            {isEditing ? t("form.updateError") : t("form.error")}
           </div>
         )}
 
@@ -108,9 +168,14 @@ export function MovementFormPage() {
                   name="type"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue />
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger disabled={isEditing}>
+                        <SelectValue>
+                          {field.value ? t(`types.${field.value.toLowerCase()}`) : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="IN">{t("types.in")}</SelectItem>
@@ -132,9 +197,19 @@ export function MovementFormPage() {
                   name="warehouseId"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("fields.warehousePlaceholder")} />
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger disabled={isEditing}>
+                        <SelectValue placeholder={t("fields.warehousePlaceholder")}>
+                          {field.value
+                            ? (() => {
+                                const w = warehousesData?.data.find((wh) => wh.id === field.value);
+                                return w ? `${w.name} (${w.code})` : undefined;
+                              })()
+                            : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {warehousesData?.data.map((warehouse) => (
@@ -214,7 +289,14 @@ export function MovementFormPage() {
                           render={({ field: selectField }) => (
                             <Select value={selectField.value} onValueChange={selectField.onChange}>
                               <SelectTrigger>
-                                <SelectValue placeholder={t("fields.productPlaceholder")} />
+                                <SelectValue placeholder={t("fields.productPlaceholder")}>
+                                  {selectField.value
+                                    ? (() => {
+                                        const p = productsData?.data.find((pr) => pr.id === selectField.value);
+                                        return p ? `${p.name} (${p.sku})` : undefined;
+                                      })()
+                                    : undefined}
+                                </SelectValue>
                               </SelectTrigger>
                               <SelectContent>
                                 {productsData?.data.map((product) => (
@@ -239,15 +321,15 @@ export function MovementFormPage() {
 
                       <FormField error={errors.lines?.[index]?.unitCost?.message}>
                         <Label>{t("fields.unitCost")}</Label>
-                        <Input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          placeholder="0.00"
-                          {...register(`lines.${index}.unitCost`, {
-                            valueAsNumber: true,
-                            setValueAs: (v) => v === "" ? undefined : parseFloat(v),
-                          })}
+                        <Controller
+                          name={`lines.${index}.unitCost`}
+                          control={control}
+                          render={({ field }) => (
+                            <CurrencyInput
+                              value={field.value}
+                              onChange={(val) => field.onChange(val || undefined)}
+                            />
+                          )}
                         />
                       </FormField>
                     </div>
@@ -277,7 +359,11 @@ export function MovementFormPage() {
             </Link>
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? tCommon("loading") : tCommon("create")}
+            {isSubmitting
+              ? tCommon("loading")
+              : isEditing
+              ? tCommon("save")
+              : tCommon("create")}
           </Button>
         </div>
       </form>

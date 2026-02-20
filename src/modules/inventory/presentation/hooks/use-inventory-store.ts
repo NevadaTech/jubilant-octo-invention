@@ -1,5 +1,6 @@
 "use client";
 
+import { useShallow } from "zustand/react/shallow";
 import { useInventoryStore } from "../../infrastructure/store/inventory.store";
 
 // Product filters selectors
@@ -52,22 +53,22 @@ export function useSetSelectedWarehouse() {
 
 // Product form state
 export function useProductFormState() {
-  return useInventoryStore((state) => ({
+  return useInventoryStore(useShallow((state) => ({
     isOpen: state.isProductFormOpen,
     editingId: state.editingProductId,
     open: state.openProductForm,
     close: state.closeProductForm,
-  }));
+  })));
 }
 
 // Warehouse form state
 export function useWarehouseFormState() {
-  return useInventoryStore((state) => ({
+  return useInventoryStore(useShallow((state) => ({
     isOpen: state.isWarehouseFormOpen,
     editingId: state.editingWarehouseId,
     open: state.openWarehouseForm,
     close: state.closeWarehouseForm,
-  }));
+  })));
 }
 
 // Category filters selectors
@@ -85,10 +86,10 @@ export function useResetCategoryFilters() {
 
 // Category form state
 export function useCategoryFormState() {
-  return useInventoryStore((state) => ({
+  return useInventoryStore(useShallow((state) => ({
     isOpen: state.isCategoryFormOpen,
     editingId: state.editingCategoryId,
     open: state.openCategoryForm,
     close: state.closeCategoryForm,
-  }));
+  })));
 }

@@ -3,7 +3,6 @@ import {
   createProductSchema,
   toCreateProductDto,
   toUpdateProductDto,
-  validateStockRange,
   type CreateProductFormData,
   type UpdateProductFormData,
 } from '@/modules/inventory/presentation/schemas/product.schema';
@@ -17,10 +16,7 @@ describe('Product Schema', () => {
         name: 'Test Product',
         description: 'A test description',
         unitOfMeasure: 'unit',
-        cost: 10.5,
         price: 19.99,
-        minStock: 5,
-        maxStock: 100,
       };
 
       // Act
@@ -36,10 +32,7 @@ describe('Product Schema', () => {
         sku: '',
         name: 'Test Product',
         unitOfMeasure: 'unit',
-        cost: 10,
         price: 20,
-        minStock: 0,
-        maxStock: 100,
       };
 
       // Act
@@ -55,10 +48,7 @@ describe('Product Schema', () => {
         sku: 'PROD 001!',
         name: 'Test Product',
         unitOfMeasure: 'unit',
-        cost: 10,
         price: 20,
-        minStock: 0,
-        maxStock: 100,
       };
 
       // Act
@@ -68,16 +58,13 @@ describe('Product Schema', () => {
       expect(result.success).toBe(false);
     });
 
-    it('Given: negative cost When: validating Then: should fail validation', () => {
+    it('Given: negative price When: validating Then: should fail validation', () => {
       // Arrange
       const invalidData = {
         sku: 'PROD-001',
         name: 'Test Product',
         unitOfMeasure: 'unit',
-        cost: -10,
-        price: 20,
-        minStock: 0,
-        maxStock: 100,
+        price: -20,
       };
 
       // Act
@@ -87,17 +74,14 @@ describe('Product Schema', () => {
       expect(result.success).toBe(false);
     });
 
-    it('Given: valid categoryId UUID When: validating Then: should pass validation', () => {
+    it('Given: valid categoryIds When: validating Then: should pass validation', () => {
       // Arrange
       const validData = {
         sku: 'PROD-001',
         name: 'Test Product',
-        categoryId: '123e4567-e89b-12d3-a456-426614174000',
+        categoryIds: ['123e4567-e89b-12d3-a456-426614174000'],
         unitOfMeasure: 'unit',
-        cost: 10,
         price: 20,
-        minStock: 0,
-        maxStock: 100,
       };
 
       // Act
@@ -107,17 +91,13 @@ describe('Product Schema', () => {
       expect(result.success).toBe(true);
     });
 
-    it('Given: empty categoryId When: validating Then: should pass validation (optional)', () => {
+    it('Given: no categoryIds When: validating Then: should pass validation (optional)', () => {
       // Arrange
       const validData = {
         sku: 'PROD-001',
         name: 'Test Product',
-        categoryId: '',
         unitOfMeasure: 'unit',
-        cost: 10,
         price: 20,
-        minStock: 0,
-        maxStock: 100,
       };
 
       // Act
@@ -135,13 +115,9 @@ describe('Product Schema', () => {
         sku: 'PROD-001',
         name: 'Test Product',
         description: 'Description',
-        categoryId: '123e4567-e89b-12d3-a456-426614174000',
+        categoryIds: ['123e4567-e89b-12d3-a456-426614174000'],
         unitOfMeasure: 'unit',
-        cost: 10,
         price: 20,
-        minStock: 5,
-        maxStock: 100,
-        imageUrl: 'https://example.com/image.jpg',
       };
 
       // Act
@@ -151,13 +127,9 @@ describe('Product Schema', () => {
       expect(dto.sku).toBe(formData.sku);
       expect(dto.name).toBe(formData.name);
       expect(dto.description).toBe(formData.description);
-      expect(dto.categoryId).toBe(formData.categoryId);
+      expect(dto.categoryIds).toEqual(formData.categoryIds);
       expect(dto.unitOfMeasure).toBe(formData.unitOfMeasure);
-      expect(dto.cost).toBe(formData.cost);
       expect(dto.price).toBe(formData.price);
-      expect(dto.minStock).toBe(formData.minStock);
-      expect(dto.maxStock).toBe(formData.maxStock);
-      expect(dto.imageUrl).toBe(formData.imageUrl);
     });
 
     it('Given: form data with empty optional fields When: converting to DTO Then: should set them as undefined', () => {
@@ -166,13 +138,8 @@ describe('Product Schema', () => {
         sku: 'PROD-001',
         name: 'Test Product',
         description: '',
-        categoryId: '',
         unitOfMeasure: 'unit',
-        cost: 10,
         price: 20,
-        minStock: 5,
-        maxStock: 100,
-        imageUrl: '',
       };
 
       // Act
@@ -180,8 +147,6 @@ describe('Product Schema', () => {
 
       // Assert
       expect(dto.description).toBeUndefined();
-      expect(dto.categoryId).toBeUndefined();
-      expect(dto.imageUrl).toBeUndefined();
     });
   });
 
@@ -202,67 +167,7 @@ describe('Product Schema', () => {
       expect(dto.price).toBe(25);
       expect(dto.isActive).toBe(false);
       expect(dto.sku).toBeUndefined();
-      expect(dto.cost).toBeUndefined();
     });
   });
 
-  describe('validateStockRange', () => {
-    it('Given: maxStock greater than minStock When: validating Then: should return success', () => {
-      // Arrange
-      const formData: CreateProductFormData = {
-        sku: 'PROD-001',
-        name: 'Test',
-        unitOfMeasure: 'unit',
-        cost: 10,
-        price: 20,
-        minStock: 5,
-        maxStock: 100,
-      };
-
-      // Act
-      const result = validateStockRange(formData);
-
-      // Assert
-      expect(result.success).toBe(true);
-    });
-
-    it('Given: maxStock equal to minStock When: validating Then: should return success', () => {
-      // Arrange
-      const formData: CreateProductFormData = {
-        sku: 'PROD-001',
-        name: 'Test',
-        unitOfMeasure: 'unit',
-        cost: 10,
-        price: 20,
-        minStock: 50,
-        maxStock: 50,
-      };
-
-      // Act
-      const result = validateStockRange(formData);
-
-      // Assert
-      expect(result.success).toBe(true);
-    });
-
-    it('Given: maxStock less than minStock When: validating Then: should return error', () => {
-      // Arrange
-      const formData: CreateProductFormData = {
-        sku: 'PROD-001',
-        name: 'Test',
-        unitOfMeasure: 'unit',
-        cost: 10,
-        price: 20,
-        minStock: 100,
-        maxStock: 50,
-      };
-
-      // Act
-      const result = validateStockRange(formData);
-
-      // Assert
-      expect(result.success).toBe(false);
-      expect(result.error).toBeDefined();
-    });
-  });
 });

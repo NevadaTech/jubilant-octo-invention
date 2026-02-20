@@ -8,6 +8,7 @@ import type {
   StockMovementListResponseDto,
   StockMovementResponseDto,
   CreateStockMovementDto,
+  UpdateStockMovementDto,
   StockMovementFilters,
 } from "../../application/dto/stock-movement.dto";
 import { StockMovementMapper } from "../../application/mappers/stock-movement.mapper";
@@ -52,18 +53,24 @@ export class StockMovementApiAdapter implements StockMovementRepositoryPort {
     return StockMovementMapper.toDomain(response.data.data);
   }
 
-  async post(id: string): Promise<StockMovement> {
-    const response = await apiClient.post<ApiResponse<StockMovementResponseDto>>(
-      `${this.basePath}/${id}/post`
+  async update(id: string, data: UpdateStockMovementDto): Promise<StockMovement> {
+    const response = await apiClient.patch<ApiResponse<StockMovementResponseDto>>(
+      `${this.basePath}/${id}`,
+      data
     );
     return StockMovementMapper.toDomain(response.data.data);
   }
 
-  async void(id: string): Promise<StockMovement> {
-    const response = await apiClient.post<ApiResponse<StockMovementResponseDto>>(
-      `${this.basePath}/${id}/void`
-    );
-    return StockMovementMapper.toDomain(response.data.data);
+  async delete(id: string): Promise<void> {
+    await apiClient.delete(`${this.basePath}/${id}`);
+  }
+
+  async post(id: string): Promise<void> {
+    await apiClient.post(`${this.basePath}/${id}/post`);
+  }
+
+  async void(id: string): Promise<void> {
+    await apiClient.post(`${this.basePath}/${id}/void`);
   }
 
   private buildQueryParams(filters?: StockMovementFilters): Record<string, unknown> {

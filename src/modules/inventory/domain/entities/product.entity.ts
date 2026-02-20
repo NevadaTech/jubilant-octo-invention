@@ -5,8 +5,7 @@ export interface ProductProps {
   sku: string;
   name: string;
   description: string | null;
-  categoryId: string | null;
-  categoryName: string | null;
+  categories: { id: string; name: string }[];
   unitOfMeasure: string;
   cost: number;
   price: number;
@@ -22,6 +21,13 @@ export interface ProductProps {
   margin: number;
   profit: number;
   safetyStock: number;
+  // Rotation metrics
+  totalIn30d: number;
+  totalOut30d: number;
+  avgDailyConsumption: number;
+  daysOfStock: number | null;
+  turnoverRate: number;
+  lastMovementDate: string | null;
 }
 
 export class Product extends Entity<string> {
@@ -37,8 +43,7 @@ export class Product extends Entity<string> {
       sku: props.sku,
       name: props.name,
       description: props.description,
-      categoryId: props.categoryId,
-      categoryName: props.categoryName,
+      categories: props.categories,
       unitOfMeasure: props.unitOfMeasure,
       cost: props.cost,
       price: props.price,
@@ -53,6 +58,12 @@ export class Product extends Entity<string> {
       margin: props.margin,
       profit: props.profit,
       safetyStock: props.safetyStock,
+      totalIn30d: props.totalIn30d,
+      totalOut30d: props.totalOut30d,
+      avgDailyConsumption: props.avgDailyConsumption,
+      daysOfStock: props.daysOfStock,
+      turnoverRate: props.turnoverRate,
+      lastMovementDate: props.lastMovementDate,
     });
   }
 
@@ -68,12 +79,8 @@ export class Product extends Entity<string> {
     return this.props.description;
   }
 
-  get categoryId(): string | null {
-    return this.props.categoryId;
-  }
-
-  get categoryName(): string | null {
-    return this.props.categoryName;
+  get categories(): { id: string; name: string }[] {
+    return this.props.categories;
   }
 
   get unitOfMeasure(): string {
@@ -130,6 +137,30 @@ export class Product extends Entity<string> {
 
   get safetyStock(): number {
     return this.props.safetyStock;
+  }
+
+  get totalIn30d(): number {
+    return this.props.totalIn30d;
+  }
+
+  get totalOut30d(): number {
+    return this.props.totalOut30d;
+  }
+
+  get avgDailyConsumption(): number {
+    return this.props.avgDailyConsumption;
+  }
+
+  get daysOfStock(): number | null {
+    return this.props.daysOfStock;
+  }
+
+  get turnoverRate(): number {
+    return this.props.turnoverRate;
+  }
+
+  get lastMovementDate(): string | null {
+    return this.props.lastMovementDate;
   }
 
   isLowStock(currentQuantity: number): boolean {

@@ -56,6 +56,10 @@ export function Sidebar({ className }: SidebarProps) {
           href: "/dashboard/inventory/products",
         },
         {
+          label: t("navigation.categories"),
+          href: "/dashboard/inventory/categories",
+        },
+        {
           label: t("navigation.warehouses"),
           href: "/dashboard/inventory/warehouses",
         },

@@ -61,6 +61,7 @@ export function CategoryForm() {
   });
 
   const selectedParentId = watch("parentId");
+  const selectedParentName = parentOptions.find((c) => c.id === selectedParentId)?.name;
 
   // Populate form when editing
   useEffect(() => {
@@ -151,7 +152,9 @@ export function CategoryForm() {
                   onValueChange={(value) => setValue("parentId", value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("fields.parentPlaceholder")} />
+                    <SelectValue placeholder={t("fields.parentPlaceholder")}>
+                      {selectedParentId ? selectedParentName || selectedParentId : undefined}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">{t("fields.noParent")}</SelectItem>

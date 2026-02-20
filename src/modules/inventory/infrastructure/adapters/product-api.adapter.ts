@@ -34,8 +34,7 @@ function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
     sku: raw.sku,
     name: raw.name,
     description: raw.description ?? null,
-    categoryId: raw.categoryId ?? null,
-    categoryName: raw.categoryName ?? null,
+    categories: raw.categories ?? [],
     unitOfMeasure,
     cost: raw.averageCost ?? raw.cost ?? 0,
     price: raw.price ?? 0,
@@ -51,6 +50,13 @@ function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
     margin: raw.margin ?? 0,
     profit: raw.profit ?? 0,
     safetyStock: raw.safetyStock ?? 0,
+    // Rotation metrics
+    totalIn30d: raw.totalIn30d ?? 0,
+    totalOut30d: raw.totalOut30d ?? 0,
+    avgDailyConsumption: raw.avgDailyConsumption ?? 0,
+    daysOfStock: raw.daysOfStock ?? null,
+    turnoverRate: raw.turnoverRate ?? 0,
+    lastMovementDate: raw.lastMovementDate ?? null,
   };
 }
 
@@ -65,6 +71,8 @@ function toCreateApiDto(data: CreateProductDto): CreateProductApiDto {
       precision: 0,
     },
     description: data.description || undefined,
+    categoryIds: data.categoryIds,
+    price: data.price || undefined,
   };
 }
 
@@ -74,6 +82,7 @@ function toUpdateApiDto(data: UpdateProductDto): UpdateProductApiDto {
 
   if (data.name !== undefined) dto.name = data.name;
   if (data.description !== undefined) dto.description = data.description || undefined;
+  if (data.categoryIds !== undefined) dto.categoryIds = data.categoryIds;
   if (data.unitOfMeasure !== undefined) {
     dto.unit = {
       code: data.unitOfMeasure.toUpperCase().replace(/\s+/g, "_"),

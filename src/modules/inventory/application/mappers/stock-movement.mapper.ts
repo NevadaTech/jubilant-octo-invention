@@ -2,12 +2,12 @@ import { StockMovement, type MovementLine } from "../../domain/entities/stock-mo
 import type { StockMovementResponseDto, MovementLineResponseDto } from "../dto/stock-movement.dto";
 
 export class StockMovementMapper {
-  static lineToDomain(dto: MovementLineResponseDto): MovementLine {
+  static lineToDomain(dto: MovementLineResponseDto & { name?: string; sku?: string }): MovementLine {
     return {
       id: dto.id,
       productId: dto.productId,
-      productName: dto.productName,
-      productSku: dto.productSku,
+      productName: dto.productName ?? (dto as { name?: string }).name ?? "",
+      productSku: dto.productSku ?? (dto as { sku?: string }).sku ?? "",
       quantity: dto.quantity,
       unitCost: dto.unitCost,
     };
@@ -17,13 +17,13 @@ export class StockMovementMapper {
     return StockMovement.create({
       id: dto.id,
       warehouseId: dto.warehouseId,
-      warehouseName: dto.warehouseName,
+      warehouseName: dto.warehouseName ?? "",
       type: dto.type,
       status: dto.status,
       reference: typeof dto.reference === "string" ? dto.reference : null,
       reason: typeof dto.reason === "string" ? dto.reason : null,
       note: typeof dto.note === "string" ? dto.note : null,
-      lines: dto.lines.map(StockMovementMapper.lineToDomain),
+      lines: (dto.lines ?? []).map(StockMovementMapper.lineToDomain),
       createdBy: dto.createdBy,
       createdAt: new Date(dto.createdAt),
       postedAt: typeof dto.postedAt === "string" ? new Date(dto.postedAt) : null,

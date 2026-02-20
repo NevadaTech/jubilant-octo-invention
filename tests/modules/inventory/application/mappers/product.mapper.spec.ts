@@ -8,8 +8,7 @@ describe('ProductMapper', () => {
     sku: 'PROD-001',
     name: 'Test Product',
     description: 'A test product description',
-    categoryId: '456e7890-e89b-12d3-a456-426614174000',
-    categoryName: 'Test Category',
+    categories: [{ id: '456e7890-e89b-12d3-a456-426614174000', name: 'Test Category' }],
     unitOfMeasure: 'unit',
     cost: 10.50,
     price: 19.99,
@@ -31,8 +30,7 @@ describe('ProductMapper', () => {
       expect(product.sku).toBe(mockProductDto.sku);
       expect(product.name).toBe(mockProductDto.name);
       expect(product.description).toBe(mockProductDto.description);
-      expect(product.categoryId).toBe(mockProductDto.categoryId);
-      expect(product.categoryName).toBe(mockProductDto.categoryName);
+      expect(product.categories).toEqual(mockProductDto.categories);
       expect(product.unitOfMeasure).toBe(mockProductDto.unitOfMeasure);
       expect(product.cost).toBe(mockProductDto.cost);
       expect(product.price).toBe(mockProductDto.price);
@@ -58,8 +56,7 @@ describe('ProductMapper', () => {
       const dtoWithNulls: ProductResponseDto = {
         ...mockProductDto,
         description: null,
-        categoryId: null,
-        categoryName: null,
+        categories: [],
         imageUrl: null,
       };
 
@@ -68,8 +65,7 @@ describe('ProductMapper', () => {
 
       // Assert
       expect(product.description).toBeNull();
-      expect(product.categoryId).toBeNull();
-      expect(product.categoryName).toBeNull();
+      expect(product.categories).toEqual([]);
       expect(product.imageUrl).toBeNull();
     });
   });
@@ -87,8 +83,7 @@ describe('ProductMapper', () => {
       expect(dto.sku).toBe(product.sku);
       expect(dto.name).toBe(product.name);
       expect(dto.description).toBe(product.description);
-      expect(dto.categoryId).toBe(product.categoryId);
-      expect(dto.categoryName).toBe(product.categoryName);
+      expect(dto.categories).toEqual(product.categories);
       expect(dto.unitOfMeasure).toBe(product.unitOfMeasure);
       expect(dto.cost).toBe(product.cost);
       expect(dto.price).toBe(product.price);

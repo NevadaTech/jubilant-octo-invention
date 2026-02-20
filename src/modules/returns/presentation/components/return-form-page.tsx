@@ -7,6 +7,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
+import { CurrencyInput } from "@/ui/components/currency-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -237,29 +238,29 @@ export function ReturnFormPage() {
                       {isCustomerReturn ? (
                         <FormField error={errors.lines?.[index]?.originalSalePrice?.message}>
                           <Label>{t("fields.originalPrice")}</Label>
-                          <Input
-                            type="number"
-                            min="0.01"
-                            step="0.01"
-                            placeholder="0.00"
-                            {...register(`lines.${index}.originalSalePrice`, {
-                              valueAsNumber: true,
-                              setValueAs: (v) => v === "" ? undefined : parseFloat(v),
-                            })}
+                          <Controller
+                            name={`lines.${index}.originalSalePrice`}
+                            control={control}
+                            render={({ field }) => (
+                              <CurrencyInput
+                                value={field.value}
+                                onChange={(val) => field.onChange(val || undefined)}
+                              />
+                            )}
                           />
                         </FormField>
                       ) : (
                         <FormField error={errors.lines?.[index]?.originalUnitCost?.message}>
                           <Label>{t("fields.originalCost")}</Label>
-                          <Input
-                            type="number"
-                            min="0.01"
-                            step="0.01"
-                            placeholder="0.00"
-                            {...register(`lines.${index}.originalUnitCost`, {
-                              valueAsNumber: true,
-                              setValueAs: (v) => v === "" ? undefined : parseFloat(v),
-                            })}
+                          <Controller
+                            name={`lines.${index}.originalUnitCost`}
+                            control={control}
+                            render={({ field }) => (
+                              <CurrencyInput
+                                value={field.value}
+                                onChange={(val) => field.onChange(val || undefined)}
+                              />
+                            )}
                           />
                         </FormField>
                       )}
