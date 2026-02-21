@@ -193,6 +193,3 @@ Si encuentras problemas:
 **Última actualización**: Diciembre 2024  
 **Versión**: 1.0.0  
 **Compatibilidad**: Postman v10+
-
-
-

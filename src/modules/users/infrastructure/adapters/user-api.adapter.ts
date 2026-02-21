@@ -41,7 +41,7 @@ export class UserApiAdapter implements UserRepositoryPort {
   async findAll(filters?: UserFilters): Promise<PaginatedResult<User>> {
     const response = await apiClient.get<ApiListResponse<UserResponseDto>>(
       this.basePath,
-      { params: this.buildQueryParams(filters) }
+      { params: this.buildQueryParams(filters) },
     );
 
     return {
@@ -53,7 +53,7 @@ export class UserApiAdapter implements UserRepositoryPort {
   async findById(id: string): Promise<User | null> {
     try {
       const response = await apiClient.get<ApiResponse<UserResponseDto>>(
-        `${this.basePath}/${id}`
+        `${this.basePath}/${id}`,
       );
       return UserMapper.toDomain(response.data.data);
     } catch (error) {
@@ -65,7 +65,7 @@ export class UserApiAdapter implements UserRepositoryPort {
   async create(data: CreateUserDto): Promise<User> {
     const response = await apiClient.post<ApiResponse<UserResponseDto>>(
       this.basePath,
-      data
+      data,
     );
     return UserMapper.toDomain(response.data.data);
   }
@@ -73,7 +73,7 @@ export class UserApiAdapter implements UserRepositoryPort {
   async update(id: string, data: UpdateUserDto): Promise<User> {
     const response = await apiClient.put<ApiResponse<UserResponseDto>>(
       `${this.basePath}/${id}`,
-      data
+      data,
     );
     return UserMapper.toDomain(response.data.data);
   }
@@ -81,7 +81,7 @@ export class UserApiAdapter implements UserRepositoryPort {
   async changeStatus(id: string, data: ChangeUserStatusDto): Promise<User> {
     const response = await apiClient.patch<ApiResponse<UserResponseDto>>(
       `${this.basePath}/${id}/status`,
-      data
+      data,
     );
     return UserMapper.toDomain(response.data.data);
   }
@@ -109,7 +109,8 @@ export class UserApiAdapter implements UserRepositoryPort {
       typeof error === "object" &&
       error !== null &&
       "response" in error &&
-      typeof (error as { response?: { status?: number } }).response === "object" &&
+      typeof (error as { response?: { status?: number } }).response ===
+        "object" &&
       (error as { response: { status?: number } }).response?.status === 404
     );
   }

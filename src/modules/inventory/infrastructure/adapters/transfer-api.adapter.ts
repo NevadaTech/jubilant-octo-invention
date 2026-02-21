@@ -1,13 +1,18 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { Transfer, TransferStatus } from "../../domain/entities/transfer.entity";
+import type {
+  Transfer,
+  TransferStatus,
+} from "../../domain/entities/transfer.entity";
 import type {
   TransferRepositoryPort,
   PaginatedResult,
 } from "../../application/ports/transfer.repository.port";
 import type {
   TransferListResponseDto,
+  TransferDetailApiResponse,
   TransferResponseDto,
   CreateTransferDto,
+  ReceiveTransferDto,
   TransferFilters,
 } from "../../application/dto/transfer.dto";
 import { TransferMapper } from "../../application/mappers/transfer.mapper";
@@ -20,9 +25,12 @@ export class TransferApiAdapter implements TransferRepositoryPort {
   private readonly basePath = "/inventory/transfers";
 
   async findAll(filters?: TransferFilters): Promise<PaginatedResult<Transfer>> {
-    const response = await apiClient.get<TransferListResponseDto>(this.basePath, {
-      params: this.buildQueryParams(filters),
-    });
+    const response = await apiClient.get<TransferListResponseDto>(
+      this.basePath,
+      {
+        params: this.buildQueryParams(filters),
+      },
+    );
 
     return {
       data: (response.data.data ?? []).map(TransferMapper.fromApiRaw),
@@ -32,8 +40,8 @@ export class TransferApiAdapter implements TransferRepositoryPort {
 
   async findById(id: string): Promise<Transfer | null> {
     try {
-      const response = await apiClient.get<ApiResponse<TransferResponseDto>>(
-        `${this.basePath}/${id}`
+      const response = await apiClient.get<TransferDetailApiResponse>(
+        `${this.basePath}/${id}`,
       );
       return TransferMapper.toDomain(response.data.data);
     } catch (error) {
@@ -47,15 +55,33 @@ export class TransferApiAdapter implements TransferRepositoryPort {
   async create(data: CreateTransferDto): Promise<Transfer> {
     const response = await apiClient.post<ApiResponse<TransferResponseDto>>(
       this.basePath,
-      data
+      data,
     );
     return TransferMapper.toDomain(response.data.data);
   }
 
   async updateStatus(id: string, status: TransferStatus): Promise<Transfer> {
-    const response = await apiClient.patch<ApiResponse<TransferResponseDto>>(
-      `${this.basePath}/${id}/status`,
-      { status }
+    const endpointMap: Partial<Record<TransferStatus, string>> = {
+      IN_TRANSIT: "confirm",
+      REJECTED: "reject",
+      CANCELED: "cancel",
+    };
+
+    const endpoint = endpointMap[status];
+    if (!endpoint) {
+      throw new Error(`No endpoint defined for status transition: ${status}`);
+    }
+
+    const response = await apiClient.post<ApiResponse<TransferResponseDto>>(
+      `${this.basePath}/${id}/${endpoint}`,
+    );
+    return TransferMapper.toDomain(response.data.data);
+  }
+
+  async receive(id: string, data: ReceiveTransferDto): Promise<Transfer> {
+    const response = await apiClient.post<ApiResponse<TransferResponseDto>>(
+      `${this.basePath}/${id}/receive`,
+      data,
     );
     return TransferMapper.toDomain(response.data.data);
   }
@@ -92,7 +118,8 @@ export class TransferApiAdapter implements TransferRepositoryPort {
       typeof error === "object" &&
       error !== null &&
       "response" in error &&
-      typeof (error as { response?: { status?: number } }).response === "object" &&
+      typeof (error as { response?: { status?: number } }).response ===
+        "object" &&
       (error as { response: { status?: number } }).response?.status === 404
     );
   }

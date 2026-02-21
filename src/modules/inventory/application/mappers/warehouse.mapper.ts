@@ -11,6 +11,8 @@ export class WarehouseMapper {
       isActive: dto.isActive,
       createdAt: new Date(dto.createdAt),
       updatedAt: new Date(dto.updatedAt),
+      statusChangedBy: dto.statusChangedBy ?? null,
+      statusChangedAt: dto.statusChangedAt ?? null,
     });
   }
 
@@ -23,6 +25,8 @@ export class WarehouseMapper {
       isActive: entity.isActive,
       createdAt: entity.createdAt.toISOString(),
       updatedAt: entity.updatedAt.toISOString(),
+      statusChangedBy: entity.statusChangedBy ?? null,
+      statusChangedAt: entity.statusChangedAt ?? null,
     };
   }
 }

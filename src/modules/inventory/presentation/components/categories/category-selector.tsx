@@ -1,7 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import { useCategories } from "../../hooks/use-categories";
 
 interface CategorySelectorProps {
@@ -23,12 +29,12 @@ export function CategorySelector({
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger disabled={disabled || isLoading}>
-        <SelectValue placeholder={isLoading ? t("selector.loading") : t("selector.label")} />
+        <SelectValue
+          placeholder={isLoading ? t("selector.loading") : t("selector.label")}
+        />
       </SelectTrigger>
       <SelectContent>
-        {includeAll && (
-          <SelectItem value="">{t("selector.all")}</SelectItem>
-        )}
+        {includeAll && <SelectItem value="">{t("selector.all")}</SelectItem>}
         {data?.data.map((category) => (
           <SelectItem key={category.id} value={category.id}>
             {category.name}

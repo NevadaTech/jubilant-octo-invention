@@ -28,6 +28,7 @@ export interface TransferProps {
   lines: TransferLine[];
   linesCount: number;
   createdBy: string;
+  receivedBy: string | null;
   createdAt: Date;
   completedAt: Date | null;
 }
@@ -51,6 +52,7 @@ export class Transfer extends Entity<string> {
       lines: props.lines,
       linesCount: props.linesCount,
       createdBy: props.createdBy,
+      receivedBy: props.receivedBy,
       createdAt: props.createdAt,
       completedAt: props.completedAt,
     });
@@ -98,6 +100,10 @@ export class Transfer extends Entity<string> {
 
   get createdBy(): string {
     return this.props.createdBy;
+  }
+
+  get receivedBy(): string | null {
+    return this.props.receivedBy;
   }
 
   get createdAt(): Date {

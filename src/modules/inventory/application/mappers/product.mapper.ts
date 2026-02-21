@@ -29,6 +29,8 @@ export class ProductMapper {
       daysOfStock: dto.daysOfStock ?? null,
       turnoverRate: dto.turnoverRate ?? 0,
       lastMovementDate: dto.lastMovementDate ?? null,
+      statusChangedBy: dto.statusChangedBy ?? null,
+      statusChangedAt: dto.statusChangedAt ?? null,
     });
   }
 
@@ -59,6 +61,8 @@ export class ProductMapper {
       daysOfStock: entity.daysOfStock,
       turnoverRate: entity.turnoverRate,
       lastMovementDate: entity.lastMovementDate,
+      statusChangedBy: entity.statusChangedBy ?? null,
+      statusChangedAt: entity.statusChangedAt ?? null,
     };
   }
 }

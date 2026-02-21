@@ -10,7 +10,7 @@ const Skeleton = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
       className={cn("animate-pulse rounded-md bg-muted", className)}
       {...props}
     />
-  )
+  ),
 );
 Skeleton.displayName = "Skeleton";
 

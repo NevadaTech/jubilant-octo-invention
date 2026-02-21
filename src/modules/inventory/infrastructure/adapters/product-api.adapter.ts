@@ -26,7 +26,7 @@ function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
   const unitOfMeasure =
     raw.unitOfMeasure ??
     (typeof unit === "object" && unit !== null
-      ? unit.name ?? unit.code ?? "UNIT"
+      ? (unit.name ?? unit.code ?? "UNIT")
       : "UNIT");
 
   return {
@@ -57,6 +57,8 @@ function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
     daysOfStock: raw.daysOfStock ?? null,
     turnoverRate: raw.turnoverRate ?? 0,
     lastMovementDate: raw.lastMovementDate ?? null,
+    statusChangedBy: raw.statusChangedBy ?? null,
+    statusChangedAt: raw.statusChangedAt ?? null,
   };
 }
 
@@ -81,7 +83,8 @@ function toUpdateApiDto(data: UpdateProductDto): UpdateProductApiDto {
   const dto: UpdateProductApiDto = {};
 
   if (data.name !== undefined) dto.name = data.name;
-  if (data.description !== undefined) dto.description = data.description || undefined;
+  if (data.description !== undefined)
+    dto.description = data.description || undefined;
   if (data.categoryIds !== undefined) dto.categoryIds = data.categoryIds;
   if (data.unitOfMeasure !== undefined) {
     dto.unit = {
@@ -111,7 +114,7 @@ export class ProductApiAdapter implements ProductRepositoryPort {
 
     return {
       data: response.data.data.map((raw) =>
-        ProductMapper.toDomain(mapApiProductToDto(raw))
+        ProductMapper.toDomain(mapApiProductToDto(raw)),
       ),
       pagination: response.data.pagination,
     };
@@ -120,7 +123,7 @@ export class ProductApiAdapter implements ProductRepositoryPort {
   async findById(id: string): Promise<Product | null> {
     try {
       const response = await apiClient.get<ApiResponse<ProductApiRawDto>>(
-        `${this.basePath}/${id}`
+        `${this.basePath}/${id}`,
       );
       const dto = mapApiProductToDto(response.data.data);
       return ProductMapper.toDomain(dto);
@@ -137,7 +140,7 @@ export class ProductApiAdapter implements ProductRepositoryPort {
     const apiDto = toCreateApiDto(data);
     const response = await apiClient.post<ApiResponse<ProductApiRawDto>>(
       this.basePath,
-      apiDto
+      apiDto,
     );
     const dto = mapApiProductToDto(response.data.data);
     return ProductMapper.toDomain(dto);
@@ -147,7 +150,7 @@ export class ProductApiAdapter implements ProductRepositoryPort {
     const apiDto = toUpdateApiDto(data);
     const response = await apiClient.put<ApiResponse<ProductApiRawDto>>(
       `${this.basePath}/${id}`,
-      apiDto
+      apiDto,
     );
     const dto = mapApiProductToDto(response.data.data);
     return ProductMapper.toDomain(dto);
@@ -182,7 +185,8 @@ export class ProductApiAdapter implements ProductRepositoryPort {
       typeof error === "object" &&
       error !== null &&
       "response" in error &&
-      typeof (error as { response?: { status?: number } }).response === "object" &&
+      typeof (error as { response?: { status?: number } }).response ===
+        "object" &&
       (error as { response: { status?: number } }).response?.status === 404
     );
   }

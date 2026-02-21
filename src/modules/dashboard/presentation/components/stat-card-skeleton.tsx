@@ -4,11 +4,7 @@ import { Card, CardContent, CardHeader } from "@/ui/components/card";
 import { cn } from "@/ui/lib/utils";
 
 function Skeleton({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn("animate-pulse rounded-md bg-muted", className)}
-    />
-  );
+  return <div className={cn("animate-pulse rounded-md bg-muted", className)} />;
 }
 
 export function StatCardSkeleton() {

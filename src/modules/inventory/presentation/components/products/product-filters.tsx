@@ -6,7 +6,13 @@ import { Search, X, Filter } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import { useDebounce } from "@/shared/presentation/hooks";
 import type { ProductFilters as ProductFiltersType } from "../../../application/dto/product.dto";
 
@@ -15,7 +21,10 @@ interface ProductFiltersProps {
   onFiltersChange: (filters: ProductFiltersType) => void;
 }
 
-export function ProductFilters({ filters, onFiltersChange }: ProductFiltersProps) {
+export function ProductFilters({
+  filters,
+  onFiltersChange,
+}: ProductFiltersProps) {
   const t = useTranslations("inventory.products");
   const tCommon = useTranslations("inventory.common.filters");
   const [searchValue, setSearchValue] = useState(filters.search || "");
@@ -26,7 +35,11 @@ export function ProductFilters({ filters, onFiltersChange }: ProductFiltersProps
   useEffect(() => {
     const currentSearch = filters.search || "";
     if (debouncedSearch !== currentSearch) {
-      onFiltersChange({ ...filters, search: debouncedSearch || undefined, page: 1 });
+      onFiltersChange({
+        ...filters,
+        search: debouncedSearch || undefined,
+        page: 1,
+      });
     }
   }, [debouncedSearch]);
 

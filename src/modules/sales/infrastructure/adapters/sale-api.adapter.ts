@@ -20,12 +20,7 @@ interface ApiResponse<T> {
 
 /** Unwrap Effect-style { _tag, _value } if present */
 function unwrapResponse<T>(data: T): T {
-  if (
-    data &&
-    typeof data === "object" &&
-    "_tag" in data &&
-    "_value" in data
-  ) {
+  if (data && typeof data === "object" && "_tag" in data && "_value" in data) {
     return (data as unknown as { _value: T })._value;
   }
   return data;
@@ -50,7 +45,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
   async findById(id: string): Promise<Sale | null> {
     try {
       const raw = await apiClient.get<ApiResponse<SaleResponseDto>>(
-        `${this.basePath}/${id}`
+        `${this.basePath}/${id}`,
       );
       const body = unwrapResponse(raw.data);
       return SaleMapper.toDomain(body.data);
@@ -65,7 +60,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
   async create(data: CreateSaleDto): Promise<Sale> {
     const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
       this.basePath,
-      data
+      data,
     );
     const body = unwrapResponse(raw.data);
     return SaleMapper.toDomain(body.data);
@@ -74,7 +69,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
   async update(id: string, data: UpdateSaleDto): Promise<Sale> {
     const raw = await apiClient.patch<ApiResponse<SaleResponseDto>>(
       `${this.basePath}/${id}`,
-      data
+      data,
     );
     const body = unwrapResponse(raw.data);
     return SaleMapper.toDomain(body.data);
@@ -82,7 +77,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
 
   async confirm(id: string): Promise<Sale> {
     const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
-      `${this.basePath}/${id}/confirm`
+      `${this.basePath}/${id}/confirm`,
     );
     const body = unwrapResponse(raw.data);
     return SaleMapper.toDomain(body.data);
@@ -90,7 +85,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
 
   async cancel(id: string): Promise<Sale> {
     const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
-      `${this.basePath}/${id}/cancel`
+      `${this.basePath}/${id}/cancel`,
     );
     const body = unwrapResponse(raw.data);
     return SaleMapper.toDomain(body.data);
@@ -99,7 +94,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
   async addLine(saleId: string, line: CreateSaleLineDto): Promise<Sale> {
     const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
       `${this.basePath}/${saleId}/lines`,
-      line
+      line,
     );
     const body = unwrapResponse(raw.data);
     return SaleMapper.toDomain(body.data);
@@ -107,7 +102,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
 
   async removeLine(saleId: string, lineId: string): Promise<Sale> {
     const raw = await apiClient.delete<ApiResponse<SaleResponseDto>>(
-      `${this.basePath}/${saleId}/lines/${lineId}`
+      `${this.basePath}/${saleId}/lines/${lineId}`,
     );
     const body = unwrapResponse(raw.data);
     return SaleMapper.toDomain(body.data);
@@ -136,7 +131,8 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       typeof error === "object" &&
       error !== null &&
       "response" in error &&
-      typeof (error as { response?: { status?: number } }).response === "object" &&
+      typeof (error as { response?: { status?: number } }).response ===
+        "object" &&
       (error as { response: { status?: number } }).response?.status === 404
     );
   }

@@ -1,5 +1,13 @@
-import { Return, type ReturnLineProps } from "../../domain/entities/return.entity";
-import type { ReturnResponseDto, ReturnLineResponseDto, ReturnApiRawDto, ReturnLineApiRawDto } from "../dto/return.dto";
+import {
+  Return,
+  type ReturnLineProps,
+} from "../../domain/entities/return.entity";
+import type {
+  ReturnResponseDto,
+  ReturnLineResponseDto,
+  ReturnApiRawDto,
+  ReturnLineApiRawDto,
+} from "../dto/return.dto";
 
 export class ReturnMapper {
   static lineToDomain(dto: ReturnLineResponseDto): ReturnLineProps {
@@ -42,16 +50,20 @@ export class ReturnMapper {
       warehouseName: raw.warehouseName ?? "",
       saleId: typeof raw.saleId === "string" ? raw.saleId : null,
       saleNumber: typeof raw.saleNumber === "string" ? raw.saleNumber : null,
-      sourceMovementId: typeof raw.sourceMovementId === "string" ? raw.sourceMovementId : null,
-      returnMovementId: typeof raw.returnMovementId === "string" ? raw.returnMovementId : null,
+      sourceMovementId:
+        typeof raw.sourceMovementId === "string" ? raw.sourceMovementId : null,
+      returnMovementId:
+        typeof raw.returnMovementId === "string" ? raw.returnMovementId : null,
       note: typeof raw.note === "string" ? raw.note : null,
       totalAmount: raw.totalAmount,
       currency: raw.currency,
       lines: (raw.lines ?? []).map(ReturnMapper.lineFromApiRaw),
       createdBy: raw.createdBy,
       createdAt: new Date(raw.createdAt),
-      confirmedAt: typeof raw.confirmedAt === "string" ? new Date(raw.confirmedAt) : null,
-      cancelledAt: typeof raw.cancelledAt === "string" ? new Date(raw.cancelledAt) : null,
+      confirmedAt:
+        typeof raw.confirmedAt === "string" ? new Date(raw.confirmedAt) : null,
+      cancelledAt:
+        typeof raw.cancelledAt === "string" ? new Date(raw.cancelledAt) : null,
     });
   }
 
@@ -66,16 +78,20 @@ export class ReturnMapper {
       warehouseName: dto.warehouseName ?? "",
       saleId: typeof dto.saleId === "string" ? dto.saleId : null,
       saleNumber: typeof dto.saleNumber === "string" ? dto.saleNumber : null,
-      sourceMovementId: typeof dto.sourceMovementId === "string" ? dto.sourceMovementId : null,
-      returnMovementId: typeof dto.returnMovementId === "string" ? dto.returnMovementId : null,
+      sourceMovementId:
+        typeof dto.sourceMovementId === "string" ? dto.sourceMovementId : null,
+      returnMovementId:
+        typeof dto.returnMovementId === "string" ? dto.returnMovementId : null,
       note: typeof dto.note === "string" ? dto.note : null,
       totalAmount: dto.totalAmount,
       currency: dto.currency,
       lines: (dto.lines ?? []).map(ReturnMapper.lineToDomain),
       createdBy: dto.createdBy,
       createdAt: new Date(dto.createdAt),
-      confirmedAt: typeof dto.confirmedAt === "string" ? new Date(dto.confirmedAt) : null,
-      cancelledAt: typeof dto.cancelledAt === "string" ? new Date(dto.cancelledAt) : null,
+      confirmedAt:
+        typeof dto.confirmedAt === "string" ? new Date(dto.confirmedAt) : null,
+      cancelledAt:
+        typeof dto.cancelledAt === "string" ? new Date(dto.cancelledAt) : null,
     });
   }
 }

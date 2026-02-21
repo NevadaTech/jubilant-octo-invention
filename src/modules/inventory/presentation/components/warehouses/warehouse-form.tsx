@@ -27,9 +27,8 @@ export function WarehouseForm() {
   const t = useTranslations("inventory.warehouses");
   const tCommon = useTranslations("common");
   const { isOpen, editingId, close } = useWarehouseFormState();
-  const { data: existingWarehouse, isLoading: isLoadingWarehouse } = useWarehouse(
-    editingId || ""
-  );
+  const { data: existingWarehouse, isLoading: isLoadingWarehouse } =
+    useWarehouse(editingId || "");
   const createWarehouse = useCreateWarehouse();
   const updateWarehouse = useUpdateWarehouse();
 

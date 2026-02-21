@@ -14,7 +14,8 @@ const STALE_TIME = 2 * 60 * 1000; // 2 minutes
 export const movementKeys = {
   all: ["movements"] as const,
   lists: () => [...movementKeys.all, "list"] as const,
-  list: (filters?: StockMovementFilters) => [...movementKeys.lists(), filters] as const,
+  list: (filters?: StockMovementFilters) =>
+    [...movementKeys.lists(), filters] as const,
   details: () => [...movementKeys.all, "detail"] as const,
   detail: (id: string) => [...movementKeys.details(), id] as const,
 };
@@ -40,7 +41,8 @@ export function useCreateMovement() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateStockMovementDto) => stockMovementApiAdapter.create(data),
+    mutationFn: (data: CreateStockMovementDto) =>
+      stockMovementApiAdapter.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
     },

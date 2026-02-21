@@ -12,7 +12,14 @@ interface SaleStatusBadgeProps {
 export function SaleStatusBadge({ status }: SaleStatusBadgeProps) {
   const t = useTranslations("sales.status");
 
-  const config: Record<SaleStatus, { label: string; variant: "secondary" | "success" | "error"; icon: typeof FileEdit }> = {
+  const config: Record<
+    SaleStatus,
+    {
+      label: string;
+      variant: "secondary" | "success" | "error";
+      icon: typeof FileEdit;
+    }
+  > = {
     DRAFT: {
       label: t("draft"),
       variant: "secondary",

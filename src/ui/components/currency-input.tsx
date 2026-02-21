@@ -29,7 +29,7 @@ export function CurrencyInput({
   className,
 }: CurrencyInputProps) {
   const [display, setDisplay] = useState(() =>
-    value ? formatDisplay(value) : ""
+    value ? formatDisplay(value) : "",
   );
 
   // Sync display when value changes externally (e.g. form reset)

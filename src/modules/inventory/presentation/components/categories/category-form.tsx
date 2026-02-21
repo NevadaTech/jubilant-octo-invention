@@ -10,7 +10,13 @@ import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import {
   createCategorySchema,
   toCreateCategoryDto,
@@ -30,7 +36,7 @@ export function CategoryForm() {
   const tCommon = useTranslations("common");
   const { isOpen, editingId, close } = useCategoryFormState();
   const { data: existingCategory, isLoading: isLoadingCategory } = useCategory(
-    editingId || ""
+    editingId || "",
   );
   const { data: categoriesData } = useCategories({ limit: 100 });
   const createCategory = useCreateCategory();
@@ -40,9 +46,8 @@ export function CategoryForm() {
   const isSubmitting = createCategory.isPending || updateCategory.isPending;
 
   // Filter out the current category and its children from parent options
-  const parentOptions = categoriesData?.data.filter(
-    (cat) => cat.id !== editingId
-  ) || [];
+  const parentOptions =
+    categoriesData?.data.filter((cat) => cat.id !== editingId) || [];
 
   const {
     register,
@@ -61,7 +66,9 @@ export function CategoryForm() {
   });
 
   const selectedParentId = watch("parentId");
-  const selectedParentName = parentOptions.find((c) => c.id === selectedParentId)?.name;
+  const selectedParentName = parentOptions.find(
+    (c) => c.id === selectedParentId,
+  )?.name;
 
   // Populate form when editing
   useEffect(() => {
@@ -153,7 +160,9 @@ export function CategoryForm() {
                 >
                   <SelectTrigger>
                     <SelectValue placeholder={t("fields.parentPlaceholder")}>
-                      {selectedParentId ? selectedParentName || selectedParentId : undefined}
+                      {selectedParentId
+                        ? selectedParentName || selectedParentId
+                        : undefined}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>

@@ -61,7 +61,7 @@ export class AxiosHttpClient implements HttpClientPort {
 
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     // Response interceptor - Handle errors
@@ -81,8 +81,9 @@ export class AxiosHttpClient implements HttpClientPort {
           if (newAccessToken) {
             // Retry the original request with new token
             if (originalRequest.headers) {
-              (originalRequest.headers as Record<string, string>).Authorization =
-                `Bearer ${newAccessToken}`;
+              (
+                originalRequest.headers as Record<string, string>
+              ).Authorization = `Bearer ${newAccessToken}`;
             }
             return this.instance(originalRequest);
           }
@@ -92,7 +93,7 @@ export class AxiosHttpClient implements HttpClientPort {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -136,17 +137,21 @@ export class AxiosHttpClient implements HttpClientPort {
         const refreshResponse = await axios.post(
           `${env.NEXT_PUBLIC_API_URL}/auth/refresh`,
           { refreshToken },
-          { headers }
+          { headers },
         );
 
-        const { accessToken, refreshToken: newRefresh, expiresAt } =
-          refreshResponse.data?.data ?? refreshResponse.data ?? {};
+        const {
+          accessToken,
+          refreshToken: newRefresh,
+          expiresAt,
+        } = refreshResponse.data?.data ?? refreshResponse.data ?? {};
 
         if (accessToken) {
           TokenService.setTokens({
             accessToken,
             refreshToken: newRefresh ?? refreshToken,
-            expiresAt: expiresAt ?? new Date(Date.now() + 3600000).toISOString(),
+            expiresAt:
+              expiresAt ?? new Date(Date.now() + 3600000).toISOString(),
           });
           return accessToken as string;
         }
@@ -187,7 +192,7 @@ export class AxiosHttpClient implements HttpClientPort {
 
   async get<T>(
     url: string,
-    config?: HttpRequestConfig
+    config?: HttpRequestConfig,
   ): Promise<HttpResponse<T>> {
     const response = await this.instance.get<T>(url, config);
     return this.toHttpResponse(response);
@@ -196,7 +201,7 @@ export class AxiosHttpClient implements HttpClientPort {
   async post<T>(
     url: string,
     data?: unknown,
-    config?: HttpRequestConfig
+    config?: HttpRequestConfig,
   ): Promise<HttpResponse<T>> {
     const response = await this.instance.post<T>(url, data, config);
     return this.toHttpResponse(response);
@@ -205,7 +210,7 @@ export class AxiosHttpClient implements HttpClientPort {
   async put<T>(
     url: string,
     data?: unknown,
-    config?: HttpRequestConfig
+    config?: HttpRequestConfig,
   ): Promise<HttpResponse<T>> {
     const response = await this.instance.put<T>(url, data, config);
     return this.toHttpResponse(response);
@@ -214,7 +219,7 @@ export class AxiosHttpClient implements HttpClientPort {
   async patch<T>(
     url: string,
     data?: unknown,
-    config?: HttpRequestConfig
+    config?: HttpRequestConfig,
   ): Promise<HttpResponse<T>> {
     const response = await this.instance.patch<T>(url, data, config);
     return this.toHttpResponse(response);
@@ -222,7 +227,7 @@ export class AxiosHttpClient implements HttpClientPort {
 
   async delete<T>(
     url: string,
-    config?: HttpRequestConfig
+    config?: HttpRequestConfig,
   ): Promise<HttpResponse<T>> {
     const response = await this.instance.delete<T>(url, config);
     return this.toHttpResponse(response);

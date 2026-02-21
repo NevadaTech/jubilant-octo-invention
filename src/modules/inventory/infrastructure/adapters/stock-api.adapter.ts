@@ -39,11 +39,11 @@ export class StockApiAdapter implements StockRepositoryPort {
 
   async findByProductAndWarehouse(
     productId: string,
-    warehouseId: string
+    warehouseId: string,
   ): Promise<Stock | null> {
     try {
       const response = await apiClient.get<ApiResponse<StockResponseDto>>(
-        `${this.basePath}/product/${productId}/warehouse/${warehouseId}`
+        `${this.basePath}/product/${productId}/warehouse/${warehouseId}`,
       );
       return StockMapper.toDomain(response.data.data);
     } catch (error) {
@@ -86,7 +86,8 @@ export class StockApiAdapter implements StockRepositoryPort {
       typeof error === "object" &&
       error !== null &&
       "response" in error &&
-      typeof (error as { response?: { status?: number } }).response === "object" &&
+      typeof (error as { response?: { status?: number } }).response ===
+        "object" &&
       (error as { response: { status?: number } }).response?.status === 404
     );
   }

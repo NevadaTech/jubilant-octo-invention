@@ -21,17 +21,30 @@ import {
   Clock,
   Plus,
   Pencil,
+  ToggleLeft,
+  ToggleRight,
+  User,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/ui/components/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/ui/components/dropdown-menu";
-import { useProduct } from "../../hooks/use-products";
+import { useProduct, useToggleProductStatus } from "../../hooks/use-products";
 import { useReorderRules } from "../../hooks/use-reorder-rules";
 import { useWarehouses } from "../../hooks/use-warehouses";
 import { ReorderRuleDialog } from "../stock/reorder-rule-dialog";
@@ -71,7 +84,9 @@ function DetailItem({
         <Icon className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
       </div>
       <div>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">{label}</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          {label}
+        </p>
         <div className="font-medium text-neutral-900 dark:text-neutral-100">
           {value}
         </div>
@@ -109,6 +124,8 @@ export function ProductDetail({ productId }: ProductDetailProps) {
   const t = useTranslations("inventory.products");
   const tCommon = useTranslations("common");
   const { data: product, isLoading, isError, error } = useProduct(productId);
+  const toggleStatus = useToggleProductStatus();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -189,6 +206,23 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           <Badge variant={product.isActive ? "success" : "secondary"}>
             {product.isActive ? t("status.active") : t("status.inactive")}
           </Badge>
+          <Button
+            variant="outline"
+            onClick={() => setConfirmOpen(true)}
+            disabled={toggleStatus.isPending}
+          >
+            {product.isActive ? (
+              <>
+                <ToggleRight className="mr-2 h-4 w-4 text-green-600" />
+                {t("actions.deactivate")}
+              </>
+            ) : (
+              <>
+                <ToggleLeft className="mr-2 h-4 w-4 text-muted-foreground" />
+                {t("actions.activate")}
+              </>
+            )}
+          </Button>
           <Button asChild>
             <Link href={`/dashboard/inventory/products/${productId}/edit`}>
               <Edit className="mr-2 h-4 w-4" />
@@ -197,6 +231,40 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           </Button>
         </div>
       </div>
+
+      {/* Confirmation dialog */}
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {product.isActive
+                ? t("confirm.deactivate.title")
+                : t("confirm.activate.title")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {product.isActive
+                ? t("confirm.deactivate.description")
+                : t("confirm.activate.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                toggleStatus.mutate({
+                  id: product.id,
+                  isActive: !product.isActive,
+                });
+                setConfirmOpen(false);
+              }}
+            >
+              {product.isActive
+                ? t("actions.deactivate")
+                : t("actions.activate")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Description */}
       {product.description && (
@@ -211,6 +279,34 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Status info (deactivated by / at) */}
+      {!product.isActive &&
+        (product.statusChangedBy || product.statusChangedAt) && (
+          <Card className="border-warning-200 dark:border-warning-800 bg-warning-50/50 dark:bg-warning-950/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base text-warning-700 dark:text-warning-400">
+                {t("detail.statusInfo")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {product.statusChangedBy && (
+                <DetailItem
+                  icon={User}
+                  label={t("detail.statusChangedBy")}
+                  value={product.statusChangedBy}
+                />
+              )}
+              {product.statusChangedAt && (
+                <DetailItem
+                  icon={Calendar}
+                  label={t("detail.statusChangedAt")}
+                  value={formatDate(new Date(product.statusChangedAt))}
+                />
+              )}
+            </CardContent>
+          </Card>
+        )}
 
       {/* Details Grid */}
       <div className="grid gap-6 md:grid-cols-2">
@@ -285,7 +381,9 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         {/* Classification & Dates */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">{t("detail.classification")}</CardTitle>
+            <CardTitle className="text-lg">
+              {t("detail.classification")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <DetailItem
@@ -368,7 +466,6 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             />
           </CardContent>
         </Card>
-
       </div>
 
       {/* Reorder Rules */}
@@ -384,17 +481,24 @@ interface ProductReorderRulesProps {
   productName: string;
 }
 
-function ProductReorderRules({ productId, productName }: ProductReorderRulesProps) {
+function ProductReorderRules({
+  productId,
+  productName,
+}: ProductReorderRulesProps) {
   const t = useTranslations("inventory.products");
   const tRule = useTranslations("inventory.stock.reorderRule");
   const { data: allRules, isLoading: rulesLoading } = useReorderRules();
   const { data: warehousesResult } = useWarehouses();
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedWarehouseId, setSelectedWarehouseId] = useState<string | null>(null);
+  const [selectedWarehouseId, setSelectedWarehouseId] = useState<string | null>(
+    null,
+  );
 
   const warehouses = warehousesResult?.data ?? [];
-  const productRules = (allRules ?? []).filter((r) => r.productId === productId);
+  const productRules = (allRules ?? []).filter(
+    (r) => r.productId === productId,
+  );
 
   // Build a warehouse name lookup
   const warehouseNameMap = new Map<string, string>();
@@ -404,7 +508,9 @@ function ProductReorderRules({ productId, productName }: ProductReorderRulesProp
 
   // Warehouses that don't have a rule yet
   const usedWarehouseIds = new Set(productRules.map((r) => r.warehouseId));
-  const availableWarehouses = warehouses.filter((w) => !usedWarehouseIds.has(w.id));
+  const availableWarehouses = warehouses.filter(
+    (w) => !usedWarehouseIds.has(w.id),
+  );
 
   const handleAddRule = (warehouseId: string) => {
     setSelectedWarehouseId(warehouseId);
@@ -432,7 +538,10 @@ function ProductReorderRules({ productId, productName }: ProductReorderRulesProp
           {rulesLoading ? (
             <div className="space-y-3">
               {[...Array(2)].map((_, i) => (
-                <div key={i} className="h-12 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700" />
+                <div
+                  key={i}
+                  className="h-12 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700"
+                />
               ))}
             </div>
           ) : productRules.length === 0 ? (
@@ -450,7 +559,8 @@ function ProductReorderRules({ productId, productName }: ProductReorderRulesProp
                     <Warehouse className="h-4 w-4 text-neutral-400" />
                     <div>
                       <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                        {warehouseNameMap.get(rule.warehouseId) ?? rule.warehouseId}
+                        {warehouseNameMap.get(rule.warehouseId) ??
+                          rule.warehouseId}
                       </p>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400">
                         {tRule("fields.minQty")}: {rule.minQty} &middot;{" "}
@@ -480,7 +590,9 @@ function ProductReorderRules({ productId, productName }: ProductReorderRulesProp
           productId={productId}
           warehouseId={selectedWarehouseId}
           productName={productName}
-          warehouseName={warehouseNameMap.get(selectedWarehouseId) ?? selectedWarehouseId}
+          warehouseName={
+            warehouseNameMap.get(selectedWarehouseId) ?? selectedWarehouseId
+          }
         />
       )}
     </>

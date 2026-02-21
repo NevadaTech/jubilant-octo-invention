@@ -12,7 +12,13 @@ import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import {
   createCategorySchema,
   toCreateCategoryDto,
@@ -37,7 +43,7 @@ export function CategoryFormPage({ categoryId }: CategoryFormPageProps) {
   const isEditing = Boolean(categoryId);
 
   const { data: existingCategory, isLoading: isLoadingCategory } = useCategory(
-    categoryId || ""
+    categoryId || "",
   );
   const { data: categoriesData } = useCategories({ limit: 100 });
   const createCategory = useCreateCategory();
@@ -46,9 +52,8 @@ export function CategoryFormPage({ categoryId }: CategoryFormPageProps) {
   const isSubmitting = createCategory.isPending || updateCategory.isPending;
 
   // Filter out the current category from parent options
-  const parentOptions = categoriesData?.data.filter(
-    (cat) => cat.id !== categoryId
-  ) || [];
+  const parentOptions =
+    categoriesData?.data.filter((cat) => cat.id !== categoryId) || [];
 
   const {
     register,
@@ -67,7 +72,9 @@ export function CategoryFormPage({ categoryId }: CategoryFormPageProps) {
   });
 
   const selectedParentId = watch("parentId");
-  const selectedParentName = parentOptions.find((c) => c.id === selectedParentId)?.name;
+  const selectedParentName = parentOptions.find(
+    (c) => c.id === selectedParentId,
+  )?.name;
 
   // Populate form when editing
   useEffect(() => {
@@ -122,7 +129,9 @@ export function CategoryFormPage({ categoryId }: CategoryFormPageProps) {
             {isEditing ? t("form.editTitle") : t("form.createTitle")}
           </h1>
           <p className="text-neutral-500 dark:text-neutral-400">
-            {isEditing ? t("form.editDescription") : t("form.createDescription")}
+            {isEditing
+              ? t("form.editDescription")
+              : t("form.createDescription")}
           </p>
         </div>
       </div>
@@ -166,7 +175,9 @@ export function CategoryFormPage({ categoryId }: CategoryFormPageProps) {
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t("fields.parentPlaceholder")}>
-                    {selectedParentId ? selectedParentName || selectedParentId : undefined}
+                    {selectedParentId
+                      ? selectedParentName || selectedParentId
+                      : undefined}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>

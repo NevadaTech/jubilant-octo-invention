@@ -28,6 +28,8 @@ export interface ProductProps {
   daysOfStock: number | null;
   turnoverRate: number;
   lastMovementDate: string | null;
+  statusChangedBy?: string | null;
+  statusChangedAt?: string | null;
 }
 
 export class Product extends Entity<string> {
@@ -64,6 +66,8 @@ export class Product extends Entity<string> {
       daysOfStock: props.daysOfStock,
       turnoverRate: props.turnoverRate,
       lastMovementDate: props.lastMovementDate,
+      statusChangedBy: props.statusChangedBy,
+      statusChangedAt: props.statusChangedAt,
     });
   }
 
@@ -161,6 +165,14 @@ export class Product extends Entity<string> {
 
   get lastMovementDate(): string | null {
     return this.props.lastMovementDate;
+  }
+
+  get statusChangedBy(): string | null | undefined {
+    return this.props.statusChangedBy;
+  }
+
+  get statusChangedAt(): string | null | undefined {
+    return this.props.statusChangedAt;
   }
 
   isLowStock(currentQuantity: number): boolean {

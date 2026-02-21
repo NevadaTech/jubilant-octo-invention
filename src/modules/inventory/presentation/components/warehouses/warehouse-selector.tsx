@@ -3,7 +3,11 @@
 import { useTranslations } from "next-intl";
 import { Warehouse, ChevronDown } from "lucide-react";
 import { Button } from "@/ui/components/button";
-import { useWarehouses, useSelectedWarehouseId, useSetSelectedWarehouse } from "../../hooks";
+import {
+  useWarehouses,
+  useSelectedWarehouseId,
+  useSetSelectedWarehouse,
+} from "../../hooks";
 
 export function WarehouseSelector() {
   const t = useTranslations("inventory.warehouses");
@@ -37,10 +41,15 @@ export function WarehouseSelector() {
           </option>
         ))}
       </select>
-      <Button variant="outline" className="min-w-[200px] justify-between pointer-events-none">
+      <Button
+        variant="outline"
+        className="min-w-[200px] justify-between pointer-events-none"
+      >
         <span className="flex items-center">
           <Warehouse className="mr-2 h-4 w-4" />
-          {selectedWarehouse ? selectedWarehouse.displayName : t("selector.all")}
+          {selectedWarehouse
+            ? selectedWarehouse.displayName
+            : t("selector.all")}
         </span>
         <ChevronDown className="ml-2 h-4 w-4" />
       </Button>

@@ -2,7 +2,10 @@ import { Stock } from "../../domain/entities/stock.entity";
 import type { StockResponseDto, StockApiRawDto } from "../dto/stock.dto";
 
 export class StockMapper {
-  static toDomain(dto: StockApiRawDto | StockResponseDto, index?: number): Stock {
+  static toDomain(
+    dto: StockApiRawDto | StockResponseDto,
+    index?: number,
+  ): Stock {
     const quantity = dto.quantity ?? 0;
     const reservedQuantity = dto.reservedQuantity ?? 0;
 

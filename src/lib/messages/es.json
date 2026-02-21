@@ -104,7 +104,9 @@
         "new": "Nuevo Producto",
         "edit": "Editar",
         "view": "Ver",
-        "more": "Más opciones"
+        "more": "Más opciones",
+        "activate": "Activar",
+        "deactivate": "Desactivar"
       },
       "list": {
         "title": "Productos"
@@ -134,7 +136,20 @@
         "daysUnit": "{days} días",
         "timesPerYear": "{rate}x / año",
         "reorderRules": "Reglas de Reorden",
-        "noReorderRules": "No hay reglas de reorden configuradas. Agrega reglas por almacén para activar alertas de stock bajo."
+        "noReorderRules": "No hay reglas de reorden configuradas. Agrega reglas por almacén para activar alertas de stock bajo.",
+        "statusChangedBy": "Desactivado por",
+        "statusChangedAt": "Desactivado el",
+        "statusInfo": "Información de Estado"
+      },
+      "confirm": {
+        "deactivate": {
+          "title": "¿Desactivar producto?",
+          "description": "El producto quedará inactivo y no estará disponible para nuevas operaciones. ¿Deseas continuar?"
+        },
+        "activate": {
+          "title": "¿Activar producto?",
+          "description": "El producto quedará activo y estará disponible para nuevas operaciones. ¿Deseas continuar?"
+        }
       },
       "search": {
         "placeholder": "Buscar productos..."
@@ -187,7 +202,9 @@
         "new": "Nuevo Almacén",
         "edit": "Editar",
         "view": "Ver",
-        "more": "Más opciones"
+        "more": "Más opciones",
+        "activate": "Activar",
+        "deactivate": "Desactivar"
       },
       "list": {
         "title": "Almacenes"
@@ -204,7 +221,20 @@
         "createdAt": "Creado el",
         "updatedAt": "Actualizado el",
         "notFound": "Almacén no encontrado",
-        "backToList": "Volver a almacenes"
+        "backToList": "Volver a almacenes",
+        "statusInfo": "Información de estado",
+        "statusChangedBy": "Desactivado por",
+        "statusChangedAt": "Desactivado el"
+      },
+      "confirm": {
+        "deactivate": {
+          "title": "¿Desactivar almacén?",
+          "description": "El almacén quedará inactivo y no estará disponible para nuevas operaciones. ¿Deseas continuar?"
+        },
+        "activate": {
+          "title": "¿Activar almacén?",
+          "description": "El almacén volverá a estar activo y disponible para operaciones. ¿Deseas continuar?"
+        }
       },
       "search": {
         "placeholder": "Buscar almacenes..."
@@ -235,7 +265,9 @@
       "messages": {
         "created": "Almacén creado exitosamente",
         "updated": "Almacén actualizado exitosamente",
-        "deleted": "Almacén eliminado exitosamente"
+        "deleted": "Almacén eliminado exitosamente",
+        "updateError": "Error al actualizar el almacén",
+        "hasStock": "No se puede desactivar el almacén porque tiene productos con stock. Transfiere o ajusta el stock a cero primero."
       }
     },
     "stock": {
@@ -388,7 +420,9 @@
         "notePlaceholder": "Notas adicionales (opcional)",
         "createdBy": "Creado Por",
         "createdAt": "Fecha",
-        "postedAt": "Confirmado En"
+        "postedAt": "Confirmado En",
+        "postedBy": "Confirmado Por",
+        "totalCost": "Costo Total"
       },
       "actions": {
         "new": "Nuevo Movimiento",
@@ -455,6 +489,16 @@
       "confirmVoid": {
         "title": "Anular Movimiento",
         "description": "¿Estás seguro de que deseas anular este movimiento? Esto revertirá los cambios de stock."
+      },
+      "detail": {
+        "title": "Detalle de Movimiento",
+        "subtitle": "Movimiento #{id}",
+        "information": "Información del Movimiento",
+        "summary": "Resumen",
+        "products": "Productos",
+        "notFound": "Movimiento No Encontrado",
+        "notFoundDescription": "El movimiento que buscas no existe o ha sido eliminado.",
+        "total": "Total"
       }
     },
     "transfers": {
@@ -489,7 +533,8 @@
         "createdBy": "Creado Por",
         "createdAt": "Creado El",
         "completedAt": "Completado El",
-        "actions": "Acciones"
+        "actions": "Acciones",
+        "receivedBy": "Recibido Por"
       },
       "actions": {
         "new": "Nueva Transferencia",
@@ -556,6 +601,10 @@
         "received": "Transferencia recibida exitosamente",
         "rejected": "Transferencia rechazada",
         "canceled": "Transferencia cancelada"
+      },
+      "receive": {
+        "title": "Confirmar Recepción",
+        "description": "Ingresa las cantidades realmente recibidas por producto."
       }
     },
     "common": {
@@ -935,21 +984,63 @@
   },
   "pages": {
     "inventory": {
-      "products": { "title": "Productos", "description": "Gestiona tu catálogo de productos" },
-      "categories": { "title": "Categorías", "description": "Organiza productos en categorías" },
-      "warehouses": { "title": "Almacenes", "description": "Gestiona ubicaciones de almacenamiento" },
-      "movements": { "title": "Movimientos", "description": "Rastrea movimientos de inventario" },
-      "transfers": { "title": "Transferencias", "description": "Transfiere stock entre almacenes" },
-      "stock": { "title": "Niveles de Stock", "description": "Ver niveles actuales de stock" }
+      "products": {
+        "title": "Productos",
+        "description": "Gestiona tu catálogo de productos"
+      },
+      "categories": {
+        "title": "Categorías",
+        "description": "Organiza productos en categorías"
+      },
+      "warehouses": {
+        "title": "Almacenes",
+        "description": "Gestiona ubicaciones de almacenamiento"
+      },
+      "movements": {
+        "title": "Movimientos",
+        "description": "Rastrea movimientos de inventario"
+      },
+      "transfers": {
+        "title": "Transferencias",
+        "description": "Transfiere stock entre almacenes"
+      },
+      "stock": {
+        "title": "Niveles de Stock",
+        "description": "Ver niveles actuales de stock"
+      }
     },
-    "sales": { "title": "Ventas", "description": "Gestiona órdenes de venta" },
-    "returns": { "title": "Devoluciones", "description": "Procesa devoluciones de productos" },
-    "reports": { "title": "Reportes", "description": "Ver y generar reportes" },
-    "imports": { "title": "Importaciones", "description": "Importa datos de fuentes externas" },
-    "users": { "title": "Usuarios", "description": "Gestiona usuarios del sistema" },
-    "roles": { "title": "Roles", "description": "Configura roles y permisos de usuarios" },
-    "audit": { "title": "Auditoría", "description": "Revisa actividad del sistema" },
-    "settings": { "title": "Configuración", "description": "Configura ajustes del sistema" }
+    "sales": {
+      "title": "Ventas",
+      "description": "Gestiona órdenes de venta"
+    },
+    "returns": {
+      "title": "Devoluciones",
+      "description": "Procesa devoluciones de productos"
+    },
+    "reports": {
+      "title": "Reportes",
+      "description": "Ver y generar reportes"
+    },
+    "imports": {
+      "title": "Importaciones",
+      "description": "Importa datos de fuentes externas"
+    },
+    "users": {
+      "title": "Usuarios",
+      "description": "Gestiona usuarios del sistema"
+    },
+    "roles": {
+      "title": "Roles",
+      "description": "Configura roles y permisos de usuarios"
+    },
+    "audit": {
+      "title": "Auditoría",
+      "description": "Revisa actividad del sistema"
+    },
+    "settings": {
+      "title": "Configuración",
+      "description": "Configura ajustes del sistema"
+    }
   },
   "theme": {
     "light": "Modo claro",

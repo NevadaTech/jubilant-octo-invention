@@ -1,5 +1,8 @@
 import { z } from "zod";
-import type { CreateSaleDto, CreateSaleLineDto } from "../../application/dto/sale.dto";
+import type {
+  CreateSaleDto,
+  CreateSaleLineDto,
+} from "../../application/dto/sale.dto";
 
 export const saleLineSchema = z.object({
   productId: z.string().uuid("Please select a product"),

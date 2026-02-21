@@ -230,6 +230,7 @@ Los smoke tests son una suite rápida de tests que validan que los endpoints cr�
 ### ¿Qué es Collection Runner?
 
 Collection Runner ejecuta múltiples requests de una colección en secuencia, útil para:
+
 - Testing completo de funcionalidades
 - Validación de flujos completos
 - Testing de regresión
@@ -265,6 +266,7 @@ Collection Runner ejecuta múltiples requests de una colección en secuencia, ú
 ### Problema: "Invalid token" o Error 401
 
 **Solución**:
+
 1. Verifica que hayas hecho login recientemente
 2. Ejecuta **"POST Refresh Token"** para renovar el token
 3. Si persiste, vuelve a hacer login
@@ -272,6 +274,7 @@ Collection Runner ejecuta múltiples requests de una colección en secuencia, ú
 ### Problema: "Organization not found" o Error 404
 
 **Solución**:
+
 1. Verifica que `organizationId` en el entorno sea correcto
 2. Verifica que el header `X-Organization-ID` esté presente
 3. Asegúrate de que la organización exista en el sistema
@@ -279,6 +282,7 @@ Collection Runner ejecuta múltiples requests de una colección en secuencia, ú
 ### Problema: Timeout o Error de Conexión
 
 **Solución**:
+
 1. Verifica que el servidor esté corriendo
 2. Verifica que `baseUrl` en el entorno sea correcto
 3. Verifica tu conexión a internet
@@ -287,6 +291,7 @@ Collection Runner ejecuta múltiples requests de una colección en secuencia, ú
 ### Problema: Variables no se actualizan
 
 **Solución**:
+
 1. Verifica que estés usando el entorno correcto
 2. Algunas variables se actualizan solo en ciertos requests
 3. Revisa los scripts de test en el request para ver qué variables se actualizan
@@ -294,6 +299,7 @@ Collection Runner ejecuta múltiples requests de una colección en secuencia, ú
 ### Problema: Tests fallan pero el request funciona
 
 **Solución**:
+
 1. Revisa el mensaje de error específico en **"Test Results"**
 2. Puede ser que la estructura de la respuesta haya cambiado
 3. Actualiza los tests en el request si es necesario
@@ -301,6 +307,7 @@ Collection Runner ejecuta múltiples requests de una colección en secuencia, ú
 ### Problema: No puedo importar la colección
 
 **Solución**:
+
 1. Verifica que el archivo JSON esté completo
 2. Verifica que Postman esté actualizado (v10+)
 3. Intenta importar desde archivo en lugar de copiar/pegar
@@ -368,8 +375,3 @@ Si encuentras problemas o tienes preguntas:
 
 **Última actualización**: Diciembre 2024  
 **Versión de Postman**: 10.0+
-
-
-
-
-

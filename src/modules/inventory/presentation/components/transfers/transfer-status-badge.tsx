@@ -1,7 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FileEdit, Truck, PackageCheck, CheckCircle2, XCircle, Ban } from "lucide-react";
+import {
+  FileEdit,
+  Truck,
+  PackageCheck,
+  CheckCircle2,
+  XCircle,
+  Ban,
+} from "lucide-react";
 import { Badge } from "@/ui/components/badge";
 import type { TransferStatus } from "../../../domain/entities/transfer.entity";
 
@@ -12,7 +19,14 @@ interface TransferStatusBadgeProps {
 export function TransferStatusBadge({ status }: TransferStatusBadgeProps) {
   const t = useTranslations("inventory.transfers.status");
 
-  const config: Record<TransferStatus, { label: string; variant: "warning" | "info" | "success" | "error" | "secondary"; icon: typeof FileEdit }> = {
+  const config: Record<
+    TransferStatus,
+    {
+      label: string;
+      variant: "warning" | "info" | "success" | "error" | "secondary";
+      icon: typeof FileEdit;
+    }
+  > = {
     DRAFT: {
       label: t("draft"),
       variant: "secondary",

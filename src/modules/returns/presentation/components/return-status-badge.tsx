@@ -12,7 +12,14 @@ interface ReturnStatusBadgeProps {
 export function ReturnStatusBadge({ status }: ReturnStatusBadgeProps) {
   const t = useTranslations("returns.status");
 
-  const config: Record<ReturnStatus, { label: string; variant: "secondary" | "success" | "error"; icon: typeof FileEdit }> = {
+  const config: Record<
+    ReturnStatus,
+    {
+      label: string;
+      variant: "secondary" | "success" | "error";
+      icon: typeof FileEdit;
+    }
+  > = {
     DRAFT: {
       label: t("draft"),
       variant: "secondary",

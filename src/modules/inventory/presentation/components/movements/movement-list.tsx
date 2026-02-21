@@ -3,7 +3,17 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Plus, Search, ArrowRightLeft, CheckCircle, XCircle, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import {
+  Plus,
+  Search,
+  ArrowRightLeft,
+  CheckCircle,
+  XCircle,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Eye,
+} from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -49,7 +59,9 @@ export function MovementList() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [postConfirm, setPostConfirm] = useState<StockMovement | null>(null);
   const [voidConfirm, setVoidConfirm] = useState<StockMovement | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<StockMovement | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<StockMovement | null>(
+    null,
+  );
 
   const { data, isLoading, isError } = useMovements(filters);
   const postMovement = usePostMovement();
@@ -165,7 +177,9 @@ export function MovementList() {
                       <th className="pb-3 pr-4">{t("fields.reference")}</th>
                       <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
                       <th className="pb-3 pr-4">{t("fields.postedAt")}</th>
-                      <th className="pb-3 pr-4 text-right">{tCommon("actions")}</th>
+                      <th className="pb-3 pr-4 text-right">
+                        {tCommon("actions")}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -179,24 +193,30 @@ export function MovementList() {
                         </td>
                         <td className="py-4 pr-4">{movement.warehouseName}</td>
                         <td className="py-4 pr-4">
-                          <span className="font-medium">{movement.totalItems}</span>
+                          <span className="font-medium">
+                            {movement.totalItems}
+                          </span>
                           <span className="text-muted-foreground ml-1">
                             {movement.totalItems === 1 ? "product" : "products"}
                           </span>
                         </td>
                         <td className="py-4 pr-4">
-                          <span className={
-                            movement.isEntry
-                              ? "text-green-600 dark:text-green-400"
-                              : "text-red-600 dark:text-red-400"
-                          }>
+                          <span
+                            className={
+                              movement.isEntry
+                                ? "text-green-600 dark:text-green-400"
+                                : "text-red-600 dark:text-red-400"
+                            }
+                          >
                             {movement.isEntry ? "+" : "-"}
                             {movement.totalQuantity}
                           </span>
                         </td>
                         <td className="py-4 pr-4">
                           {movement.reference ? (
-                            <span className="font-mono text-sm">{movement.reference}</span>
+                            <span className="font-mono text-sm">
+                              {movement.reference}
+                            </span>
                           ) : (
                             <span className="text-muted-foreground">-</span>
                           )}
@@ -205,27 +225,46 @@ export function MovementList() {
                           {formatDate(movement.createdAt)}
                         </td>
                         <td className="py-4 pr-4 text-sm text-muted-foreground">
-                          {movement.postedAt ? formatDate(movement.postedAt) : (
+                          {movement.postedAt ? (
+                            formatDate(movement.postedAt)
+                          ) : (
                             <span className="text-muted-foreground">-</span>
                           )}
                         </td>
                         <td className="py-4 text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onMouseDown={(e) => e.preventDefault()}
+                              >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/dashboard/inventory/movements/${movement.id}`}
+                                >
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  {t("actions.view")}
+                                </Link>
+                              </DropdownMenuItem>
                               {movement.isDraft && (
                                 <>
+                                  <DropdownMenuSeparator />
                                   <DropdownMenuItem asChild>
-                                    <Link href={`/dashboard/inventory/movements/${movement.id}/edit`}>
+                                    <Link
+                                      href={`/dashboard/inventory/movements/${movement.id}/edit`}
+                                    >
                                       <Pencil className="mr-2 h-4 w-4" />
                                       {t("actions.edit")}
                                     </Link>
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => setPostConfirm(movement)}>
+                                  <DropdownMenuItem
+                                    onClick={() => setPostConfirm(movement)}
+                                  >
                                     <CheckCircle className="mr-2 h-4 w-4" />
                                     {t("actions.post")}
                                   </DropdownMenuItem>
@@ -261,10 +300,11 @@ export function MovementList() {
                 <div className="mt-4 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
                     {t("pagination.showing", {
-                      from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                      from:
+                        (data.pagination.page - 1) * data.pagination.limit + 1,
                       to: Math.min(
                         data.pagination.page * data.pagination.limit,
-                        data.pagination.total
+                        data.pagination.total,
                       ),
                       total: data.pagination.total,
                     })}
@@ -274,15 +314,27 @@ export function MovementList() {
                       variant="outline"
                       size="sm"
                       disabled={data.pagination.page <= 1}
-                      onClick={() => setFilters((prev) => ({ ...prev, page: data.pagination.page - 1 }))}
+                      onClick={() =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          page: data.pagination.page - 1,
+                        }))
+                      }
                     >
                       {tCommon("previous")}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={data.pagination.page >= data.pagination.totalPages}
-                      onClick={() => setFilters((prev) => ({ ...prev, page: data.pagination.page + 1 }))}
+                      disabled={
+                        data.pagination.page >= data.pagination.totalPages
+                      }
+                      onClick={() =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          page: data.pagination.page + 1,
+                        }))
+                      }
                     >
                       {tCommon("next")}
                     </Button>
@@ -297,7 +349,10 @@ export function MovementList() {
       <MovementForm open={isFormOpen} onOpenChange={setIsFormOpen} />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+      <AlertDialog
+        open={!!deleteConfirm}
+        onOpenChange={(open) => !open && setDeleteConfirm(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("confirmDelete.title")}</AlertDialogTitle>
@@ -312,14 +367,19 @@ export function MovementList() {
               disabled={deleteMovement.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteMovement.isPending ? tCommon("loading") : tCommon("delete")}
+              {deleteMovement.isPending
+                ? tCommon("loading")
+                : tCommon("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       {/* Post Confirmation Dialog */}
-      <AlertDialog open={!!postConfirm} onOpenChange={(open) => !open && setPostConfirm(null)}>
+      <AlertDialog
+        open={!!postConfirm}
+        onOpenChange={(open) => !open && setPostConfirm(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("confirmPost.title")}</AlertDialogTitle>
@@ -340,7 +400,10 @@ export function MovementList() {
       </AlertDialog>
 
       {/* Void Confirmation Dialog */}
-      <AlertDialog open={!!voidConfirm} onOpenChange={(open) => !open && setVoidConfirm(null)}>
+      <AlertDialog
+        open={!!voidConfirm}
+        onOpenChange={(open) => !open && setVoidConfirm(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("confirmVoid.title")}</AlertDialogTitle>

@@ -6,7 +6,7 @@ export class AuthApiError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    public readonly statusCode: number
+    public readonly statusCode: number,
   ) {
     super(message);
     this.name = "AuthApiError";
@@ -25,7 +25,7 @@ export type AuthErrorCode =
  */
 export function getAuthErrorCode(
   statusCode: number,
-  error?: string
+  error?: string,
 ): AuthErrorCode {
   if (statusCode === 401 || error?.toLowerCase() === "unauthorized") {
     return "unauthorized";

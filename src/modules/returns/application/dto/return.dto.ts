@@ -1,4 +1,7 @@
-import type { ReturnStatus, ReturnType } from "../../domain/entities/return.entity";
+import type {
+  ReturnStatus,
+  ReturnType,
+} from "../../domain/entities/return.entity";
 
 export interface ReturnLineResponseDto {
   id: string;

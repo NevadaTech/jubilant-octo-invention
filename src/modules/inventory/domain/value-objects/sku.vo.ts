@@ -24,7 +24,9 @@ export class Sku extends ValueObject<SkuProps> {
     }
 
     if (!Sku.SKU_PATTERN.test(trimmed)) {
-      throw new Error("SKU can only contain letters, numbers, hyphens and underscores");
+      throw new Error(
+        "SKU can only contain letters, numbers, hyphens and underscores",
+      );
     }
 
     return new Sku({ value: trimmed });

@@ -1,5 +1,8 @@
 import { z } from "zod";
-import type { CreateCategoryDto, UpdateCategoryDto } from "../../application/dto/category.dto";
+import type {
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from "../../application/dto/category.dto";
 
 export const createCategorySchema = z.object({
   name: z
@@ -10,10 +13,7 @@ export const createCategorySchema = z.object({
     .string()
     .max(500, "Description cannot exceed 500 characters")
     .optional(),
-  parentId: z
-    .string()
-    .optional()
-    .or(z.literal("")),
+  parentId: z.string().optional().or(z.literal("")),
 });
 
 export const updateCategorySchema = createCategorySchema.partial().extend({
@@ -32,7 +32,9 @@ export interface UpdateCategoryFormData extends Partial<CreateCategoryFormData> 
 }
 
 // Helper to transform form data to DTO
-export function toCreateCategoryDto(data: CreateCategoryFormData): CreateCategoryDto {
+export function toCreateCategoryDto(
+  data: CreateCategoryFormData,
+): CreateCategoryDto {
   return {
     name: data.name,
     description: data.description || undefined,
@@ -40,11 +42,14 @@ export function toCreateCategoryDto(data: CreateCategoryFormData): CreateCategor
   };
 }
 
-export function toUpdateCategoryDto(data: UpdateCategoryFormData): UpdateCategoryDto {
+export function toUpdateCategoryDto(
+  data: UpdateCategoryFormData,
+): UpdateCategoryDto {
   const dto: UpdateCategoryDto = {};
 
   if (data.name !== undefined) dto.name = data.name;
-  if (data.description !== undefined) dto.description = data.description || undefined;
+  if (data.description !== undefined)
+    dto.description = data.description || undefined;
   if (data.parentId !== undefined) dto.parentId = data.parentId || undefined;
   if (data.isActive !== undefined) dto.isActive = data.isActive;
 

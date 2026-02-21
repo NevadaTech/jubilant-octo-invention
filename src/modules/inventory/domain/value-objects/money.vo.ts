@@ -12,7 +12,10 @@ export class Money extends ValueObject<MoneyProps> {
     super(props);
   }
 
-  static create(amount: number, currency: string = Money.DEFAULT_CURRENCY): Money {
+  static create(
+    amount: number,
+    currency: string = Money.DEFAULT_CURRENCY,
+  ): Money {
     if (amount < 0) {
       throw new Error("Amount cannot be negative");
     }

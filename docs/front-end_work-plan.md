@@ -25,28 +25,28 @@ Este frontend sigue tres principios arquitectónicos fundamentales:
 
 ### Framework y Librerías Core
 
-| Tecnología | Versión | Propósito |
-|------------|---------|-----------|
-| **Next.js** | 14+ | Framework React con App Router, Server Components |
-| **React** | 19 | Librería UI |
-| **TypeScript** | 5.x | Tipado estático |
-| **Tailwind CSS** | 4 | Framework de estilos utility-first |
-| **Framer Motion** | Latest | Animaciones y transiciones |
-| **next-intl** | Latest | Internacionalización (EN/ES) |
+| Tecnología        | Versión | Propósito                                         |
+| ----------------- | ------- | ------------------------------------------------- |
+| **Next.js**       | 14+     | Framework React con App Router, Server Components |
+| **React**         | 19      | Librería UI                                       |
+| **TypeScript**    | 5.x     | Tipado estático                                   |
+| **Tailwind CSS**  | 4       | Framework de estilos utility-first                |
+| **Framer Motion** | Latest  | Animaciones y transiciones                        |
+| **next-intl**     | Latest  | Internacionalización (EN/ES)                      |
 
 ### Librerías Adicionales Recomendadas
 
-| Librería | Propósito |
-|----------|-----------|
-| **@tanstack/react-query** | Gestión de estado servidor, cache, mutaciones |
-| **axios** | Cliente HTTP con interceptores |
-| **zod** | Validación de formularios y datos |
-| **react-hook-form** | Gestión de formularios |
-| **date-fns** | Manipulación de fechas |
-| **recharts** / **chart.js** | Gráficos para reportes |
-| **@tanstack/react-table** | Tablas con paginación, filtros, ordenamiento |
-| **sonner** / **react-hot-toast** | Notificaciones |
-| **lucide-react** | Iconos |
+| Librería                         | Propósito                                     |
+| -------------------------------- | --------------------------------------------- |
+| **@tanstack/react-query**        | Gestión de estado servidor, cache, mutaciones |
+| **axios**                        | Cliente HTTP con interceptores                |
+| **zod**                          | Validación de formularios y datos             |
+| **react-hook-form**              | Gestión de formularios                        |
+| **date-fns**                     | Manipulación de fechas                        |
+| **recharts** / **chart.js**      | Gráficos para reportes                        |
+| **@tanstack/react-table**        | Tablas con paginación, filtros, ordenamiento  |
+| **sonner** / **react-hot-toast** | Notificaciones                                |
+| **lucide-react**                 | Iconos                                        |
 
 ---
 
@@ -55,6 +55,7 @@ Este frontend sigue tres principios arquitectónicos fundamentales:
 ### 2.1 Principios Fundamentales
 
 #### Screaming Architecture
+
 > "La arquitectura debe gritar el propósito del sistema" — Robert C. Martin
 
 La estructura de carpetas refleja el **dominio del negocio**, no el framework:
@@ -628,9 +629,9 @@ La capa de dominio es el **corazón del sistema**. No tiene dependencias externa
 ```typescript
 // modules/inventory/domain/entities/Product.ts
 
-import { ProductSku } from '../value-objects/ProductSku';
-import { Money } from '../value-objects/Money';
-import { ProductStatus } from '../value-objects/ProductStatus';
+import { ProductSku } from "../value-objects/ProductSku";
+import { Money } from "../value-objects/Money";
+import { ProductStatus } from "../value-objects/ProductStatus";
 
 export interface ProductProps {
   id: string;
@@ -643,7 +644,7 @@ export interface ProductProps {
   model?: string;
   price?: Money;
   status: ProductStatus;
-  costMethod: 'AVERAGE' | 'FIFO' | 'LIFO';
+  costMethod: "AVERAGE" | "FIFO" | "LIFO";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -652,7 +653,9 @@ export class Product {
   private constructor(private props: ProductProps) {}
 
   // Factory method
-  static create(props: Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'>): Product {
+  static create(
+    props: Omit<ProductProps, "id" | "createdAt" | "updatedAt">,
+  ): Product {
     return new Product({
       ...props,
       id: crypto.randomUUID(),
@@ -667,16 +670,24 @@ export class Product {
   }
 
   // Getters
-  get id(): string { return this.props.id; }
-  get sku(): ProductSku { return this.props.sku; }
-  get name(): string { return this.props.name; }
-  get status(): ProductStatus { return this.props.status; }
+  get id(): string {
+    return this.props.id;
+  }
+  get sku(): ProductSku {
+    return this.props.sku;
+  }
+  get name(): string {
+    return this.props.name;
+  }
+  get status(): ProductStatus {
+    return this.props.status;
+  }
   // ... más getters
 
   // Comportamiento de negocio
   activate(): void {
     if (this.props.status.isDiscontinued()) {
-      throw new Error('Cannot activate a discontinued product');
+      throw new Error("Cannot activate a discontinued product");
     }
     this.props.status = ProductStatus.active();
     this.props.updatedAt = new Date();
@@ -694,7 +705,7 @@ export class Product {
 
   updatePrice(newPrice: Money): void {
     if (newPrice.isNegative()) {
-      throw new Error('Price cannot be negative');
+      throw new Error("Price cannot be negative");
     }
     this.props.price = newPrice;
     this.props.updatedAt = new Date();
@@ -719,13 +730,15 @@ export class ProductSku {
 
   private validate(value: string): void {
     if (!value || value.trim().length === 0) {
-      throw new Error('SKU cannot be empty');
+      throw new Error("SKU cannot be empty");
     }
     if (value.length > 50) {
-      throw new Error('SKU cannot exceed 50 characters');
+      throw new Error("SKU cannot exceed 50 characters");
     }
     if (!/^[A-Z0-9-]+$/i.test(value)) {
-      throw new Error('SKU can only contain alphanumeric characters and hyphens');
+      throw new Error(
+        "SKU can only contain alphanumeric characters and hyphens",
+      );
     }
   }
 
@@ -753,25 +766,33 @@ export class ProductSku {
 export class Money {
   private constructor(
     private readonly amount: number,
-    private readonly currency: string
+    private readonly currency: string,
   ) {}
 
-  static create(amount: number, currency: string = 'USD'): Money {
+  static create(amount: number, currency: string = "USD"): Money {
     if (!Number.isFinite(amount)) {
-      throw new Error('Amount must be a finite number');
+      throw new Error("Amount must be a finite number");
     }
     return new Money(Math.round(amount * 100) / 100, currency.toUpperCase());
   }
 
-  static zero(currency: string = 'USD'): Money {
+  static zero(currency: string = "USD"): Money {
     return new Money(0, currency.toUpperCase());
   }
 
-  getAmount(): number { return this.amount; }
-  getCurrency(): string { return this.currency; }
+  getAmount(): number {
+    return this.amount;
+  }
+  getCurrency(): string {
+    return this.currency;
+  }
 
-  isNegative(): boolean { return this.amount < 0; }
-  isZero(): boolean { return this.amount === 0; }
+  isNegative(): boolean {
+    return this.amount < 0;
+  }
+  isZero(): boolean {
+    return this.amount === 0;
+  }
 
   add(other: Money): Money {
     this.ensureSameCurrency(other);
@@ -789,7 +810,9 @@ export class Money {
 
   private ensureSameCurrency(other: Money): void {
     if (this.currency !== other.currency) {
-      throw new Error(`Cannot operate on different currencies: ${this.currency} vs ${other.currency}`);
+      throw new Error(
+        `Cannot operate on different currencies: ${this.currency} vs ${other.currency}`,
+      );
     }
   }
 
@@ -797,9 +820,9 @@ export class Money {
     return this.amount === other.amount && this.currency === other.currency;
   }
 
-  format(locale: string = 'en-US'): string {
+  format(locale: string = "en-US"): string {
     return new Intl.NumberFormat(locale, {
-      style: 'currency',
+      style: "currency",
       currency: this.currency,
     }).format(this.amount);
   }
@@ -811,15 +834,15 @@ export class Money {
 ```typescript
 // modules/inventory/domain/ports/ProductRepository.ts
 
-import { Product } from '../entities/Product';
-import { ProductSku } from '../value-objects/ProductSku';
-import { Pagination } from '@/shared/domain/value-objects/Pagination';
+import { Product } from "../entities/Product";
+import { ProductSku } from "../value-objects/ProductSku";
+import { Pagination } from "@/shared/domain/value-objects/Pagination";
 
 export interface ProductFilters {
   status?: string;
   search?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface PaginatedProducts {
@@ -831,7 +854,11 @@ export interface PaginatedProducts {
 export interface ProductRepository {
   findById(id: string): Promise<Product | null>;
   findBySku(sku: ProductSku): Promise<Product | null>;
-  findAll(filters: ProductFilters, page: number, limit: number): Promise<PaginatedProducts>;
+  findAll(
+    filters: ProductFilters,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedProducts>;
   save(product: Product): Promise<void>;
   update(product: Product): Promise<void>;
   exists(sku: ProductSku): Promise<boolean>;
@@ -847,12 +874,12 @@ Los casos de uso orquestan la lógica de dominio y coordinan con la infraestruct
 ```typescript
 // modules/inventory/application/use-cases/products/CreateProduct.ts
 
-import { Product } from '../../domain/entities/Product';
-import { ProductSku } from '../../domain/value-objects/ProductSku';
-import { ProductStatus } from '../../domain/value-objects/ProductStatus';
-import { ProductRepository } from '../../domain/ports/ProductRepository';
-import { CreateProductDto } from '../dto/CreateProductDto';
-import { ProductResponseDto } from '../dto/ProductResponseDto';
+import { Product } from "../../domain/entities/Product";
+import { ProductSku } from "../../domain/value-objects/ProductSku";
+import { ProductStatus } from "../../domain/value-objects/ProductStatus";
+import { ProductRepository } from "../../domain/ports/ProductRepository";
+import { CreateProductDto } from "../dto/CreateProductDto";
+import { ProductResponseDto } from "../dto/ProductResponseDto";
 
 export class CreateProductUseCase {
   constructor(private readonly productRepository: ProductRepository) {}
@@ -860,7 +887,7 @@ export class CreateProductUseCase {
   async execute(dto: CreateProductDto): Promise<ProductResponseDto> {
     // 1. Crear Value Objects (validación incluida)
     const sku = ProductSku.create(dto.sku);
-    const status = ProductStatus.create(dto.status ?? 'ACTIVE');
+    const status = ProductStatus.create(dto.status ?? "ACTIVE");
 
     // 2. Verificar que no exista
     const exists = await this.productRepository.exists(sku);
@@ -878,7 +905,7 @@ export class CreateProductUseCase {
       brand: dto.brand,
       model: dto.model,
       status,
-      costMethod: dto.costMethod ?? 'AVERAGE',
+      costMethod: dto.costMethod ?? "AVERAGE",
     });
 
     // 4. Persistir
@@ -893,26 +920,28 @@ export class CreateProductUseCase {
 ```typescript
 // modules/inventory/application/use-cases/transfers/ConfirmTransfer.ts
 
-import { TransferRepository } from '../../domain/ports/TransferRepository';
-import { MovementRepository } from '../../domain/ports/MovementRepository';
-import { TransferStatus } from '../../domain/value-objects/TransferStatus';
+import { TransferRepository } from "../../domain/ports/TransferRepository";
+import { MovementRepository } from "../../domain/ports/MovementRepository";
+import { TransferStatus } from "../../domain/value-objects/TransferStatus";
 
 export class ConfirmTransferUseCase {
   constructor(
     private readonly transferRepository: TransferRepository,
-    private readonly movementRepository: MovementRepository
+    private readonly movementRepository: MovementRepository,
   ) {}
 
   async execute(transferId: string): Promise<void> {
     // 1. Obtener transferencia
     const transfer = await this.transferRepository.findById(transferId);
     if (!transfer) {
-      throw new Error('Transfer not found');
+      throw new Error("Transfer not found");
     }
 
     // 2. Validar estado actual
     if (!transfer.canBeConfirmed()) {
-      throw new Error(`Transfer cannot be confirmed. Current status: ${transfer.status}`);
+      throw new Error(
+        `Transfer cannot be confirmed. Current status: ${transfer.status}`,
+      );
     }
 
     // 3. Cambiar estado (lógica de dominio en la entidad)
@@ -933,18 +962,18 @@ export class ConfirmTransferUseCase {
 ```typescript
 // modules/inventory/application/dto/CreateProductDto.ts
 
-import { z } from 'zod';
+import { z } from "zod";
 
 export const createProductSchema = z.object({
-  sku: z.string().min(1, 'SKU is required').max(50),
-  name: z.string().min(1, 'Name is required').max(200),
+  sku: z.string().min(1, "SKU is required").max(50),
+  name: z.string().min(1, "Name is required").max(200),
   description: z.string().max(1000).optional(),
-  unit: z.enum(['UNIT', 'KG', 'LB', 'BOX', 'PACK']),
+  unit: z.enum(["UNIT", "KG", "LB", "BOX", "PACK"]),
   barcode: z.string().max(100).optional(),
   brand: z.string().max(100).optional(),
   model: z.string().max(100).optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'DISCONTINUED']).optional(),
-  costMethod: z.enum(['AVERAGE', 'FIFO', 'LIFO']).optional(),
+  status: z.enum(["ACTIVE", "INACTIVE", "DISCONTINUED"]).optional(),
+  costMethod: z.enum(["AVERAGE", "FIFO", "LIFO"]).optional(),
 });
 
 export type CreateProductDto = z.infer<typeof createProductSchema>;
@@ -953,7 +982,7 @@ export type CreateProductDto = z.infer<typeof createProductSchema>;
 ```typescript
 // modules/inventory/application/dto/ProductResponseDto.ts
 
-import { Product } from '../../domain/entities/Product';
+import { Product } from "../../domain/entities/Product";
 
 export class ProductResponseDto {
   constructor(
@@ -968,7 +997,7 @@ export class ProductResponseDto {
     public readonly status: string,
     public readonly costMethod: string,
     public readonly createdAt: string,
-    public readonly updatedAt: string
+    public readonly updatedAt: string,
   ) {}
 
   static fromDomain(product: Product): ProductResponseDto {
@@ -985,7 +1014,7 @@ export class ProductResponseDto {
       props.status.getValue(),
       props.costMethod,
       props.createdAt.toISOString(),
-      props.updatedAt.toISOString()
+      props.updatedAt.toISOString(),
     );
   }
 }
@@ -1000,12 +1029,16 @@ export class ProductResponseDto {
 ```typescript
 // modules/inventory/infrastructure/adapters/ApiProductRepository.ts
 
-import { Product } from '../../domain/entities/Product';
-import { ProductSku } from '../../domain/value-objects/ProductSku';
-import { ProductRepository, ProductFilters, PaginatedProducts } from '../../domain/ports/ProductRepository';
-import { HttpClient } from '@/shared/application/ports/HttpClient';
-import { ProductMapper } from '../mappers/ProductMapper';
-import { Pagination } from '@/shared/domain/value-objects/Pagination';
+import { Product } from "../../domain/entities/Product";
+import { ProductSku } from "../../domain/value-objects/ProductSku";
+import {
+  ProductRepository,
+  ProductFilters,
+  PaginatedProducts,
+} from "../../domain/ports/ProductRepository";
+import { HttpClient } from "@/shared/application/ports/HttpClient";
+import { ProductMapper } from "../mappers/ProductMapper";
+import { Pagination } from "@/shared/domain/value-objects/Pagination";
 
 // 🔌 DRIVEN ADAPTER - Implementa el port del dominio
 export class ApiProductRepository implements ProductRepository {
@@ -1014,7 +1047,7 @@ export class ApiProductRepository implements ProductRepository {
   async findById(id: string): Promise<Product | null> {
     try {
       const response = await this.httpClient.get<ApiProductResponse>(
-        `/inventory/products/${id}`
+        `/inventory/products/${id}`,
       );
       return ProductMapper.toDomain(response.data);
     } catch (error) {
@@ -1031,14 +1064,13 @@ export class ApiProductRepository implements ProductRepository {
   async findAll(
     filters: ProductFilters,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<PaginatedProducts> {
-    const response = await this.httpClient.get<ApiPaginatedResponse<ApiProductResponse>>(
-      '/inventory/products',
-      {
-        params: { ...filters, page, limit },
-      }
-    );
+    const response = await this.httpClient.get<
+      ApiPaginatedResponse<ApiProductResponse>
+    >("/inventory/products", {
+      params: { ...filters, page, limit },
+    });
 
     return {
       items: response.data.data.map(ProductMapper.toDomain),
@@ -1053,7 +1085,7 @@ export class ApiProductRepository implements ProductRepository {
 
   async save(product: Product): Promise<void> {
     const apiDto = ProductMapper.toApi(product);
-    await this.httpClient.post('/inventory/products', apiDto);
+    await this.httpClient.post("/inventory/products", apiDto);
   }
 
   async update(product: Product): Promise<void> {
@@ -1101,10 +1133,10 @@ interface ApiPaginatedResponse<T> {
 ```typescript
 // modules/inventory/infrastructure/mappers/ProductMapper.ts
 
-import { Product, ProductProps } from '../../domain/entities/Product';
-import { ProductSku } from '../../domain/value-objects/ProductSku';
-import { ProductStatus } from '../../domain/value-objects/ProductStatus';
-import { Money } from '../../domain/value-objects/Money';
+import { Product, ProductProps } from "../../domain/entities/Product";
+import { ProductSku } from "../../domain/value-objects/ProductSku";
+import { ProductStatus } from "../../domain/value-objects/ProductStatus";
+import { Money } from "../../domain/value-objects/Money";
 
 export class ProductMapper {
   static toDomain(apiResponse: ApiProductResponse): Product {
@@ -1118,10 +1150,10 @@ export class ProductMapper {
       brand: apiResponse.brand,
       model: apiResponse.model,
       price: apiResponse.price
-        ? Money.create(apiResponse.price, apiResponse.currency ?? 'USD')
+        ? Money.create(apiResponse.price, apiResponse.currency ?? "USD")
         : undefined,
       status: ProductStatus.create(apiResponse.status),
-      costMethod: apiResponse.costMethod as 'AVERAGE' | 'FIFO' | 'LIFO',
+      costMethod: apiResponse.costMethod as "AVERAGE" | "FIFO" | "LIFO",
       createdAt: new Date(apiResponse.createdAt),
       updatedAt: new Date(apiResponse.updatedAt),
     });
@@ -1149,16 +1181,20 @@ export class ProductMapper {
 ```typescript
 // modules/inventory/infrastructure/hooks/useProducts.ts
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useContainer } from '@/config/di/providers';
-import { CreateProductDto } from '../../application/dto/CreateProductDto';
-import { ProductFilters } from '../../domain/ports/ProductRepository';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useContainer } from "@/config/di/providers";
+import { CreateProductDto } from "../../application/dto/CreateProductDto";
+import { ProductFilters } from "../../domain/ports/ProductRepository";
 
-export function useProducts(filters: ProductFilters, page: number, limit: number) {
+export function useProducts(
+  filters: ProductFilters,
+  page: number,
+  limit: number,
+) {
   const { getProductsUseCase } = useContainer();
 
   return useQuery({
-    queryKey: ['products', filters, page, limit],
+    queryKey: ["products", filters, page, limit],
     queryFn: () => getProductsUseCase.execute(filters, page, limit),
   });
 }
@@ -1167,7 +1203,7 @@ export function useProduct(id: string) {
   const { getProductByIdUseCase } = useContainer();
 
   return useQuery({
-    queryKey: ['product', id],
+    queryKey: ["product", id],
     queryFn: () => getProductByIdUseCase.execute(id),
     enabled: !!id,
   });
@@ -1180,7 +1216,7 @@ export function useCreateProduct() {
   return useMutation({
     mutationFn: (dto: CreateProductDto) => createProductUseCase.execute(dto),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 }
@@ -1193,8 +1229,8 @@ export function useUpdateProduct() {
     mutationFn: ({ id, dto }: { id: string; dto: UpdateProductDto }) =>
       updateProductUseCase.execute(id, dto),
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product', id] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product", id] });
     },
   });
 }
@@ -1209,10 +1245,13 @@ export function useUpdateProduct() {
 ```typescript
 // modules/inventory/presentation/view-models/useProductsViewModel.ts
 
-import { useState, useMemo } from 'react';
-import { useProducts, useCreateProduct } from '../../infrastructure/hooks/useProducts';
-import { ProductFilters } from '../../domain/ports/ProductRepository';
-import { CreateProductDto } from '../../application/dto/CreateProductDto';
+import { useState, useMemo } from "react";
+import {
+  useProducts,
+  useCreateProduct,
+} from "../../infrastructure/hooks/useProducts";
+import { ProductFilters } from "../../domain/ports/ProductRepository";
+import { CreateProductDto } from "../../application/dto/CreateProductDto";
 
 export function useProductsViewModel() {
   // State
@@ -1222,7 +1261,11 @@ export function useProductsViewModel() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Queries
-  const { data, isLoading, isFetching, error } = useProducts(filters, page, limit);
+  const { data, isLoading, isFetching, error } = useProducts(
+    filters,
+    page,
+    limit,
+  );
   const createMutation = useCreateProduct();
 
   // Derived state
@@ -1233,17 +1276,17 @@ export function useProductsViewModel() {
 
   // Actions
   const handleSearch = (search: string) => {
-    setFilters(prev => ({ ...prev, search }));
+    setFilters((prev) => ({ ...prev, search }));
     setPage(1);
   };
 
   const handleFilterByStatus = (status: string | undefined) => {
-    setFilters(prev => ({ ...prev, status }));
+    setFilters((prev) => ({ ...prev, status }));
     setPage(1);
   };
 
-  const handleSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
-    setFilters(prev => ({ ...prev, sortBy, sortOrder }));
+  const handleSort = (sortBy: string, sortOrder: "asc" | "desc") => {
+    setFilters((prev) => ({ ...prev, sortBy, sortOrder }));
   };
 
   const handlePageChange = (newPage: number) => {
@@ -1404,19 +1447,19 @@ export function ProductsPage() {
 ```typescript
 // config/di/container.ts
 
-import { AxiosHttpClient } from '@/shared/infrastructure/http/AxiosHttpClient';
+import { AxiosHttpClient } from "@/shared/infrastructure/http/AxiosHttpClient";
 
 // Inventory
-import { ApiProductRepository } from '@/modules/inventory/infrastructure/adapters/ApiProductRepository';
-import { ApiWarehouseRepository } from '@/modules/inventory/infrastructure/adapters/ApiWarehouseRepository';
-import { CreateProductUseCase } from '@/modules/inventory/application/use-cases/products/CreateProduct';
-import { GetProductsUseCase } from '@/modules/inventory/application/use-cases/products/GetProducts';
-import { GetProductByIdUseCase } from '@/modules/inventory/application/use-cases/products/GetProductById';
+import { ApiProductRepository } from "@/modules/inventory/infrastructure/adapters/ApiProductRepository";
+import { ApiWarehouseRepository } from "@/modules/inventory/infrastructure/adapters/ApiWarehouseRepository";
+import { CreateProductUseCase } from "@/modules/inventory/application/use-cases/products/CreateProduct";
+import { GetProductsUseCase } from "@/modules/inventory/application/use-cases/products/GetProducts";
+import { GetProductByIdUseCase } from "@/modules/inventory/application/use-cases/products/GetProductById";
 
 // Auth
-import { ApiAuthRepository } from '@/modules/authentication/infrastructure/adapters/ApiAuthRepository';
-import { CookieTokenStorage } from '@/modules/authentication/infrastructure/adapters/CookieTokenStorage';
-import { LoginUseCase } from '@/modules/authentication/application/use-cases/Login';
+import { ApiAuthRepository } from "@/modules/authentication/infrastructure/adapters/ApiAuthRepository";
+import { CookieTokenStorage } from "@/modules/authentication/infrastructure/adapters/CookieTokenStorage";
+import { LoginUseCase } from "@/modules/authentication/application/use-cases/Login";
 
 export function createContainer() {
   // Shared infrastructure
@@ -1500,12 +1543,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 ## 4. Resumen de Capas por Responsabilidad
 
-| Capa | Responsabilidad | Dependencias | Ejemplo |
-|------|-----------------|--------------|---------|
-| **Domain** | Lógica de negocio pura | NINGUNA | `Product`, `ProductSku`, `ProductRepository` (interface) |
-| **Application** | Orquestación, casos de uso | Domain | `CreateProductUseCase`, DTOs |
-| **Infrastructure** | Implementación técnica | Application, Domain | `ApiProductRepository`, `ProductMapper` |
-| **Presentation** | UI y estado visual | Application | `ProductsPage`, `useProductsViewModel` |
+| Capa               | Responsabilidad            | Dependencias        | Ejemplo                                                  |
+| ------------------ | -------------------------- | ------------------- | -------------------------------------------------------- |
+| **Domain**         | Lógica de negocio pura     | NINGUNA             | `Product`, `ProductSku`, `ProductRepository` (interface) |
+| **Application**    | Orquestación, casos de uso | Domain              | `CreateProductUseCase`, DTOs                             |
+| **Infrastructure** | Implementación técnica     | Application, Domain | `ApiProductRepository`, `ProductMapper`                  |
+| **Presentation**   | UI y estado visual         | Application         | `ProductsPage`, `useProductsViewModel`                   |
 
 ### Flujo de una Petición
 
@@ -1540,28 +1583,30 @@ export function Providers({ children }: { children: React.ReactNode }) {
 ```typescript
 // modules/inventory/domain/__tests__/Product.test.ts
 
-describe('Product', () => {
-  it('should create a product with valid data', () => {
+describe("Product", () => {
+  it("should create a product with valid data", () => {
     const product = Product.create({
-      sku: ProductSku.create('SKU-001'),
-      name: 'Test Product',
-      unit: 'UNIT',
+      sku: ProductSku.create("SKU-001"),
+      name: "Test Product",
+      unit: "UNIT",
       status: ProductStatus.active(),
-      costMethod: 'AVERAGE',
+      costMethod: "AVERAGE",
     });
 
     expect(product.id).toBeDefined();
-    expect(product.sku.getValue()).toBe('SKU-001');
+    expect(product.sku.getValue()).toBe("SKU-001");
     expect(product.status.isActive()).toBe(true);
   });
 
-  it('should not activate a discontinued product', () => {
+  it("should not activate a discontinued product", () => {
     const product = Product.create({
       // ...props
       status: ProductStatus.discontinued(),
     });
 
-    expect(() => product.activate()).toThrow('Cannot activate a discontinued product');
+    expect(() => product.activate()).toThrow(
+      "Cannot activate a discontinued product",
+    );
   });
 });
 ```
@@ -1571,8 +1616,8 @@ describe('Product', () => {
 ```typescript
 // modules/inventory/application/__tests__/CreateProduct.test.ts
 
-describe('CreateProductUseCase', () => {
-  it('should create product when SKU does not exist', async () => {
+describe("CreateProductUseCase", () => {
+  it("should create product when SKU does not exist", async () => {
     // Arrange
     const mockRepository: ProductRepository = {
       exists: jest.fn().mockResolvedValue(false),
@@ -1583,18 +1628,18 @@ describe('CreateProductUseCase', () => {
 
     // Act
     const result = await useCase.execute({
-      sku: 'NEW-SKU',
-      name: 'New Product',
-      unit: 'UNIT',
+      sku: "NEW-SKU",
+      name: "New Product",
+      unit: "UNIT",
     });
 
     // Assert
     expect(mockRepository.exists).toHaveBeenCalled();
     expect(mockRepository.save).toHaveBeenCalled();
-    expect(result.sku).toBe('NEW-SKU');
+    expect(result.sku).toBe("NEW-SKU");
   });
 
-  it('should throw error when SKU already exists', async () => {
+  it("should throw error when SKU already exists", async () => {
     const mockRepository: ProductRepository = {
       exists: jest.fn().mockResolvedValue(true),
       // ...
@@ -1602,8 +1647,8 @@ describe('CreateProductUseCase', () => {
     const useCase = new CreateProductUseCase(mockRepository);
 
     await expect(
-      useCase.execute({ sku: 'EXISTING', name: 'Test', unit: 'UNIT' })
-    ).rejects.toThrow('already exists');
+      useCase.execute({ sku: "EXISTING", name: "Test", unit: "UNIT" }),
+    ).rejects.toThrow("already exists");
   });
 });
 ```
@@ -1710,59 +1755,67 @@ describe('ProductsPage', () => {
 ## 8. Referencia de Endpoints por Módulo
 
 ### Inventory Module
-| Recurso | Endpoints |
-|---------|-----------|
-| Products | `GET/POST /inventory/products`, `GET/PUT /inventory/products/:id` |
-| Warehouses | `GET/POST /inventory/warehouses`, `GET /inventory/warehouses/:id` |
-| Movements | `GET/POST /inventory/movements`, `POST /inventory/movements/:id/post` |
-| Transfers | `GET/POST /inventory/transfers`, `POST /inventory/transfers/:id/{confirm,receive,reject,cancel}` |
-| Stock | `GET /inventory/stock` |
+
+| Recurso    | Endpoints                                                                                        |
+| ---------- | ------------------------------------------------------------------------------------------------ |
+| Products   | `GET/POST /inventory/products`, `GET/PUT /inventory/products/:id`                                |
+| Warehouses | `GET/POST /inventory/warehouses`, `GET /inventory/warehouses/:id`                                |
+| Movements  | `GET/POST /inventory/movements`, `POST /inventory/movements/:id/post`                            |
+| Transfers  | `GET/POST /inventory/transfers`, `POST /inventory/transfers/:id/{confirm,receive,reject,cancel}` |
+| Stock      | `GET /inventory/stock`                                                                           |
 
 ### Sales Module
-| Recurso | Endpoints |
-|---------|-----------|
-| Sales | `GET/POST /sales`, `GET/PATCH /sales/:id`, `POST /sales/:id/{confirm,cancel}` |
-| Lines | `POST/DELETE /sales/:id/lines` |
+
+| Recurso | Endpoints                                                                     |
+| ------- | ----------------------------------------------------------------------------- |
+| Sales   | `GET/POST /sales`, `GET/PATCH /sales/:id`, `POST /sales/:id/{confirm,cancel}` |
+| Lines   | `POST/DELETE /sales/:id/lines`                                                |
 
 ### Returns Module
-| Recurso | Endpoints |
-|---------|-----------|
+
+| Recurso | Endpoints                                                                         |
+| ------- | --------------------------------------------------------------------------------- |
 | Returns | `GET/POST /returns`, `GET/PUT /returns/:id`, `POST /returns/:id/{confirm,cancel}` |
-| Lines | `POST/DELETE /returns/:id/lines` |
+| Lines   | `POST/DELETE /returns/:id/lines`                                                  |
 
 ### Reports Module
-| Recurso | Endpoints |
-|---------|-----------|
-| View | `GET /reports/{inventory,sales,returns}/*/view` |
-| Export | `POST /reports/{inventory,sales,returns}/*/export` |
+
+| Recurso | Endpoints                                          |
+| ------- | -------------------------------------------------- |
+| View    | `GET /reports/{inventory,sales,returns}/*/view`    |
+| Export  | `POST /reports/{inventory,sales,returns}/*/export` |
 
 ### Authentication Module
-| Recurso | Endpoints |
-|---------|-----------|
-| Auth | `POST /auth/{login,logout,refresh}` |
+
+| Recurso  | Endpoints                                         |
+| -------- | ------------------------------------------------- |
+| Auth     | `POST /auth/{login,logout,refresh}`               |
 | Password | `POST /password-reset/{request,verify-otp,reset}` |
 
 ### Users Module
-| Recurso | Endpoints |
-|---------|-----------|
-| Users | `GET/POST /users`, `GET/PUT /users/:id`, `PATCH /users/:id/status` |
-| Roles | `POST/DELETE /users/:id/roles` |
+
+| Recurso | Endpoints                                                          |
+| ------- | ------------------------------------------------------------------ |
+| Users   | `GET/POST /users`, `GET/PUT /users/:id`, `PATCH /users/:id/status` |
+| Roles   | `POST/DELETE /users/:id/roles`                                     |
 
 ### Roles Module
-| Recurso | Endpoints |
-|---------|-----------|
-| Roles | `GET/POST /roles`, `GET/PATCH/DELETE /roles/:id` |
-| Permissions | `POST /roles/:id/permissions` |
+
+| Recurso     | Endpoints                                        |
+| ----------- | ------------------------------------------------ |
+| Roles       | `GET/POST /roles`, `GET/PATCH/DELETE /roles/:id` |
+| Permissions | `POST /roles/:id/permissions`                    |
 
 ### Audit Module
-| Recurso | Endpoints |
-|---------|-----------|
-| Logs | `GET /audit/logs`, `GET /audit/logs/:id` |
-| Activity | `GET /audit/users/:userId/activity` |
-| History | `GET /audit/entities/:type/:id/history` |
+
+| Recurso  | Endpoints                                |
+| -------- | ---------------------------------------- |
+| Logs     | `GET /audit/logs`, `GET /audit/logs/:id` |
+| Activity | `GET /audit/users/:userId/activity`      |
+| History  | `GET /audit/entities/:type/:id/history`  |
 
 ---
 
-*Documento generado para el proyecto de gestión de inventario.*
-*Arquitectura: Screaming + Clean + Hexagonal*
-*Última actualización: Enero 2026*
+_Documento generado para el proyecto de gestión de inventario._
+_Arquitectura: Screaming + Clean + Hexagonal_
+_Última actualización: Enero 2026_

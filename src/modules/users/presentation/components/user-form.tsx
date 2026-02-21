@@ -90,7 +90,11 @@ export function UserForm({ open, onOpenChange }: UserFormProps) {
 
             <FormField error={errors.email?.message}>
               <Label>{t("fields.email")} *</Label>
-              <Input type="email" placeholder="john@example.com" {...register("email")} />
+              <Input
+                type="email"
+                placeholder="john@example.com"
+                {...register("email")}
+              />
             </FormField>
 
             <FormField error={errors.username?.message}>
@@ -100,7 +104,11 @@ export function UserForm({ open, onOpenChange }: UserFormProps) {
 
             <FormField error={errors.password?.message}>
               <Label>{t("fields.password")} *</Label>
-              <Input type="password" placeholder="********" {...register("password")} />
+              <Input
+                type="password"
+                placeholder="********"
+                {...register("password")}
+              />
             </FormField>
 
             <div className="flex justify-end gap-3 pt-4 border-t">

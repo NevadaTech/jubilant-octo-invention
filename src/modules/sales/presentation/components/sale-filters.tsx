@@ -5,7 +5,13 @@ import { X } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import type { SaleFilters } from "../../application/dto/sale.dto";
 import type { SaleStatus } from "../../domain/entities/sale.entity";
 
@@ -14,7 +20,10 @@ interface SaleFiltersProps {
   onFiltersChange: (filters: SaleFilters) => void;
 }
 
-export function SaleFiltersComponent({ filters, onFiltersChange }: SaleFiltersProps) {
+export function SaleFiltersComponent({
+  filters,
+  onFiltersChange,
+}: SaleFiltersProps) {
   const t = useTranslations("sales");
 
   const handleStatusChange = (status: string) => {
@@ -48,13 +57,17 @@ export function SaleFiltersComponent({ filters, onFiltersChange }: SaleFiltersPr
     });
   };
 
-  const hasActiveFilters = filters.status || filters.startDate || filters.endDate;
+  const hasActiveFilters =
+    filters.status || filters.startDate || filters.endDate;
 
   return (
     <div className="flex flex-wrap items-end gap-4">
       <div className="min-w-[150px]">
         <Label className="text-sm">{t("filters.status")}</Label>
-        <Select value={filters.status || "all"} onValueChange={handleStatusChange}>
+        <Select
+          value={filters.status || "all"}
+          onValueChange={handleStatusChange}
+        >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>

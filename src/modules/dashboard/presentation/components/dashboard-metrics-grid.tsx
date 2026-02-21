@@ -46,11 +46,7 @@ export function DashboardMetricsGrid() {
             <p className="text-sm text-muted-foreground">
               {t("error.description")}
             </p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-            >
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
               <RefreshCw className="mr-2 h-4 w-4" />
               {t("error.retry")}
             </Button>
@@ -100,7 +96,11 @@ export function DashboardMetricsGrid() {
 
       <StatCard
         title={t("inventoryValue.title")}
-        value={formatCurrency(metrics.inventory.totalValue, metrics.inventory.currency, locale)}
+        value={formatCurrency(
+          metrics.inventory.totalValue,
+          metrics.inventory.currency,
+          locale,
+        )}
         description={t("inventoryValue.description")}
         icon={DollarSign}
         color="success"

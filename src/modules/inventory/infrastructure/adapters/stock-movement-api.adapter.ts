@@ -20,10 +20,15 @@ interface ApiResponse<T> {
 export class StockMovementApiAdapter implements StockMovementRepositoryPort {
   private readonly basePath = "/inventory/movements";
 
-  async findAll(filters?: StockMovementFilters): Promise<PaginatedResult<StockMovement>> {
-    const response = await apiClient.get<StockMovementListResponseDto>(this.basePath, {
-      params: this.buildQueryParams(filters),
-    });
+  async findAll(
+    filters?: StockMovementFilters,
+  ): Promise<PaginatedResult<StockMovement>> {
+    const response = await apiClient.get<StockMovementListResponseDto>(
+      this.basePath,
+      {
+        params: this.buildQueryParams(filters),
+      },
+    );
 
     return {
       data: response.data.data.map(StockMovementMapper.toDomain),
@@ -33,9 +38,9 @@ export class StockMovementApiAdapter implements StockMovementRepositoryPort {
 
   async findById(id: string): Promise<StockMovement | null> {
     try {
-      const response = await apiClient.get<ApiResponse<StockMovementResponseDto>>(
-        `${this.basePath}/${id}`
-      );
+      const response = await apiClient.get<
+        ApiResponse<StockMovementResponseDto>
+      >(`${this.basePath}/${id}`);
       return StockMovementMapper.toDomain(response.data.data);
     } catch (error) {
       if (this.isNotFoundError(error)) {
@@ -46,18 +51,19 @@ export class StockMovementApiAdapter implements StockMovementRepositoryPort {
   }
 
   async create(data: CreateStockMovementDto): Promise<StockMovement> {
-    const response = await apiClient.post<ApiResponse<StockMovementResponseDto>>(
-      this.basePath,
-      data
-    );
+    const response = await apiClient.post<
+      ApiResponse<StockMovementResponseDto>
+    >(this.basePath, data);
     return StockMovementMapper.toDomain(response.data.data);
   }
 
-  async update(id: string, data: UpdateStockMovementDto): Promise<StockMovement> {
-    const response = await apiClient.patch<ApiResponse<StockMovementResponseDto>>(
-      `${this.basePath}/${id}`,
-      data
-    );
+  async update(
+    id: string,
+    data: UpdateStockMovementDto,
+  ): Promise<StockMovement> {
+    const response = await apiClient.patch<
+      ApiResponse<StockMovementResponseDto>
+    >(`${this.basePath}/${id}`, data);
     return StockMovementMapper.toDomain(response.data.data);
   }
 
@@ -73,7 +79,9 @@ export class StockMovementApiAdapter implements StockMovementRepositoryPort {
     await apiClient.post(`${this.basePath}/${id}/void`);
   }
 
-  private buildQueryParams(filters?: StockMovementFilters): Record<string, unknown> {
+  private buildQueryParams(
+    filters?: StockMovementFilters,
+  ): Record<string, unknown> {
     if (!filters) return {};
 
     const params: Record<string, unknown> = {};
@@ -114,7 +122,8 @@ export class StockMovementApiAdapter implements StockMovementRepositoryPort {
       typeof error === "object" &&
       error !== null &&
       "response" in error &&
-      typeof (error as { response?: { status?: number } }).response === "object" &&
+      typeof (error as { response?: { status?: number } }).response ===
+        "object" &&
       (error as { response: { status?: number } }).response?.status === 404
     );
   }

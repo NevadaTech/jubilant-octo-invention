@@ -242,6 +242,7 @@ Endpoints para gestionar plantillas de reportes:
 - **PUT** `/report-templates/:id` - Actualizar plantilla existente
 
 **Headers requeridos**:
+
 - `X-Organization-ID`: ID de la organización
 - `X-User-ID`: ID del usuario (para POST y PUT)
 
@@ -411,6 +412,7 @@ Una vez configurado el token, todos los endpoints protegidos funcionarán autom�
 ```
 
 **Nota**: Los valores `organizationId` y `organizationSlug` coinciden con los valores definidos en los seeders:
+
 - `organizationId`: `dev-org` (DEFAULT_ORG_ID en el código)
 - `organizationSlug`: `demo-org` (slug definido en seed.ts)
 

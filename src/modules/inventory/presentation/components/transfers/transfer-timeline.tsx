@@ -22,7 +22,11 @@ interface TransferTimelineProps {
   completedAt: Date | null;
 }
 
-export function TransferTimeline({ status, createdAt, completedAt }: TransferTimelineProps) {
+export function TransferTimeline({
+  status,
+  createdAt,
+  completedAt,
+}: TransferTimelineProps) {
   const t = useTranslations("inventory.transfers");
 
   const getSteps = (): TimelineStep[] => {
@@ -140,7 +144,7 @@ export function TransferTimeline({ status, createdAt, completedAt }: TransferTim
                     ? "bg-primary"
                     : step.isCanceled || step.isRejected
                       ? "bg-red-500"
-                      : "bg-muted"
+                      : "bg-muted",
                 )}
               />
             )}
@@ -155,7 +159,7 @@ export function TransferTimeline({ status, createdAt, completedAt }: TransferTim
                     ? "border-primary bg-background text-primary"
                     : step.isCanceled || step.isRejected
                       ? "border-red-500 bg-red-500 text-white"
-                      : "border-muted bg-background text-muted-foreground"
+                      : "border-muted bg-background text-muted-foreground",
               )}
             >
               {getIcon(step)}
@@ -173,7 +177,7 @@ export function TransferTimeline({ status, createdAt, completedAt }: TransferTim
                         ? "text-red-500"
                         : step.isCompleted
                           ? "text-foreground"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground",
                   )}
                 >
                   {step.label}
@@ -184,7 +188,9 @@ export function TransferTimeline({ status, createdAt, completedAt }: TransferTim
                   </span>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground">{step.description}</p>
+              <p className="text-sm text-muted-foreground">
+                {step.description}
+              </p>
             </div>
           </div>
         ))}

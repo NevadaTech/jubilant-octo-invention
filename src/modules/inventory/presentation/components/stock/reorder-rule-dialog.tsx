@@ -51,7 +51,7 @@ export function ReorderRuleDialog({
   const updateMutation = useUpdateReorderRule();
   const deleteMutation = useDeleteReorderRule();
   const [existingRule, setExistingRule] = useState<ReorderRuleApiDto | null>(
-    null
+    null,
   );
 
   const {
@@ -68,7 +68,7 @@ export function ReorderRuleDialog({
   useEffect(() => {
     if (rules && open) {
       const found = rules.find(
-        (r) => r.productId === productId && r.warehouseId === warehouseId
+        (r) => r.productId === productId && r.warehouseId === warehouseId,
       );
       setExistingRule(found ?? null);
       if (found) {

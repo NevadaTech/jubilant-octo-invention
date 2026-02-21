@@ -17,12 +17,14 @@ export interface MovementLine {
   productSku: string;
   quantity: number;
   unitCost: number | null;
+  currency: string | null;
 }
 
 export interface StockMovementProps {
   id: string;
   warehouseId: string;
   warehouseName: string;
+  warehouseCode: string | null;
   type: MovementType;
   status: MovementStatus;
   reference: string | null;
@@ -30,8 +32,11 @@ export interface StockMovementProps {
   note: string | null;
   lines: MovementLine[];
   createdBy: string;
+  createdByName: string | null;
   createdAt: Date;
   postedAt: Date | null;
+  postedBy: string | null;
+  postedByName: string | null;
 }
 
 export class StockMovement extends Entity<string> {
@@ -46,6 +51,7 @@ export class StockMovement extends Entity<string> {
     return new StockMovement(props.id, {
       warehouseId: props.warehouseId,
       warehouseName: props.warehouseName,
+      warehouseCode: props.warehouseCode,
       type: props.type,
       status: props.status,
       reference: props.reference,
@@ -53,8 +59,11 @@ export class StockMovement extends Entity<string> {
       note: props.note,
       lines: props.lines,
       createdBy: props.createdBy,
+      createdByName: props.createdByName,
       createdAt: props.createdAt,
       postedAt: props.postedAt,
+      postedBy: props.postedBy,
+      postedByName: props.postedByName,
     });
   }
 
@@ -64,6 +73,10 @@ export class StockMovement extends Entity<string> {
 
   get warehouseName(): string {
     return this.props.warehouseName;
+  }
+
+  get warehouseCode(): string | null {
+    return this.props.warehouseCode;
   }
 
   get type(): MovementType {
@@ -102,6 +115,10 @@ export class StockMovement extends Entity<string> {
     return this.props.createdBy;
   }
 
+  get createdByName(): string | null {
+    return this.props.createdByName;
+  }
+
   get createdAt(): Date {
     return this.props.createdAt;
   }
@@ -110,13 +127,29 @@ export class StockMovement extends Entity<string> {
     return this.props.postedAt;
   }
 
+  get postedBy(): string | null {
+    return this.props.postedBy;
+  }
+
+  get postedByName(): string | null {
+    return this.props.postedByName;
+  }
+
   // Type helpers
   get isEntry(): boolean {
-    return this.props.type === "IN" || this.props.type === "ADJUST_IN" || this.props.type === "TRANSFER_IN";
+    return (
+      this.props.type === "IN" ||
+      this.props.type === "ADJUST_IN" ||
+      this.props.type === "TRANSFER_IN"
+    );
   }
 
   get isExit(): boolean {
-    return this.props.type === "OUT" || this.props.type === "ADJUST_OUT" || this.props.type === "TRANSFER_OUT";
+    return (
+      this.props.type === "OUT" ||
+      this.props.type === "ADJUST_OUT" ||
+      this.props.type === "TRANSFER_OUT"
+    );
   }
 
   get isAdjustment(): boolean {
@@ -124,7 +157,9 @@ export class StockMovement extends Entity<string> {
   }
 
   get isTransfer(): boolean {
-    return this.props.type === "TRANSFER_IN" || this.props.type === "TRANSFER_OUT";
+    return (
+      this.props.type === "TRANSFER_IN" || this.props.type === "TRANSFER_OUT"
+    );
   }
 
   // Status helpers

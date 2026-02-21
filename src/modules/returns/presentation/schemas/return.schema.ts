@@ -1,5 +1,8 @@
 import { z } from "zod";
-import type { CreateReturnDto, CreateReturnLineDto } from "../../application/dto/return.dto";
+import type {
+  CreateReturnDto,
+  CreateReturnLineDto,
+} from "../../application/dto/return.dto";
 
 export const returnLineSchema = z.object({
   productId: z.string().uuid("Please select a product"),

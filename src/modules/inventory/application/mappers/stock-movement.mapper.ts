@@ -1,8 +1,16 @@
-import { StockMovement, type MovementLine } from "../../domain/entities/stock-movement.entity";
-import type { StockMovementResponseDto, MovementLineResponseDto } from "../dto/stock-movement.dto";
+import {
+  StockMovement,
+  type MovementLine,
+} from "../../domain/entities/stock-movement.entity";
+import type {
+  StockMovementResponseDto,
+  MovementLineResponseDto,
+} from "../dto/stock-movement.dto";
 
 export class StockMovementMapper {
-  static lineToDomain(dto: MovementLineResponseDto & { name?: string; sku?: string }): MovementLine {
+  static lineToDomain(
+    dto: MovementLineResponseDto & { name?: string; sku?: string },
+  ): MovementLine {
     return {
       id: dto.id,
       productId: dto.productId,
@@ -10,6 +18,7 @@ export class StockMovementMapper {
       productSku: dto.productSku ?? (dto as { sku?: string }).sku ?? "",
       quantity: dto.quantity,
       unitCost: dto.unitCost,
+      currency: dto.currency ?? null,
     };
   }
 
@@ -18,6 +27,7 @@ export class StockMovementMapper {
       id: dto.id,
       warehouseId: dto.warehouseId,
       warehouseName: dto.warehouseName ?? "",
+      warehouseCode: dto.warehouseCode ?? null,
       type: dto.type,
       status: dto.status,
       reference: typeof dto.reference === "string" ? dto.reference : null,
@@ -25,8 +35,12 @@ export class StockMovementMapper {
       note: typeof dto.note === "string" ? dto.note : null,
       lines: (dto.lines ?? []).map(StockMovementMapper.lineToDomain),
       createdBy: dto.createdBy,
+      createdByName: dto.createdByName ?? null,
       createdAt: new Date(dto.createdAt),
-      postedAt: typeof dto.postedAt === "string" ? new Date(dto.postedAt) : null,
+      postedAt:
+        typeof dto.postedAt === "string" ? new Date(dto.postedAt) : null,
+      postedBy: dto.postedBy ?? null,
+      postedByName: dto.postedByName ?? null,
     });
   }
 

@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Search, MoreHorizontal, Pencil, Trash2, FolderTree } from "lucide-react";
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  FolderTree,
+} from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -25,7 +32,11 @@ import {
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
 import { useCategories, useDeleteCategory } from "../../hooks/use-categories";
-import { useCategoryFilters, useSetCategoryFilters, useCategoryFormState } from "../../hooks/use-inventory-store";
+import {
+  useCategoryFilters,
+  useSetCategoryFilters,
+  useCategoryFormState,
+} from "../../hooks/use-inventory-store";
 import { CategoryForm } from "./category-form";
 
 export function CategoryList() {
@@ -138,12 +149,16 @@ export function CategoryList() {
                         <td className="py-4 pr-4">
                           {category.parentName || "-"}
                         </td>
+                        <td className="py-4 pr-4">{category.productCount}</td>
                         <td className="py-4 pr-4">
-                          {category.productCount}
-                        </td>
-                        <td className="py-4 pr-4">
-                          <Badge variant={category.isActive ? "success" : "secondary"}>
-                            {category.isActive ? t("status.active") : t("status.inactive")}
+                          <Badge
+                            variant={
+                              category.isActive ? "success" : "secondary"
+                            }
+                          >
+                            {category.isActive
+                              ? t("status.active")
+                              : t("status.inactive")}
                           </Badge>
                         </td>
                         <td className="py-4 text-right">
@@ -154,7 +169,9 @@ export function CategoryList() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => open(category.id)}>
+                              <DropdownMenuItem
+                                onClick={() => open(category.id)}
+                              >
                                 <Pencil className="mr-2 h-4 w-4" />
                                 {t("actions.edit")}
                               </DropdownMenuItem>
@@ -179,10 +196,11 @@ export function CategoryList() {
                 <div className="mt-4 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
                     {t("pagination.showing", {
-                      from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                      from:
+                        (data.pagination.page - 1) * data.pagination.limit + 1,
                       to: Math.min(
                         data.pagination.page * data.pagination.limit,
-                        data.pagination.total
+                        data.pagination.total,
                       ),
                       total: data.pagination.total,
                     })}
@@ -192,15 +210,21 @@ export function CategoryList() {
                       variant="outline"
                       size="sm"
                       disabled={data.pagination.page <= 1}
-                      onClick={() => setFilters({ page: data.pagination.page - 1 })}
+                      onClick={() =>
+                        setFilters({ page: data.pagination.page - 1 })
+                      }
                     >
                       Previous
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={data.pagination.page >= data.pagination.totalPages}
-                      onClick={() => setFilters({ page: data.pagination.page + 1 })}
+                      disabled={
+                        data.pagination.page >= data.pagination.totalPages
+                      }
+                      onClick={() =>
+                        setFilters({ page: data.pagination.page + 1 })
+                      }
                     >
                       Next
                     </Button>
@@ -228,7 +252,9 @@ export function CategoryList() {
               onClick={handleDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteCategory.isPending ? tCommon("loading") : tCommon("delete")}
+              {deleteCategory.isPending
+                ? tCommon("loading")
+                : tCommon("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

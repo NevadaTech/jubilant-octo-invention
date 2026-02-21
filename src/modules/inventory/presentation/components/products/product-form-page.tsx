@@ -37,7 +37,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
   const isEditing = Boolean(productId);
 
   const { data: existingProduct, isLoading: isLoadingProduct } = useProduct(
-    productId || ""
+    productId || "",
   );
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
@@ -122,7 +122,9 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
             {isEditing ? t("form.editTitle") : t("form.createTitle")}
           </h1>
           <p className="text-neutral-500 dark:text-neutral-400">
-            {isEditing ? t("form.editDescription") : t("form.createDescription")}
+            {isEditing
+              ? t("form.editDescription")
+              : t("form.createDescription")}
           </p>
         </div>
       </div>
@@ -136,8 +138,11 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {mutationError && (
               <div className="rounded-md bg-error-100 p-3 text-sm text-error-700 dark:bg-error-900/20 dark:text-error-400">
-                {(mutationError as Error & { response?: { data?: { message?: string } } })
-                  ?.response?.data?.message || t("form.error")}
+                {(
+                  mutationError as Error & {
+                    response?: { data?: { message?: string } };
+                  }
+                )?.response?.data?.message || t("form.error")}
               </div>
             )}
 
@@ -182,7 +187,9 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField error={errors.unitOfMeasure?.message}>
-                <Label htmlFor="unitOfMeasure">{t("fields.unitOfMeasure")} *</Label>
+                <Label htmlFor="unitOfMeasure">
+                  {t("fields.unitOfMeasure")} *
+                </Label>
                 <Input
                   id="unitOfMeasure"
                   placeholder={t("fields.unitOfMeasurePlaceholder")}

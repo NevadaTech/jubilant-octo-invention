@@ -34,9 +34,9 @@ test/
 Cada test se estructura en tres secciones claras:
 
 ```typescript
-it('Given: condition When: action Then: expected result', () => {
+it("Given: condition When: action Then: expected result", () => {
   // Arrange: Preparar datos y mocks
-  const mockData = { status: 'healthy' };
+  const mockData = { status: "healthy" };
   mockService.getHealth.mockResolvedValue(mockData);
 
   // Act: Ejecutar la función a testear
@@ -53,11 +53,11 @@ it('Given: condition When: action Then: expected result', () => {
 Los nombres de los tests siguen el patrón BDD (Behavior Driven Development):
 
 ```typescript
-it('Given: healthy database When: checking health Then: should return healthy status', () => {
+it("Given: healthy database When: checking health Then: should return healthy status", () => {
   // Test implementation
 });
 
-it('Given: database failure When: checking health Then: should return unhealthy status', () => {
+it("Given: database failure When: checking health Then: should return unhealthy status", () => {
   // Test implementation
 });
 ```
@@ -87,13 +87,13 @@ it('Given: database failure When: checking health Then: should return unhealthy 
 
 ```typescript
 // test/shared/domain/healthCheck.service.spec.ts
-describe('Health Check Domain Service', () => {
-  describe('createHealthCheckResult', () => {
-    it('Given: healthy status, version 1.0.0, test environment When: creating result Then: should return correct health check result', () => {
+describe("Health Check Domain Service", () => {
+  describe("createHealthCheckResult", () => {
+    it("Given: healthy status, version 1.0.0, test environment When: creating result Then: should return correct health check result", () => {
       // Arrange
-      const status: HealthStatus = 'healthy';
-      const version = '1.0.0';
-      const environment = 'test';
+      const status: HealthStatus = "healthy";
+      const version = "1.0.0";
+      const environment = "test";
 
       // Act
       const result = createHealthCheckResult(status, version, environment);
@@ -111,9 +111,9 @@ describe('Health Check Domain Service', () => {
 
 ```typescript
 // test/application/healthCheck/healthCheck.application.service.spec.ts
-describe('HealthCheckApplicationService', () => {
-  describe('getBasicHealth', () => {
-    it('Given: healthy port response When: getting basic health Then: should return basic health from port', async () => {
+describe("HealthCheckApplicationService", () => {
+  describe("getBasicHealth", () => {
+    it("Given: healthy port response When: getting basic health Then: should return basic health from port", async () => {
       // Arrange
       const mockResult: HealthCheckResult = {
         /* ... */
@@ -135,18 +135,18 @@ describe('HealthCheckApplicationService', () => {
 
 ```typescript
 // test/infrastructure/healthCheck/healthCheck.adapter.spec.ts
-describe('HealthCheckAdapter', () => {
-  describe('checkDatabase', () => {
-    it('Given: healthy database When: checking database health Then: should return true', async () => {
+describe("HealthCheckAdapter", () => {
+  describe("checkDatabase", () => {
+    it("Given: healthy database When: checking database health Then: should return true", async () => {
       // Arrange
-      mockPrismaService.$queryRaw.mockResolvedValue([{ '1': 1 }]);
+      mockPrismaService.$queryRaw.mockResolvedValue([{ "1": 1 }]);
 
       // Act
       const result = await adapter.checkDatabase();
 
       // Assert
       expect(result).toBe(true);
-      expect(mockPrismaService.$queryRaw).toHaveBeenCalledWith('SELECT 1');
+      expect(mockPrismaService.$queryRaw).toHaveBeenCalledWith("SELECT 1");
     });
   });
 });
@@ -156,9 +156,9 @@ describe('HealthCheckAdapter', () => {
 
 ```typescript
 // test/interfaces/http/healthCheck/healthCheck.controller.spec.ts
-describe('HealthCheckController', () => {
-  describe('getBasicHealth', () => {
-    it('Given: healthy service response When: getting basic health Then: should return basic health status', async () => {
+describe("HealthCheckController", () => {
+  describe("getBasicHealth", () => {
+    it("Given: healthy service response When: getting basic health Then: should return basic health status", async () => {
       // Arrange
       const mockResult: HealthCheckResult = {
         /* ... */
@@ -280,24 +280,29 @@ open coverage/lcov-report/index.html
 ### **Test Completo de Dominio**
 
 ```typescript
-describe('Health Check Domain Service', () => {
-  describe('determineOverallStatus', () => {
-    it('Given: healthy basic status, healthy database and system, all healthy services When: determining overall status Then: should return healthy', () => {
+describe("Health Check Domain Service", () => {
+  describe("determineOverallStatus", () => {
+    it("Given: healthy basic status, healthy database and system, all healthy services When: determining overall status Then: should return healthy", () => {
       // Arrange
-      const basicStatus: HealthStatus = 'healthy';
+      const basicStatus: HealthStatus = "healthy";
       const database = true;
       const system = true;
       const services: Record<string, HealthStatus> = {
-        database: 'healthy',
-        system: 'healthy',
-        api: 'healthy',
+        database: "healthy",
+        system: "healthy",
+        api: "healthy",
       };
 
       // Act
-      const result = determineOverallStatus(basicStatus, database, system, services);
+      const result = determineOverallStatus(
+        basicStatus,
+        database,
+        system,
+        services,
+      );
 
       // Assert
-      expect(result).toBe('healthy');
+      expect(result).toBe("healthy");
     });
   });
 });
@@ -306,9 +311,9 @@ describe('Health Check Domain Service', () => {
 ### **Test Completo de Aplicación**
 
 ```typescript
-describe('HealthCheckApplicationService', () => {
-  describe('getFullHealthCheck', () => {
-    it('Given: healthy database and system When: getting full health check Then: should return full health with domain orchestration', async () => {
+describe("HealthCheckApplicationService", () => {
+  describe("getFullHealthCheck", () => {
+    it("Given: healthy database and system When: getting full health check Then: should return full health with domain orchestration", async () => {
       // Arrange
       mockHealthCheckPort.checkDatabase.mockResolvedValue(true);
       mockHealthCheckPort.checkSystem.mockResolvedValue(true);
@@ -317,7 +322,7 @@ describe('HealthCheckApplicationService', () => {
       const result = await service.getFullHealthCheck();
 
       // Assert
-      expect(result.status).toBe('healthy');
+      expect(result.status).toBe("healthy");
       expect(mockHealthCheckPort.checkDatabase).toHaveBeenCalled();
       expect(mockHealthCheckPort.checkSystem).toHaveBeenCalled();
     });

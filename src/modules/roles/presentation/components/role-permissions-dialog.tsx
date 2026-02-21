@@ -13,7 +13,11 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/ui/components/dialog";
-import { usePermissions, useRolePermissions, useAssignPermissions } from "../hooks/use-roles";
+import {
+  usePermissions,
+  useRolePermissions,
+  useAssignPermissions,
+} from "../hooks/use-roles";
 import type { Role } from "../../domain/entities/role.entity";
 
 interface RolePermissionsDialogProps {
@@ -23,16 +27,20 @@ interface RolePermissionsDialogProps {
   readOnly?: boolean;
 }
 
-export function RolePermissionsDialog({ role, open, onOpenChange, readOnly = false }: RolePermissionsDialogProps) {
+export function RolePermissionsDialog({
+  role,
+  open,
+  onOpenChange,
+  readOnly = false,
+}: RolePermissionsDialogProps) {
   const t = useTranslations("roles");
   const tCommon = useTranslations("common");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  const { data: allPermissions, isLoading: loadingPermissions } = usePermissions();
-  const { data: rolePermissions, isLoading: loadingRolePerms } = useRolePermissions(
-    role?.id ?? "",
-    open && !!role
-  );
+  const { data: allPermissions, isLoading: loadingPermissions } =
+    usePermissions();
+  const { data: rolePermissions, isLoading: loadingRolePerms } =
+    useRolePermissions(role?.id ?? "", open && !!role);
   const assignPermissions = useAssignPermissions();
 
   // Initialize selection from role's current permissions
@@ -146,10 +154,13 @@ export function RolePermissionsDialog({ role, open, onOpenChange, readOnly = fal
                     disabled={readOnly}
                     className={`flex w-full items-center justify-between px-4 py-3 transition-colors ${readOnly ? "cursor-default" : "hover:bg-muted/50"}`}
                   >
-                    <span className="font-medium text-sm">{moduleLabel(module)}</span>
+                    <span className="font-medium text-sm">
+                      {moduleLabel(module)}
+                    </span>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground">
-                        {perms.filter((p) => selectedIds.has(p.id)).length}/{perms.length}
+                        {perms.filter((p) => selectedIds.has(p.id)).length}/
+                        {perms.length}
                       </span>
                       <div
                         className={`h-4 w-4 rounded border flex items-center justify-center transition-colors ${
@@ -160,7 +171,9 @@ export function RolePermissionsDialog({ role, open, onOpenChange, readOnly = fal
                               : "border-muted-foreground/30"
                         }`}
                       >
-                        {(allSelected || someSelected) && <Check className="h-3 w-3" />}
+                        {(allSelected || someSelected) && (
+                          <Check className="h-3 w-3" />
+                        )}
                       </div>
                     </div>
                   </button>
@@ -181,11 +194,17 @@ export function RolePermissionsDialog({ role, open, onOpenChange, readOnly = fal
                             if (!readOnly) togglePermission(perm.id);
                           }}
                         >
-                          {selectedIds.has(perm.id) && <Check className="h-3 w-3" />}
+                          {selectedIds.has(perm.id) && (
+                            <Check className="h-3 w-3" />
+                          )}
                         </div>
                         <span
-                          className={readOnly ? "cursor-default" : "cursor-pointer"}
-                          onClick={() => { if (!readOnly) togglePermission(perm.id); }}
+                          className={
+                            readOnly ? "cursor-default" : "cursor-pointer"
+                          }
+                          onClick={() => {
+                            if (!readOnly) togglePermission(perm.id);
+                          }}
                         >
                           {perm.action}
                         </span>
@@ -215,9 +234,13 @@ export function RolePermissionsDialog({ role, open, onOpenChange, readOnly = fal
                   </Button>
                   <Button
                     onClick={handleSave}
-                    disabled={assignPermissions.isPending || selectedIds.size === 0}
+                    disabled={
+                      assignPermissions.isPending || selectedIds.size === 0
+                    }
                   >
-                    {assignPermissions.isPending ? tCommon("loading") : tCommon("save")}
+                    {assignPermissions.isPending
+                      ? tCommon("loading")
+                      : tCommon("save")}
                   </Button>
                 </>
               )}

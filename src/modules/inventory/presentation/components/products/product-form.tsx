@@ -29,7 +29,7 @@ export function ProductForm() {
   const tCommon = useTranslations("common");
   const { isOpen, editingId, close } = useProductFormState();
   const { data: existingProduct, isLoading: isLoadingProduct } = useProduct(
-    editingId || ""
+    editingId || "",
   );
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
@@ -125,8 +125,11 @@ export function ProductForm() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {mutationError && (
                 <div className="rounded-md bg-error-100 p-3 text-sm text-error-700 dark:bg-error-900/20 dark:text-error-400">
-                  {(mutationError as Error & { response?: { data?: { message?: string } } })
-                    ?.response?.data?.message || t("form.error")}
+                  {(
+                    mutationError as Error & {
+                      response?: { data?: { message?: string } };
+                    }
+                  )?.response?.data?.message || t("form.error")}
                 </div>
               )}
 
@@ -170,7 +173,9 @@ export function ProductForm() {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <FormField error={errors.unitOfMeasure?.message}>
-                  <Label htmlFor="unitOfMeasure">{t("fields.unitOfMeasure")} *</Label>
+                  <Label htmlFor="unitOfMeasure">
+                    {t("fields.unitOfMeasure")} *
+                  </Label>
                   <Input
                     id="unitOfMeasure"
                     placeholder={t("fields.unitOfMeasurePlaceholder")}

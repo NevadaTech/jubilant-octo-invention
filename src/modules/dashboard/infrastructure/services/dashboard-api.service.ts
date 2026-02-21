@@ -28,7 +28,7 @@ export class DashboardApiService {
     const [inventoryResponse, lowStockResponse, salesResponse] =
       await Promise.all([
         apiClient.get<InventoryAvailableResponseDto>(
-          "/reports/inventory/available/view"
+          "/reports/inventory/available/view",
         ),
         apiClient.get<LowStockResponseDto>("/reports/inventory/low-stock/view"),
         apiClient.get<SalesReportResponseDto>("/reports/sales/view", {
@@ -46,8 +46,9 @@ export class DashboardApiService {
     // Calculate sales totals from rows
     const salesRows = salesData.data.rows || [];
     const monthlyRevenue = salesRows.reduce(
-      (sum: number, row: Record<string, unknown>) => sum + (Number(row.totalAmount) || 0),
-      0
+      (sum: number, row: Record<string, unknown>) =>
+        sum + (Number(row.totalAmount) || 0),
+      0,
     );
 
     // Extract currency from first row or default to USD
@@ -56,7 +57,9 @@ export class DashboardApiService {
 
     return {
       inventory: {
-        totalProducts: inventoryData.data.summary?.totalItems ?? inventoryData.data.metadata.totalRecords,
+        totalProducts:
+          inventoryData.data.summary?.totalItems ??
+          inventoryData.data.metadata.totalRecords,
         totalValue: inventoryData.data.summary?.totalValue ?? 0,
         totalQuantity: inventoryData.data.summary?.totalQuantity ?? 0,
         currency: detectedCurrency,

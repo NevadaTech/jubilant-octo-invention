@@ -1,4 +1,4 @@
-import { env } from '@/config/env';
+import { env } from "@/config/env";
 
 interface StoredTokens {
   accessToken: string;
@@ -8,9 +8,9 @@ interface StoredTokens {
 
 const TOKEN_KEY = env.NEXT_PUBLIC_AUTH_COOKIE_NAME;
 const REFRESH_TOKEN_KEY = env.NEXT_PUBLIC_REFRESH_COOKIE_NAME;
-const ORG_SLUG_KEY = 'nevada_org_slug';
-const ORG_ID_KEY = 'nevada_org_id';
-const USER_KEY = 'nevada_user';
+const ORG_SLUG_KEY = "nevada_org_slug";
+const ORG_ID_KEY = "nevada_org_id";
+const USER_KEY = "nevada_user";
 
 export interface StoredUser {
   id: string;
@@ -23,7 +23,7 @@ export interface StoredUser {
 }
 
 function isClient(): boolean {
-  return typeof window !== 'undefined';
+  return typeof window !== "undefined";
 }
 
 export class TokenService {
@@ -38,7 +38,7 @@ export class TokenService {
       // Sync with cookie for middleware auth check
       document.cookie = `${TOKEN_KEY}=${tokens.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
     } catch (error) {
-      console.error('Failed to store tokens:', error);
+      console.error("Failed to store tokens:", error);
     }
   }
 
@@ -47,11 +47,11 @@ export class TokenService {
    * Used so requests after client navigation always have the token.
    */
   static getAccessTokenFromCookie(): string | null {
-    if (!isClient() || typeof document?.cookie !== 'string') return null;
+    if (!isClient() || typeof document?.cookie !== "string") return null;
     try {
       const name = `${TOKEN_KEY}=`;
       const decoded = decodeURIComponent(document.cookie);
-      const parts = decoded.split(';');
+      const parts = decoded.split(";");
       for (const part of parts) {
         const trimmed = part.trim();
         if (trimmed.startsWith(name)) {
@@ -131,7 +131,7 @@ export class TokenService {
       // Clear auth cookie
       document.cookie = `${TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax`;
     } catch (error) {
-      console.error('Failed to clear tokens:', error);
+      console.error("Failed to clear tokens:", error);
     }
   }
 
@@ -141,7 +141,7 @@ export class TokenService {
     try {
       localStorage.setItem(USER_KEY, JSON.stringify(user));
     } catch (error) {
-      console.error('Failed to store user:', error);
+      console.error("Failed to store user:", error);
     }
   }
 
@@ -162,7 +162,7 @@ export class TokenService {
     try {
       localStorage.setItem(ORG_SLUG_KEY, slug);
     } catch (error) {
-      console.error('Failed to store organization slug:', error);
+      console.error("Failed to store organization slug:", error);
     }
   }
 
@@ -182,7 +182,7 @@ export class TokenService {
     try {
       localStorage.setItem(ORG_ID_KEY, orgId);
     } catch (error) {
-      console.error('Failed to store organization id:', error);
+      console.error("Failed to store organization id:", error);
     }
   }
 
@@ -201,7 +201,7 @@ export class TokenService {
     if (!token) return null;
 
     try {
-      const payload = token.split('.')[1];
+      const payload = token.split(".")[1];
       const decoded = JSON.parse(atob(payload));
       return decoded.org_id || null;
     } catch {

@@ -2,7 +2,12 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { returnApiAdapter } from "../../infrastructure/adapters/return-api.adapter";
-import type { ReturnFilters, CreateReturnDto, CreateReturnLineDto, UpdateReturnDto } from "../../application/dto/return.dto";
+import type {
+  ReturnFilters,
+  CreateReturnDto,
+  CreateReturnLineDto,
+  UpdateReturnDto,
+} from "../../application/dto/return.dto";
 
 const returnKeys = {
   all: ["returns"] as const,
@@ -79,8 +84,13 @@ export function useAddReturnLine() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ returnId, line }: { returnId: string; line: CreateReturnLineDto }) =>
-      returnApiAdapter.addLine(returnId, line),
+    mutationFn: ({
+      returnId,
+      line,
+    }: {
+      returnId: string;
+      line: CreateReturnLineDto;
+    }) => returnApiAdapter.addLine(returnId, line),
     onSuccess: (_, { returnId }) => {
       queryClient.invalidateQueries({ queryKey: returnKeys.detail(returnId) });
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });

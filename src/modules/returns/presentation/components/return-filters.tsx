@@ -5,16 +5,28 @@ import { X } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import type { ReturnFilters } from "../../application/dto/return.dto";
-import type { ReturnStatus, ReturnType } from "../../domain/entities/return.entity";
+import type {
+  ReturnStatus,
+  ReturnType,
+} from "../../domain/entities/return.entity";
 
 interface ReturnFiltersProps {
   filters: ReturnFilters;
   onFiltersChange: (filters: ReturnFilters) => void;
 }
 
-export function ReturnFiltersComponent({ filters, onFiltersChange }: ReturnFiltersProps) {
+export function ReturnFiltersComponent({
+  filters,
+  onFiltersChange,
+}: ReturnFiltersProps) {
   const t = useTranslations("returns");
 
   const handleStatusChange = (status: string) => {
@@ -56,7 +68,8 @@ export function ReturnFiltersComponent({ filters, onFiltersChange }: ReturnFilte
     });
   };
 
-  const hasActiveFilters = filters.status || filters.type || filters.startDate || filters.endDate;
+  const hasActiveFilters =
+    filters.status || filters.type || filters.startDate || filters.endDate;
 
   return (
     <div className="flex flex-wrap items-end gap-4">
@@ -68,15 +81,22 @@ export function ReturnFiltersComponent({ filters, onFiltersChange }: ReturnFilte
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("filters.allTypes")}</SelectItem>
-            <SelectItem value="RETURN_CUSTOMER">{t("types.customer")}</SelectItem>
-            <SelectItem value="RETURN_SUPPLIER">{t("types.supplier")}</SelectItem>
+            <SelectItem value="RETURN_CUSTOMER">
+              {t("types.customer")}
+            </SelectItem>
+            <SelectItem value="RETURN_SUPPLIER">
+              {t("types.supplier")}
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="min-w-[150px]">
         <Label className="text-sm">{t("filters.status")}</Label>
-        <Select value={filters.status || "all"} onValueChange={handleStatusChange}>
+        <Select
+          value={filters.status || "all"}
+          onValueChange={handleStatusChange}
+        >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>

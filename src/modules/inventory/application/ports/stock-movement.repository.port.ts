@@ -16,7 +16,9 @@ export interface PaginatedResult<T> {
 }
 
 export interface StockMovementRepositoryPort {
-  findAll(filters?: StockMovementFilters): Promise<PaginatedResult<StockMovement>>;
+  findAll(
+    filters?: StockMovementFilters,
+  ): Promise<PaginatedResult<StockMovement>>;
   findById(id: string): Promise<StockMovement | null>;
   create(data: CreateStockMovementDto): Promise<StockMovement>;
   update(id: string, data: UpdateStockMovementDto): Promise<StockMovement>;

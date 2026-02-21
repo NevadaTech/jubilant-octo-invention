@@ -3,6 +3,7 @@ export {
   useProduct,
   useCreateProduct,
   useUpdateProduct,
+  useToggleProductStatus,
   productKeys,
 } from "./use-products";
 
@@ -11,6 +12,7 @@ export {
   useWarehouse,
   useCreateWarehouse,
   useUpdateWarehouse,
+  useToggleWarehouseStatus,
   warehouseKeys,
 } from "./use-warehouses";
 

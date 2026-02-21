@@ -34,9 +34,8 @@ export function WarehouseFormPage({ warehouseId }: WarehouseFormPageProps) {
   const router = useRouter();
   const isEditing = Boolean(warehouseId);
 
-  const { data: existingWarehouse, isLoading: isLoadingWarehouse } = useWarehouse(
-    warehouseId || ""
-  );
+  const { data: existingWarehouse, isLoading: isLoadingWarehouse } =
+    useWarehouse(warehouseId || "");
   const createWarehouse = useCreateWarehouse();
   const updateWarehouse = useUpdateWarehouse();
 
@@ -109,7 +108,9 @@ export function WarehouseFormPage({ warehouseId }: WarehouseFormPageProps) {
             {isEditing ? t("form.editTitle") : t("form.createTitle")}
           </h1>
           <p className="text-neutral-500 dark:text-neutral-400">
-            {isEditing ? t("form.editDescription") : t("form.createDescription")}
+            {isEditing
+              ? t("form.editDescription")
+              : t("form.createDescription")}
           </p>
         </div>
       </div>

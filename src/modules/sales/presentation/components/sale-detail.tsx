@@ -134,7 +134,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                     onClick={handleConfirm}
                     disabled={confirmSale.isPending}
                   >
-                    {confirmSale.isPending ? tCommon("loading") : t("actions.confirm")}
+                    {confirmSale.isPending
+                      ? tCommon("loading")
+                      : t("actions.confirm")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -162,7 +164,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                     disabled={cancelSale.isPending}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
-                    {cancelSale.isPending ? tCommon("loading") : t("actions.cancelSale")}
+                    {cancelSale.isPending
+                      ? tCommon("loading")
+                      : t("actions.cancelSale")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -179,36 +183,54 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
         <CardContent>
           <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">{t("fields.warehouse")}</dt>
+              <dt className="text-sm font-medium text-muted-foreground">
+                {t("fields.warehouse")}
+              </dt>
               <dd className="mt-1 font-medium">{sale.warehouseName}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">{t("fields.customer")}</dt>
+              <dt className="text-sm font-medium text-muted-foreground">
+                {t("fields.customer")}
+              </dt>
               <dd className="mt-1">{sale.customerReference || "-"}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">{t("fields.externalReference")}</dt>
-              <dd className="mt-1 font-mono text-sm">{sale.externalReference || "-"}</dd>
+              <dt className="text-sm font-medium text-muted-foreground">
+                {t("fields.externalReference")}
+              </dt>
+              <dd className="mt-1 font-mono text-sm">
+                {sale.externalReference || "-"}
+              </dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">{t("fields.total")}</dt>
-              <dd className="mt-1 text-lg font-bold">{formatCurrency(sale.totalAmount, sale.currency)}</dd>
+              <dt className="text-sm font-medium text-muted-foreground">
+                {t("fields.total")}
+              </dt>
+              <dd className="mt-1 text-lg font-bold">
+                {formatCurrency(sale.totalAmount, sale.currency)}
+              </dd>
             </div>
             {sale.confirmedAt && (
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">{t("fields.confirmedAt")}</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("fields.confirmedAt")}
+                </dt>
                 <dd className="mt-1">{formatDate(sale.confirmedAt)}</dd>
               </div>
             )}
             {sale.cancelledAt && (
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">{t("fields.cancelledAt")}</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("fields.cancelledAt")}
+                </dt>
                 <dd className="mt-1">{formatDate(sale.cancelledAt)}</dd>
               </div>
             )}
             {sale.note && (
               <div className="sm:col-span-2 lg:col-span-3">
-                <dt className="text-sm font-medium text-muted-foreground">{t("fields.note")}</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("fields.note")}
+                </dt>
                 <dd className="mt-1">{sale.note}</dd>
               </div>
             )}
@@ -219,7 +241,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
       {/* Lines Card */}
       <Card>
         <CardHeader>
-          <CardTitle>{t("detail.lines")} ({sale.totalItems})</CardTitle>
+          <CardTitle>
+            {t("detail.lines")} ({sale.totalItems})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {sale.lines.length === 0 ? (
@@ -235,7 +259,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                     <th className="pb-3 pr-4">{t("fields.product")}</th>
                     <th className="pb-3 pr-4">{t("fields.quantity")}</th>
                     <th className="pb-3 pr-4">{t("fields.salePrice")}</th>
-                    <th className="pb-3 pr-4 text-right">{t("fields.lineTotal")}</th>
+                    <th className="pb-3 pr-4 text-right">
+                      {t("fields.lineTotal")}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -243,7 +269,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                     <tr key={line.id} className="border-b">
                       <td className="py-3 pr-4">
                         <p className="font-medium">{line.productName}</p>
-                        <p className="text-sm text-muted-foreground">{line.productSku}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {line.productSku}
+                        </p>
                       </td>
                       <td className="py-3 pr-4">{line.quantity}</td>
                       <td className="py-3 pr-4">

@@ -1,5 +1,9 @@
 import { Sale, type SaleLineProps } from "../../domain/entities/sale.entity";
-import type { SaleResponseDto, SaleLineResponseDto, SaleApiRawDto } from "../dto/sale.dto";
+import type {
+  SaleResponseDto,
+  SaleLineResponseDto,
+  SaleApiRawDto,
+} from "../dto/sale.dto";
 
 export class SaleMapper {
   static lineToDomain(dto: SaleLineResponseDto): SaleLineProps {
@@ -23,8 +27,14 @@ export class SaleMapper {
       status: raw.status,
       warehouseId: raw.warehouseId,
       warehouseName: raw.warehouseName ?? "",
-      customerReference: typeof raw.customerReference === "string" ? raw.customerReference : null,
-      externalReference: typeof raw.externalReference === "string" ? raw.externalReference : null,
+      customerReference:
+        typeof raw.customerReference === "string"
+          ? raw.customerReference
+          : null,
+      externalReference:
+        typeof raw.externalReference === "string"
+          ? raw.externalReference
+          : null,
       note: typeof raw.note === "string" ? raw.note : null,
       totalAmount: raw.totalAmount,
       currency: raw.currency,
@@ -32,8 +42,10 @@ export class SaleMapper {
       movementId: typeof raw.movementId === "string" ? raw.movementId : null,
       createdBy: raw.createdBy,
       createdAt: new Date(raw.createdAt),
-      confirmedAt: typeof raw.confirmedAt === "string" ? new Date(raw.confirmedAt) : null,
-      cancelledAt: typeof raw.cancelledAt === "string" ? new Date(raw.cancelledAt) : null,
+      confirmedAt:
+        typeof raw.confirmedAt === "string" ? new Date(raw.confirmedAt) : null,
+      cancelledAt:
+        typeof raw.cancelledAt === "string" ? new Date(raw.cancelledAt) : null,
     });
   }
 
@@ -44,8 +56,14 @@ export class SaleMapper {
       status: dto.status,
       warehouseId: dto.warehouseId,
       warehouseName: dto.warehouseName ?? "",
-      customerReference: typeof dto.customerReference === "string" ? dto.customerReference : null,
-      externalReference: typeof dto.externalReference === "string" ? dto.externalReference : null,
+      customerReference:
+        typeof dto.customerReference === "string"
+          ? dto.customerReference
+          : null,
+      externalReference:
+        typeof dto.externalReference === "string"
+          ? dto.externalReference
+          : null,
       note: typeof dto.note === "string" ? dto.note : null,
       totalAmount: dto.totalAmount,
       currency: dto.currency,
@@ -53,8 +71,10 @@ export class SaleMapper {
       movementId: typeof dto.movementId === "string" ? dto.movementId : null,
       createdBy: dto.createdBy,
       createdAt: new Date(dto.createdAt),
-      confirmedAt: typeof dto.confirmedAt === "string" ? new Date(dto.confirmedAt) : null,
-      cancelledAt: typeof dto.cancelledAt === "string" ? new Date(dto.cancelledAt) : null,
+      confirmedAt:
+        typeof dto.confirmedAt === "string" ? new Date(dto.confirmedAt) : null,
+      cancelledAt:
+        typeof dto.cancelledAt === "string" ? new Date(dto.cancelledAt) : null,
     });
   }
 }

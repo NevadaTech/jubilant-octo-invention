@@ -22,14 +22,14 @@ export class RoleApiAdapter implements RoleRepositoryPort {
 
   async findAll(): Promise<Role[]> {
     const response = await apiClient.get<ApiResponse<RoleResponseDto[]>>(
-      this.basePath
+      this.basePath,
     );
     return response.data.data.map(RoleMapper.toDomain);
   }
 
   async findById(id: string): Promise<Role> {
     const response = await apiClient.get<ApiResponse<RoleResponseDto>>(
-      `${this.basePath}/${id}`
+      `${this.basePath}/${id}`,
     );
     return RoleMapper.toDomain(response.data.data);
   }
@@ -37,7 +37,7 @@ export class RoleApiAdapter implements RoleRepositoryPort {
   async create(data: CreateRoleDto): Promise<Role> {
     const response = await apiClient.post<ApiResponse<RoleResponseDto>>(
       this.basePath,
-      data
+      data,
     );
     return RoleMapper.toDomain(response.data.data);
   }
@@ -45,7 +45,7 @@ export class RoleApiAdapter implements RoleRepositoryPort {
   async update(id: string, data: UpdateRoleDto): Promise<Role> {
     const response = await apiClient.patch<ApiResponse<RoleResponseDto>>(
       `${this.basePath}/${id}`,
-      data
+      data,
     );
     return RoleMapper.toDomain(response.data.data);
   }
@@ -54,20 +54,23 @@ export class RoleApiAdapter implements RoleRepositoryPort {
     await apiClient.delete(`${this.basePath}/${id}`);
   }
 
-  async assignPermissions(id: string, dto: AssignPermissionsDto): Promise<void> {
+  async assignPermissions(
+    id: string,
+    dto: AssignPermissionsDto,
+  ): Promise<void> {
     await apiClient.post(`${this.basePath}/${id}/permissions`, dto);
   }
 
   async getPermissions(): Promise<PermissionProps[]> {
     const response = await apiClient.get<ApiResponse<PermissionResponseDto[]>>(
-      `${this.basePath}/permissions`
+      `${this.basePath}/permissions`,
     );
     return response.data.data.map(RoleMapper.permissionToDomain);
   }
 
   async getRolePermissions(roleId: string): Promise<PermissionProps[]> {
     const response = await apiClient.get<ApiResponse<PermissionResponseDto[]>>(
-      `${this.basePath}/${roleId}/permissions`
+      `${this.basePath}/${roleId}/permissions`,
     );
     return response.data.data.map(RoleMapper.permissionToDomain);
   }

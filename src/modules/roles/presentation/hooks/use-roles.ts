@@ -1,6 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { roleApiAdapter } from "../../infrastructure/adapters/role-api.adapter";
-import type { CreateRoleDto, UpdateRoleDto, AssignPermissionsDto } from "../../application/dto/role.dto";
+import type {
+  CreateRoleDto,
+  UpdateRoleDto,
+  AssignPermissionsDto,
+} from "../../application/dto/role.dto";
 
 const roleKeys = {
   all: ["roles"] as const,

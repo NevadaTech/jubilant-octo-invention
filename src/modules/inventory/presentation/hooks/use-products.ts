@@ -13,7 +13,8 @@ const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 export const productKeys = {
   all: ["products"] as const,
   lists: () => [...productKeys.all, "list"] as const,
-  list: (filters?: ProductFilters) => [...productKeys.lists(), filters] as const,
+  list: (filters?: ProductFilters) =>
+    [...productKeys.lists(), filters] as const,
   details: () => [...productKeys.all, "detail"] as const,
   detail: (id: string) => [...productKeys.details(), id] as const,
 };
@@ -59,3 +60,15 @@ export function useUpdateProduct() {
   });
 }
 
+export function useToggleProductStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
+      productApiAdapter.update(id, { isActive }),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: productKeys.detail(id) });
+    },
+  });
+}

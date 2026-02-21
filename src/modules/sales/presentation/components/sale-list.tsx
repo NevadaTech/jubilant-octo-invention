@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Search, ShoppingCart, CheckCircle, XCircle, MoreHorizontal, Eye } from "lucide-react";
+import {
+  Plus,
+  Search,
+  ShoppingCart,
+  CheckCircle,
+  XCircle,
+  MoreHorizontal,
+  Eye,
+} from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
@@ -118,7 +126,10 @@ export function SaleList() {
                 className="pl-9"
               />
             </div>
-            <SaleFiltersComponent filters={filters} onFiltersChange={setFilters} />
+            <SaleFiltersComponent
+              filters={filters}
+              onFiltersChange={setFilters}
+            />
           </div>
         </CardHeader>
         <CardContent>
@@ -155,7 +166,9 @@ export function SaleList() {
                       <th className="pb-3 pr-4">{t("fields.items")}</th>
                       <th className="pb-3 pr-4">{t("fields.total")}</th>
                       <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
-                      <th className="pb-3 pr-4 text-right">{tCommon("actions")}</th>
+                      <th className="pb-3 pr-4 text-right">
+                        {tCommon("actions")}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -202,7 +215,9 @@ export function SaleList() {
                                 </Link>
                               </DropdownMenuItem>
                               {sale.canConfirm && (
-                                <DropdownMenuItem onClick={() => setConfirmDialog(sale)}>
+                                <DropdownMenuItem
+                                  onClick={() => setConfirmDialog(sale)}
+                                >
                                   <CheckCircle className="mr-2 h-4 w-4" />
                                   {t("actions.confirm")}
                                 </DropdownMenuItem>
@@ -229,10 +244,11 @@ export function SaleList() {
                 <div className="mt-4 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
                     {t("pagination.showing", {
-                      from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                      from:
+                        (data.pagination.page - 1) * data.pagination.limit + 1,
                       to: Math.min(
                         data.pagination.page * data.pagination.limit,
-                        data.pagination.total
+                        data.pagination.total,
                       ),
                       total: data.pagination.total,
                     })}
@@ -242,15 +258,27 @@ export function SaleList() {
                       variant="outline"
                       size="sm"
                       disabled={data.pagination.page <= 1}
-                      onClick={() => setFilters((prev) => ({ ...prev, page: data.pagination.page - 1 }))}
+                      onClick={() =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          page: data.pagination.page - 1,
+                        }))
+                      }
                     >
                       {tCommon("previous")}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={data.pagination.page >= data.pagination.totalPages}
-                      onClick={() => setFilters((prev) => ({ ...prev, page: data.pagination.page + 1 }))}
+                      disabled={
+                        data.pagination.page >= data.pagination.totalPages
+                      }
+                      onClick={() =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          page: data.pagination.page + 1,
+                        }))
+                      }
                     >
                       {tCommon("next")}
                     </Button>
@@ -263,7 +291,10 @@ export function SaleList() {
       </Card>
 
       {/* Confirm Sale Dialog */}
-      <AlertDialog open={!!confirmDialog} onOpenChange={(open) => !open && setConfirmDialog(null)}>
+      <AlertDialog
+        open={!!confirmDialog}
+        onOpenChange={(open) => !open && setConfirmDialog(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("confirmSale.title")}</AlertDialogTitle>
@@ -277,14 +308,19 @@ export function SaleList() {
               onClick={handleConfirm}
               disabled={confirmSale.isPending}
             >
-              {confirmSale.isPending ? tCommon("loading") : t("actions.confirm")}
+              {confirmSale.isPending
+                ? tCommon("loading")
+                : t("actions.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       {/* Cancel Sale Dialog */}
-      <AlertDialog open={!!cancelDialog} onOpenChange={(open) => !open && setCancelDialog(null)}>
+      <AlertDialog
+        open={!!cancelDialog}
+        onOpenChange={(open) => !open && setCancelDialog(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("cancelSale.title")}</AlertDialogTitle>
@@ -299,7 +335,9 @@ export function SaleList() {
               disabled={cancelSale.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {cancelSale.isPending ? tCommon("loading") : t("actions.cancelSale")}
+              {cancelSale.isPending
+                ? tCommon("loading")
+                : t("actions.cancelSale")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

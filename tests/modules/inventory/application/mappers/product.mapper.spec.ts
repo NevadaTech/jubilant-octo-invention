@@ -1,27 +1,29 @@
-import { describe, it, expect } from 'vitest';
-import { ProductMapper } from '@/modules/inventory/application/mappers/product.mapper';
-import type { ProductResponseDto } from '@/modules/inventory/application/dto/product.dto';
+import { describe, it, expect } from "vitest";
+import { ProductMapper } from "@/modules/inventory/application/mappers/product.mapper";
+import type { ProductResponseDto } from "@/modules/inventory/application/dto/product.dto";
 
-describe('ProductMapper', () => {
+describe("ProductMapper", () => {
   const mockProductDto: ProductResponseDto = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    sku: 'PROD-001',
-    name: 'Test Product',
-    description: 'A test product description',
-    categories: [{ id: '456e7890-e89b-12d3-a456-426614174000', name: 'Test Category' }],
-    unitOfMeasure: 'unit',
-    cost: 10.50,
+    id: "123e4567-e89b-12d3-a456-426614174000",
+    sku: "PROD-001",
+    name: "Test Product",
+    description: "A test product description",
+    categories: [
+      { id: "456e7890-e89b-12d3-a456-426614174000", name: "Test Category" },
+    ],
+    unitOfMeasure: "unit",
+    cost: 10.5,
     price: 19.99,
     minStock: 5,
     maxStock: 100,
     isActive: true,
-    imageUrl: 'https://example.com/image.jpg',
-    createdAt: '2025-01-15T10:30:00.000Z',
-    updatedAt: '2025-01-16T14:20:00.000Z',
+    imageUrl: "https://example.com/image.jpg",
+    createdAt: "2025-01-15T10:30:00.000Z",
+    updatedAt: "2025-01-16T14:20:00.000Z",
   };
 
-  describe('toDomain', () => {
-    it('Given: a valid ProductResponseDto When: mapping to domain Then: should return a Product entity', () => {
+  describe("toDomain", () => {
+    it("Given: a valid ProductResponseDto When: mapping to domain Then: should return a Product entity", () => {
       // Act
       const product = ProductMapper.toDomain(mockProductDto);
 
@@ -40,7 +42,7 @@ describe('ProductMapper', () => {
       expect(product.imageUrl).toBe(mockProductDto.imageUrl);
     });
 
-    it('Given: a ProductResponseDto with date strings When: mapping to domain Then: should convert dates correctly', () => {
+    it("Given: a ProductResponseDto with date strings When: mapping to domain Then: should convert dates correctly", () => {
       // Act
       const product = ProductMapper.toDomain(mockProductDto);
 
@@ -51,7 +53,7 @@ describe('ProductMapper', () => {
       expect(product.updatedAt.toISOString()).toBe(mockProductDto.updatedAt);
     });
 
-    it('Given: a ProductResponseDto with null values When: mapping to domain Then: should preserve nulls', () => {
+    it("Given: a ProductResponseDto with null values When: mapping to domain Then: should preserve nulls", () => {
       // Arrange
       const dtoWithNulls: ProductResponseDto = {
         ...mockProductDto,
@@ -70,8 +72,8 @@ describe('ProductMapper', () => {
     });
   });
 
-  describe('toDto', () => {
-    it('Given: a Product entity When: mapping to DTO Then: should return a ProductResponseDto', () => {
+  describe("toDto", () => {
+    it("Given: a Product entity When: mapping to DTO Then: should return a ProductResponseDto", () => {
       // Arrange
       const product = ProductMapper.toDomain(mockProductDto);
 
@@ -93,7 +95,7 @@ describe('ProductMapper', () => {
       expect(dto.imageUrl).toBe(product.imageUrl);
     });
 
-    it('Given: a Product entity with Date values When: mapping to DTO Then: should convert dates to ISO strings', () => {
+    it("Given: a Product entity with Date values When: mapping to DTO Then: should convert dates to ISO strings", () => {
       // Arrange
       const product = ProductMapper.toDomain(mockProductDto);
 
@@ -101,15 +103,15 @@ describe('ProductMapper', () => {
       const dto = ProductMapper.toDto(product);
 
       // Assert
-      expect(typeof dto.createdAt).toBe('string');
-      expect(typeof dto.updatedAt).toBe('string');
+      expect(typeof dto.createdAt).toBe("string");
+      expect(typeof dto.updatedAt).toBe("string");
       expect(dto.createdAt).toBe(mockProductDto.createdAt);
       expect(dto.updatedAt).toBe(mockProductDto.updatedAt);
     });
   });
 
-  describe('round-trip', () => {
-    it('Given: a ProductResponseDto When: mapping to domain and back to DTO Then: should be equivalent', () => {
+  describe("round-trip", () => {
+    it("Given: a ProductResponseDto When: mapping to domain and back to DTO Then: should be equivalent", () => {
       // Act
       const product = ProductMapper.toDomain(mockProductDto);
       const resultDto = ProductMapper.toDto(product);

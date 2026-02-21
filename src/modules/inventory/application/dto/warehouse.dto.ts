@@ -10,6 +10,8 @@ export interface WarehouseResponseDto {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  statusChangedBy?: string | null;
+  statusChangedAt?: string | null;
 }
 
 export interface WarehouseListResponseDto {

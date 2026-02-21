@@ -2,7 +2,13 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userApiAdapter } from "../../infrastructure/adapters/user-api.adapter";
-import type { UserFilters, CreateUserDto, UpdateUserDto, ChangeUserStatusDto, AssignRoleDto } from "../../application/dto/user.dto";
+import type {
+  UserFilters,
+  CreateUserDto,
+  UpdateUserDto,
+  ChangeUserStatusDto,
+  AssignRoleDto,
+} from "../../application/dto/user.dto";
 
 const userKeys = {
   all: ["users"] as const,

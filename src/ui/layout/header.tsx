@@ -26,7 +26,7 @@ export function DashboardHeader({ className }: DashboardHeaderProps) {
     <header
       className={cn(
         "sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200 bg-white/95 px-4 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/95 lg:px-6",
-        className
+        className,
       )}
     >
       <div className="flex items-center gap-4">
@@ -38,7 +38,13 @@ export function DashboardHeader({ className }: DashboardHeaderProps) {
           variant="ghost"
           size="icon"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          title={mounted ? (theme === "dark" ? t("theme.light") : t("theme.dark")) : undefined}
+          title={
+            mounted
+              ? theme === "dark"
+                ? t("theme.light")
+                : t("theme.dark")
+              : undefined
+          }
         >
           <Sun className="h-5 w-5 rotate-0 scale-100 transition-transform dark:rotate-90 dark:scale-0" />
           <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />

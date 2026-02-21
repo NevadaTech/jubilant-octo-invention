@@ -20,10 +20,15 @@ interface ApiResponse<T> {
 export class WarehouseApiAdapter implements WarehouseRepositoryPort {
   private readonly basePath = "/inventory/warehouses";
 
-  async findAll(filters?: WarehouseFilters): Promise<PaginatedResult<Warehouse>> {
-    const response = await apiClient.get<WarehouseListResponseDto>(this.basePath, {
-      params: this.buildQueryParams(filters),
-    });
+  async findAll(
+    filters?: WarehouseFilters,
+  ): Promise<PaginatedResult<Warehouse>> {
+    const response = await apiClient.get<WarehouseListResponseDto>(
+      this.basePath,
+      {
+        params: this.buildQueryParams(filters),
+      },
+    );
 
     return {
       data: response.data.data.map(WarehouseMapper.toDomain),
@@ -34,7 +39,7 @@ export class WarehouseApiAdapter implements WarehouseRepositoryPort {
   async findById(id: string): Promise<Warehouse | null> {
     try {
       const response = await apiClient.get<ApiResponse<WarehouseResponseDto>>(
-        `${this.basePath}/${id}`
+        `${this.basePath}/${id}`,
       );
       return WarehouseMapper.toDomain(response.data.data);
     } catch (error) {
@@ -48,7 +53,7 @@ export class WarehouseApiAdapter implements WarehouseRepositoryPort {
   async create(data: CreateWarehouseDto): Promise<Warehouse> {
     const response = await apiClient.post<ApiResponse<WarehouseResponseDto>>(
       this.basePath,
-      data
+      data,
     );
     return WarehouseMapper.toDomain(response.data.data);
   }
@@ -56,12 +61,14 @@ export class WarehouseApiAdapter implements WarehouseRepositoryPort {
   async update(id: string, data: UpdateWarehouseDto): Promise<Warehouse> {
     const response = await apiClient.put<ApiResponse<WarehouseResponseDto>>(
       `${this.basePath}/${id}`,
-      data
+      data,
     );
     return WarehouseMapper.toDomain(response.data.data);
   }
 
-  private buildQueryParams(filters?: WarehouseFilters): Record<string, unknown> {
+  private buildQueryParams(
+    filters?: WarehouseFilters,
+  ): Record<string, unknown> {
     if (!filters) return {};
 
     const params: Record<string, unknown> = {};
@@ -87,7 +94,8 @@ export class WarehouseApiAdapter implements WarehouseRepositoryPort {
       typeof error === "object" &&
       error !== null &&
       "response" in error &&
-      typeof (error as { response?: { status?: number } }).response === "object" &&
+      typeof (error as { response?: { status?: number } }).response ===
+        "object" &&
       (error as { response: { status?: number } }).response?.status === 404
     );
   }

@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Search, Shield, MoreHorizontal, Trash2, Edit2, KeyRound } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Shield,
+  MoreHorizontal,
+  Trash2,
+  Edit2,
+  KeyRound,
+} from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -74,7 +82,9 @@ export function RoleList() {
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(date);
+    return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
+      date,
+    );
   };
 
   if (isError) {
@@ -119,7 +129,9 @@ export function RoleList() {
             <div className="py-10 text-center">
               <Shield className="mx-auto h-12 w-12 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-semibold">{t("empty.title")}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{t("empty.description")}</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {t("empty.description")}
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -131,7 +143,9 @@ export function RoleList() {
                     <th className="pb-3 pr-4">{t("fields.system")}</th>
                     <th className="pb-3 pr-4">{t("fields.status")}</th>
                     <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
-                    <th className="pb-3 pr-4 text-right">{tCommon("actions")}</th>
+                    <th className="pb-3 pr-4 text-right">
+                      {tCommon("actions")}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -147,8 +161,12 @@ export function RoleList() {
                         <RoleTypeBadge isSystem={role.isSystem} />
                       </td>
                       <td className="py-4 pr-4">
-                        <Badge variant={role.isActive ? "success" : "secondary"}>
-                          {role.isActive ? t("status.active") : t("status.inactive")}
+                        <Badge
+                          variant={role.isActive ? "success" : "secondary"}
+                        >
+                          {role.isActive
+                            ? t("status.active")
+                            : t("status.inactive")}
                         </Badge>
                       </td>
                       <td className="py-4 pr-4 text-sm text-muted-foreground">
@@ -162,16 +180,24 @@ export function RoleList() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setPermissionsTarget(role)}>
+                            <DropdownMenuItem
+                              onClick={() => setPermissionsTarget(role)}
+                            >
                               <KeyRound className="mr-2 h-4 w-4" />
-                              {role.isSystem ? t("actions.viewPermissions") : t("actions.managePermissions")}
+                              {role.isSystem
+                                ? t("actions.viewPermissions")
+                                : t("actions.managePermissions")}
                             </DropdownMenuItem>
                             {role.canEdit && (
                               <>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => handleToggleStatus(role)}>
+                                <DropdownMenuItem
+                                  onClick={() => handleToggleStatus(role)}
+                                >
                                   <Edit2 className="mr-2 h-4 w-4" />
-                                  {role.isActive ? t("status.inactive") : t("status.active")}
+                                  {role.isActive
+                                    ? t("status.inactive")
+                                    : t("status.active")}
                                 </DropdownMenuItem>
                                 {role.canDelete && (
                                   <DropdownMenuItem
@@ -198,11 +224,16 @@ export function RoleList() {
 
       <RoleForm open={isFormOpen} onOpenChange={setIsFormOpen} />
 
-      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("delete.title")}</AlertDialogTitle>
-            <AlertDialogDescription>{t("delete.description")}</AlertDialogDescription>
+            <AlertDialogDescription>
+              {t("delete.description")}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>

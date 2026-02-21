@@ -21,9 +21,12 @@ export class CategoryApiAdapter implements CategoryRepositoryPort {
   private readonly basePath = "/inventory/categories";
 
   async findAll(filters?: CategoryFilters): Promise<PaginatedResult<Category>> {
-    const response = await apiClient.get<CategoryListResponseDto>(this.basePath, {
-      params: this.buildQueryParams(filters),
-    });
+    const response = await apiClient.get<CategoryListResponseDto>(
+      this.basePath,
+      {
+        params: this.buildQueryParams(filters),
+      },
+    );
 
     return {
       data: response.data.data.map(CategoryMapper.toDomain),
@@ -34,7 +37,7 @@ export class CategoryApiAdapter implements CategoryRepositoryPort {
   async findById(id: string): Promise<Category | null> {
     try {
       const response = await apiClient.get<ApiResponse<CategoryResponseDto>>(
-        `${this.basePath}/${id}`
+        `${this.basePath}/${id}`,
       );
       return CategoryMapper.toDomain(response.data.data);
     } catch (error) {
@@ -48,7 +51,7 @@ export class CategoryApiAdapter implements CategoryRepositoryPort {
   async create(data: CreateCategoryDto): Promise<Category> {
     const response = await apiClient.post<ApiResponse<CategoryResponseDto>>(
       this.basePath,
-      data
+      data,
     );
     return CategoryMapper.toDomain(response.data.data);
   }
@@ -56,7 +59,7 @@ export class CategoryApiAdapter implements CategoryRepositoryPort {
   async update(id: string, data: UpdateCategoryDto): Promise<Category> {
     const response = await apiClient.put<ApiResponse<CategoryResponseDto>>(
       `${this.basePath}/${id}`,
-      data
+      data,
     );
     return CategoryMapper.toDomain(response.data.data);
   }
@@ -94,7 +97,8 @@ export class CategoryApiAdapter implements CategoryRepositoryPort {
       typeof error === "object" &&
       error !== null &&
       "response" in error &&
-      typeof (error as { response?: { status?: number } }).response === "object" &&
+      typeof (error as { response?: { status?: number } }).response ===
+        "object" &&
       (error as { response: { status?: number } }).response?.status === 404
     );
   }

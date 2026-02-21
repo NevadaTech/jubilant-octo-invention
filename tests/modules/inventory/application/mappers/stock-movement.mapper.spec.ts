@@ -1,27 +1,27 @@
-import { describe, it, expect } from 'vitest';
-import { StockMovementMapper } from '@/modules/inventory/application/mappers/stock-movement.mapper';
-import type { StockMovementResponseDto } from '@/modules/inventory/application/dto/stock-movement.dto';
+import { describe, it, expect } from "vitest";
+import { StockMovementMapper } from "@/modules/inventory/application/mappers/stock-movement.mapper";
+import type { StockMovementResponseDto } from "@/modules/inventory/application/dto/stock-movement.dto";
 
-describe('StockMovementMapper', () => {
+describe("StockMovementMapper", () => {
   const mockMovementDto: StockMovementResponseDto = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    productId: '456e7890-e89b-12d3-a456-426614174000',
-    productName: 'Test Product',
-    productSku: 'PROD-001',
-    warehouseId: '789e0123-e89b-12d3-a456-426614174000',
-    warehouseName: 'Main Warehouse',
-    type: 'IN',
+    id: "123e4567-e89b-12d3-a456-426614174000",
+    productId: "456e7890-e89b-12d3-a456-426614174000",
+    productName: "Test Product",
+    productSku: "PROD-001",
+    warehouseId: "789e0123-e89b-12d3-a456-426614174000",
+    warehouseName: "Main Warehouse",
+    type: "IN",
     quantity: 50,
     previousQuantity: 100,
     newQuantity: 150,
-    reason: 'Stock replenishment',
-    reference: 'PO-2025-001',
-    createdBy: 'john.doe@example.com',
-    createdAt: '2025-01-15T10:30:00.000Z',
+    reason: "Stock replenishment",
+    reference: "PO-2025-001",
+    createdBy: "john.doe@example.com",
+    createdAt: "2025-01-15T10:30:00.000Z",
   };
 
-  describe('toDomain', () => {
-    it('Given: a valid StockMovementResponseDto When: mapping to domain Then: should return a StockMovement entity', () => {
+  describe("toDomain", () => {
+    it("Given: a valid StockMovementResponseDto When: mapping to domain Then: should return a StockMovement entity", () => {
       // Act
       const movement = StockMovementMapper.toDomain(mockMovementDto);
 
@@ -41,9 +41,12 @@ describe('StockMovementMapper', () => {
       expect(movement.createdBy).toBe(mockMovementDto.createdBy);
     });
 
-    it('Given: a movement with type IN When: mapping to domain Then: isEntry should be true', () => {
+    it("Given: a movement with type IN When: mapping to domain Then: isEntry should be true", () => {
       // Arrange
-      const inMovementDto: StockMovementResponseDto = { ...mockMovementDto, type: 'IN' };
+      const inMovementDto: StockMovementResponseDto = {
+        ...mockMovementDto,
+        type: "IN",
+      };
 
       // Act
       const movement = StockMovementMapper.toDomain(inMovementDto);
@@ -54,9 +57,12 @@ describe('StockMovementMapper', () => {
       expect(movement.isAdjustment).toBe(false);
     });
 
-    it('Given: a movement with type OUT When: mapping to domain Then: isExit should be true', () => {
+    it("Given: a movement with type OUT When: mapping to domain Then: isExit should be true", () => {
       // Arrange
-      const outMovementDto: StockMovementResponseDto = { ...mockMovementDto, type: 'OUT' };
+      const outMovementDto: StockMovementResponseDto = {
+        ...mockMovementDto,
+        type: "OUT",
+      };
 
       // Act
       const movement = StockMovementMapper.toDomain(outMovementDto);
@@ -67,9 +73,12 @@ describe('StockMovementMapper', () => {
       expect(movement.isAdjustment).toBe(false);
     });
 
-    it('Given: a movement with type ADJUSTMENT When: mapping to domain Then: isAdjustment should be true', () => {
+    it("Given: a movement with type ADJUSTMENT When: mapping to domain Then: isAdjustment should be true", () => {
       // Arrange
-      const adjustmentDto: StockMovementResponseDto = { ...mockMovementDto, type: 'ADJUSTMENT' };
+      const adjustmentDto: StockMovementResponseDto = {
+        ...mockMovementDto,
+        type: "ADJUSTMENT",
+      };
 
       // Act
       const movement = StockMovementMapper.toDomain(adjustmentDto);
@@ -80,7 +89,7 @@ describe('StockMovementMapper', () => {
       expect(movement.isAdjustment).toBe(true);
     });
 
-    it('Given: a movement When: getting quantityDifference Then: should return correct difference', () => {
+    it("Given: a movement When: getting quantityDifference Then: should return correct difference", () => {
       // Act
       const movement = StockMovementMapper.toDomain(mockMovementDto);
 
@@ -88,9 +97,12 @@ describe('StockMovementMapper', () => {
       expect(movement.quantityDifference).toBe(50); // 150 - 100
     });
 
-    it('Given: a movement without reference When: mapping to domain Then: reference should be null', () => {
+    it("Given: a movement without reference When: mapping to domain Then: reference should be null", () => {
       // Arrange
-      const noRefDto: StockMovementResponseDto = { ...mockMovementDto, reference: null };
+      const noRefDto: StockMovementResponseDto = {
+        ...mockMovementDto,
+        reference: null,
+      };
 
       // Act
       const movement = StockMovementMapper.toDomain(noRefDto);
@@ -100,8 +112,8 @@ describe('StockMovementMapper', () => {
     });
   });
 
-  describe('toDto', () => {
-    it('Given: a StockMovement entity When: mapping to DTO Then: should return a StockMovementResponseDto', () => {
+  describe("toDto", () => {
+    it("Given: a StockMovement entity When: mapping to DTO Then: should return a StockMovementResponseDto", () => {
       // Arrange
       const movement = StockMovementMapper.toDomain(mockMovementDto);
 
@@ -116,8 +128,8 @@ describe('StockMovementMapper', () => {
     });
   });
 
-  describe('round-trip', () => {
-    it('Given: a StockMovementResponseDto When: mapping to domain and back to DTO Then: should be equivalent', () => {
+  describe("round-trip", () => {
+    it("Given: a StockMovementResponseDto When: mapping to domain and back to DTO Then: should be equivalent", () => {
       // Act
       const movement = StockMovementMapper.toDomain(mockMovementDto);
       const resultDto = StockMovementMapper.toDto(movement);

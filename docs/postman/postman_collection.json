@@ -4837,7 +4837,13 @@
                 "url": {
                   "raw": "{{baseUrl}}/reports/returns/by-sale/{{saleId}}/view",
                   "host": ["{{baseUrl}}"],
-                  "path": ["reports", "returns", "by-sale", "{{saleId}}", "view"],
+                  "path": [
+                    "reports",
+                    "returns",
+                    "by-sale",
+                    "{{saleId}}",
+                    "view"
+                  ],
                   "variable": [
                     {
                       "key": "saleId",
@@ -6178,7 +6184,13 @@
             "url": {
               "raw": "{{baseUrl}}/audit/entities/:entityType/:entityId/history?page=1&limit=50",
               "host": ["{{baseUrl}}"],
-              "path": ["audit", "entities", ":entityType", ":entityId", "history"],
+              "path": [
+                "audit",
+                "entities",
+                ":entityType",
+                ":entityId",
+                "history"
+              ],
               "variable": [
                 {
                   "key": "entityType",
@@ -7257,7 +7269,9 @@
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
-              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
               "cookie": [],
               "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"audit-log-1\",\n      \"entityType\": \"User\",\n      \"entityId\": \"user-123\",\n      \"action\": \"UPDATE\",\n      \"performedBy\": \"admin-user\",\n      \"changes\": {\n        \"before\": { \"status\": \"ACTIVE\" },\n        \"after\": { \"status\": \"INACTIVE\" }\n      },\n      \"timestamp\": \"2024-12-20T10:00:00.000Z\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 50,\n    \"total\": 1,\n    \"totalPages\": 1\n  }\n}"
             }
@@ -7410,7 +7424,13 @@
             "url": {
               "raw": "{{baseUrl}}/audit/entities/:entityType/:entityId/history?page=1&limit=50",
               "host": ["{{baseUrl}}"],
-              "path": ["audit", "entities", ":entityType", ":entityId", "history"],
+              "path": [
+                "audit",
+                "entities",
+                ":entityType",
+                ":entityId",
+                "history"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -7828,7 +7848,9 @@
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
-              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
               "cookie": [],
               "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"batch-123\",\n    \"type\": \"PRODUCTS\",\n    \"status\": \"COMPLETED\",\n    \"fileName\": \"products-import.xlsx\",\n    \"totalRows\": 100,\n    \"processedRows\": 100,\n    \"successRows\": 98,\n    \"errorRows\": 2,\n    \"createdAt\": \"2024-12-20T10:00:00.000Z\",\n    \"completedAt\": \"2024-12-20T10:05:00.000Z\"\n  }\n}"
             }
@@ -8092,7 +8114,9 @@
               "status": "Created",
               "code": 201,
               "_postman_previewlanguage": "json",
-              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
               "cookie": [],
               "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"template-123\",\n    \"name\": \"Monthly Inventory Report\",\n    \"description\": \"Template for monthly inventory valuation\",\n    \"type\": \"INVENTORY_VALUATION\",\n    \"defaultParameters\": {\n      \"includeInactive\": false,\n      \"groupBy\": \"WAREHOUSE\",\n      \"period\": \"MONTHLY\"\n    },\n    \"isActive\": true,\n    \"createdBy\": \"user-123\",\n    \"createdAt\": \"2024-12-20T10:00:00.000Z\"\n  }\n}"
             }

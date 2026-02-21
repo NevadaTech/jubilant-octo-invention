@@ -5,8 +5,14 @@ export const createUserSchema = z.object({
   email: z.string().email("Please enter a valid email"),
   username: z.string().min(3, "Username must be at least 3 characters").max(50),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  firstName: z.string().min(2, "First name must be at least 2 characters").max(100),
-  lastName: z.string().min(2, "Last name must be at least 2 characters").max(100),
+  firstName: z
+    .string()
+    .min(2, "First name must be at least 2 characters")
+    .max(100),
+  lastName: z
+    .string()
+    .min(2, "Last name must be at least 2 characters")
+    .max(100),
 });
 
 export type CreateUserFormData = z.infer<typeof createUserSchema>;

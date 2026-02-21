@@ -1,30 +1,57 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { ArrowLeft, ArrowRight, Package, Warehouse, User, Calendar, FileText } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Package,
+  Warehouse,
+  User,
+  Calendar,
+  FileText,
+} from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
-import { useTransfer, useUpdateTransferStatus } from "../../hooks/use-transfers";
+import {
+  useTransfer,
+  useUpdateTransferStatus,
+} from "../../hooks/use-transfers";
+import { useUser } from "@/modules/users/presentation/hooks/use-users";
 import { TransferStatusBadge } from "./transfer-status-badge";
 import { TransferTimeline } from "./transfer-timeline";
+import { TransferReceiveModal } from "./transfer-receive-modal";
 
 interface TransferDetailProps {
   transferId: string;
+}
+
+function UserName({ userId }: { userId: string }) {
+  const { data: user } = useUser(userId);
+  if (!user) {
+    return (
+      <span className="font-mono text-sm text-muted-foreground">
+        {userId.slice(0, 8)}...
+      </span>
+    );
+  }
+  return (
+    <span>
+      {user.firstName} {user.lastName}
+    </span>
+  );
 }
 
 export function TransferDetail({ transferId }: TransferDetailProps) {
   const t = useTranslations("inventory.transfers");
   const { data: transfer, isLoading, isError } = useTransfer(transferId);
   const updateStatus = useUpdateTransferStatus();
+  const [receiveModalOpen, setReceiveModalOpen] = useState(false);
 
   const handleStartTransit = async () => {
     await updateStatus.mutateAsync({ id: transferId, status: "IN_TRANSIT" });
-  };
-
-  const handleReceive = async () => {
-    await updateStatus.mutateAsync({ id: transferId, status: "RECEIVED" });
   };
 
   const handleReject = async () => {
@@ -121,8 +148,9 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
           )}
           {transfer.canReceive && (
             <Button
-              onClick={handleReceive}
+              onClick={() => setReceiveModalOpen(true)}
               disabled={updateStatus.isPending}
+              className="bg-green-600 hover:bg-green-700"
             >
               {t("actions.receive")}
             </Button>
@@ -211,9 +239,22 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("fields.createdBy")}
                 </p>
-                <p>{transfer.createdBy}</p>
+                <UserName userId={transfer.createdBy} />
               </div>
             </div>
+
+            {/* Received By */}
+            {transfer.receivedBy && (
+              <div className="flex items-start gap-3">
+                <User className="mt-0.5 h-5 w-5 text-green-600" />
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t("fields.receivedBy")}
+                  </p>
+                  <UserName userId={transfer.receivedBy} />
+                </div>
+              </div>
+            )}
 
             {/* Created At */}
             <div className="flex items-start gap-3">
@@ -255,23 +296,32 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
                 <tr className="border-b text-left text-sm font-medium text-muted-foreground">
                   <th className="pb-3 pr-4">{t("fields.product")}</th>
                   <th className="pb-3 pr-4">{t("fields.sku")}</th>
-                  <th className="pb-3 pr-4 text-right">{t("fields.quantity")}</th>
+                  <th className="pb-3 pr-4 text-right">
+                    {t("fields.quantity")}
+                  </th>
                   {transfer.isReceived || transfer.isPartial ? (
-                    <th className="pb-3 text-right">{t("fields.receivedQuantity")}</th>
+                    <th className="pb-3 text-right">
+                      {t("fields.receivedQuantity")}
+                    </th>
                   ) : null}
                 </tr>
               </thead>
               <tbody>
                 {transfer.lines.map((line) => (
                   <tr key={line.id} className="border-b">
-                    <td className="py-4 pr-4 font-medium">{line.productName}</td>
-                    <td className="py-4 pr-4 text-muted-foreground">{line.productSku}</td>
+                    <td className="py-4 pr-4 font-medium">
+                      {line.productName}
+                    </td>
+                    <td className="py-4 pr-4 text-muted-foreground">
+                      {line.productSku}
+                    </td>
                     <td className="py-4 pr-4 text-right">{line.quantity}</td>
                     {transfer.isReceived || transfer.isPartial ? (
                       <td className="py-4 text-right">
                         <span
                           className={
-                            line.receivedQuantity !== null && line.receivedQuantity < line.quantity
+                            line.receivedQuantity !== null &&
+                            line.receivedQuantity < line.quantity
                               ? "text-orange-600"
                               : "text-green-600"
                           }
@@ -287,6 +337,15 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Receive Modal */}
+      {transfer.canReceive && (
+        <TransferReceiveModal
+          transfer={transfer}
+          open={receiveModalOpen}
+          onOpenChange={setReceiveModalOpen}
+        />
+      )}
     </div>
   );
 }

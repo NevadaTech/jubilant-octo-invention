@@ -14,7 +14,11 @@ import {
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
-import { useProducts, useProductFilters, useSetProductFilters } from "../../hooks";
+import {
+  useProducts,
+  useProductFilters,
+  useSetProductFilters,
+} from "../../hooks";
 import { ProductFilters } from "./product-filters";
 import type { Product } from "../../../domain/entities/product.entity";
 import type { ProductFilters as ProductFiltersType } from "../../../application/dto/product.dto";
@@ -41,12 +45,8 @@ function ProductRow({ product }: { product: Product }) {
             <Package className="h-5 w-5 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <p className="font-medium text-foreground">
-              {product.name}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {product.sku}
-            </p>
+            <p className="font-medium text-foreground">{product.name}</p>
+            <p className="text-sm text-muted-foreground">{product.sku}</p>
           </div>
         </Link>
       </td>
@@ -144,7 +144,7 @@ export function ProductList() {
     (newFilters: ProductFiltersType) => {
       setFilters(newFilters);
     },
-    [setFilters]
+    [setFilters],
   );
 
   const handlePageChange = (newPage: number) => {
@@ -177,7 +177,10 @@ export function ProductList() {
       <CardContent>
         {/* Search and Filters */}
         <div className="mb-6">
-          <ProductFilters filters={filters} onFiltersChange={handleFiltersChange} />
+          <ProductFilters
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+          />
         </div>
 
         {/* Table */}
@@ -212,10 +215,11 @@ export function ProductList() {
               <div className="mt-4 flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-700">
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">
                   {t("pagination.showing", {
-                    from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                    from:
+                      (data.pagination.page - 1) * data.pagination.limit + 1,
                     to: Math.min(
                       data.pagination.page * data.pagination.limit,
-                      data.pagination.total
+                      data.pagination.total,
                     ),
                     total: data.pagination.total,
                   })}
@@ -236,7 +240,9 @@ export function ProductList() {
                     variant="outline"
                     size="sm"
                     onClick={() => handlePageChange(data.pagination.page + 1)}
-                    disabled={data.pagination.page >= data.pagination.totalPages}
+                    disabled={
+                      data.pagination.page >= data.pagination.totalPages
+                    }
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>

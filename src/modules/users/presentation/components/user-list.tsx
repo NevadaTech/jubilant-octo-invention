@@ -2,13 +2,28 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Search, Users, MoreHorizontal, CheckCircle, XCircle, Lock, Shield } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Users,
+  MoreHorizontal,
+  CheckCircle,
+  XCircle,
+  Lock,
+  Shield,
+} from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,7 +71,9 @@ export function UserList() {
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(date);
+    return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
+      date,
+    );
   };
 
   if (isError) {
@@ -92,14 +109,21 @@ export function UserList() {
             </div>
             <div className="min-w-[150px]">
               <Label className="text-sm">{t("filters.status")}</Label>
-              <Select value={filters.status || "all"} onValueChange={handleStatusFilter}>
+              <Select
+                value={filters.status || "all"}
+                onValueChange={handleStatusFilter}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t("filters.allStatuses")}</SelectItem>
+                  <SelectItem value="all">
+                    {t("filters.allStatuses")}
+                  </SelectItem>
                   <SelectItem value="ACTIVE">{t("status.active")}</SelectItem>
-                  <SelectItem value="INACTIVE">{t("status.inactive")}</SelectItem>
+                  <SelectItem value="INACTIVE">
+                    {t("status.inactive")}
+                  </SelectItem>
                   <SelectItem value="LOCKED">{t("status.locked")}</SelectItem>
                 </SelectContent>
               </Select>
@@ -117,7 +141,9 @@ export function UserList() {
             <div className="py-10 text-center">
               <Users className="mx-auto h-12 w-12 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-semibold">{t("empty.title")}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{t("empty.description")}</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {t("empty.description")}
+              </p>
             </div>
           ) : (
             <>
@@ -131,7 +157,9 @@ export function UserList() {
                       <th className="pb-3 pr-4">{t("fields.status")}</th>
                       <th className="pb-3 pr-4">{t("fields.lastLogin")}</th>
                       <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
-                      <th className="pb-3 pr-4 text-right">{tCommon("actions")}</th>
+                      <th className="pb-3 pr-4 text-right">
+                        {tCommon("actions")}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -141,12 +169,16 @@ export function UserList() {
                           <p className="font-medium">{user.fullName}</p>
                         </td>
                         <td className="py-4 pr-4 text-sm">{user.email}</td>
-                        <td className="py-4 pr-4 font-mono text-sm">{user.username}</td>
+                        <td className="py-4 pr-4 font-mono text-sm">
+                          {user.username}
+                        </td>
                         <td className="py-4 pr-4">
                           <UserStatusBadge status={user.status} />
                         </td>
                         <td className="py-4 pr-4 text-sm text-muted-foreground">
-                          {user.lastLoginAt ? formatDate(user.lastLoginAt) : "-"}
+                          {user.lastLoginAt
+                            ? formatDate(user.lastLoginAt)
+                            : "-"}
                         </td>
                         <td className="py-4 pr-4 text-sm text-muted-foreground">
                           {formatDate(user.createdAt)}
@@ -159,19 +191,29 @@ export function UserList() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setRolesDialogUser(user)}>
+                              <DropdownMenuItem
+                                onClick={() => setRolesDialogUser(user)}
+                              >
                                 <Shield className="mr-2 h-4 w-4" />
                                 {t("actions.manageRoles")}
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               {!user.isActive && (
-                                <DropdownMenuItem onClick={() => handleChangeStatus(user.id, "ACTIVE")}>
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handleChangeStatus(user.id, "ACTIVE")
+                                  }
+                                >
                                   <CheckCircle className="mr-2 h-4 w-4" />
                                   {t("actions.activate")}
                                 </DropdownMenuItem>
                               )}
                               {user.isActive && (
-                                <DropdownMenuItem onClick={() => handleChangeStatus(user.id, "INACTIVE")}>
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handleChangeStatus(user.id, "INACTIVE")
+                                  }
+                                >
                                   <XCircle className="mr-2 h-4 w-4" />
                                   {t("actions.deactivate")}
                                 </DropdownMenuItem>
@@ -179,7 +221,9 @@ export function UserList() {
                               <DropdownMenuSeparator />
                               {!user.isLocked && (
                                 <DropdownMenuItem
-                                  onClick={() => handleChangeStatus(user.id, "LOCKED")}
+                                  onClick={() =>
+                                    handleChangeStatus(user.id, "LOCKED")
+                                  }
                                   className="text-destructive"
                                 >
                                   <Lock className="mr-2 h-4 w-4" />
@@ -199,18 +243,42 @@ export function UserList() {
                 <div className="mt-4 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
                     {t("pagination.showing", {
-                      from: (data.pagination.page - 1) * data.pagination.limit + 1,
-                      to: Math.min(data.pagination.page * data.pagination.limit, data.pagination.total),
+                      from:
+                        (data.pagination.page - 1) * data.pagination.limit + 1,
+                      to: Math.min(
+                        data.pagination.page * data.pagination.limit,
+                        data.pagination.total,
+                      ),
                       total: data.pagination.total,
                     })}
                   </p>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" disabled={data.pagination.page <= 1}
-                      onClick={() => setFilters((prev) => ({ ...prev, page: data.pagination.page - 1 }))}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={data.pagination.page <= 1}
+                      onClick={() =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          page: data.pagination.page - 1,
+                        }))
+                      }
+                    >
                       {tCommon("previous")}
                     </Button>
-                    <Button variant="outline" size="sm" disabled={data.pagination.page >= data.pagination.totalPages}
-                      onClick={() => setFilters((prev) => ({ ...prev, page: data.pagination.page + 1 }))}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={
+                        data.pagination.page >= data.pagination.totalPages
+                      }
+                      onClick={() =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          page: data.pagination.page + 1,
+                        }))
+                      }
+                    >
                       {tCommon("next")}
                     </Button>
                   </div>
@@ -223,9 +291,16 @@ export function UserList() {
 
       <UserForm open={isFormOpen} onOpenChange={setIsFormOpen} />
       <UserRolesDialog
-        user={rolesDialogUser ? (data?.data.find((u) => u.id === rolesDialogUser.id) ?? rolesDialogUser) : null}
+        user={
+          rolesDialogUser
+            ? (data?.data.find((u) => u.id === rolesDialogUser.id) ??
+              rolesDialogUser)
+            : null
+        }
         open={!!rolesDialogUser}
-        onOpenChange={(open) => { if (!open) setRolesDialogUser(null); }}
+        onOpenChange={(open) => {
+          if (!open) setRolesDialogUser(null);
+        }}
       />
     </>
   );

@@ -1,5 +1,8 @@
 import { z } from "zod";
-import type { CreateProductDto, UpdateProductDto } from "../../application/dto/product.dto";
+import type {
+  CreateProductDto,
+  UpdateProductDto,
+} from "../../application/dto/product.dto";
 
 export const createProductSchema = z.object({
   sku: z
@@ -8,7 +11,7 @@ export const createProductSchema = z.object({
     .max(50, "SKU cannot exceed 50 characters")
     .regex(
       /^[A-Za-z0-9-_]+$/,
-      "SKU can only contain letters, numbers, hyphens and underscores"
+      "SKU can only contain letters, numbers, hyphens and underscores",
     ),
   name: z
     .string()
@@ -42,7 +45,9 @@ export interface UpdateProductFormData extends Partial<CreateProductFormData> {
 }
 
 // Helper to transform form data to DTO
-export function toCreateProductDto(data: CreateProductFormData): CreateProductDto {
+export function toCreateProductDto(
+  data: CreateProductFormData,
+): CreateProductDto {
   return {
     sku: data.sku,
     name: data.name,
@@ -56,11 +61,14 @@ export function toCreateProductDto(data: CreateProductFormData): CreateProductDt
   };
 }
 
-export function toUpdateProductDto(data: UpdateProductFormData): UpdateProductDto {
+export function toUpdateProductDto(
+  data: UpdateProductFormData,
+): UpdateProductDto {
   const dto: UpdateProductDto = {};
 
   if (data.name !== undefined) dto.name = data.name;
-  if (data.description !== undefined) dto.description = data.description || undefined;
+  if (data.description !== undefined)
+    dto.description = data.description || undefined;
   if (data.categoryIds !== undefined) dto.categoryIds = data.categoryIds;
   if (data.unitOfMeasure !== undefined) dto.unitOfMeasure = data.unitOfMeasure;
   if (data.price !== undefined) dto.price = data.price;

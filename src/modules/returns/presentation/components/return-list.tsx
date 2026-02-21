@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Search, RotateCcw, CheckCircle, XCircle, MoreHorizontal, Eye } from "lucide-react";
+import {
+  Plus,
+  Search,
+  RotateCcw,
+  CheckCircle,
+  XCircle,
+  MoreHorizontal,
+  Eye,
+} from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
@@ -24,7 +32,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
-import { useReturns, useConfirmReturn, useCancelReturn } from "../hooks/use-returns";
+import {
+  useReturns,
+  useConfirmReturn,
+  useCancelReturn,
+} from "../hooks/use-returns";
 import { ReturnStatusBadge } from "./return-status-badge";
 import { ReturnTypeBadge } from "./return-type-badge";
 import { ReturnFiltersComponent } from "./return-filters";
@@ -119,7 +131,10 @@ export function ReturnList() {
                 className="pl-9"
               />
             </div>
-            <ReturnFiltersComponent filters={filters} onFiltersChange={setFilters} />
+            <ReturnFiltersComponent
+              filters={filters}
+              onFiltersChange={setFilters}
+            />
           </div>
         </CardHeader>
         <CardContent>
@@ -156,7 +171,9 @@ export function ReturnList() {
                       <th className="pb-3 pr-4">{t("fields.items")}</th>
                       <th className="pb-3 pr-4">{t("fields.total")}</th>
                       <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
-                      <th className="pb-3 pr-4 text-right">{tCommon("actions")}</th>
+                      <th className="pb-3 pr-4 text-right">
+                        {tCommon("actions")}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -201,7 +218,9 @@ export function ReturnList() {
                                 </Link>
                               </DropdownMenuItem>
                               {ret.canConfirm && (
-                                <DropdownMenuItem onClick={() => setConfirmDialog(ret)}>
+                                <DropdownMenuItem
+                                  onClick={() => setConfirmDialog(ret)}
+                                >
                                   <CheckCircle className="mr-2 h-4 w-4" />
                                   {t("actions.confirm")}
                                 </DropdownMenuItem>
@@ -228,10 +247,11 @@ export function ReturnList() {
                 <div className="mt-4 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
                     {t("pagination.showing", {
-                      from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                      from:
+                        (data.pagination.page - 1) * data.pagination.limit + 1,
                       to: Math.min(
                         data.pagination.page * data.pagination.limit,
-                        data.pagination.total
+                        data.pagination.total,
                       ),
                       total: data.pagination.total,
                     })}
@@ -241,15 +261,27 @@ export function ReturnList() {
                       variant="outline"
                       size="sm"
                       disabled={data.pagination.page <= 1}
-                      onClick={() => setFilters((prev) => ({ ...prev, page: data.pagination.page - 1 }))}
+                      onClick={() =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          page: data.pagination.page - 1,
+                        }))
+                      }
                     >
                       {tCommon("previous")}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={data.pagination.page >= data.pagination.totalPages}
-                      onClick={() => setFilters((prev) => ({ ...prev, page: data.pagination.page + 1 }))}
+                      disabled={
+                        data.pagination.page >= data.pagination.totalPages
+                      }
+                      onClick={() =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          page: data.pagination.page + 1,
+                        }))
+                      }
                     >
                       {tCommon("next")}
                     </Button>
@@ -262,7 +294,10 @@ export function ReturnList() {
       </Card>
 
       {/* Confirm Return Dialog */}
-      <AlertDialog open={!!confirmDialog} onOpenChange={(open) => !open && setConfirmDialog(null)}>
+      <AlertDialog
+        open={!!confirmDialog}
+        onOpenChange={(open) => !open && setConfirmDialog(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("confirmReturn.title")}</AlertDialogTitle>
@@ -276,14 +311,19 @@ export function ReturnList() {
               onClick={handleConfirm}
               disabled={confirmReturn.isPending}
             >
-              {confirmReturn.isPending ? tCommon("loading") : t("actions.confirm")}
+              {confirmReturn.isPending
+                ? tCommon("loading")
+                : t("actions.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       {/* Cancel Return Dialog */}
-      <AlertDialog open={!!cancelDialog} onOpenChange={(open) => !open && setCancelDialog(null)}>
+      <AlertDialog
+        open={!!cancelDialog}
+        onOpenChange={(open) => !open && setCancelDialog(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("cancelReturn.title")}</AlertDialogTitle>
@@ -298,7 +338,9 @@ export function ReturnList() {
               disabled={cancelReturn.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {cancelReturn.isPending ? tCommon("loading") : t("actions.cancelReturn")}
+              {cancelReturn.isPending
+                ? tCommon("loading")
+                : t("actions.cancelReturn")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -17,7 +17,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/ui/components/alert-dialog";
-import { useReturn, useConfirmReturn, useCancelReturn } from "../hooks/use-returns";
+import {
+  useReturn,
+  useConfirmReturn,
+  useCancelReturn,
+} from "../hooks/use-returns";
 import { ReturnStatusBadge } from "./return-status-badge";
 import { ReturnTypeBadge } from "./return-type-badge";
 
@@ -109,7 +113,9 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
               <ReturnTypeBadge type={returnData.type} />
             </div>
             <p className="text-neutral-500 dark:text-neutral-400">
-              {t("detail.createdAt", { date: formatDate(returnData.createdAt) })}
+              {t("detail.createdAt", {
+                date: formatDate(returnData.createdAt),
+              })}
             </p>
           </div>
         </div>
@@ -125,7 +131,9 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>{t("confirmReturn.title")}</AlertDialogTitle>
+                  <AlertDialogTitle>
+                    {t("confirmReturn.title")}
+                  </AlertDialogTitle>
                   <AlertDialogDescription>
                     {t("confirmReturn.description")}
                   </AlertDialogDescription>
@@ -136,7 +144,9 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                     onClick={handleConfirm}
                     disabled={confirmReturn.isPending}
                   >
-                    {confirmReturn.isPending ? tCommon("loading") : t("actions.confirm")}
+                    {confirmReturn.isPending
+                      ? tCommon("loading")
+                      : t("actions.confirm")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -164,7 +174,9 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                     disabled={cancelReturn.isPending}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
-                    {cancelReturn.isPending ? tCommon("loading") : t("actions.cancelReturn")}
+                    {cancelReturn.isPending
+                      ? tCommon("loading")
+                      : t("actions.cancelReturn")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -181,40 +193,58 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
         <CardContent>
           <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">{t("fields.warehouse")}</dt>
+              <dt className="text-sm font-medium text-muted-foreground">
+                {t("fields.warehouse")}
+              </dt>
               <dd className="mt-1 font-medium">{returnData.warehouseName}</dd>
             </div>
             {returnData.saleNumber && (
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">{t("fields.saleReference")}</dt>
-                <dd className="mt-1 font-mono text-sm">{returnData.saleNumber}</dd>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("fields.saleReference")}
+                </dt>
+                <dd className="mt-1 font-mono text-sm">
+                  {returnData.saleNumber}
+                </dd>
               </div>
             )}
             {returnData.reason && (
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">{t("fields.reason")}</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("fields.reason")}
+                </dt>
                 <dd className="mt-1">{returnData.reason}</dd>
               </div>
             )}
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">{t("fields.total")}</dt>
-              <dd className="mt-1 text-lg font-bold">{formatCurrency(returnData.totalAmount, returnData.currency)}</dd>
+              <dt className="text-sm font-medium text-muted-foreground">
+                {t("fields.total")}
+              </dt>
+              <dd className="mt-1 text-lg font-bold">
+                {formatCurrency(returnData.totalAmount, returnData.currency)}
+              </dd>
             </div>
             {returnData.confirmedAt && (
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">{t("fields.confirmedAt")}</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("fields.confirmedAt")}
+                </dt>
                 <dd className="mt-1">{formatDate(returnData.confirmedAt)}</dd>
               </div>
             )}
             {returnData.cancelledAt && (
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">{t("fields.cancelledAt")}</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("fields.cancelledAt")}
+                </dt>
                 <dd className="mt-1">{formatDate(returnData.cancelledAt)}</dd>
               </div>
             )}
             {returnData.note && (
               <div className="sm:col-span-2 lg:col-span-3">
-                <dt className="text-sm font-medium text-muted-foreground">{t("fields.note")}</dt>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("fields.note")}
+                </dt>
                 <dd className="mt-1">{returnData.note}</dd>
               </div>
             )}
@@ -225,7 +255,9 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
       {/* Lines Card */}
       <Card>
         <CardHeader>
-          <CardTitle>{t("detail.lines")} ({returnData.totalItems})</CardTitle>
+          <CardTitle>
+            {t("detail.lines")} ({returnData.totalItems})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {returnData.lines.length === 0 ? (
@@ -241,9 +273,13 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                     <th className="pb-3 pr-4">{t("fields.product")}</th>
                     <th className="pb-3 pr-4">{t("fields.quantity")}</th>
                     <th className="pb-3 pr-4">
-                      {returnData.isCustomerReturn ? t("fields.originalPrice") : t("fields.originalCost")}
+                      {returnData.isCustomerReturn
+                        ? t("fields.originalPrice")
+                        : t("fields.originalCost")}
                     </th>
-                    <th className="pb-3 pr-4 text-right">{t("fields.lineTotal")}</th>
+                    <th className="pb-3 pr-4 text-right">
+                      {t("fields.lineTotal")}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -251,14 +287,22 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                     <tr key={line.id} className="border-b">
                       <td className="py-3 pr-4">
                         <p className="font-medium">{line.productName}</p>
-                        <p className="text-sm text-muted-foreground">{line.productSku}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {line.productSku}
+                        </p>
                       </td>
                       <td className="py-3 pr-4">{line.quantity}</td>
                       <td className="py-3 pr-4">
                         {line.originalSalePrice
-                          ? formatCurrency(line.originalSalePrice, line.currency)
+                          ? formatCurrency(
+                              line.originalSalePrice,
+                              line.currency,
+                            )
                           : line.originalUnitCost
-                            ? formatCurrency(line.originalUnitCost, line.currency)
+                            ? formatCurrency(
+                                line.originalUnitCost,
+                                line.currency,
+                              )
                             : "-"}
                       </td>
                       <td className="py-3 pr-4 text-right font-medium">
@@ -273,7 +317,10 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                       {t("fields.total")}
                     </td>
                     <td className="py-3 text-right text-lg font-bold">
-                      {formatCurrency(returnData.totalAmount, returnData.currency)}
+                      {formatCurrency(
+                        returnData.totalAmount,
+                        returnData.currency,
+                      )}
                     </td>
                   </tr>
                 </tfoot>

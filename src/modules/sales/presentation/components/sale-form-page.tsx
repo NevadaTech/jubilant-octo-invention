@@ -11,7 +11,13 @@ import { CurrencyInput } from "@/ui/components/currency-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import { Textarea } from "@/ui/components/textarea";
 import {
   createSaleSchema,
@@ -28,7 +34,10 @@ export function SaleFormPage() {
   const router = useRouter();
   const createSale = useCreateSale();
   const { data: productsData } = useProducts({ limit: 100, isActive: true });
-  const { data: warehousesData } = useWarehouses({ limit: 100, isActive: true });
+  const { data: warehousesData } = useWarehouses({
+    limit: 100,
+    isActive: true,
+  });
 
   const isSubmitting = createSale.isPending;
 
@@ -107,7 +116,9 @@ export function SaleFormPage() {
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder={t("fields.warehousePlaceholder")} />
+                      <SelectValue
+                        placeholder={t("fields.warehousePlaceholder")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {warehousesData?.data.map((warehouse) => (
@@ -155,7 +166,12 @@ export function SaleFormPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>{t("form.linesSection")}</CardTitle>
-              <Button type="button" variant="outline" size="sm" onClick={addLine}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addLine}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 {t("actions.addLine")}
               </Button>
@@ -163,7 +179,9 @@ export function SaleFormPage() {
           </CardHeader>
           <CardContent>
             {errors.lines?.message && (
-              <p className="mb-4 text-sm text-destructive">{errors.lines.message}</p>
+              <p className="mb-4 text-sm text-destructive">
+                {errors.lines.message}
+              </p>
             )}
 
             {fields.length === 0 ? (
@@ -173,21 +191,34 @@ export function SaleFormPage() {
             ) : (
               <div className="space-y-4">
                 {fields.map((field, index) => (
-                  <div key={field.id} className="flex items-start gap-4 rounded-lg border p-4">
+                  <div
+                    key={field.id}
+                    className="flex items-start gap-4 rounded-lg border p-4"
+                  >
                     <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <FormField error={errors.lines?.[index]?.productId?.message}>
+                      <FormField
+                        error={errors.lines?.[index]?.productId?.message}
+                      >
                         <Label>{t("fields.product")} *</Label>
                         <Controller
                           name={`lines.${index}.productId`}
                           control={control}
                           render={({ field: selectField }) => (
-                            <Select value={selectField.value} onValueChange={selectField.onChange}>
+                            <Select
+                              value={selectField.value}
+                              onValueChange={selectField.onChange}
+                            >
                               <SelectTrigger>
-                                <SelectValue placeholder={t("fields.productPlaceholder")} />
+                                <SelectValue
+                                  placeholder={t("fields.productPlaceholder")}
+                                />
                               </SelectTrigger>
                               <SelectContent>
                                 {productsData?.data.map((product) => (
-                                  <SelectItem key={product.id} value={product.id}>
+                                  <SelectItem
+                                    key={product.id}
+                                    value={product.id}
+                                  >
                                     {product.name} ({product.sku})
                                   </SelectItem>
                                 ))}
@@ -197,16 +228,22 @@ export function SaleFormPage() {
                         />
                       </FormField>
 
-                      <FormField error={errors.lines?.[index]?.quantity?.message}>
+                      <FormField
+                        error={errors.lines?.[index]?.quantity?.message}
+                      >
                         <Label>{t("fields.quantity")} *</Label>
                         <Input
                           type="number"
                           min="1"
-                          {...register(`lines.${index}.quantity`, { valueAsNumber: true })}
+                          {...register(`lines.${index}.quantity`, {
+                            valueAsNumber: true,
+                          })}
                         />
                       </FormField>
 
-                      <FormField error={errors.lines?.[index]?.salePrice?.message}>
+                      <FormField
+                        error={errors.lines?.[index]?.salePrice?.message}
+                      >
                         <Label>{t("fields.salePrice")} *</Label>
                         <Controller
                           name={`lines.${index}.salePrice`}
@@ -241,9 +278,7 @@ export function SaleFormPage() {
         {/* Actions */}
         <div className="flex justify-end gap-3">
           <Button asChild type="button" variant="outline">
-            <Link href="/dashboard/sales">
-              {tCommon("cancel")}
-            </Link>
+            <Link href="/dashboard/sales">{tCommon("cancel")}</Link>
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? tCommon("loading") : tCommon("create")}

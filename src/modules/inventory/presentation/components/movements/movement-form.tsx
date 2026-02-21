@@ -9,7 +9,13 @@ import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import { Textarea } from "@/ui/components/textarea";
 import { CurrencyInput } from "@/ui/components/currency-input";
 import {
@@ -31,7 +37,10 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
   const tCommon = useTranslations("common");
   const createMovement = useCreateMovement();
   const { data: productsData } = useProducts({ limit: 100, isActive: true });
-  const { data: warehousesData } = useWarehouses({ limit: 100, isActive: true });
+  const { data: warehousesData } = useWarehouses({
+    limit: 100,
+    isActive: true,
+  });
 
   const {
     register,
@@ -106,17 +115,22 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
                     name="type"
                     control={control}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="IN">{t("types.in")}</SelectItem>
                           <SelectItem value="OUT">{t("types.out")}</SelectItem>
-                          <SelectItem value="ADJUST_IN">{t("types.adjust_in")}</SelectItem>
-                          <SelectItem value="ADJUST_OUT">{t("types.adjust_out")}</SelectItem>
-                          <SelectItem value="TRANSFER_IN">{t("types.transfer_in")}</SelectItem>
-                          <SelectItem value="TRANSFER_OUT">{t("types.transfer_out")}</SelectItem>
+                          <SelectItem value="ADJUST_IN">
+                            {t("types.adjust_in")}
+                          </SelectItem>
+                          <SelectItem value="ADJUST_OUT">
+                            {t("types.adjust_out")}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -129,9 +143,14 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
                     name="warehouseId"
                     control={control}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
-                          <SelectValue placeholder={t("fields.warehousePlaceholder")} />
+                          <SelectValue
+                            placeholder={t("fields.warehousePlaceholder")}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {warehousesData?.data.map((warehouse) => (
@@ -178,14 +197,21 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">{t("form.linesSection")}</h3>
-                <Button type="button" variant="outline" size="sm" onClick={addLine}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addLine}
+                >
                   <Plus className="mr-2 h-4 w-4" />
                   {t("actions.addLine")}
                 </Button>
               </div>
 
               {errors.lines?.message && (
-                <p className="text-sm text-destructive">{errors.lines.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.lines.message}
+                </p>
               )}
 
               {fields.length === 0 ? (
@@ -195,21 +221,36 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
               ) : (
                 <div className="space-y-3">
                   {fields.map((field, index) => (
-                    <div key={field.id} className="flex items-start gap-3 rounded-md border p-3">
+                    <div
+                      key={field.id}
+                      className="flex items-start gap-3 rounded-md border p-3"
+                    >
                       <div className="flex-1 grid grid-cols-3 gap-3">
-                        <FormField error={errors.lines?.[index]?.productId?.message}>
-                          <Label className="text-xs">{t("fields.product")}</Label>
+                        <FormField
+                          error={errors.lines?.[index]?.productId?.message}
+                        >
+                          <Label className="text-xs">
+                            {t("fields.product")}
+                          </Label>
                           <Controller
                             name={`lines.${index}.productId`}
                             control={control}
                             render={({ field: selectField }) => (
-                              <Select value={selectField.value} onValueChange={selectField.onChange}>
+                              <Select
+                                value={selectField.value}
+                                onValueChange={selectField.onChange}
+                              >
                                 <SelectTrigger>
-                                  <SelectValue placeholder={t("fields.productPlaceholder")} />
+                                  <SelectValue
+                                    placeholder={t("fields.productPlaceholder")}
+                                  />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {productsData?.data.map((product) => (
-                                    <SelectItem key={product.id} value={product.id}>
+                                    <SelectItem
+                                      key={product.id}
+                                      value={product.id}
+                                    >
                                       {product.name} ({product.sku})
                                     </SelectItem>
                                   ))}
@@ -219,24 +260,36 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
                           />
                         </FormField>
 
-                        <FormField error={errors.lines?.[index]?.quantity?.message}>
-                          <Label className="text-xs">{t("fields.quantity")}</Label>
+                        <FormField
+                          error={errors.lines?.[index]?.quantity?.message}
+                        >
+                          <Label className="text-xs">
+                            {t("fields.quantity")}
+                          </Label>
                           <Input
                             type="number"
                             min="1"
-                            {...register(`lines.${index}.quantity`, { valueAsNumber: true })}
+                            {...register(`lines.${index}.quantity`, {
+                              valueAsNumber: true,
+                            })}
                           />
                         </FormField>
 
-                        <FormField error={errors.lines?.[index]?.unitCost?.message}>
-                          <Label className="text-xs">{t("fields.unitCost")}</Label>
+                        <FormField
+                          error={errors.lines?.[index]?.unitCost?.message}
+                        >
+                          <Label className="text-xs">
+                            {t("fields.unitCost")}
+                          </Label>
                           <Controller
                             name={`lines.${index}.unitCost`}
                             control={control}
                             render={({ field }) => (
                               <CurrencyInput
                                 value={field.value}
-                                onChange={(val) => field.onChange(val === 0 ? undefined : val)}
+                                onChange={(val) =>
+                                  field.onChange(val === 0 ? undefined : val)
+                                }
                               />
                             )}
                           />
@@ -264,7 +317,9 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
                 {tCommon("cancel")}
               </Button>
               <Button type="submit" disabled={createMovement.isPending}>
-                {createMovement.isPending ? tCommon("loading") : tCommon("create")}
+                {createMovement.isPending
+                  ? tCommon("loading")
+                  : tCommon("create")}
               </Button>
             </div>
           </form>

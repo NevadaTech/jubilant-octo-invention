@@ -37,12 +37,8 @@ function WarehouseRow({ warehouse }: { warehouse: Warehouse }) {
             <WarehouseIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <p className="font-medium text-foreground">
-              {warehouse.name}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {warehouse.code}
-            </p>
+            <p className="font-medium text-foreground">{warehouse.name}</p>
+            <p className="text-sm text-muted-foreground">{warehouse.code}</p>
           </div>
         </Link>
       </td>
@@ -203,10 +199,11 @@ export function WarehouseList() {
               <div className="mt-4 flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-700">
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">
                   {t("pagination.showing", {
-                    from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                    from:
+                      (data.pagination.page - 1) * data.pagination.limit + 1,
                     to: Math.min(
                       data.pagination.page * data.pagination.limit,
-                      data.pagination.total
+                      data.pagination.total,
                     ),
                     total: data.pagination.total,
                   })}
@@ -227,7 +224,9 @@ export function WarehouseList() {
                     variant="outline"
                     size="sm"
                     onClick={() => handlePageChange(data.pagination.page + 1)}
-                    disabled={data.pagination.page >= data.pagination.totalPages}
+                    disabled={
+                      data.pagination.page >= data.pagination.totalPages
+                    }
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>

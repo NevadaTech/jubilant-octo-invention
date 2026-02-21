@@ -12,7 +12,7 @@ class ReorderRuleApiAdapter {
 
   async findAll(): Promise<ReorderRuleApiDto[]> {
     const response = await apiClient.get<ReorderRuleListResponseDto>(
-      this.basePath
+      this.basePath,
     );
     return response.data.data ?? [];
   }
@@ -20,18 +20,18 @@ class ReorderRuleApiAdapter {
   async create(dto: CreateReorderRuleDto): Promise<ReorderRuleApiDto> {
     const response = await apiClient.post<ReorderRuleSingleResponseDto>(
       this.basePath,
-      dto
+      dto,
     );
     return response.data.data;
   }
 
   async update(
     id: string,
-    dto: UpdateReorderRuleDto
+    dto: UpdateReorderRuleDto,
   ): Promise<ReorderRuleApiDto> {
     const response = await apiClient.put<ReorderRuleSingleResponseDto>(
       `${this.basePath}/${id}`,
-      dto
+      dto,
     );
     return response.data.data;
   }

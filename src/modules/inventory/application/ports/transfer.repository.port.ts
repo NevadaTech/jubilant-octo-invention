@@ -1,6 +1,10 @@
-import type { Transfer, TransferStatus } from "../../domain/entities/transfer.entity";
+import type {
+  Transfer,
+  TransferStatus,
+} from "../../domain/entities/transfer.entity";
 import type {
   CreateTransferDto,
+  ReceiveTransferDto,
   TransferFilters,
 } from "../dto/transfer.dto";
 
@@ -19,4 +23,5 @@ export interface TransferRepositoryPort {
   findById(id: string): Promise<Transfer | null>;
   create(data: CreateTransferDto): Promise<Transfer>;
   updateStatus(id: string, status: TransferStatus): Promise<Transfer>;
+  receive(id: string, data: ReceiveTransferDto): Promise<Transfer>;
 }

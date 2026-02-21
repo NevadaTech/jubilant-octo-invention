@@ -9,7 +9,13 @@ import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import {
   createTransferSchema,
   toCreateTransferDto,
@@ -29,7 +35,10 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
   const tCommon = useTranslations("common");
   const createTransfer = useCreateTransfer();
   const { data: productsData } = useProducts({ limit: 100, isActive: true });
-  const { data: warehousesData } = useWarehouses({ limit: 100, isActive: true });
+  const { data: warehousesData } = useWarehouses({
+    limit: 100,
+    isActive: true,
+  });
 
   const {
     register,
@@ -44,7 +53,7 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
       fromWarehouseId: "",
       toWarehouseId: "",
       lines: [{ productId: "", quantity: 1 }],
-      notes: "",
+      note: "",
     },
   });
 
@@ -57,16 +66,19 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
   const selectedProducts = watch("lines").map((line) => line.productId);
 
   // Filter out the source warehouse from destination options
-  const toWarehouseOptions = warehousesData?.data.filter(
-    (w) => w.id !== selectedFromWarehouse
-  ) || [];
+  const toWarehouseOptions =
+    warehousesData?.data.filter((w) => w.id !== selectedFromWarehouse) || [];
 
   // Filter out already selected products for each line
   const getAvailableProducts = (currentIndex: number) => {
-    const selectedInOtherLines = selectedProducts.filter((_, i) => i !== currentIndex);
-    return productsData?.data.filter(
-      (product) => !selectedInOtherLines.includes(product.id)
-    ) || [];
+    const selectedInOtherLines = selectedProducts.filter(
+      (_, i) => i !== currentIndex,
+    );
+    return (
+      productsData?.data.filter(
+        (product) => !selectedInOtherLines.includes(product.id),
+      ) || []
+    );
   };
 
   const onSubmit = async (data: CreateTransferFormData) => {
@@ -117,9 +129,14 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
                     name="fromWarehouseId"
                     control={control}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
-                          <SelectValue placeholder={t("fields.fromPlaceholder")} />
+                          <SelectValue
+                            placeholder={t("fields.fromPlaceholder")}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {warehousesData?.data.map((warehouse) => (
@@ -148,7 +165,9 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger disabled={!selectedFromWarehouse}>
-                          <SelectValue placeholder={t("fields.toPlaceholder")} />
+                          <SelectValue
+                            placeholder={t("fields.toPlaceholder")}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {toWarehouseOptions.map((warehouse) => (
@@ -181,25 +200,37 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
               </div>
 
               {errors.lines?.message && (
-                <p className="text-sm text-destructive">{errors.lines.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.lines.message}
+                </p>
               )}
 
               <div className="space-y-3 rounded-md border p-3">
                 {fields.map((field, index) => (
                   <div key={field.id} className="flex items-start gap-3">
                     <div className="flex-1">
-                      <FormField error={errors.lines?.[index]?.productId?.message}>
+                      <FormField
+                        error={errors.lines?.[index]?.productId?.message}
+                      >
                         <Controller
                           name={`lines.${index}.productId`}
                           control={control}
                           render={({ field: selectField }) => (
-                            <Select value={selectField.value} onValueChange={selectField.onChange}>
+                            <Select
+                              value={selectField.value}
+                              onValueChange={selectField.onChange}
+                            >
                               <SelectTrigger>
-                                <SelectValue placeholder={t("fields.productPlaceholder")} />
+                                <SelectValue
+                                  placeholder={t("fields.productPlaceholder")}
+                                />
                               </SelectTrigger>
                               <SelectContent>
                                 {getAvailableProducts(index).map((product) => (
-                                  <SelectItem key={product.id} value={product.id}>
+                                  <SelectItem
+                                    key={product.id}
+                                    value={product.id}
+                                  >
                                     {product.name} ({product.sku})
                                   </SelectItem>
                                 ))}
@@ -210,12 +241,16 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
                       </FormField>
                     </div>
                     <div className="w-24">
-                      <FormField error={errors.lines?.[index]?.quantity?.message}>
+                      <FormField
+                        error={errors.lines?.[index]?.quantity?.message}
+                      >
                         <Input
                           type="number"
                           min="1"
                           placeholder={t("fields.qty")}
-                          {...register(`lines.${index}.quantity`, { valueAsNumber: true })}
+                          {...register(`lines.${index}.quantity`, {
+                            valueAsNumber: true,
+                          })}
                         />
                       </FormField>
                     </div>
@@ -235,11 +270,11 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
               </div>
             </div>
 
-            <FormField error={errors.notes?.message}>
+            <FormField error={errors.note?.message}>
               <Label>{t("fields.notes")}</Label>
               <Input
                 placeholder={t("fields.notesPlaceholder")}
-                {...register("notes")}
+                {...register("note")}
               />
             </FormField>
 
@@ -248,7 +283,9 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
                 {tCommon("cancel")}
               </Button>
               <Button type="submit" disabled={createTransfer.isPending}>
-                {createTransfer.isPending ? tCommon("loading") : tCommon("create")}
+                {createTransfer.isPending
+                  ? tCommon("loading")
+                  : tCommon("create")}
               </Button>
             </div>
           </form>

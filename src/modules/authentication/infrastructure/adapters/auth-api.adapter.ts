@@ -8,10 +8,7 @@ import { UserMapper } from "../mappers/user.mapper";
 import type { LoginResponseDto } from "../../application/dto/login.dto";
 import { env } from "@/config/env";
 import { TokenService } from "../services/token.service";
-import {
-  AuthApiError,
-  getAuthErrorCode,
-} from "../errors/auth-api.error";
+import { AuthApiError, getAuthErrorCode } from "../errors/auth-api.error";
 
 export class AuthApiAdapter implements AuthRepositoryPort {
   private readonly baseUrl = env.NEXT_PUBLIC_API_URL;
@@ -41,7 +38,7 @@ export class AuthApiAdapter implements AuthRepositoryPort {
       throw new AuthApiError(
         errorData.message ?? "Authentication failed",
         code,
-        statusCode
+        statusCode,
       );
     }
 

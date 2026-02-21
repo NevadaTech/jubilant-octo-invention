@@ -30,7 +30,11 @@ interface UserRolesDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function UserRolesDialog({ user, open, onOpenChange }: UserRolesDialogProps) {
+export function UserRolesDialog({
+  user,
+  open,
+  onOpenChange,
+}: UserRolesDialogProps) {
   const t = useTranslations("users");
   const tCommon = useTranslations("common");
   const [selectKey, setSelectKey] = useState(0);
@@ -42,8 +46,15 @@ export function UserRolesDialog({ user, open, onOpenChange }: UserRolesDialogPro
 
   const userRoleNames = user?.roles ?? [];
 
-  const assignedRoles = (allRoles ?? []).filter((r) => userRoleNames.includes(r.name));
-  const availableRoles = (allRoles ?? []).filter((r) => !userRoleNames.includes(r.name) && r.isActive && r.name !== "SYSTEM_ADMIN");
+  const assignedRoles = (allRoles ?? []).filter((r) =>
+    userRoleNames.includes(r.name),
+  );
+  const availableRoles = (allRoles ?? []).filter(
+    (r) =>
+      !userRoleNames.includes(r.name) &&
+      r.isActive &&
+      r.name !== "SYSTEM_ADMIN",
+  );
 
   const canRemove = userRoleNames.length > 1;
   const isAdding = assignRole.isPending;
@@ -56,7 +67,8 @@ export function UserRolesDialog({ user, open, onOpenChange }: UserRolesDialogPro
       await assignRole.mutateAsync({ userId: user.id, data: { roleId } });
       toast.success(t("roles.assignSuccess"));
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("roles.assignError");
+      const message =
+        error instanceof Error ? error.message : t("roles.assignError");
       toast.error(message);
     }
   };
@@ -68,7 +80,8 @@ export function UserRolesDialog({ user, open, onOpenChange }: UserRolesDialogPro
       await removeRole.mutateAsync({ userId: user.id, roleId });
       toast.success(t("roles.removeSuccess"));
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("roles.removeError");
+      const message =
+        error instanceof Error ? error.message : t("roles.removeError");
       toast.error(message);
     } finally {
       setRemovingRoleId(null);
@@ -151,10 +164,7 @@ export function UserRolesDialog({ user, open, onOpenChange }: UserRolesDialogPro
                 {t("roles.assigning")}
               </div>
             ) : (
-              <Select
-                key={selectKey}
-                onValueChange={handleAdd}
-              >
+              <Select key={selectKey} onValueChange={handleAdd}>
                 <SelectTrigger disabled={isMutating}>
                   <SelectValue placeholder={t("roles.selectRole")} />
                 </SelectTrigger>
@@ -171,7 +181,11 @@ export function UserRolesDialog({ user, open, onOpenChange }: UserRolesDialogPro
         </div>
 
         <div className="pt-4 border-t flex justify-end">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isMutating}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isMutating}
+          >
             {tCommon("close")}
           </Button>
         </div>

@@ -1,5 +1,8 @@
 import { z } from "zod";
-import type { CreateWarehouseDto, UpdateWarehouseDto } from "../../application/dto/warehouse.dto";
+import type {
+  CreateWarehouseDto,
+  UpdateWarehouseDto,
+} from "../../application/dto/warehouse.dto";
 
 export const createWarehouseSchema = z.object({
   code: z
@@ -8,7 +11,7 @@ export const createWarehouseSchema = z.object({
     .max(20, "Code cannot exceed 20 characters")
     .regex(
       /^[A-Za-z0-9-_]+$/,
-      "Code can only contain letters, numbers, hyphens and underscores"
+      "Code can only contain letters, numbers, hyphens and underscores",
     ),
   name: z
     .string()
@@ -36,7 +39,9 @@ export interface UpdateWarehouseFormData extends Partial<CreateWarehouseFormData
 }
 
 // Helper to transform form data to DTO
-export function toCreateWarehouseDto(data: CreateWarehouseFormData): CreateWarehouseDto {
+export function toCreateWarehouseDto(
+  data: CreateWarehouseFormData,
+): CreateWarehouseDto {
   return {
     code: data.code,
     name: data.name,
@@ -44,7 +49,9 @@ export function toCreateWarehouseDto(data: CreateWarehouseFormData): CreateWareh
   };
 }
 
-export function toUpdateWarehouseDto(data: UpdateWarehouseFormData): UpdateWarehouseDto {
+export function toUpdateWarehouseDto(
+  data: UpdateWarehouseFormData,
+): UpdateWarehouseDto {
   const dto: UpdateWarehouseDto = {};
 
   if (data.code !== undefined) dto.code = data.code;

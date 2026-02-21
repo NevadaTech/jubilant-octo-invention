@@ -1,5 +1,12 @@
-import { Transfer, type TransferLine } from "../../domain/entities/transfer.entity";
-import type { TransferResponseDto, TransferLineResponseDto, TransferApiRawDto } from "../dto/transfer.dto";
+import {
+  Transfer,
+  type TransferLine,
+} from "../../domain/entities/transfer.entity";
+import type {
+  TransferResponseDto,
+  TransferLineResponseDto,
+  TransferApiRawDto,
+} from "../dto/transfer.dto";
 
 export class TransferMapper {
   static lineToDomain(dto: TransferLineResponseDto): TransferLine {
@@ -9,7 +16,7 @@ export class TransferMapper {
       productName: dto.productName,
       productSku: dto.productSku,
       quantity: dto.quantity,
-      receivedQuantity: dto.receivedQuantity,
+      receivedQuantity: dto.receivedQuantity ?? null,
     };
   }
 
@@ -26,25 +33,30 @@ export class TransferMapper {
       lines: (raw.lines ?? []).map(TransferMapper.lineToDomain),
       linesCount: raw.linesCount ?? raw.lines?.length ?? 0,
       createdBy: raw.createdBy,
+      receivedBy: raw.receivedBy ?? null,
       createdAt: new Date(raw.createdAt),
-      completedAt: typeof raw.completedAt === "string" ? new Date(raw.completedAt) : null,
+      completedAt:
+        typeof raw.completedAt === "string" ? new Date(raw.completedAt) : null,
     });
   }
 
   static toDomain(dto: TransferResponseDto): Transfer {
+    const completedAt = dto.receivedAt ? new Date(dto.receivedAt) : null;
+
     return Transfer.create({
       id: dto.id,
       fromWarehouseId: dto.fromWarehouseId,
-      fromWarehouseName: dto.fromWarehouseName,
+      fromWarehouseName: dto.fromWarehouseName ?? "",
       toWarehouseId: dto.toWarehouseId,
-      toWarehouseName: dto.toWarehouseName,
+      toWarehouseName: dto.toWarehouseName ?? "",
       status: dto.status,
-      notes: typeof dto.notes === "string" ? dto.notes : null,
+      notes: typeof dto.note === "string" ? dto.note : null,
       lines: (dto.lines ?? []).map(TransferMapper.lineToDomain),
       linesCount: dto.linesCount ?? dto.lines?.length ?? 0,
       createdBy: dto.createdBy,
+      receivedBy: dto.receivedBy ?? null,
       createdAt: new Date(dto.createdAt),
-      completedAt: typeof dto.completedAt === "string" ? new Date(dto.completedAt) : null,
+      completedAt,
     });
   }
 
@@ -67,12 +79,14 @@ export class TransferMapper {
       toWarehouseId: entity.toWarehouseId,
       toWarehouseName: entity.toWarehouseName,
       status: entity.status,
-      notes: entity.notes,
+      note: entity.notes,
       lines: entity.lines.map(TransferMapper.lineToDto),
       linesCount: entity.linesCount,
       createdBy: entity.createdBy,
+      orgId: "",
+      receivedAt: entity.completedAt?.toISOString() ?? null,
       createdAt: entity.createdAt.toISOString(),
-      completedAt: entity.completedAt?.toISOString() || null,
+      updatedAt: entity.createdAt.toISOString(),
     };
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
@@ -13,7 +14,13 @@ import { CurrencyInput } from "@/ui/components/currency-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/select";
 import { Skeleton } from "@/ui/components/skeleton";
 import { Textarea } from "@/ui/components/textarea";
 import {
@@ -39,14 +46,24 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
   const t = useTranslations("inventory.movements");
   const tCommon = useTranslations("common");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo =
+    searchParams.get("returnTo") ?? "/dashboard/inventory/movements";
 
   const createMovement = useCreateMovement();
   const updateMovement = useUpdateMovement();
-  const { data: existingMovement, isLoading: isLoadingMovement } = useMovement(movementId ?? "");
+  const { data: existingMovement, isLoading: isLoadingMovement } = useMovement(
+    movementId ?? "",
+  );
   const { data: productsData } = useProducts({ limit: 100, isActive: true });
-  const { data: warehousesData } = useWarehouses({ limit: 100, isActive: true });
+  const { data: warehousesData } = useWarehouses({
+    limit: 100,
+    isActive: true,
+  });
 
-  const isSubmitting = isEditing ? updateMovement.isPending : createMovement.isPending;
+  const isSubmitting = isEditing
+    ? updateMovement.isPending
+    : createMovement.isPending;
   const isError = isEditing ? updateMovement.isError : createMovement.isError;
 
   const {
@@ -72,7 +89,7 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
     if (isEditing && existingMovement) {
       reset({
         warehouseId: existingMovement.warehouseId,
-        type: existingMovement.type,
+        type: existingMovement.type as import("../../schemas/movement.schema").ManualMovementType,
         reference: existingMovement.reference ?? "",
         reason: existingMovement.reason ?? "",
         note: existingMovement.note ?? "",
@@ -108,7 +125,7 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
         const dto = toCreateMovementDto(data);
         await createMovement.mutateAsync(dto);
       }
-      router.push("/dashboard/inventory/movements");
+      router.push(returnTo);
     } catch {
       // Error is handled by the mutation
     }
@@ -133,7 +150,7 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button asChild variant="ghost" size="icon">
-          <Link href="/dashboard/inventory/movements">
+          <Link href={returnTo}>
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
@@ -142,7 +159,9 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
             {isEditing ? t("form.editTitle") : t("form.createTitle")}
           </h1>
           <p className="text-neutral-500 dark:text-neutral-400">
-            {isEditing ? t("form.editDescription") : t("form.createDescription")}
+            {isEditing
+              ? t("form.editDescription")
+              : t("form.createDescription")}
           </p>
         </div>
       </div>
@@ -168,22 +187,29 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
                   name="type"
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger disabled={isEditing}>
                         <SelectValue>
-                          {field.value ? t(`types.${field.value.toLowerCase()}`) : undefined}
+                          {field.value
+                            ? t(`types.${field.value.toLowerCase()}`)
+                            : undefined}
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="IN">{t("types.in")}</SelectItem>
                         <SelectItem value="OUT">{t("types.out")}</SelectItem>
-                        <SelectItem value="ADJUST_IN">{t("types.adjust_in")}</SelectItem>
-                        <SelectItem value="ADJUST_OUT">{t("types.adjust_out")}</SelectItem>
-                        <SelectItem value="TRANSFER_IN">{t("types.transfer_in")}</SelectItem>
-                        <SelectItem value="TRANSFER_OUT">{t("types.transfer_out")}</SelectItem>
+                        <SelectItem value="ADJUST_IN">
+                          {t("types.adjust_in")}
+                        </SelectItem>
+                        <SelectItem value="ADJUST_OUT">
+                          {t("types.adjust_out")}
+                        </SelectItem>
+                        <SelectItem value="TRANSFER_IN">
+                          {t("types.transfer_in")}
+                        </SelectItem>
+                        <SelectItem value="TRANSFER_OUT">
+                          {t("types.transfer_out")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -197,15 +223,16 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
                   name="warehouseId"
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger disabled={isEditing}>
-                        <SelectValue placeholder={t("fields.warehousePlaceholder")}>
+                        <SelectValue
+                          placeholder={t("fields.warehousePlaceholder")}
+                        >
                           {field.value
                             ? (() => {
-                                const w = warehousesData?.data.find((wh) => wh.id === field.value);
+                                const w = warehousesData?.data.find(
+                                  (wh) => wh.id === field.value,
+                                );
                                 return w ? `${w.name} (${w.code})` : undefined;
                               })()
                             : undefined}
@@ -261,7 +288,12 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>{t("form.linesSection")}</CardTitle>
-              <Button type="button" variant="outline" size="sm" onClick={addLine}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addLine}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 {t("actions.addLine")}
               </Button>
@@ -269,7 +301,9 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
           </CardHeader>
           <CardContent>
             {errors.lines?.message && (
-              <p className="mb-4 text-sm text-destructive">{errors.lines.message}</p>
+              <p className="mb-4 text-sm text-destructive">
+                {errors.lines.message}
+              </p>
             )}
 
             {fields.length === 0 ? (
@@ -279,28 +313,45 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
             ) : (
               <div className="space-y-4">
                 {fields.map((field, index) => (
-                  <div key={field.id} className="flex items-start gap-4 rounded-lg border p-4">
+                  <div
+                    key={field.id}
+                    className="flex items-start gap-4 rounded-lg border p-4"
+                  >
                     <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <FormField error={errors.lines?.[index]?.productId?.message}>
+                      <FormField
+                        error={errors.lines?.[index]?.productId?.message}
+                      >
                         <Label>{t("fields.product")} *</Label>
                         <Controller
                           name={`lines.${index}.productId`}
                           control={control}
                           render={({ field: selectField }) => (
-                            <Select value={selectField.value} onValueChange={selectField.onChange}>
+                            <Select
+                              value={selectField.value}
+                              onValueChange={selectField.onChange}
+                            >
                               <SelectTrigger>
-                                <SelectValue placeholder={t("fields.productPlaceholder")}>
+                                <SelectValue
+                                  placeholder={t("fields.productPlaceholder")}
+                                >
                                   {selectField.value
                                     ? (() => {
-                                        const p = productsData?.data.find((pr) => pr.id === selectField.value);
-                                        return p ? `${p.name} (${p.sku})` : undefined;
+                                        const p = productsData?.data.find(
+                                          (pr) => pr.id === selectField.value,
+                                        );
+                                        return p
+                                          ? `${p.name} (${p.sku})`
+                                          : undefined;
                                       })()
                                     : undefined}
                                 </SelectValue>
                               </SelectTrigger>
                               <SelectContent>
                                 {productsData?.data.map((product) => (
-                                  <SelectItem key={product.id} value={product.id}>
+                                  <SelectItem
+                                    key={product.id}
+                                    value={product.id}
+                                  >
                                     {product.name} ({product.sku})
                                   </SelectItem>
                                 ))}
@@ -310,16 +361,22 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
                         />
                       </FormField>
 
-                      <FormField error={errors.lines?.[index]?.quantity?.message}>
+                      <FormField
+                        error={errors.lines?.[index]?.quantity?.message}
+                      >
                         <Label>{t("fields.quantity")} *</Label>
                         <Input
                           type="number"
                           min="1"
-                          {...register(`lines.${index}.quantity`, { valueAsNumber: true })}
+                          {...register(`lines.${index}.quantity`, {
+                            valueAsNumber: true,
+                          })}
                         />
                       </FormField>
 
-                      <FormField error={errors.lines?.[index]?.unitCost?.message}>
+                      <FormField
+                        error={errors.lines?.[index]?.unitCost?.message}
+                      >
                         <Label>{t("fields.unitCost")}</Label>
                         <Controller
                           name={`lines.${index}.unitCost`}
@@ -327,7 +384,9 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
                           render={({ field }) => (
                             <CurrencyInput
                               value={field.value}
-                              onChange={(val) => field.onChange(val || undefined)}
+                              onChange={(val) =>
+                                field.onChange(val || undefined)
+                              }
                             />
                           )}
                         />
@@ -354,16 +413,14 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
         {/* Actions */}
         <div className="flex justify-end gap-3">
           <Button asChild type="button" variant="outline">
-            <Link href="/dashboard/inventory/movements">
-              {tCommon("cancel")}
-            </Link>
+            <Link href={returnTo}>{tCommon("cancel")}</Link>
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting
               ? tCommon("loading")
               : isEditing
-              ? tCommon("save")
-              : tCommon("create")}
+                ? tCommon("save")
+                : tCommon("create")}
           </Button>
         </div>
       </form>

@@ -1,9 +1,9 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import type { User } from '../../domain/entities/user';
-import type { LoginCredentials } from '../../domain/ports/auth-repository.port';
-import { AuthApiAdapter } from '../../infrastructure/adapters/auth-api.adapter';
-import { TokenService } from '../../infrastructure/services/token.service';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import type { User } from "../../domain/entities/user";
+import type { LoginCredentials } from "../../domain/ports/auth-repository.port";
+import { AuthApiAdapter } from "../../infrastructure/adapters/auth-api.adapter";
+import { TokenService } from "../../infrastructure/services/token.service";
 
 interface AuthState {
   user: User | null;
@@ -50,7 +50,8 @@ export const useAuthStore = create<AuthStore>()(
             error: null,
           });
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Login failed';
+          const message =
+            error instanceof Error ? error.message : "Login failed";
           set({
             user: null,
             isAuthenticated: false,
@@ -133,7 +134,7 @@ export const useAuthStore = create<AuthStore>()(
       },
     }),
     {
-      name: 'nevada-auth-store',
+      name: "nevada-auth-store",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         // Only persist minimal data, tokens are handled by TokenService
@@ -144,6 +145,6 @@ export const useAuthStore = create<AuthStore>()(
           state.setHydrated(true);
         }
       },
-    }
-  )
+    },
+  ),
 );

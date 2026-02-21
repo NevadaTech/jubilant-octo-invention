@@ -25,7 +25,8 @@ function AuthHydration({ children }: { children: ReactNode }) {
   useEffect(() => {
     const syncTokenToCookie = () => {
       const token = TokenService.getAccessToken();
-      const name = process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME ?? "nevada_auth_token";
+      const name =
+        process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME ?? "nevada_auth_token";
       if (token) {
         document.cookie = `${name}=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
       } else {
@@ -36,7 +37,8 @@ function AuthHydration({ children }: { children: ReactNode }) {
     syncTokenToCookie();
 
     // Listen for storage changes (in case another tab logs in/out)
-    const tokenKey = process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME ?? "nevada_auth_token";
+    const tokenKey =
+      process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME ?? "nevada_auth_token";
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === tokenKey) syncTokenToCookie();
     };

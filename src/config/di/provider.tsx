@@ -12,11 +12,7 @@ interface ContainerProviderProps {
 export function ContainerProvider({ children }: ContainerProviderProps) {
   const container = createContainer();
 
-  return (
-    <ContainerContext value={container}>
-      {children}
-    </ContainerContext>
-  );
+  return <ContainerContext value={container}>{children}</ContainerContext>;
 }
 
 export function useContainer(): Container {

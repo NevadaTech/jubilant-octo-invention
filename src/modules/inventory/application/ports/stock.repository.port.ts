@@ -13,5 +13,8 @@ export interface PaginatedResult<T> {
 
 export interface StockRepositoryPort {
   findAll(filters?: StockFilters): Promise<PaginatedResult<Stock>>;
-  findByProductAndWarehouse(productId: string, warehouseId: string): Promise<Stock | null>;
+  findByProductAndWarehouse(
+    productId: string,
+    warehouseId: string,
+  ): Promise<Stock | null>;
 }

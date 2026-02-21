@@ -2,7 +2,12 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { saleApiAdapter } from "../../infrastructure/adapters/sale-api.adapter";
-import type { SaleFilters, CreateSaleDto, CreateSaleLineDto, UpdateSaleDto } from "../../application/dto/sale.dto";
+import type {
+  SaleFilters,
+  CreateSaleDto,
+  CreateSaleLineDto,
+  UpdateSaleDto,
+} from "../../application/dto/sale.dto";
 
 const saleKeys = {
   all: ["sales"] as const,
@@ -79,8 +84,13 @@ export function useAddSaleLine() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ saleId, line }: { saleId: string; line: CreateSaleLineDto }) =>
-      saleApiAdapter.addLine(saleId, line),
+    mutationFn: ({
+      saleId,
+      line,
+    }: {
+      saleId: string;
+      line: CreateSaleLineDto;
+    }) => saleApiAdapter.addLine(saleId, line),
     onSuccess: (_, { saleId }) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(saleId) });
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });

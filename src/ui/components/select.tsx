@@ -74,7 +74,7 @@ function Select({
       }
       onOpenChange?.(newOpen);
     },
-    [isOpenControlled, onOpenChange]
+    [isOpenControlled, onOpenChange],
   );
 
   const handleValueChange = useCallback(
@@ -85,12 +85,20 @@ function Select({
       onValueChange?.(newValue);
       handleOpenChange(false);
     },
-    [isValueControlled, onValueChange, handleOpenChange]
+    [isValueControlled, onValueChange, handleOpenChange],
   );
 
   return (
     <SelectContext.Provider
-      value={{ open, onOpenChange: handleOpenChange, value, onValueChange: handleValueChange, triggerRef, displayText, setDisplayText }}
+      value={{
+        open,
+        onOpenChange: handleOpenChange,
+        value,
+        onValueChange: handleValueChange,
+        triggerRef,
+        displayText,
+        setDisplayText,
+      }}
     >
       {children}
     </SelectContext.Provider>
@@ -108,14 +116,17 @@ const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
 
     const combinedRef = useCallback(
       (node: HTMLButtonElement | null) => {
-        (triggerRef as React.MutableRefObject<HTMLButtonElement | null>).current = node;
+        (
+          triggerRef as React.MutableRefObject<HTMLButtonElement | null>
+        ).current = node;
         if (typeof ref === "function") {
           ref(node);
         } else if (ref) {
-          (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node;
+          (ref as React.MutableRefObject<HTMLButtonElement | null>).current =
+            node;
         }
       },
-      [ref, triggerRef]
+      [ref, triggerRef],
     );
 
     return (
@@ -126,7 +137,7 @@ const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         aria-expanded={open}
         className={cn(
           "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-          className
+          className,
         )}
         onClick={() => !props.disabled && onOpenChange(!open)}
         {...props}
@@ -135,7 +146,7 @@ const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         <ChevronDown className="h-4 w-4 opacity-50" />
       </button>
     );
-  }
+  },
 );
 SelectTrigger.displayName = "SelectTrigger";
 
@@ -165,14 +176,15 @@ const SelectContent = forwardRef<HTMLDivElement, SelectContentProps>(
 
     const combinedRef = useCallback(
       (node: HTMLDivElement | null) => {
-        (contentRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+        (contentRef as React.MutableRefObject<HTMLDivElement | null>).current =
+          node;
         if (typeof ref === "function") {
           ref(node);
         } else if (ref) {
           (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
         }
       },
-      [ref]
+      [ref],
     );
 
     useEffect(() => {
@@ -219,8 +231,9 @@ const SelectContent = forwardRef<HTMLDivElement, SelectContentProps>(
         ref={combinedRef}
         className={cn(
           "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-          position === "popper" && "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2",
-          className
+          position === "popper" &&
+            "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2",
+          className,
         )}
         style={{
           position: "absolute",
@@ -230,18 +243,24 @@ const SelectContent = forwardRef<HTMLDivElement, SelectContentProps>(
         }}
         {...props}
       >
-        <div className="p-1 overflow-y-auto max-h-[var(--select-content-available-height,theme(maxHeight.96))]">{children}</div>
+        <div className="p-1 overflow-y-auto max-h-[var(--select-content-available-height,theme(maxHeight.96))]">
+          {children}
+        </div>
       </div>,
-      document.body
+      document.body,
     );
-  }
+  },
 );
 SelectContent.displayName = "SelectContent";
 
 const SelectLabel = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("py-1.5 pl-8 pr-2 text-sm font-semibold", className)} {...props} />
-  )
+    <div
+      ref={ref}
+      className={cn("py-1.5 pl-8 pr-2 text-sm font-semibold", className)}
+      {...props}
+    />
+  ),
 );
 SelectLabel.displayName = "SelectLabel";
 
@@ -249,7 +268,8 @@ function extractText(node: ReactNode): string {
   if (typeof node === "string") return node;
   if (typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(extractText).join("");
-  if (isValidElement(node)) return extractText((node.props as { children?: ReactNode }).children);
+  if (isValidElement(node))
+    return extractText((node.props as { children?: ReactNode }).children);
   return "";
 }
 
@@ -260,7 +280,11 @@ interface SelectItemProps extends HTMLAttributes<HTMLDivElement> {
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
   ({ className, children, value, disabled, ...props }, ref) => {
-    const { value: selectedValue, onValueChange, setDisplayText } = useSelectContext();
+    const {
+      value: selectedValue,
+      onValueChange,
+      setDisplayText,
+    } = useSelectContext();
     const isSelected = selectedValue === value;
 
     // Extract text content from children for display
@@ -282,8 +306,9 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
         className={cn(
           "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           isSelected && "bg-accent text-accent-foreground",
-          !disabled && "cursor-pointer hover:bg-accent hover:text-accent-foreground",
-          className
+          !disabled &&
+            "cursor-pointer hover:bg-accent hover:text-accent-foreground",
+          className,
         )}
         onClick={() => {
           if (!disabled) {
@@ -300,21 +325,32 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 SelectItem.displayName = "SelectItem";
 
-const SelectSeparator = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("-mx-1 my-1 h-px bg-muted", className)} {...props} />
-  )
-);
+const SelectSeparator = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    {...props}
+  />
+));
 SelectSeparator.displayName = "SelectSeparator";
 
-function SelectScrollUpButton({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+function SelectScrollUpButton({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex cursor-default items-center justify-center py-1", className)}
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
       {...props}
     >
       <ChevronUp className="h-4 w-4" />
@@ -322,10 +358,16 @@ function SelectScrollUpButton({ className, ...props }: HTMLAttributes<HTMLDivEle
   );
 }
 
-function SelectScrollDownButton({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+function SelectScrollDownButton({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex cursor-default items-center justify-center py-1", className)}
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
       {...props}
     >
       <ChevronDown className="h-4 w-4" />

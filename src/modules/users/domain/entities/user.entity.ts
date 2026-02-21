@@ -37,18 +37,44 @@ export class User extends Entity<string> {
     });
   }
 
-  get email(): string { return this.props.email; }
-  get username(): string { return this.props.username; }
-  get firstName(): string { return this.props.firstName; }
-  get lastName(): string { return this.props.lastName; }
-  get fullName(): string { return `${this.props.firstName} ${this.props.lastName}`; }
-  get status(): UserStatus { return this.props.status; }
-  get roles(): string[] { return this.props.roles; }
-  get lastLoginAt(): Date | null { return this.props.lastLoginAt; }
-  get createdAt(): Date { return this.props.createdAt; }
-  get updatedAt(): Date { return this.props.updatedAt; }
+  get email(): string {
+    return this.props.email;
+  }
+  get username(): string {
+    return this.props.username;
+  }
+  get firstName(): string {
+    return this.props.firstName;
+  }
+  get lastName(): string {
+    return this.props.lastName;
+  }
+  get fullName(): string {
+    return `${this.props.firstName} ${this.props.lastName}`;
+  }
+  get status(): UserStatus {
+    return this.props.status;
+  }
+  get roles(): string[] {
+    return this.props.roles;
+  }
+  get lastLoginAt(): Date | null {
+    return this.props.lastLoginAt;
+  }
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
 
-  get isActive(): boolean { return this.props.status === "ACTIVE"; }
-  get isInactive(): boolean { return this.props.status === "INACTIVE"; }
-  get isLocked(): boolean { return this.props.status === "LOCKED"; }
+  get isActive(): boolean {
+    return this.props.status === "ACTIVE";
+  }
+  get isInactive(): boolean {
+    return this.props.status === "INACTIVE";
+  }
+  get isLocked(): boolean {
+    return this.props.status === "LOCKED";
+  }
 }

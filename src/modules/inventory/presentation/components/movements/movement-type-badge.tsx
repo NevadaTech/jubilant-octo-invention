@@ -1,7 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ArrowDownCircle, ArrowUpCircle, RefreshCw, ArrowRightLeft } from "lucide-react";
+import {
+  ArrowDownCircle,
+  ArrowUpCircle,
+  RefreshCw,
+  ArrowRightLeft,
+} from "lucide-react";
 import { Badge } from "@/ui/components/badge";
 import type { MovementType } from "../../../domain/entities/stock-movement.entity";
 
@@ -12,7 +17,14 @@ interface MovementTypeBadgeProps {
 export function MovementTypeBadge({ type }: MovementTypeBadgeProps) {
   const t = useTranslations("inventory.movements.types");
 
-  const config: Record<MovementType, { label: string; variant: "success" | "error" | "warning" | "info"; icon: typeof ArrowDownCircle }> = {
+  const config: Record<
+    MovementType,
+    {
+      label: string;
+      variant: "success" | "error" | "warning" | "info";
+      icon: typeof ArrowDownCircle;
+    }
+  > = {
     IN: {
       label: t("in"),
       variant: "success",

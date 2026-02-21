@@ -26,7 +26,8 @@ export function useStock(filters?: StockFilters) {
 export function useStockByLocation(productId: string, warehouseId: string) {
   return useQuery({
     queryKey: stockKeys.location(productId, warehouseId),
-    queryFn: () => stockApiAdapter.findByProductAndWarehouse(productId, warehouseId),
+    queryFn: () =>
+      stockApiAdapter.findByProductAndWarehouse(productId, warehouseId),
     staleTime: STALE_TIME,
     enabled: Boolean(productId) && Boolean(warehouseId),
   });

@@ -12,7 +12,10 @@ interface ReturnTypeBadgeProps {
 export function ReturnTypeBadge({ type }: ReturnTypeBadgeProps) {
   const t = useTranslations("returns.types");
 
-  const config: Record<ReturnType, { label: string; variant: "info" | "warning"; icon: typeof UserCheck }> = {
+  const config: Record<
+    ReturnType,
+    { label: string; variant: "info" | "warning"; icon: typeof UserCheck }
+  > = {
     RETURN_CUSTOMER: {
       label: t("customer"),
       variant: "info",

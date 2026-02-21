@@ -13,7 +13,8 @@ const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 export const categoryKeys = {
   all: ["categories"] as const,
   lists: () => [...categoryKeys.all, "list"] as const,
-  list: (filters?: CategoryFilters) => [...categoryKeys.lists(), filters] as const,
+  list: (filters?: CategoryFilters) =>
+    [...categoryKeys.lists(), filters] as const,
   details: () => [...categoryKeys.all, "detail"] as const,
   detail: (id: string) => [...categoryKeys.details(), id] as const,
 };

@@ -48,6 +48,8 @@ export interface ProductApiRawDto {
   imageUrl?: string | null;
   createdAt: string;
   updatedAt: string;
+  statusChangedBy?: string | null;
+  statusChangedAt?: string | null;
 }
 
 export interface ProductResponseDto {
@@ -78,6 +80,8 @@ export interface ProductResponseDto {
   daysOfStock: number | null;
   turnoverRate: number;
   lastMovementDate: string | null;
+  statusChangedBy?: string | null;
+  statusChangedAt?: string | null;
 }
 
 export interface ProductListResponseDto {

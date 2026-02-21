@@ -12,7 +12,14 @@ interface MovementStatusBadgeProps {
 export function MovementStatusBadge({ status }: MovementStatusBadgeProps) {
   const t = useTranslations("inventory.movements.status");
 
-  const config: Record<MovementStatus, { label: string; variant: "secondary" | "success" | "error"; icon: typeof FileEdit }> = {
+  const config: Record<
+    MovementStatus,
+    {
+      label: string;
+      variant: "secondary" | "success" | "error";
+      icon: typeof FileEdit;
+    }
+  > = {
     DRAFT: {
       label: t("draft"),
       variant: "secondary",

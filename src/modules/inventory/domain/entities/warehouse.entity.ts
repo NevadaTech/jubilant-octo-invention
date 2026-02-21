@@ -8,6 +8,8 @@ export interface WarehouseProps {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+  statusChangedBy?: string | null;
+  statusChangedAt?: string | null;
 }
 
 export class Warehouse extends Entity<string> {
@@ -26,6 +28,8 @@ export class Warehouse extends Entity<string> {
       isActive: props.isActive,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
+      statusChangedBy: props.statusChangedBy ?? null,
+      statusChangedAt: props.statusChangedAt ?? null,
     });
   }
 
@@ -51,6 +55,14 @@ export class Warehouse extends Entity<string> {
 
   get updatedAt(): Date {
     return this.props.updatedAt;
+  }
+
+  get statusChangedBy(): string | null | undefined {
+    return this.props.statusChangedBy;
+  }
+
+  get statusChangedAt(): string | null | undefined {
+    return this.props.statusChangedAt;
   }
 
   get displayName(): string {

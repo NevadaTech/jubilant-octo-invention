@@ -64,9 +64,7 @@ function StockRow({
       </td>
       <td className="px-4 py-3 text-right">
         <div className="flex items-center justify-end gap-2">
-          {isLowStock && (
-            <AlertTriangle className="h-4 w-4 text-warning-500" />
-          )}
+          {isLowStock && <AlertTriangle className="h-4 w-4 text-warning-500" />}
           <span
             className={`font-medium ${
               isLowStock
@@ -150,11 +148,14 @@ function StockSummary({ items }: { items: Stock[] }) {
   const t = useTranslations("inventory.stock");
   const totalQuantity = items.reduce((sum, s) => sum + s.quantity, 0);
   const totalValue = items.reduce((sum, s) => sum + s.totalValue, 0);
-  const currency = items.find(s => s.currency)?.currency || "USD";
+  const currency = items.find((s) => s.currency)?.currency || "USD";
 
   return (
     <tr className="border-t-2 border-neutral-300 bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-800/70">
-      <td className="px-4 py-3 font-semibold text-neutral-900 dark:text-neutral-100" colSpan={2}>
+      <td
+        className="px-4 py-3 font-semibold text-neutral-900 dark:text-neutral-100"
+        colSpan={2}
+      >
         {t("summary.totalQuantity")}
       </td>
       <td className="px-4 py-3 text-right font-semibold text-neutral-900 dark:text-neutral-100">
@@ -226,7 +227,9 @@ export function StockTable() {
               <Button
                 variant={filters.lowStock ? "default" : "outline"}
                 size="sm"
-                onClick={() => setFilters({ lowStock: !filters.lowStock, page: 1 })}
+                onClick={() =>
+                  setFilters({ lowStock: !filters.lowStock, page: 1 })
+                }
                 className="gap-2"
               >
                 <AlertTriangle className="h-4 w-4" />
@@ -249,9 +252,15 @@ export function StockTable() {
                     <tr className="border-b border-neutral-200 text-left text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
                       <th className="px-4 py-3">{t("fields.product")}</th>
                       <th className="px-4 py-3">{t("fields.warehouse")}</th>
-                      <th className="px-4 py-3 text-right">{t("fields.quantity")}</th>
-                      <th className="px-4 py-3 text-right">{t("fields.avgCost")}</th>
-                      <th className="px-4 py-3 text-right">{t("fields.totalValue")}</th>
+                      <th className="px-4 py-3 text-right">
+                        {t("fields.quantity")}
+                      </th>
+                      <th className="px-4 py-3 text-right">
+                        {t("fields.avgCost")}
+                      </th>
+                      <th className="px-4 py-3 text-right">
+                        {t("fields.totalValue")}
+                      </th>
                       <th className="px-4 py-3">{t("fields.lastMovement")}</th>
                       <th className="px-4 py-3">{t("fields.actions")}</th>
                     </tr>
@@ -264,9 +273,7 @@ export function StockTable() {
                         onSetRule={handleSetRule}
                       />
                     ))}
-                    {data.data.length > 0 && (
-                      <StockSummary items={data.data} />
-                    )}
+                    {data.data.length > 0 && <StockSummary items={data.data} />}
                   </tbody>
                 </table>
               </div>
@@ -276,10 +283,11 @@ export function StockTable() {
                 <div className="mt-4 flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-700">
                   <p className="text-sm text-neutral-500 dark:text-neutral-400">
                     {t("pagination.showing", {
-                      from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                      from:
+                        (data.pagination.page - 1) * data.pagination.limit + 1,
                       to: Math.min(
                         data.pagination.page * data.pagination.limit,
-                        data.pagination.total
+                        data.pagination.total,
                       ),
                       total: data.pagination.total,
                     })}
@@ -300,7 +308,9 @@ export function StockTable() {
                       variant="outline"
                       size="sm"
                       onClick={() => handlePageChange(data.pagination.page + 1)}
-                      disabled={data.pagination.page >= data.pagination.totalPages}
+                      disabled={
+                        data.pagination.page >= data.pagination.totalPages
+                      }
                     >
                       <ChevronRight className="h-4 w-4" />
                     </Button>
@@ -319,7 +329,9 @@ export function StockTable() {
           productId={selectedStock.productId}
           warehouseId={selectedStock.warehouseId}
           productName={selectedStock.productName || selectedStock.productId}
-          warehouseName={selectedStock.warehouseName || selectedStock.warehouseId}
+          warehouseName={
+            selectedStock.warehouseName || selectedStock.warehouseId
+          }
         />
       )}
     </>

@@ -54,7 +54,9 @@ export function CategoryMultiSelector({
           </Badge>
         ))}
         {selected.length === 0 && !open && (
-          <span className="text-sm text-muted-foreground">{t("selector.none")}</span>
+          <span className="text-sm text-muted-foreground">
+            {t("selector.none")}
+          </span>
         )}
       </div>
 

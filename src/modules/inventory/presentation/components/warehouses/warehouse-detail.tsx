@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { toast } from "sonner";
 import {
   Warehouse as WarehouseIcon,
   Edit,
@@ -11,14 +12,29 @@ import {
   Package,
   Search,
   DollarSign,
-  TrendingUp,
   Boxes,
+  ToggleLeft,
+  ToggleRight,
+  User,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
-import { useWarehouse } from "../../hooks/use-warehouses";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/ui/components/alert-dialog";
+import {
+  useWarehouse,
+  useToggleWarehouseStatus,
+} from "../../hooks/use-warehouses";
 import { useStock } from "../../hooks/use-stock";
 import { useState, useMemo } from "react";
 
@@ -57,7 +73,9 @@ function DetailItem({
         <Icon className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
       </div>
       <div>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">{label}</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          {label}
+        </p>
         <p className="font-medium text-neutral-900 dark:text-neutral-100">
           {value}
         </p>
@@ -85,8 +103,15 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
   const tStock = useTranslations("inventory.stock");
   const tCommon = useTranslations("common");
   const [search, setSearch] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const toggleStatus = useToggleWarehouseStatus();
 
-  const { data: warehouse, isLoading, isError, error } = useWarehouse(warehouseId);
+  const {
+    data: warehouse,
+    isLoading,
+    isError,
+    error,
+  } = useWarehouse(warehouseId);
   const { data: stockData, isLoading: isLoadingStock } = useStock({
     warehouseId,
     search: search || undefined,
@@ -94,10 +119,14 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
   });
 
   const warehouseMetrics = useMemo(() => {
-    if (!stockData?.data.length) return { totalQuantity: 0, totalValue: 0, currency: "USD" };
-    const totalQuantity = stockData.data.reduce((sum, s) => sum + s.quantity, 0);
+    if (!stockData?.data.length)
+      return { totalQuantity: 0, totalValue: 0, currency: "USD" };
+    const totalQuantity = stockData.data.reduce(
+      (sum, s) => sum + s.quantity,
+      0,
+    );
     const totalValue = stockData.data.reduce((sum, s) => sum + s.totalValue, 0);
-    const currency = stockData.data.find(s => s.currency)?.currency || "USD";
+    const currency = stockData.data.find((s) => s.currency)?.currency || "USD";
     return { totalQuantity, totalValue, currency };
   }, [stockData]);
 
@@ -158,7 +187,24 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
           <Badge variant={warehouse.isActive ? "success" : "secondary"}>
             {warehouse.isActive ? t("status.active") : t("status.inactive")}
           </Badge>
-          <Button asChild>
+          <Button
+            variant="outline"
+            onClick={() => setConfirmOpen(true)}
+            disabled={toggleStatus.isPending}
+          >
+            {warehouse.isActive ? (
+              <>
+                <ToggleRight className="mr-2 h-4 w-4 text-green-600" />
+                {t("actions.deactivate")}
+              </>
+            ) : (
+              <>
+                <ToggleLeft className="mr-2 h-4 w-4 text-muted-foreground" />
+                {t("actions.activate")}
+              </>
+            )}
+          </Button>
+          <Button asChild variant="outline">
             <Link href={`/dashboard/inventory/warehouses/${warehouseId}/edit`}>
               <Edit className="mr-2 h-4 w-4" />
               {tCommon("edit")}
@@ -166,6 +212,74 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
           </Button>
         </div>
       </div>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {warehouse.isActive
+                ? t("confirm.deactivate.title")
+                : t("confirm.activate.title")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {warehouse.isActive
+                ? t("confirm.deactivate.description")
+                : t("confirm.activate.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                try {
+                  await toggleStatus.mutateAsync({
+                    id: warehouseId,
+                    isActive: !warehouse.isActive,
+                  });
+                } catch (error) {
+                  const message =
+                    (error as { response?: { data?: { message?: string } } })
+                      ?.response?.data?.message ??
+                    (error instanceof Error
+                      ? error.message
+                      : t("messages.updateError"));
+                  toast.error(message);
+                }
+              }}
+            >
+              {tCommon("confirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Status Info Card (shown when inactive) */}
+      {!warehouse.isActive &&
+        (warehouse.statusChangedBy || warehouse.statusChangedAt) && (
+          <Card className="border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base text-warning-800 dark:text-warning-200">
+                {t("detail.statusInfo")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {warehouse.statusChangedBy && (
+                <DetailItem
+                  icon={User}
+                  label={t("detail.statusChangedBy")}
+                  value={warehouse.statusChangedBy}
+                />
+              )}
+              {warehouse.statusChangedAt && (
+                <DetailItem
+                  icon={Calendar}
+                  label={t("detail.statusChangedAt")}
+                  value={formatDate(new Date(warehouse.statusChangedAt))}
+                />
+              )}
+            </CardContent>
+          </Card>
+        )}
 
       {/* Warehouse Info */}
       <div className="grid gap-6 md:grid-cols-2">
@@ -212,7 +326,10 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
               label={t("detail.totalValue")}
               value={
                 <span className="text-lg font-semibold text-success-600 dark:text-success-400">
-                  {formatCurrency(warehouseMetrics.totalValue, warehouseMetrics.currency)}
+                  {formatCurrency(
+                    warehouseMetrics.totalValue,
+                    warehouseMetrics.currency,
+                  )}
                 </span>
               }
             />
@@ -223,7 +340,9 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
       {/* Products in Warehouse */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">{t("detail.productsInWarehouse")}</CardTitle>
+          <CardTitle className="text-lg">
+            {t("detail.productsInWarehouse")}
+          </CardTitle>
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
             <Input
@@ -264,10 +383,18 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
                 <thead>
                   <tr className="border-b border-neutral-200 text-left text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
                     <th className="px-4 py-3">{tStock("fields.product")}</th>
-                    <th className="px-4 py-3 text-right">{tStock("fields.quantity")}</th>
-                    <th className="px-4 py-3 text-right">{tStock("fields.avgCost")}</th>
-                    <th className="px-4 py-3 text-right">{tStock("fields.totalValue")}</th>
-                    <th className="px-4 py-3 text-right">{tStock("fields.available")}</th>
+                    <th className="px-4 py-3 text-right">
+                      {tStock("fields.quantity")}
+                    </th>
+                    <th className="px-4 py-3 text-right">
+                      {tStock("fields.avgCost")}
+                    </th>
+                    <th className="px-4 py-3 text-right">
+                      {tStock("fields.totalValue")}
+                    </th>
+                    <th className="px-4 py-3 text-right">
+                      {tStock("fields.available")}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

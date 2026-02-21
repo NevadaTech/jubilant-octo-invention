@@ -1,22 +1,22 @@
-import { describe, it, expect } from 'vitest';
-import { CategoryMapper } from '@/modules/inventory/application/mappers/category.mapper';
-import type { CategoryResponseDto } from '@/modules/inventory/application/dto/category.dto';
+import { describe, it, expect } from "vitest";
+import { CategoryMapper } from "@/modules/inventory/application/mappers/category.mapper";
+import type { CategoryResponseDto } from "@/modules/inventory/application/dto/category.dto";
 
-describe('CategoryMapper', () => {
+describe("CategoryMapper", () => {
   const mockCategoryDto: CategoryResponseDto = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    name: 'Electronics',
-    description: 'Electronic devices and components',
-    parentId: '456e7890-e89b-12d3-a456-426614174000',
-    parentName: 'Products',
+    id: "123e4567-e89b-12d3-a456-426614174000",
+    name: "Electronics",
+    description: "Electronic devices and components",
+    parentId: "456e7890-e89b-12d3-a456-426614174000",
+    parentName: "Products",
     isActive: true,
     productCount: 42,
-    createdAt: '2025-01-15T10:30:00.000Z',
-    updatedAt: '2025-01-16T14:20:00.000Z',
+    createdAt: "2025-01-15T10:30:00.000Z",
+    updatedAt: "2025-01-16T14:20:00.000Z",
   };
 
-  describe('toDomain', () => {
-    it('Given: a valid CategoryResponseDto When: mapping to domain Then: should return a Category entity', () => {
+  describe("toDomain", () => {
+    it("Given: a valid CategoryResponseDto When: mapping to domain Then: should return a Category entity", () => {
       // Act
       const category = CategoryMapper.toDomain(mockCategoryDto);
 
@@ -30,7 +30,7 @@ describe('CategoryMapper', () => {
       expect(category.productCount).toBe(mockCategoryDto.productCount);
     });
 
-    it('Given: a CategoryResponseDto with date strings When: mapping to domain Then: should convert dates correctly', () => {
+    it("Given: a CategoryResponseDto with date strings When: mapping to domain Then: should convert dates correctly", () => {
       // Act
       const category = CategoryMapper.toDomain(mockCategoryDto);
 
@@ -41,7 +41,7 @@ describe('CategoryMapper', () => {
       expect(category.updatedAt.toISOString()).toBe(mockCategoryDto.updatedAt);
     });
 
-    it('Given: a root category (no parent) When: mapping to domain Then: should have null parent values', () => {
+    it("Given: a root category (no parent) When: mapping to domain Then: should have null parent values", () => {
       // Arrange
       const rootCategoryDto: CategoryResponseDto = {
         ...mockCategoryDto,
@@ -58,7 +58,7 @@ describe('CategoryMapper', () => {
       expect(category.hasParent).toBe(false);
     });
 
-    it('Given: a category with parent When: mapping to domain Then: hasParent should be true', () => {
+    it("Given: a category with parent When: mapping to domain Then: hasParent should be true", () => {
       // Act
       const category = CategoryMapper.toDomain(mockCategoryDto);
 
@@ -66,7 +66,7 @@ describe('CategoryMapper', () => {
       expect(category.hasParent).toBe(true);
     });
 
-    it('Given: a category with products When: mapping to domain Then: hasProducts should be true', () => {
+    it("Given: a category with products When: mapping to domain Then: hasProducts should be true", () => {
       // Act
       const category = CategoryMapper.toDomain(mockCategoryDto);
 
@@ -75,7 +75,7 @@ describe('CategoryMapper', () => {
       expect(category.hasProducts).toBe(true);
     });
 
-    it('Given: a category without products When: mapping to domain Then: hasProducts should be false', () => {
+    it("Given: a category without products When: mapping to domain Then: hasProducts should be false", () => {
       // Arrange
       const emptyCategoryDto: CategoryResponseDto = {
         ...mockCategoryDto,
@@ -91,8 +91,8 @@ describe('CategoryMapper', () => {
     });
   });
 
-  describe('toDto', () => {
-    it('Given: a Category entity When: mapping to DTO Then: should return a CategoryResponseDto', () => {
+  describe("toDto", () => {
+    it("Given: a Category entity When: mapping to DTO Then: should return a CategoryResponseDto", () => {
       // Arrange
       const category = CategoryMapper.toDomain(mockCategoryDto);
 
@@ -109,7 +109,7 @@ describe('CategoryMapper', () => {
       expect(dto.productCount).toBe(category.productCount);
     });
 
-    it('Given: a Category entity with Date values When: mapping to DTO Then: should convert dates to ISO strings', () => {
+    it("Given: a Category entity with Date values When: mapping to DTO Then: should convert dates to ISO strings", () => {
       // Arrange
       const category = CategoryMapper.toDomain(mockCategoryDto);
 
@@ -117,13 +117,13 @@ describe('CategoryMapper', () => {
       const dto = CategoryMapper.toDto(category);
 
       // Assert
-      expect(typeof dto.createdAt).toBe('string');
-      expect(typeof dto.updatedAt).toBe('string');
+      expect(typeof dto.createdAt).toBe("string");
+      expect(typeof dto.updatedAt).toBe("string");
     });
   });
 
-  describe('round-trip', () => {
-    it('Given: a CategoryResponseDto When: mapping to domain and back to DTO Then: should be equivalent', () => {
+  describe("round-trip", () => {
+    it("Given: a CategoryResponseDto When: mapping to domain and back to DTO Then: should be equivalent", () => {
       // Act
       const category = CategoryMapper.toDomain(mockCategoryDto);
       const resultDto = CategoryMapper.toDto(category);

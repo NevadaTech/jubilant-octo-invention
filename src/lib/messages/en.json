@@ -104,7 +104,9 @@
         "new": "New Product",
         "edit": "Edit",
         "view": "View",
-        "more": "More options"
+        "more": "More options",
+        "activate": "Activate",
+        "deactivate": "Deactivate"
       },
       "list": {
         "title": "Products"
@@ -134,7 +136,20 @@
         "daysUnit": "{days} days",
         "timesPerYear": "{rate}x / year",
         "reorderRules": "Reorder Rules",
-        "noReorderRules": "No reorder rules configured. Add rules per warehouse to enable low stock alerts."
+        "noReorderRules": "No reorder rules configured. Add rules per warehouse to enable low stock alerts.",
+        "statusChangedBy": "Deactivated by",
+        "statusChangedAt": "Deactivated on",
+        "statusInfo": "Status Information"
+      },
+      "confirm": {
+        "deactivate": {
+          "title": "Deactivate product?",
+          "description": "The product will be inactive and unavailable for new operations. Do you want to continue?"
+        },
+        "activate": {
+          "title": "Activate product?",
+          "description": "The product will be active and available for new operations. Do you want to continue?"
+        }
       },
       "search": {
         "placeholder": "Search products..."
@@ -187,7 +202,9 @@
         "new": "New Warehouse",
         "edit": "Edit",
         "view": "View",
-        "more": "More options"
+        "more": "More options",
+        "activate": "Activate",
+        "deactivate": "Deactivate"
       },
       "list": {
         "title": "Warehouses"
@@ -204,7 +221,20 @@
         "createdAt": "Created at",
         "updatedAt": "Updated at",
         "notFound": "Warehouse not found",
-        "backToList": "Back to warehouses"
+        "backToList": "Back to warehouses",
+        "statusInfo": "Status information",
+        "statusChangedBy": "Deactivated by",
+        "statusChangedAt": "Deactivated on"
+      },
+      "confirm": {
+        "deactivate": {
+          "title": "Deactivate warehouse?",
+          "description": "The warehouse will become inactive and unavailable for new operations. Do you want to continue?"
+        },
+        "activate": {
+          "title": "Activate warehouse?",
+          "description": "The warehouse will become active and available for operations again. Do you want to continue?"
+        }
       },
       "search": {
         "placeholder": "Search warehouses..."
@@ -235,7 +265,9 @@
       "messages": {
         "created": "Warehouse created successfully",
         "updated": "Warehouse updated successfully",
-        "deleted": "Warehouse deleted successfully"
+        "deleted": "Warehouse deleted successfully",
+        "updateError": "Error updating warehouse",
+        "hasStock": "Cannot deactivate warehouse because it has products with stock. Transfer or adjust stock to zero first."
       }
     },
     "stock": {
@@ -388,7 +420,9 @@
         "notePlaceholder": "Additional notes (optional)",
         "createdBy": "Created By",
         "createdAt": "Date",
-        "postedAt": "Posted At"
+        "postedAt": "Posted At",
+        "postedBy": "Posted By",
+        "totalCost": "Total Cost"
       },
       "actions": {
         "new": "New Movement",
@@ -455,6 +489,16 @@
       "confirmVoid": {
         "title": "Void Movement",
         "description": "Are you sure you want to void this movement? This will reverse the stock changes."
+      },
+      "detail": {
+        "title": "Movement Details",
+        "subtitle": "Movement #{id}",
+        "information": "Movement Information",
+        "summary": "Summary",
+        "products": "Products",
+        "notFound": "Movement Not Found",
+        "notFoundDescription": "The movement you are looking for does not exist or has been deleted.",
+        "total": "Total"
       }
     },
     "transfers": {
@@ -489,7 +533,8 @@
         "createdBy": "Created By",
         "createdAt": "Created At",
         "completedAt": "Completed At",
-        "actions": "Actions"
+        "actions": "Actions",
+        "receivedBy": "Received By"
       },
       "actions": {
         "new": "New Transfer",
@@ -556,6 +601,10 @@
         "received": "Transfer received successfully",
         "rejected": "Transfer rejected",
         "canceled": "Transfer canceled"
+      },
+      "receive": {
+        "title": "Confirm Receipt",
+        "description": "Enter the actual quantities received per product."
       }
     },
     "common": {
@@ -935,21 +984,63 @@
   },
   "pages": {
     "inventory": {
-      "products": { "title": "Products", "description": "Manage your product catalog" },
-      "categories": { "title": "Categories", "description": "Organize products into categories" },
-      "warehouses": { "title": "Warehouses", "description": "Manage storage locations" },
-      "movements": { "title": "Movements", "description": "Track inventory movements" },
-      "transfers": { "title": "Transfers", "description": "Transfer stock between warehouses" },
-      "stock": { "title": "Stock Levels", "description": "View current stock levels" }
+      "products": {
+        "title": "Products",
+        "description": "Manage your product catalog"
+      },
+      "categories": {
+        "title": "Categories",
+        "description": "Organize products into categories"
+      },
+      "warehouses": {
+        "title": "Warehouses",
+        "description": "Manage storage locations"
+      },
+      "movements": {
+        "title": "Movements",
+        "description": "Track inventory movements"
+      },
+      "transfers": {
+        "title": "Transfers",
+        "description": "Transfer stock between warehouses"
+      },
+      "stock": {
+        "title": "Stock Levels",
+        "description": "View current stock levels"
+      }
     },
-    "sales": { "title": "Sales", "description": "Manage sales orders" },
-    "returns": { "title": "Returns", "description": "Process product returns" },
-    "reports": { "title": "Reports", "description": "View and generate reports" },
-    "imports": { "title": "Data Imports", "description": "Import data from external sources" },
-    "users": { "title": "Users", "description": "Manage system users" },
-    "roles": { "title": "Roles", "description": "Configure user roles and permissions" },
-    "audit": { "title": "Audit Log", "description": "Review system activity" },
-    "settings": { "title": "Settings", "description": "Configure system settings" }
+    "sales": {
+      "title": "Sales",
+      "description": "Manage sales orders"
+    },
+    "returns": {
+      "title": "Returns",
+      "description": "Process product returns"
+    },
+    "reports": {
+      "title": "Reports",
+      "description": "View and generate reports"
+    },
+    "imports": {
+      "title": "Data Imports",
+      "description": "Import data from external sources"
+    },
+    "users": {
+      "title": "Users",
+      "description": "Manage system users"
+    },
+    "roles": {
+      "title": "Roles",
+      "description": "Configure user roles and permissions"
+    },
+    "audit": {
+      "title": "Audit Log",
+      "description": "Review system activity"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Configure system settings"
+    }
   },
   "theme": {
     "light": "Light mode",

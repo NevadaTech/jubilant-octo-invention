@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { ProductFilters, WarehouseFilters, StockFilters, CategoryFilters } from "../../application/dto";
+import type {
+  ProductFilters,
+  WarehouseFilters,
+  StockFilters,
+  CategoryFilters,
+} from "../../application/dto";
 
 interface InventoryState {
   // Selected items
@@ -108,9 +113,11 @@ export const useInventoryStore = create<InventoryStore>()(
           categoryFilters: { ...state.categoryFilters, ...filters },
         })),
       resetProductFilters: () => set({ productFilters: defaultProductFilters }),
-      resetWarehouseFilters: () => set({ warehouseFilters: defaultWarehouseFilters }),
+      resetWarehouseFilters: () =>
+        set({ warehouseFilters: defaultWarehouseFilters }),
       resetStockFilters: () => set({ stockFilters: defaultStockFilters }),
-      resetCategoryFilters: () => set({ categoryFilters: defaultCategoryFilters }),
+      resetCategoryFilters: () =>
+        set({ categoryFilters: defaultCategoryFilters }),
       resetAllFilters: () =>
         set({
           productFilters: defaultProductFilters,
@@ -162,6 +169,6 @@ export const useInventoryStore = create<InventoryStore>()(
         stockFilters: state.stockFilters,
         categoryFilters: state.categoryFilters,
       }),
-    }
-  )
+    },
+  ),
 );

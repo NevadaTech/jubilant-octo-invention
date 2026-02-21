@@ -1,4 +1,7 @@
-import type { MovementType, MovementStatus } from "../../domain/entities/stock-movement.entity";
+import type {
+  MovementType,
+  MovementStatus,
+} from "../../domain/entities/stock-movement.entity";
 
 /**
  * API Response DTOs for Stock Movements
@@ -11,12 +14,14 @@ export interface MovementLineResponseDto {
   productSku: string;
   quantity: number;
   unitCost: number | null;
+  currency?: string | null;
 }
 
 export interface StockMovementResponseDto {
   id: string;
   warehouseId: string;
   warehouseName?: string;
+  warehouseCode?: string;
   type: MovementType;
   status: MovementStatus;
   reference: string | null;
@@ -24,8 +29,11 @@ export interface StockMovementResponseDto {
   note: string | null;
   lines: MovementLineResponseDto[];
   createdBy: string;
+  createdByName?: string;
   createdAt: string;
   postedAt: string | null;
+  postedBy?: string | null;
+  postedByName?: string;
 }
 
 export interface StockMovementListResponseDto {
