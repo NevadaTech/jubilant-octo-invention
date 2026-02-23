@@ -29,7 +29,11 @@ export interface SaleProps {
   createdBy: string;
   createdAt: Date;
   confirmedAt: Date | null;
+  confirmedBy: string | null;
+  confirmedByName: string | null;
   cancelledAt: Date | null;
+  cancelledBy: string | null;
+  cancelledByName: string | null;
 }
 
 export class SaleLine {
@@ -92,7 +96,11 @@ export class Sale extends Entity<string> {
       createdBy: props.createdBy,
       createdAt: props.createdAt,
       confirmedAt: props.confirmedAt,
+      confirmedBy: props.confirmedBy,
+      confirmedByName: props.confirmedByName,
       cancelledAt: props.cancelledAt,
+      cancelledBy: props.cancelledBy,
+      cancelledByName: props.cancelledByName,
     });
   }
 
@@ -160,8 +168,24 @@ export class Sale extends Entity<string> {
     return this.props.confirmedAt;
   }
 
+  get confirmedBy(): string | null {
+    return this.props.confirmedBy;
+  }
+
+  get confirmedByName(): string | null {
+    return this.props.confirmedByName;
+  }
+
   get cancelledAt(): Date | null {
     return this.props.cancelledAt;
+  }
+
+  get cancelledBy(): string | null {
+    return this.props.cancelledBy;
+  }
+
+  get cancelledByName(): string | null {
+    return this.props.cancelledByName;
   }
 
   // Status helpers

@@ -215,7 +215,14 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                 <dt className="text-sm font-medium text-muted-foreground">
                   {t("fields.confirmedAt")}
                 </dt>
-                <dd className="mt-1">{formatDate(sale.confirmedAt)}</dd>
+                <dd className="mt-1">
+                  {formatDate(sale.confirmedAt)}
+                  {sale.confirmedByName && (
+                    <span className="ml-1 text-sm text-muted-foreground">
+                      ({t("detail.by")} {sale.confirmedByName})
+                    </span>
+                  )}
+                </dd>
               </div>
             )}
             {sale.cancelledAt && (
@@ -223,7 +230,14 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                 <dt className="text-sm font-medium text-muted-foreground">
                   {t("fields.cancelledAt")}
                 </dt>
-                <dd className="mt-1">{formatDate(sale.cancelledAt)}</dd>
+                <dd className="mt-1">
+                  {formatDate(sale.cancelledAt)}
+                  {sale.cancelledByName && (
+                    <span className="ml-1 text-sm text-muted-foreground">
+                      ({t("detail.by")} {sale.cancelledByName})
+                    </span>
+                  )}
+                </dd>
               </div>
             )}
             {sale.note && (

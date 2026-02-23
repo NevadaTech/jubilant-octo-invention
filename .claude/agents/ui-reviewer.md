@@ -1,5 +1,6 @@
 ---
 name: ui-reviewer
+description: Revisor de UI/UX especializado en interfaces web modernas. Úsalo para revisar diseño visual, responsive, accesibilidad y consistencia con el design system.
 ---
 # 🎨 Agente: UI/UX Reviewer
 

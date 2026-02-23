@@ -33,7 +33,11 @@ export interface SaleApiRawDto {
   createdAt: string;
   updatedAt?: string;
   confirmedAt: string | null;
+  confirmedBy?: string | null;
+  confirmedByName?: string | null;
   cancelledAt?: string | null;
+  cancelledBy?: string | null;
+  cancelledByName?: string | null;
 }
 
 export interface SaleResponseDto {
@@ -52,7 +56,11 @@ export interface SaleResponseDto {
   createdBy: string;
   createdAt: string;
   confirmedAt: string | null;
+  confirmedBy?: string | null;
+  confirmedByName?: string | null;
   cancelledAt?: string | null;
+  cancelledBy?: string | null;
+  cancelledByName?: string | null;
 }
 
 export interface SaleListResponseDto {

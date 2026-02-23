@@ -683,7 +683,8 @@
     "detail": {
       "info": "Sale Information",
       "lines": "Products",
-      "createdAt": "Created on {date}"
+      "createdAt": "Created on {date}",
+      "by": "by"
     },
     "filters": {
       "status": "Status",
@@ -956,6 +957,116 @@
       "updated": "Role updated successfully",
       "deleted": "Role deleted successfully",
       "permissionsUpdated": "Permissions updated successfully"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "description": "Generate and export business intelligence reports",
+    "generate": "Generate Report",
+    "generating": "Generating...",
+    "backToReports": "Back to Reports",
+    "recordsFound": "{count} records",
+    "noData": "No data available for this report",
+    "noDataDescription": "Try adjusting the filters or date range",
+    "fromCache": "Cached",
+    "categories": {
+      "inventory": "Inventory",
+      "sales": "Sales",
+      "returns": "Returns"
+    },
+    "types": {
+      "AVAILABLE_INVENTORY": "Available Inventory",
+      "AVAILABLE_INVENTORY_desc": "Current stock levels by product, warehouse, and location",
+      "MOVEMENT_HISTORY": "Movement History",
+      "MOVEMENT_HISTORY_desc": "Detailed history of all inventory entries, exits, and adjustments",
+      "VALUATION": "Inventory Valuation",
+      "VALUATION_desc": "Total inventory value using weighted average cost (WAC)",
+      "LOW_STOCK": "Low Stock Alerts",
+      "LOW_STOCK_desc": "Products below minimum stock with criticality levels",
+      "MOVEMENTS": "Movement Summary",
+      "MOVEMENTS_desc": "Aggregated movement statistics by type and warehouse",
+      "FINANCIAL": "Financial Report",
+      "FINANCIAL_desc": "Revenue, costs, and gross margins by period and warehouse",
+      "TURNOVER": "Inventory Turnover",
+      "TURNOVER_desc": "Stock rotation analysis and days of inventory on hand",
+      "SALES": "Sales Report",
+      "SALES_desc": "Sales summary by period with revenue and order counts",
+      "SALES_BY_PRODUCT": "Sales by Product",
+      "SALES_BY_PRODUCT_desc": "Detailed sales analysis broken down by product",
+      "SALES_BY_WAREHOUSE": "Sales by Warehouse",
+      "SALES_BY_WAREHOUSE_desc": "Sales performance compared across warehouses",
+      "RETURNS": "Returns Report",
+      "RETURNS_desc": "Summary of all product returns and their status",
+      "RETURNS_BY_TYPE": "Returns by Type",
+      "RETURNS_BY_TYPE_desc": "Analysis of customer vs. supplier returns",
+      "RETURNS_BY_PRODUCT": "Returns by Product",
+      "RETURNS_BY_PRODUCT_desc": "Return rates and trends broken down by product",
+      "RETURNS_CUSTOMER": "Customer Returns",
+      "RETURNS_CUSTOMER_desc": "Returns received from customers with full details",
+      "RETURNS_SUPPLIER": "Supplier Returns",
+      "RETURNS_SUPPLIER_desc": "Returns sent back to suppliers with full details"
+    },
+    "filters": {
+      "title": "Filters",
+      "apply": "Generate",
+      "clear": "Clear",
+      "dateRange": "Date Range",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "warehouse": "Warehouse",
+      "allWarehouses": "All Warehouses",
+      "category": "Category",
+      "allCategories": "All Categories",
+      "period": "Period",
+      "selectPeriod": "Select period",
+      "groupBy": "Group By",
+      "selectGroupBy": "Select grouping",
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "returnType": "Return Type",
+      "allReturnTypes": "All Types",
+      "severity": "Severity",
+      "allSeverities": "All Severities",
+      "movementType": "Movement Type",
+      "allMovementTypes": "All Types",
+      "includeInactive": "Include Inactive Products"
+    },
+    "period": {
+      "MONTHLY": "Monthly",
+      "QUARTERLY": "Quarterly",
+      "YEARLY": "Yearly"
+    },
+    "groupBy": {
+      "DAY": "By Day",
+      "WEEK": "By Week",
+      "MONTH": "By Month",
+      "PRODUCT": "By Product",
+      "WAREHOUSE": "By Warehouse",
+      "CUSTOMER": "By Customer",
+      "TYPE": "By Type"
+    },
+    "severity": {
+      "CRITICAL": "Critical",
+      "WARNING": "Warning"
+    },
+    "movementType": {
+      "IN": "Incoming",
+      "OUT": "Outgoing",
+      "ADJUSTMENT": "Adjustment",
+      "TRANSFER_IN": "Transfer In",
+      "TRANSFER_OUT": "Transfer Out"
+    },
+    "returnType": {
+      "CUSTOMER": "Customer",
+      "SUPPLIER": "Supplier"
+    },
+    "summary": {
+      "title": "Summary"
+    },
+    "errors": {
+      "loadFailed": "Failed to load report",
+      "exportFailed": "Failed to export report",
+      "invalidType": "Invalid report type"
     }
   },
   "errors": {

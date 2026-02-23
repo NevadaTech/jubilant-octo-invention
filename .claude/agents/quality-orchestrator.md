@@ -1,5 +1,6 @@
 ---
 name: quality-orchestrator
+description: Orquestador de calidad que coordina lint, build, code review y UI review antes de considerar el código listo para producción.
 ---
 # 🎯 Agente: Quality Orchestrator
 

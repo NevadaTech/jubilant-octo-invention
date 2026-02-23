@@ -13,6 +13,7 @@ import {
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cn } from "@/ui/lib/utils";
+import { Slot } from "@/ui/lib/slot";
 
 interface DialogContextValue {
   open: boolean;
@@ -68,7 +69,7 @@ interface DialogTriggerProps extends HTMLAttributes<HTMLButtonElement> {
 }
 
 const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
-  ({ onClick, asChild, children, ...props }, ref) => {
+  ({ onClick, asChild = false, children, ...props }, ref) => {
     const { onOpenChange } = useDialogContext();
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,14 +77,12 @@ const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
       onOpenChange(true);
     };
 
-    if (asChild && children) {
-      return <span onClick={() => onOpenChange(true)}>{children}</span>;
-    }
+    const Comp = asChild ? Slot : "button";
 
     return (
-      <button ref={ref} onClick={handleClick} {...props}>
+      <Comp ref={ref} onClick={handleClick} {...props}>
         {children}
-      </button>
+      </Comp>
     );
   },
 );

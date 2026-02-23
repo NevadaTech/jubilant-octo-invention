@@ -683,7 +683,8 @@
     "detail": {
       "info": "Información de la Venta",
       "lines": "Productos",
-      "createdAt": "Creado el {date}"
+      "createdAt": "Creado el {date}",
+      "by": "por"
     },
     "filters": {
       "status": "Estado",
@@ -956,6 +957,116 @@
       "updated": "Rol actualizado exitosamente",
       "deleted": "Rol eliminado exitosamente",
       "permissionsUpdated": "Permisos actualizados exitosamente"
+    }
+  },
+  "reports": {
+    "title": "Reportes",
+    "description": "Genera y exporta reportes de inteligencia de negocio",
+    "generate": "Generar Reporte",
+    "generating": "Generando...",
+    "backToReports": "Volver a Reportes",
+    "recordsFound": "{count} registros",
+    "noData": "No hay datos disponibles para este reporte",
+    "noDataDescription": "Intenta ajustar los filtros o el rango de fechas",
+    "fromCache": "En caché",
+    "categories": {
+      "inventory": "Inventario",
+      "sales": "Ventas",
+      "returns": "Devoluciones"
+    },
+    "types": {
+      "AVAILABLE_INVENTORY": "Inventario Disponible",
+      "AVAILABLE_INVENTORY_desc": "Niveles actuales de stock por producto, almacén y ubicación",
+      "MOVEMENT_HISTORY": "Historial de Movimientos",
+      "MOVEMENT_HISTORY_desc": "Historial detallado de todas las entradas, salidas y ajustes de inventario",
+      "VALUATION": "Valuación de Inventario",
+      "VALUATION_desc": "Valor total del inventario usando costo promedio ponderado (PPM)",
+      "LOW_STOCK": "Alertas de Stock Bajo",
+      "LOW_STOCK_desc": "Productos por debajo del stock mínimo con niveles de criticidad",
+      "MOVEMENTS": "Resumen de Movimientos",
+      "MOVEMENTS_desc": "Estadísticas agregadas de movimientos por tipo y almacén",
+      "FINANCIAL": "Reporte Financiero",
+      "FINANCIAL_desc": "Ingresos, costos y márgenes brutos por período y almacén",
+      "TURNOVER": "Rotación de Inventario",
+      "TURNOVER_desc": "Análisis de rotación de stock y días de inventario disponible",
+      "SALES": "Reporte de Ventas",
+      "SALES_desc": "Resumen de ventas por período con ingresos y conteo de pedidos",
+      "SALES_BY_PRODUCT": "Ventas por Producto",
+      "SALES_BY_PRODUCT_desc": "Análisis detallado de ventas desglosado por producto",
+      "SALES_BY_WAREHOUSE": "Ventas por Almacén",
+      "SALES_BY_WAREHOUSE_desc": "Rendimiento de ventas comparado entre almacenes",
+      "RETURNS": "Reporte de Devoluciones",
+      "RETURNS_desc": "Resumen de todas las devoluciones de productos y su estado",
+      "RETURNS_BY_TYPE": "Devoluciones por Tipo",
+      "RETURNS_BY_TYPE_desc": "Análisis de devoluciones de clientes vs. proveedores",
+      "RETURNS_BY_PRODUCT": "Devoluciones por Producto",
+      "RETURNS_BY_PRODUCT_desc": "Tasas de devolución y tendencias desglosadas por producto",
+      "RETURNS_CUSTOMER": "Devoluciones de Clientes",
+      "RETURNS_CUSTOMER_desc": "Devoluciones recibidas de clientes con todos los detalles",
+      "RETURNS_SUPPLIER": "Devoluciones a Proveedores",
+      "RETURNS_SUPPLIER_desc": "Devoluciones enviadas a proveedores con todos los detalles"
+    },
+    "filters": {
+      "title": "Filtros",
+      "apply": "Generar",
+      "clear": "Limpiar",
+      "dateRange": "Rango de Fechas",
+      "startDate": "Fecha Inicio",
+      "endDate": "Fecha Fin",
+      "warehouse": "Almacén",
+      "allWarehouses": "Todos los Almacenes",
+      "category": "Categoría",
+      "allCategories": "Todas las Categorías",
+      "period": "Período",
+      "selectPeriod": "Seleccionar período",
+      "groupBy": "Agrupar Por",
+      "selectGroupBy": "Seleccionar agrupación",
+      "status": "Estado",
+      "allStatuses": "Todos los Estados",
+      "returnType": "Tipo de Devolución",
+      "allReturnTypes": "Todos los Tipos",
+      "severity": "Severidad",
+      "allSeverities": "Todas las Severidades",
+      "movementType": "Tipo de Movimiento",
+      "allMovementTypes": "Todos los Tipos",
+      "includeInactive": "Incluir Productos Inactivos"
+    },
+    "period": {
+      "MONTHLY": "Mensual",
+      "QUARTERLY": "Trimestral",
+      "YEARLY": "Anual"
+    },
+    "groupBy": {
+      "DAY": "Por Día",
+      "WEEK": "Por Semana",
+      "MONTH": "Por Mes",
+      "PRODUCT": "Por Producto",
+      "WAREHOUSE": "Por Almacén",
+      "CUSTOMER": "Por Cliente",
+      "TYPE": "Por Tipo"
+    },
+    "severity": {
+      "CRITICAL": "Crítico",
+      "WARNING": "Advertencia"
+    },
+    "movementType": {
+      "IN": "Entrada",
+      "OUT": "Salida",
+      "ADJUSTMENT": "Ajuste",
+      "TRANSFER_IN": "Transferencia Entrada",
+      "TRANSFER_OUT": "Transferencia Salida"
+    },
+    "returnType": {
+      "CUSTOMER": "Cliente",
+      "SUPPLIER": "Proveedor"
+    },
+    "summary": {
+      "title": "Resumen"
+    },
+    "errors": {
+      "loadFailed": "Error al cargar el reporte",
+      "exportFailed": "Error al exportar el reporte",
+      "invalidType": "Tipo de reporte inválido"
     }
   },
   "errors": {

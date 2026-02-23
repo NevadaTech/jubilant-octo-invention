@@ -13,6 +13,7 @@ import {
   type MouseEvent,
 } from "react";
 import { createPortal } from "react-dom";
+import { Slot } from "@/ui/lib/slot";
 import { cn } from "@/ui/lib/utils";
 import { buttonVariants } from "./button";
 
@@ -78,7 +79,7 @@ interface AlertDialogTriggerProps extends HTMLAttributes<HTMLButtonElement> {
 const AlertDialogTrigger = forwardRef<
   HTMLButtonElement,
   AlertDialogTriggerProps
->(({ onClick, children, ...props }, ref) => {
+>(({ onClick, asChild = false, children, ...props }, ref) => {
   const { onOpenChange } = useAlertDialogContext();
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -86,10 +87,12 @@ const AlertDialogTrigger = forwardRef<
     onOpenChange(true);
   };
 
+  const Comp = asChild ? Slot : "button";
+
   return (
-    <button ref={ref} onClick={handleClick} {...props}>
+    <Comp ref={ref} onClick={handleClick} {...props}>
       {children}
-    </button>
+    </Comp>
   );
 });
 AlertDialogTrigger.displayName = "AlertDialogTrigger";

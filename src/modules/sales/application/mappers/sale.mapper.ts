@@ -44,8 +44,12 @@ export class SaleMapper {
       createdAt: new Date(raw.createdAt),
       confirmedAt:
         typeof raw.confirmedAt === "string" ? new Date(raw.confirmedAt) : null,
+      confirmedBy: raw.confirmedBy ?? null,
+      confirmedByName: raw.confirmedByName ?? null,
       cancelledAt:
         typeof raw.cancelledAt === "string" ? new Date(raw.cancelledAt) : null,
+      cancelledBy: raw.cancelledBy ?? null,
+      cancelledByName: raw.cancelledByName ?? null,
     });
   }
 
@@ -73,8 +77,12 @@ export class SaleMapper {
       createdAt: new Date(dto.createdAt),
       confirmedAt:
         typeof dto.confirmedAt === "string" ? new Date(dto.confirmedAt) : null,
+      confirmedBy: dto.confirmedBy ?? null,
+      confirmedByName: dto.confirmedByName ?? null,
       cancelledAt:
         typeof dto.cancelledAt === "string" ? new Date(dto.cancelledAt) : null,
+      cancelledBy: dto.cancelledBy ?? null,
+      cancelledByName: dto.cancelledByName ?? null,
     });
   }
 }

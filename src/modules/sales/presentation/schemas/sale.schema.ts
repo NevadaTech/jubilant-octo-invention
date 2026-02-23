@@ -5,14 +5,14 @@ import type {
 } from "../../application/dto/sale.dto";
 
 export const saleLineSchema = z.object({
-  productId: z.string().uuid("Please select a product"),
+  productId: z.string().min(1, "Please select a product"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   salePrice: z.number().min(0.01, "Price must be greater than 0"),
   currency: z.string().optional(),
 });
 
 export const createSaleSchema = z.object({
-  warehouseId: z.string().uuid("Please select a warehouse"),
+  warehouseId: z.string().min(1, "Please select a warehouse"),
   customerReference: z.string().optional(),
   externalReference: z.string().optional(),
   note: z.string().optional(),
@@ -39,7 +39,7 @@ export function toCreateSaleDto(data: CreateSaleFormData): CreateSaleDto {
 }
 
 export const addSaleLineSchema = z.object({
-  productId: z.string().uuid("Please select a product"),
+  productId: z.string().min(1, "Please select a product"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   salePrice: z.number().min(0.01, "Price must be greater than 0"),
 });

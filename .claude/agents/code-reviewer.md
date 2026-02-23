@@ -1,5 +1,6 @@
 ---
 name: code-reviewer
+description: Revisor de código senior para React/Next.js. Úsalo para revisar TypeScript, hooks, rendimiento, accesibilidad y seguridad antes de hacer commit.
 ---
 # 🔍 Agente: Code Reviewer
 

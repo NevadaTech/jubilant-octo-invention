@@ -5,7 +5,7 @@ import type {
 } from "../../application/dto/return.dto";
 
 export const returnLineSchema = z.object({
-  productId: z.string().uuid("Please select a product"),
+  productId: z.string().min(1, "Please select a product"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   originalSalePrice: z.number().min(0.01).optional(),
   originalUnitCost: z.number().min(0.01).optional(),
@@ -16,7 +16,7 @@ export const createReturnSchema = z.object({
   type: z.enum(["RETURN_CUSTOMER", "RETURN_SUPPLIER"] as const, {
     message: "Please select a return type",
   }),
-  warehouseId: z.string().uuid("Please select a warehouse"),
+  warehouseId: z.string().min(1, "Please select a warehouse"),
   saleId: z.string().optional(),
   reason: z.string().optional(),
   note: z.string().optional(),
