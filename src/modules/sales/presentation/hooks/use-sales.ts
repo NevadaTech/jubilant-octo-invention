@@ -6,6 +6,7 @@ import type {
   SaleFilters,
   CreateSaleDto,
   CreateSaleLineDto,
+  ShipSaleDto,
   UpdateSaleDto,
 } from "../../application/dto/sale.dto";
 
@@ -73,6 +74,43 @@ export function useCancelSale() {
 
   return useMutation({
     mutationFn: (id: string) => saleApiAdapter.cancel(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
+    },
+  });
+}
+
+export function useStartPicking() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => saleApiAdapter.startPicking(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
+    },
+  });
+}
+
+export function useShipSale() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: ShipSaleDto }) =>
+      saleApiAdapter.ship(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
+    },
+  });
+}
+
+export function useCompleteSale() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => saleApiAdapter.complete(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });

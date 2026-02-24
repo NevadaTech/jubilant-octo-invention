@@ -623,6 +623,9 @@
     "status": {
       "draft": "Draft",
       "confirmed": "Confirmed",
+      "picking": "Picking",
+      "shipped": "Shipped",
+      "completed": "Completed",
       "cancelled": "Cancelled"
     },
     "fields": {
@@ -645,7 +648,16 @@
       "notePlaceholder": "Additional notes (optional)",
       "createdAt": "Created",
       "confirmedAt": "Confirmed At",
-      "cancelledAt": "Cancelled At"
+      "cancelledAt": "Cancelled At",
+      "pickedAt": "Picked At",
+      "shippedAt": "Shipped At",
+      "completedAt": "Completed At",
+      "trackingNumber": "Tracking Number",
+      "trackingNumberPlaceholder": "Enter tracking number (optional)",
+      "shippingCarrier": "Carrier",
+      "shippingCarrierPlaceholder": "Enter carrier name (optional)",
+      "shippingNotes": "Shipping Notes",
+      "shippingNotesPlaceholder": "Enter shipping notes (optional)"
     },
     "actions": {
       "new": "New Sale",
@@ -653,6 +665,9 @@
       "confirm": "Confirm",
       "cancel": "Cancel",
       "cancelSale": "Cancel Sale",
+      "startPicking": "Start Picking",
+      "shipSale": "Ship",
+      "completeSale": "Mark as Completed",
       "addLine": "Add Product",
       "removeLine": "Remove"
     },
@@ -684,7 +699,24 @@
       "info": "Sale Information",
       "lines": "Products",
       "createdAt": "Created on {date}",
-      "by": "by"
+      "by": "by",
+      "pickingShipping": "Picking & Shipping",
+      "timeline": "Timeline",
+      "shippingDetails": "Shipping Details"
+    },
+    "timeline": {
+      "draft": "Draft",
+      "draftDescription": "Sale created and pending confirmation",
+      "confirmed": "Confirmed",
+      "confirmedDescription": "Sale confirmed, stock deducted from warehouse",
+      "picking": "Picking",
+      "pickingDescription": "Items are being picked from the warehouse",
+      "shipped": "Shipped",
+      "shippedDescription": "Sale has been shipped to the customer",
+      "completed": "Completed",
+      "completedDescription": "Sale is fully completed, no further action needed",
+      "cancelled": "Cancelled",
+      "cancelledDescription": "Sale was cancelled"
     },
     "filters": {
       "status": "Status",
@@ -697,6 +729,19 @@
       "title": "Confirm Sale",
       "description": "Are you sure you want to confirm this sale? This will deduct the stock from the warehouse and cannot be undone."
     },
+    "startPicking": {
+      "title": "Start Picking",
+      "description": "Are you sure you want to start picking for this sale? The sale status will change to PICKING."
+    },
+    "shipSale": {
+      "title": "Ship Sale",
+      "description": "Enter shipping details for this sale. The sale status will change to SHIPPED."
+    },
+    "completeSale": {
+      "title": "Complete Sale",
+      "description": "Are you sure you want to mark this sale as completed? This indicates the customer has received the order and no further action is needed.",
+      "confirm": "Mark as Completed"
+    },
     "cancelSale": {
       "title": "Cancel Sale",
       "description": "Are you sure you want to cancel this sale? If confirmed, stock will be returned to the warehouse."
@@ -704,6 +749,9 @@
     "messages": {
       "created": "Sale created successfully",
       "confirmed": "Sale confirmed successfully",
+      "pickingStarted": "Sale picking started successfully",
+      "shipped": "Sale shipped successfully",
+      "completed": "Sale completed successfully",
       "cancelled": "Sale cancelled successfully"
     }
   },

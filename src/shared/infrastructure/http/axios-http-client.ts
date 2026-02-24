@@ -72,8 +72,15 @@ export class AxiosHttpClient implements HttpClientPort {
           _retry?: boolean;
         };
 
+        // Skip refresh logic for auth endpoints to avoid loops
+        const isAuthEndpoint = originalRequest.url?.includes("/auth/");
+
         // Handle 401 - Attempt token refresh before clearing session
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (
+          error.response?.status === 401 &&
+          !originalRequest._retry &&
+          !isAuthEndpoint
+        ) {
           originalRequest._retry = true;
 
           const newAccessToken = await this.performRefresh();
@@ -110,10 +117,8 @@ export class AxiosHttpClient implements HttpClientPort {
 
     const refreshToken = TokenService.getRefreshToken();
     if (!refreshToken) {
-      TokenService.clearTokens();
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
+      // No refresh token available — just return null, don't force redirect.
+      // The middleware/auth guard will handle the redirect.
       return null;
     }
 
@@ -156,18 +161,13 @@ export class AxiosHttpClient implements HttpClientPort {
           return accessToken as string;
         }
 
-        // No access token in response
-        TokenService.clearTokens();
-        if (typeof window !== "undefined") {
-          window.location.href = "/login";
-        }
+        // No access token in response — return null without forcing logout.
+        // Individual requests will fail with 401 and the UI can handle it.
         return null;
       } catch {
-        // Refresh failed — clear session and redirect
-        TokenService.clearTokens();
-        if (typeof window !== "undefined") {
-          window.location.href = "/login";
-        }
+        // Refresh failed — return null. Don't clear tokens or redirect here
+        // to avoid a race condition where multiple 401s from non-critical
+        // endpoints (like reports) wipe the session while the user is active.
         return null;
       } finally {
         this.isRefreshing = false;

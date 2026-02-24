@@ -41,6 +41,7 @@ export class SaleMapper {
       lines: (raw.lines ?? []).map(SaleMapper.lineToDomain),
       movementId: typeof raw.movementId === "string" ? raw.movementId : null,
       createdBy: raw.createdBy,
+      createdByName: raw.createdByName ?? null,
       createdAt: new Date(raw.createdAt),
       confirmedAt:
         typeof raw.confirmedAt === "string" ? new Date(raw.confirmedAt) : null,
@@ -50,6 +51,22 @@ export class SaleMapper {
         typeof raw.cancelledAt === "string" ? new Date(raw.cancelledAt) : null,
       cancelledBy: raw.cancelledBy ?? null,
       cancelledByName: raw.cancelledByName ?? null,
+      pickedAt:
+        typeof raw.pickedAt === "string" ? new Date(raw.pickedAt) : null,
+      pickedBy: raw.pickedBy ?? null,
+      pickedByName: raw.pickedByName ?? null,
+      shippedAt:
+        typeof raw.shippedAt === "string" ? new Date(raw.shippedAt) : null,
+      shippedBy: raw.shippedBy ?? null,
+      shippedByName: raw.shippedByName ?? null,
+      trackingNumber: raw.trackingNumber ?? null,
+      shippingCarrier: raw.shippingCarrier ?? null,
+      shippingNotes: raw.shippingNotes ?? null,
+      completedAt:
+        typeof raw.completedAt === "string" ? new Date(raw.completedAt) : null,
+      completedBy: raw.completedBy ?? null,
+      completedByName: raw.completedByName ?? null,
+      pickingEnabled: raw.pickingEnabled ?? false,
     });
   }
 
@@ -74,6 +91,7 @@ export class SaleMapper {
       lines: (dto.lines ?? []).map(SaleMapper.lineToDomain),
       movementId: typeof dto.movementId === "string" ? dto.movementId : null,
       createdBy: dto.createdBy,
+      createdByName: dto.createdByName ?? null,
       createdAt: new Date(dto.createdAt),
       confirmedAt:
         typeof dto.confirmedAt === "string" ? new Date(dto.confirmedAt) : null,
@@ -83,6 +101,22 @@ export class SaleMapper {
         typeof dto.cancelledAt === "string" ? new Date(dto.cancelledAt) : null,
       cancelledBy: dto.cancelledBy ?? null,
       cancelledByName: dto.cancelledByName ?? null,
+      pickedAt:
+        typeof dto.pickedAt === "string" ? new Date(dto.pickedAt) : null,
+      pickedBy: dto.pickedBy ?? null,
+      pickedByName: dto.pickedByName ?? null,
+      shippedAt:
+        typeof dto.shippedAt === "string" ? new Date(dto.shippedAt) : null,
+      shippedBy: dto.shippedBy ?? null,
+      shippedByName: dto.shippedByName ?? null,
+      trackingNumber: dto.trackingNumber ?? null,
+      shippingCarrier: dto.shippingCarrier ?? null,
+      shippingNotes: dto.shippingNotes ?? null,
+      completedAt:
+        typeof dto.completedAt === "string" ? new Date(dto.completedAt) : null,
+      completedBy: dto.completedBy ?? null,
+      completedByName: dto.completedByName ?? null,
+      pickingEnabled: dto.pickingEnabled ?? false,
     });
   }
 }

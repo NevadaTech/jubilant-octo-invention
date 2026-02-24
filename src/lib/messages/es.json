@@ -623,6 +623,9 @@
     "status": {
       "draft": "Borrador",
       "confirmed": "Confirmada",
+      "picking": "En Picking",
+      "shipped": "Enviada",
+      "completed": "Completada",
       "cancelled": "Cancelada"
     },
     "fields": {
@@ -645,7 +648,16 @@
       "notePlaceholder": "Notas adicionales (opcional)",
       "createdAt": "Creado",
       "confirmedAt": "Confirmado En",
-      "cancelledAt": "Cancelado En"
+      "cancelledAt": "Cancelado En",
+      "pickedAt": "Picking En",
+      "shippedAt": "Enviado En",
+      "completedAt": "Completado En",
+      "trackingNumber": "Número de Rastreo",
+      "trackingNumberPlaceholder": "Ingresa número de rastreo (opcional)",
+      "shippingCarrier": "Transportista",
+      "shippingCarrierPlaceholder": "Ingresa nombre del transportista (opcional)",
+      "shippingNotes": "Notas de Envío",
+      "shippingNotesPlaceholder": "Ingresa notas de envío (opcional)"
     },
     "actions": {
       "new": "Nueva Venta",
@@ -653,6 +665,9 @@
       "confirm": "Confirmar",
       "cancel": "Cancelar",
       "cancelSale": "Cancelar Venta",
+      "startPicking": "Iniciar Picking",
+      "shipSale": "Enviar",
+      "completeSale": "Marcar como Completada",
       "addLine": "Agregar Producto",
       "removeLine": "Eliminar"
     },
@@ -684,7 +699,24 @@
       "info": "Información de la Venta",
       "lines": "Productos",
       "createdAt": "Creado el {date}",
-      "by": "por"
+      "by": "por",
+      "pickingShipping": "Picking y Envío",
+      "timeline": "Línea de Tiempo",
+      "shippingDetails": "Detalles de Envío"
+    },
+    "timeline": {
+      "draft": "Borrador",
+      "draftDescription": "Venta creada y pendiente de confirmación",
+      "confirmed": "Confirmada",
+      "confirmedDescription": "Venta confirmada, stock descontado del almacén",
+      "picking": "Picking",
+      "pickingDescription": "Los artículos se están preparando en el almacén",
+      "shipped": "Enviada",
+      "shippedDescription": "La venta ha sido enviada al cliente",
+      "completed": "Completada",
+      "completedDescription": "Venta completada, no requiere más acciones",
+      "cancelled": "Cancelada",
+      "cancelledDescription": "La venta fue cancelada"
     },
     "filters": {
       "status": "Estado",
@@ -697,6 +729,19 @@
       "title": "Confirmar Venta",
       "description": "¿Estás seguro de que deseas confirmar esta venta? Esto descontará el stock del almacén y no se puede deshacer."
     },
+    "startPicking": {
+      "title": "Iniciar Picking",
+      "description": "¿Estás seguro de que deseas iniciar el picking de esta venta? El estado cambiará a EN PICKING."
+    },
+    "shipSale": {
+      "title": "Enviar Venta",
+      "description": "Ingresa los detalles de envío para esta venta. El estado cambiará a ENVIADA."
+    },
+    "completeSale": {
+      "title": "Completar Venta",
+      "description": "¿Estás seguro de que deseas marcar esta venta como completada? Esto indica que el cliente recibió el pedido y no se requieren más acciones.",
+      "confirm": "Marcar como Completada"
+    },
     "cancelSale": {
       "title": "Cancelar Venta",
       "description": "¿Estás seguro de que deseas cancelar esta venta? Si fue confirmada, el stock se devolverá al almacén."
@@ -704,6 +749,9 @@
     "messages": {
       "created": "Venta creada exitosamente",
       "confirmed": "Venta confirmada exitosamente",
+      "pickingStarted": "Picking de venta iniciado exitosamente",
+      "shipped": "Venta enviada exitosamente",
+      "completed": "Venta completada exitosamente",
       "cancelled": "Venta cancelada exitosamente"
     }
   },

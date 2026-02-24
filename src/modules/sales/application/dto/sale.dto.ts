@@ -30,6 +30,7 @@ export interface SaleApiRawDto {
   lines?: SaleLineResponseDto[];
   movementId: string | null;
   createdBy: string;
+  createdByName?: string | null;
   createdAt: string;
   updatedAt?: string;
   confirmedAt: string | null;
@@ -38,6 +39,19 @@ export interface SaleApiRawDto {
   cancelledAt?: string | null;
   cancelledBy?: string | null;
   cancelledByName?: string | null;
+  pickedAt?: string | null;
+  pickedBy?: string | null;
+  pickedByName?: string | null;
+  shippedAt?: string | null;
+  shippedBy?: string | null;
+  shippedByName?: string | null;
+  trackingNumber?: string | null;
+  shippingCarrier?: string | null;
+  shippingNotes?: string | null;
+  completedAt?: string | null;
+  completedBy?: string | null;
+  completedByName?: string | null;
+  pickingEnabled?: boolean;
 }
 
 export interface SaleResponseDto {
@@ -54,6 +68,7 @@ export interface SaleResponseDto {
   lines?: SaleLineResponseDto[];
   movementId: string | null;
   createdBy: string;
+  createdByName?: string | null;
   createdAt: string;
   confirmedAt: string | null;
   confirmedBy?: string | null;
@@ -61,6 +76,25 @@ export interface SaleResponseDto {
   cancelledAt?: string | null;
   cancelledBy?: string | null;
   cancelledByName?: string | null;
+  pickedAt?: string | null;
+  pickedBy?: string | null;
+  pickedByName?: string | null;
+  shippedAt?: string | null;
+  shippedBy?: string | null;
+  shippedByName?: string | null;
+  trackingNumber?: string | null;
+  shippingCarrier?: string | null;
+  shippingNotes?: string | null;
+  completedAt?: string | null;
+  completedBy?: string | null;
+  completedByName?: string | null;
+  pickingEnabled?: boolean;
+}
+
+export interface ShipSaleDto {
+  trackingNumber?: string;
+  shippingCarrier?: string;
+  shippingNotes?: string;
 }
 
 export interface SaleListResponseDto {

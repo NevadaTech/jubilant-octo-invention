@@ -1,0 +1,40 @@
+@keyframes timeline-flow {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 200%;
+  }
+}
+
+@keyframes timeline-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.connectorAnimated {
+  background: linear-gradient(
+    180deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary) / 0.3) 40%,
+    transparent 60%,
+    hsl(var(--primary) / 0.3) 80%,
+    hsl(var(--primary)) 100%
+  );
+  background-size: 100% 200%;
+  animation: timeline-flow 2s ease-in-out infinite;
+}
+
+.pulseRing {
+  animation: timeline-pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

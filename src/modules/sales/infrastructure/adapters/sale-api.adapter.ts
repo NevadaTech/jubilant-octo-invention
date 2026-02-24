@@ -9,6 +9,7 @@ import type {
   SaleResponseDto,
   CreateSaleDto,
   CreateSaleLineDto,
+  ShipSaleDto,
   UpdateSaleDto,
   SaleFilters,
 } from "../../application/dto/sale.dto";
@@ -86,6 +87,31 @@ export class SaleApiAdapter implements SaleRepositoryPort {
   async cancel(id: string): Promise<Sale> {
     const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
       `${this.basePath}/${id}/cancel`,
+    );
+    const body = unwrapResponse(raw.data);
+    return SaleMapper.toDomain(body.data);
+  }
+
+  async startPicking(id: string): Promise<Sale> {
+    const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
+      `${this.basePath}/${id}/pick`,
+    );
+    const body = unwrapResponse(raw.data);
+    return SaleMapper.toDomain(body.data);
+  }
+
+  async ship(id: string, data: ShipSaleDto): Promise<Sale> {
+    const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
+      `${this.basePath}/${id}/ship`,
+      data,
+    );
+    const body = unwrapResponse(raw.data);
+    return SaleMapper.toDomain(body.data);
+  }
+
+  async complete(id: string): Promise<Sale> {
+    const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
+      `${this.basePath}/${id}/complete`,
     );
     const body = unwrapResponse(raw.data);
     return SaleMapper.toDomain(body.data);

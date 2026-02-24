@@ -1,6 +1,12 @@
 import { Entity } from "@/shared/domain";
 
-export type SaleStatus = "DRAFT" | "CONFIRMED" | "CANCELLED";
+export type SaleStatus =
+  | "DRAFT"
+  | "CONFIRMED"
+  | "PICKING"
+  | "SHIPPED"
+  | "COMPLETED"
+  | "CANCELLED";
 
 export interface SaleLineProps {
   id: string;
@@ -27,6 +33,7 @@ export interface SaleProps {
   lines: SaleLineProps[];
   movementId: string | null;
   createdBy: string;
+  createdByName: string | null;
   createdAt: Date;
   confirmedAt: Date | null;
   confirmedBy: string | null;
@@ -34,6 +41,19 @@ export interface SaleProps {
   cancelledAt: Date | null;
   cancelledBy: string | null;
   cancelledByName: string | null;
+  pickedAt: Date | null;
+  pickedBy: string | null;
+  pickedByName: string | null;
+  shippedAt: Date | null;
+  shippedBy: string | null;
+  shippedByName: string | null;
+  trackingNumber: string | null;
+  shippingCarrier: string | null;
+  shippingNotes: string | null;
+  completedAt: Date | null;
+  completedBy: string | null;
+  completedByName: string | null;
+  pickingEnabled: boolean;
 }
 
 export class SaleLine {
@@ -94,6 +114,7 @@ export class Sale extends Entity<string> {
       lines: props.lines,
       movementId: props.movementId,
       createdBy: props.createdBy,
+      createdByName: props.createdByName,
       createdAt: props.createdAt,
       confirmedAt: props.confirmedAt,
       confirmedBy: props.confirmedBy,
@@ -101,6 +122,19 @@ export class Sale extends Entity<string> {
       cancelledAt: props.cancelledAt,
       cancelledBy: props.cancelledBy,
       cancelledByName: props.cancelledByName,
+      pickedAt: props.pickedAt,
+      pickedBy: props.pickedBy,
+      pickedByName: props.pickedByName,
+      shippedAt: props.shippedAt,
+      shippedBy: props.shippedBy,
+      shippedByName: props.shippedByName,
+      trackingNumber: props.trackingNumber,
+      shippingCarrier: props.shippingCarrier,
+      shippingNotes: props.shippingNotes,
+      completedAt: props.completedAt,
+      completedBy: props.completedBy,
+      completedByName: props.completedByName,
+      pickingEnabled: props.pickingEnabled,
     });
   }
 
@@ -160,6 +194,10 @@ export class Sale extends Entity<string> {
     return this.props.createdBy;
   }
 
+  get createdByName(): string | null {
+    return this.props.createdByName;
+  }
+
   get createdAt(): Date {
     return this.props.createdAt;
   }
@@ -188,6 +226,58 @@ export class Sale extends Entity<string> {
     return this.props.cancelledByName;
   }
 
+  get pickedAt(): Date | null {
+    return this.props.pickedAt;
+  }
+
+  get pickedBy(): string | null {
+    return this.props.pickedBy;
+  }
+
+  get pickedByName(): string | null {
+    return this.props.pickedByName;
+  }
+
+  get shippedAt(): Date | null {
+    return this.props.shippedAt;
+  }
+
+  get shippedBy(): string | null {
+    return this.props.shippedBy;
+  }
+
+  get shippedByName(): string | null {
+    return this.props.shippedByName;
+  }
+
+  get trackingNumber(): string | null {
+    return this.props.trackingNumber;
+  }
+
+  get shippingCarrier(): string | null {
+    return this.props.shippingCarrier;
+  }
+
+  get shippingNotes(): string | null {
+    return this.props.shippingNotes;
+  }
+
+  get completedAt(): Date | null {
+    return this.props.completedAt;
+  }
+
+  get completedBy(): string | null {
+    return this.props.completedBy;
+  }
+
+  get completedByName(): string | null {
+    return this.props.completedByName;
+  }
+
+  get pickingEnabled(): boolean {
+    return this.props.pickingEnabled;
+  }
+
   // Status helpers
   get isDraft(): boolean {
     return this.props.status === "DRAFT";
@@ -195,6 +285,18 @@ export class Sale extends Entity<string> {
 
   get isConfirmed(): boolean {
     return this.props.status === "CONFIRMED";
+  }
+
+  get isPicking(): boolean {
+    return this.props.status === "PICKING";
+  }
+
+  get isShipped(): boolean {
+    return this.props.status === "SHIPPED";
+  }
+
+  get isCompleted(): boolean {
+    return this.props.status === "COMPLETED";
   }
 
   get isCancelled(): boolean {
@@ -205,8 +307,24 @@ export class Sale extends Entity<string> {
     return this.props.status === "DRAFT" && this.props.lines.length > 0;
   }
 
+  get canStartPicking(): boolean {
+    return this.props.status === "CONFIRMED" && this.props.pickingEnabled;
+  }
+
+  get canShip(): boolean {
+    return this.props.status === "PICKING" && this.props.pickingEnabled;
+  }
+
+  get canComplete(): boolean {
+    return this.props.status === "SHIPPED" && this.props.pickingEnabled;
+  }
+
   get canCancel(): boolean {
-    return this.props.status !== "CANCELLED";
+    return (
+      this.props.status === "DRAFT" ||
+      this.props.status === "CONFIRMED" ||
+      this.props.status === "PICKING"
+    );
   }
 
   get canEdit(): boolean {

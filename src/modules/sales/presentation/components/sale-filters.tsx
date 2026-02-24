@@ -75,6 +75,9 @@ export function SaleFiltersComponent({
             <SelectItem value="all">{t("filters.allStatuses")}</SelectItem>
             <SelectItem value="DRAFT">{t("status.draft")}</SelectItem>
             <SelectItem value="CONFIRMED">{t("status.confirmed")}</SelectItem>
+            <SelectItem value="PICKING">{t("status.picking")}</SelectItem>
+            <SelectItem value="SHIPPED">{t("status.shipped")}</SelectItem>
+            <SelectItem value="COMPLETED">{t("status.completed")}</SelectItem>
             <SelectItem value="CANCELLED">{t("status.cancelled")}</SelectItem>
           </SelectContent>
         </Select>

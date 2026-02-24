@@ -2,6 +2,7 @@ import type { Sale } from "../../domain/entities/sale.entity";
 import type {
   CreateSaleDto,
   CreateSaleLineDto,
+  ShipSaleDto,
   UpdateSaleDto,
   SaleFilters,
 } from "../dto/sale.dto";
@@ -23,6 +24,9 @@ export interface SaleRepositoryPort {
   update(id: string, data: UpdateSaleDto): Promise<Sale>;
   confirm(id: string): Promise<Sale>;
   cancel(id: string): Promise<Sale>;
+  startPicking(id: string): Promise<Sale>;
+  ship(id: string, data: ShipSaleDto): Promise<Sale>;
+  complete(id: string): Promise<Sale>;
   addLine(saleId: string, line: CreateSaleLineDto): Promise<Sale>;
   removeLine(saleId: string, lineId: string): Promise<Sale>;
 }

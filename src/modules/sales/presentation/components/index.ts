@@ -3,3 +3,4 @@ export { SaleFormPage } from "./sale-form-page";
 export { SaleDetail } from "./sale-detail";
 export { SaleStatusBadge } from "./sale-status-badge";
 export { SaleFiltersComponent } from "./sale-filters";
+export { SaleTimeline } from "./sale-timeline";

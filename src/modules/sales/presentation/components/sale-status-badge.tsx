@@ -1,7 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FileEdit, CheckCircle2, XCircle } from "lucide-react";
+import {
+  FileEdit,
+  CheckCircle2,
+  XCircle,
+  PackageSearch,
+  Truck,
+  PackageCheck,
+} from "lucide-react";
 import { Badge } from "@/ui/components/badge";
 import type { SaleStatus } from "../../domain/entities/sale.entity";
 
@@ -16,7 +23,7 @@ export function SaleStatusBadge({ status }: SaleStatusBadgeProps) {
     SaleStatus,
     {
       label: string;
-      variant: "secondary" | "success" | "error";
+      variant: "secondary" | "success" | "warning" | "info" | "error";
       icon: typeof FileEdit;
     }
   > = {
@@ -29,6 +36,21 @@ export function SaleStatusBadge({ status }: SaleStatusBadgeProps) {
       label: t("confirmed"),
       variant: "success",
       icon: CheckCircle2,
+    },
+    PICKING: {
+      label: t("picking"),
+      variant: "warning",
+      icon: PackageSearch,
+    },
+    SHIPPED: {
+      label: t("shipped"),
+      variant: "info",
+      icon: Truck,
+    },
+    COMPLETED: {
+      label: t("completed"),
+      variant: "success",
+      icon: PackageCheck,
     },
     CANCELLED: {
       label: t("cancelled"),
