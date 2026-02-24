@@ -10,6 +10,7 @@ import {
   Trash2,
   Edit2,
   KeyRound,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
@@ -236,11 +237,17 @@ export function RoleList() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteRole.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
+              disabled={deleteRole.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
+              {deleteRole.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {deleteRole.isPending ? tCommon("loading") : tCommon("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>

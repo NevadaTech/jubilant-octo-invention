@@ -24,6 +24,7 @@ import {
   ToggleLeft,
   ToggleRight,
   User,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -197,9 +198,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
               {product.name}
             </h1>
-            <p className="text-neutral-500 dark:text-neutral-400">
-              {product.sku}
-            </p>
+            <p className="text-sm text-muted-foreground">{product.sku}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -211,17 +210,14 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             onClick={() => setConfirmOpen(true)}
             disabled={toggleStatus.isPending}
           >
-            {product.isActive ? (
-              <>
-                <ToggleRight className="mr-2 h-4 w-4 text-green-600" />
-                {t("actions.deactivate")}
-              </>
+            {toggleStatus.isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : product.isActive ? (
+              <ToggleRight className="mr-2 h-4 w-4 text-green-600" />
             ) : (
-              <>
-                <ToggleLeft className="mr-2 h-4 w-4 text-muted-foreground" />
-                {t("actions.activate")}
-              </>
+              <ToggleLeft className="mr-2 h-4 w-4 text-muted-foreground" />
             )}
+            {product.isActive ? t("actions.deactivate") : t("actions.activate")}
           </Button>
           <Button asChild>
             <Link href={`/dashboard/inventory/products/${productId}/edit`}>
@@ -248,7 +244,9 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={toggleStatus.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 toggleStatus.mutate({
@@ -257,7 +255,11 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                 });
                 setConfirmOpen(false);
               }}
+              disabled={toggleStatus.isPending}
             >
+              {toggleStatus.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {product.isActive
                 ? t("actions.deactivate")
                 : t("actions.activate")}

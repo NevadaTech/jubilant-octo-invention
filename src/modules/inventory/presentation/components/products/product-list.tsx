@@ -212,8 +212,8 @@ export function ProductList() {
 
             {/* Pagination */}
             {data.pagination.totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-700">
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              <div className="mt-4 flex items-center justify-between border-t pt-4">
+                <p className="text-sm text-muted-foreground">
                   {t("pagination.showing", {
                     from:
                       (data.pagination.page - 1) * data.pagination.limit + 1,
@@ -233,7 +233,7 @@ export function ProductList() {
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <span className="text-sm text-neutral-600 dark:text-neutral-300">
+                  <span className="text-sm text-muted-foreground">
                     {data.pagination.page} / {data.pagination.totalPages}
                   </span>
                   <Button

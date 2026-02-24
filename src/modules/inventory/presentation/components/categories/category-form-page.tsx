@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
@@ -128,7 +128,7 @@ export function CategoryFormPage({ categoryId }: CategoryFormPageProps) {
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             {isEditing ? t("form.editTitle") : t("form.createTitle")}
           </h1>
-          <p className="text-neutral-500 dark:text-neutral-400">
+          <p className="text-sm text-muted-foreground">
             {isEditing
               ? t("form.editDescription")
               : t("form.createDescription")}
@@ -144,7 +144,7 @@ export function CategoryFormPage({ categoryId }: CategoryFormPageProps) {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {(createCategory.isError || updateCategory.isError) && (
-              <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
                 {t("form.error")}
               </div>
             )}
@@ -199,6 +199,9 @@ export function CategoryFormPage({ categoryId }: CategoryFormPageProps) {
                 </Link>
               </Button>
               <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {isSubmitting
                   ? tCommon("loading")
                   : isEditing

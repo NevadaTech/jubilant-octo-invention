@@ -8,6 +8,7 @@ import {
   PackageSearch,
   Truck,
   PackageCheck,
+  Undo2,
 } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
 import type { SaleStatus } from "../../domain/entities/sale.entity";
@@ -56,6 +57,11 @@ export function SaleStatusBadge({ status }: SaleStatusBadgeProps) {
       label: t("cancelled"),
       variant: "error",
       icon: XCircle,
+    },
+    RETURNED: {
+      label: t("returned"),
+      variant: "warning",
+      icon: Undo2,
     },
   };
 

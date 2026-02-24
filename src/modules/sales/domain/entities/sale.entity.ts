@@ -6,7 +6,8 @@ export type SaleStatus =
   | "PICKING"
   | "SHIPPED"
   | "COMPLETED"
-  | "CANCELLED";
+  | "CANCELLED"
+  | "RETURNED";
 
 export interface SaleLineProps {
   id: string;
@@ -53,6 +54,9 @@ export interface SaleProps {
   completedAt: Date | null;
   completedBy: string | null;
   completedByName: string | null;
+  returnedAt: Date | null;
+  returnedBy: string | null;
+  returnedByName: string | null;
   pickingEnabled: boolean;
 }
 
@@ -134,6 +138,9 @@ export class Sale extends Entity<string> {
       completedAt: props.completedAt,
       completedBy: props.completedBy,
       completedByName: props.completedByName,
+      returnedAt: props.returnedAt,
+      returnedBy: props.returnedBy,
+      returnedByName: props.returnedByName,
       pickingEnabled: props.pickingEnabled,
     });
   }
@@ -274,6 +281,18 @@ export class Sale extends Entity<string> {
     return this.props.completedByName;
   }
 
+  get returnedAt(): Date | null {
+    return this.props.returnedAt;
+  }
+
+  get returnedBy(): string | null {
+    return this.props.returnedBy;
+  }
+
+  get returnedByName(): string | null {
+    return this.props.returnedByName;
+  }
+
   get pickingEnabled(): boolean {
     return this.props.pickingEnabled;
   }
@@ -301,6 +320,10 @@ export class Sale extends Entity<string> {
 
   get isCancelled(): boolean {
     return this.props.status === "CANCELLED";
+  }
+
+  get isReturned(): boolean {
+    return this.props.status === "RETURNED";
   }
 
   get canConfirm(): boolean {

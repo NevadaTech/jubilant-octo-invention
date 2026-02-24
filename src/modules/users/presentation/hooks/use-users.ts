@@ -1,6 +1,8 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { userApiAdapter } from "../../infrastructure/adapters/user-api.adapter";
 import type {
   UserFilters,
@@ -35,40 +37,60 @@ export function useUser(id: string) {
 
 export function useCreateUser() {
   const queryClient = useQueryClient();
+  const t = useTranslations("users");
+
   return useMutation({
     mutationFn: (data: CreateUserDto) => userApiAdapter.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      toast.success(t("messages.created"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useUpdateUser() {
   const queryClient = useQueryClient();
+  const t = useTranslations("users");
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateUserDto }) =>
       userApiAdapter.update(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
+      toast.success(t("messages.updated"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useChangeUserStatus() {
   const queryClient = useQueryClient();
+  const t = useTranslations("users");
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: ChangeUserStatusDto }) =>
       userApiAdapter.changeStatus(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
+      toast.success(t("messages.statusChanged"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useAssignRole() {
   const queryClient = useQueryClient();
+  const t = useTranslations("users");
+
   return useMutation({
     mutationFn: ({ userId, data }: { userId: string; data: AssignRoleDto }) =>
       userApiAdapter.assignRole(userId, data),
@@ -77,12 +99,18 @@ export function useAssignRole() {
         queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) }),
         queryClient.invalidateQueries({ queryKey: userKeys.lists() }),
       ]);
+      toast.success(t("roles.assignSuccess"));
+    },
+    onError: () => {
+      toast.error(t("roles.assignError"));
     },
   });
 }
 
 export function useRemoveRole() {
   const queryClient = useQueryClient();
+  const t = useTranslations("users");
+
   return useMutation({
     mutationFn: ({ userId, roleId }: { userId: string; roleId: string }) =>
       userApiAdapter.removeRole(userId, roleId),
@@ -91,6 +119,10 @@ export function useRemoveRole() {
         queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) }),
         queryClient.invalidateQueries({ queryKey: userKeys.lists() }),
       ]);
+      toast.success(t("roles.removeSuccess"));
+    },
+    onError: () => {
+      toast.error(t("roles.removeError"));
     },
   });
 }

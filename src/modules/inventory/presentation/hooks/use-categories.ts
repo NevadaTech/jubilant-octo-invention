@@ -1,6 +1,8 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { categoryApiAdapter } from "../../infrastructure/adapters/category-api.adapter";
 import type {
   CategoryFilters,
@@ -38,17 +40,23 @@ export function useCategory(id: string) {
 
 export function useCreateCategory() {
   const queryClient = useQueryClient();
+  const t = useTranslations("inventory.categories");
 
   return useMutation({
     mutationFn: (data: CreateCategoryDto) => categoryApiAdapter.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
+      toast.success(t("messages.created"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useUpdateCategory() {
   const queryClient = useQueryClient();
+  const t = useTranslations("inventory.categories");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateCategoryDto }) =>
@@ -56,17 +64,26 @@ export function useUpdateCategory() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
       queryClient.invalidateQueries({ queryKey: categoryKeys.detail(id) });
+      toast.success(t("messages.updated"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useDeleteCategory() {
   const queryClient = useQueryClient();
+  const t = useTranslations("inventory.categories");
 
   return useMutation({
     mutationFn: (id: string) => categoryApiAdapter.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
+      toast.success(t("messages.deleted"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }

@@ -10,6 +10,7 @@ import {
   XCircle,
   MoreHorizontal,
   Eye,
+  Loader2,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/ui/components/button";
@@ -303,11 +304,16 @@ export function SaleList() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={confirmSale.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirm}
               disabled={confirmSale.isPending}
             >
+              {confirmSale.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {confirmSale.isPending
                 ? tCommon("loading")
                 : t("actions.confirm")}
@@ -329,12 +335,17 @@ export function SaleList() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={cancelSale.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleCancel}
               disabled={cancelSale.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
+              {cancelSale.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {cancelSale.isPending
                 ? tCommon("loading")
                 : t("actions.cancelSale")}

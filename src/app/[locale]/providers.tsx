@@ -3,8 +3,10 @@
 import type { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
-import { useState, useEffect } from "react";
-import { Toaster } from "sonner";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Toaster, toast } from "sonner";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { ContainerProvider } from "@/config/di/provider";
 import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
 import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
@@ -15,11 +17,37 @@ interface ProvidersProps {
 
 function AuthHydration({ children }: { children: ReactNode }) {
   const hydrate = useAuthStore((state) => state.hydrate);
+  const forceLogout = useAuthStore((state) => state.forceLogout);
   const isHydrated = useAuthStore((state) => state.isHydrated);
+  const router = useRouter();
+  const t = useTranslations("auth");
+  const isHandlingExpiry = useRef(false);
 
   useEffect(() => {
     hydrate();
   }, [hydrate]);
+
+  // Handle session expiration events from the HTTP interceptor
+  const handleSessionExpired = useCallback(() => {
+    // Prevent multiple toasts/redirects from concurrent 401s
+    if (isHandlingExpiry.current) return;
+    isHandlingExpiry.current = true;
+
+    forceLogout();
+    toast.error(t("sessionExpired"));
+    router.replace("/login");
+
+    // Reset after a short delay to allow future expiration events
+    setTimeout(() => {
+      isHandlingExpiry.current = false;
+    }, 3000);
+  }, [forceLogout, router, t]);
+
+  useEffect(() => {
+    window.addEventListener("auth:session-expired", handleSessionExpired);
+    return () =>
+      window.removeEventListener("auth:session-expired", handleSessionExpired);
+  }, [handleSessionExpired]);
 
   // Sync token to cookie so it's available after route changes and for middleware
   useEffect(() => {

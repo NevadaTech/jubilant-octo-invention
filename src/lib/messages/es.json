@@ -40,7 +40,8 @@
       "noAccount": "¿No tienes una cuenta?",
       "signUp": "Registrarse"
     },
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo."
   },
   "dashboard": {
     "title": "Panel de control",
@@ -179,6 +180,9 @@
         "created": "Producto creado exitosamente",
         "updated": "Producto actualizado exitosamente",
         "deleted": "Producto eliminado exitosamente"
+      },
+      "toast": {
+        "error": "Ocurrió un error. Inténtalo de nuevo."
       }
     },
     "warehouses": {
@@ -268,6 +272,9 @@
         "deleted": "Almacén eliminado exitosamente",
         "updateError": "Error al actualizar el almacén",
         "hasStock": "No se puede desactivar el almacén porque tiene productos con stock. Transfiere o ajusta el stock a cero primero."
+      },
+      "toast": {
+        "error": "Ocurrió un error. Inténtalo de nuevo."
       }
     },
     "stock": {
@@ -318,7 +325,15 @@
         "create": "Crear",
         "update": "Actualizar",
         "delete": "Eliminar",
-        "cancel": "Cancelar"
+        "cancel": "Cancelar",
+        "messages": {
+          "created": "Regla de reorden creada exitosamente",
+          "updated": "Regla de reorden actualizada exitosamente",
+          "deleted": "Regla de reorden eliminada exitosamente"
+        },
+        "toast": {
+          "error": "Ocurrió un error. Inténtalo de nuevo."
+        }
       }
     },
     "categories": {
@@ -383,6 +398,9 @@
         "created": "Categoría creada exitosamente",
         "updated": "Categoría actualizada exitosamente",
         "deleted": "Categoría eliminada exitosamente"
+      },
+      "toast": {
+        "error": "Ocurrió un error. Inténtalo de nuevo."
       }
     },
     "movements": {
@@ -399,7 +417,8 @@
       "status": {
         "draft": "Borrador",
         "posted": "Confirmado",
-        "void": "Anulado"
+        "void": "Anulado",
+        "returned": "Devuelto"
       },
       "fields": {
         "type": "Tipo",
@@ -422,6 +441,8 @@
         "createdAt": "Fecha",
         "postedAt": "Confirmado En",
         "postedBy": "Confirmado Por",
+        "returnedAt": "Devuelto En",
+        "returnedBy": "Devuelto Por",
         "totalCost": "Costo Total"
       },
       "actions": {
@@ -477,6 +498,9 @@
         "deleted": "Movimiento eliminado exitosamente",
         "posted": "Movimiento confirmado exitosamente",
         "voided": "Movimiento anulado exitosamente"
+      },
+      "toast": {
+        "error": "Ocurrió un error. Inténtalo de nuevo."
       },
       "confirmDelete": {
         "title": "Eliminar Movimiento",
@@ -602,6 +626,9 @@
         "rejected": "Transferencia rechazada",
         "canceled": "Transferencia cancelada"
       },
+      "toast": {
+        "error": "Ocurrió un error. Inténtalo de nuevo."
+      },
       "receive": {
         "title": "Confirmar Recepción",
         "description": "Ingresa las cantidades realmente recibidas por producto."
@@ -626,7 +653,8 @@
       "picking": "En Picking",
       "shipped": "Enviada",
       "completed": "Completada",
-      "cancelled": "Cancelada"
+      "cancelled": "Cancelada",
+      "returned": "Devuelta"
     },
     "fields": {
       "saleNumber": "Venta #",
@@ -716,7 +744,9 @@
       "completed": "Completada",
       "completedDescription": "Venta completada, no requiere más acciones",
       "cancelled": "Cancelada",
-      "cancelledDescription": "La venta fue cancelada"
+      "cancelledDescription": "La venta fue cancelada",
+      "returned": "Devuelta",
+      "returnedDescription": "La venta fue devuelta por el cliente"
     },
     "filters": {
       "status": "Estado",
@@ -752,7 +782,13 @@
       "pickingStarted": "Picking de venta iniciado exitosamente",
       "shipped": "Venta enviada exitosamente",
       "completed": "Venta completada exitosamente",
-      "cancelled": "Venta cancelada exitosamente"
+      "cancelled": "Venta cancelada exitosamente",
+      "updated": "Venta actualizada exitosamente",
+      "lineAdded": "Producto agregado a la venta",
+      "lineRemoved": "Producto eliminado de la venta"
+    },
+    "toast": {
+      "error": "Ocurrió un error. Inténtalo de nuevo."
     }
   },
   "returns": {
@@ -787,6 +823,11 @@
       "saleReferencePlaceholder": "Seleccionar una venta...",
       "saleSearchPlaceholder": "Buscar por número de venta...",
       "saleNotFound": "No se encontraron ventas",
+      "movementReference": "Movimiento de Origen",
+      "movementReferencePlaceholder": "Seleccionar un movimiento de ingreso...",
+      "movementSearchPlaceholder": "Buscar por referencia...",
+      "movementNotFound": "No se encontraron movimientos de ingreso",
+      "items": "artículos",
       "note": "Nota",
       "notePlaceholder": "Notas adicionales (opcional)",
       "createdAt": "Creado",
@@ -825,6 +866,7 @@
       "linesSection": "Productos",
       "noLines": "No hay productos agregados",
       "saleProductsHint": "Los productos fueron cargados de la venta seleccionada. Puedes ajustar cantidades y eliminar los que no deseas devolver.",
+      "movementProductsHint": "Los productos fueron cargados del movimiento seleccionado. Puedes ajustar cantidades y eliminar los que no deseas devolver.",
       "error": "Ocurrió un error al crear la devolución."
     },
     "detail": {
@@ -852,7 +894,13 @@
     "messages": {
       "created": "Devolución creada exitosamente",
       "confirmed": "Devolución confirmada exitosamente",
-      "cancelled": "Devolución cancelada exitosamente"
+      "cancelled": "Devolución cancelada exitosamente",
+      "updated": "Devolución actualizada exitosamente",
+      "lineAdded": "Producto agregado a la devolución",
+      "lineRemoved": "Producto eliminado de la devolución"
+    },
+    "toast": {
+      "error": "Ocurrió un error. Inténtalo de nuevo."
     }
   },
   "users": {
@@ -910,6 +958,9 @@
       "created": "Usuario creado exitosamente",
       "updated": "Usuario actualizado exitosamente",
       "statusChanged": "Estado del usuario actualizado exitosamente"
+    },
+    "toast": {
+      "error": "Ocurrió un error. Inténtalo de nuevo."
     },
     "roles": {
       "title": "Gestionar Roles",
@@ -1008,6 +1059,9 @@
       "updated": "Rol actualizado exitosamente",
       "deleted": "Rol eliminado exitosamente",
       "permissionsUpdated": "Permisos actualizados exitosamente"
+    },
+    "toast": {
+      "error": "Ocurrió un error. Inténtalo de nuevo."
     }
   },
   "reports": {

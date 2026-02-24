@@ -41,6 +41,10 @@ export class StockMovementMapper {
         typeof dto.postedAt === "string" ? new Date(dto.postedAt) : null,
       postedBy: dto.postedBy ?? null,
       postedByName: dto.postedByName ?? null,
+      returnedAt:
+        typeof dto.returnedAt === "string" ? new Date(dto.returnedAt) : null,
+      returnedBy: dto.returnedBy ?? null,
+      returnedByName: dto.returnedByName ?? null,
     });
   }
 

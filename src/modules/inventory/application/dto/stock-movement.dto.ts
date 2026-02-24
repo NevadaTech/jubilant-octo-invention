@@ -34,6 +34,9 @@ export interface StockMovementResponseDto {
   postedAt: string | null;
   postedBy?: string | null;
   postedByName?: string;
+  returnedAt?: string | null;
+  returnedBy?: string | null;
+  returnedByName?: string;
 }
 
 export interface StockMovementListResponseDto {

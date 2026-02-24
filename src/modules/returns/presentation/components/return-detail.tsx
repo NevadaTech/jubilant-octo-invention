@@ -2,7 +2,13 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { ArrowLeft, CheckCircle, XCircle, Package } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle,
+  XCircle,
+  Package,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
@@ -112,7 +118,7 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
               <ReturnStatusBadge status={returnData.status} />
               <ReturnTypeBadge type={returnData.type} />
             </div>
-            <p className="text-neutral-500 dark:text-neutral-400">
+            <p className="text-sm text-muted-foreground">
               {t("detail.createdAt", {
                 date: formatDate(returnData.createdAt),
               })}
@@ -124,8 +130,12 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
           {returnData.canConfirm && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button>
-                  <CheckCircle className="mr-2 h-4 w-4" />
+                <Button disabled={confirmReturn.isPending}>
+                  {confirmReturn.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <CheckCircle className="mr-2 h-4 w-4" />
+                  )}
                   {t("actions.confirm")}
                 </Button>
               </AlertDialogTrigger>
@@ -139,11 +149,16 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+                  <AlertDialogCancel disabled={confirmReturn.isPending}>
+                    {tCommon("cancel")}
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleConfirm}
                     disabled={confirmReturn.isPending}
                   >
+                    {confirmReturn.isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {confirmReturn.isPending
                       ? tCommon("loading")
                       : t("actions.confirm")}
@@ -155,8 +170,12 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
           {returnData.canCancel && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <XCircle className="mr-2 h-4 w-4" />
+                <Button variant="destructive" disabled={cancelReturn.isPending}>
+                  {cancelReturn.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <XCircle className="mr-2 h-4 w-4" />
+                  )}
                   {t("actions.cancelReturn")}
                 </Button>
               </AlertDialogTrigger>
@@ -168,12 +187,17 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+                  <AlertDialogCancel disabled={cancelReturn.isPending}>
+                    {tCommon("cancel")}
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleCancel}
                     disabled={cancelReturn.isPending}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
+                    {cancelReturn.isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {cancelReturn.isPending
                       ? tCommon("loading")
                       : t("actions.cancelReturn")}

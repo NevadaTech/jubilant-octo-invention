@@ -13,6 +13,8 @@ import {
   CheckCircle,
   XCircle,
   Pencil,
+  Loader2,
+  Undo2,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -123,7 +125,7 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
                 <MovementTypeBadge type={movement.type} />
                 <MovementStatusBadge status={movement.status} />
               </div>
-              <p className="text-neutral-500 dark:text-neutral-400">
+              <p className="text-sm text-muted-foreground">
                 {t("detail.subtitle", { id: movement.id.slice(0, 8) })}
               </p>
             </div>
@@ -146,7 +148,11 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
                   onClick={() => setPostConfirm(true)}
                   disabled={postMovement.isPending}
                 >
-                  <CheckCircle className="mr-2 h-4 w-4" />
+                  {postMovement.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <CheckCircle className="mr-2 h-4 w-4" />
+                  )}
                   {t("actions.post")}
                 </Button>
               </>
@@ -158,7 +164,11 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
                 onClick={() => setVoidConfirm(true)}
                 disabled={voidMovement.isPending}
               >
-                <XCircle className="mr-2 h-4 w-4" />
+                {voidMovement.isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <XCircle className="mr-2 h-4 w-4" />
+                )}
                 {t("actions.void")}
               </Button>
             )}
@@ -171,9 +181,9 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
             <CardHeader>
               <CardTitle>{t("detail.information")}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-5">
-              {/* Warehouse */}
-              <div className="flex items-center gap-3 rounded-lg border bg-muted/30 px-4 py-3">
+            <CardContent>
+              {/* Warehouse - full width */}
+              <div className="flex items-center gap-3 rounded-lg border bg-muted/30 px-4 py-3 mb-5">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-background border">
                   <Warehouse className="h-5 w-5 text-muted-foreground" />
                 </div>
@@ -192,89 +202,117 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
                 </div>
               </div>
 
-              {/* Reference */}
-              {movement.reference && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* Reference */}
+                {movement.reference && (
+                  <div className="flex items-start gap-3">
+                    <Hash className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {t("fields.reference")}
+                      </p>
+                      <p className="font-mono">{movement.reference}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Reason */}
+                {movement.reason && (
+                  <div className="flex items-start gap-3">
+                    <FileText className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {t("fields.reason")}
+                      </p>
+                      <p>{movement.reason}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Created By */}
                 <div className="flex items-start gap-3">
-                  <Hash className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
+                  <User className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
-                      {t("fields.reference")}
+                      {t("fields.createdBy")}
                     </p>
-                    <p className="font-mono">{movement.reference}</p>
+                    <p>{movement.createdByName ?? movement.createdBy}</p>
                   </div>
                 </div>
-              )}
 
-              {/* Reason */}
-              {movement.reason && (
+                {/* Created At */}
                 <div className="flex items-start gap-3">
-                  <FileText className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
+                  <Calendar className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
-                      {t("fields.reason")}
+                      {t("fields.createdAt")}
                     </p>
-                    <p>{movement.reason}</p>
+                    <p>{formatDate(movement.createdAt)}</p>
                   </div>
                 </div>
-              )}
 
-              {/* Note */}
+                {/* Posted By */}
+                {movement.postedBy && (
+                  <div className="flex items-start gap-3">
+                    <User className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {t("fields.postedBy")}
+                      </p>
+                      <p>{movement.postedByName ?? movement.postedBy}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Posted At */}
+                {movement.postedAt && (
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="mt-0.5 h-5 w-5 text-green-600 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {t("fields.postedAt")}
+                      </p>
+                      <p>{formatDate(movement.postedAt)}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Returned By */}
+                {movement.returnedBy && (
+                  <div className="flex items-start gap-3">
+                    <User className="mt-0.5 h-5 w-5 text-amber-600 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {t("fields.returnedBy")}
+                      </p>
+                      <p>{movement.returnedByName ?? movement.returnedBy}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Returned At */}
+                {movement.returnedAt && (
+                  <div className="flex items-start gap-3">
+                    <Undo2 className="mt-0.5 h-5 w-5 text-amber-600 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {t("fields.returnedAt")}
+                      </p>
+                      <p>{formatDate(movement.returnedAt)}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Note - full width below grid */}
               {movement.note && (
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 mt-5 pt-5 border-t">
                   <MessageSquare className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
                       {t("fields.note")}
                     </p>
                     <p className="text-sm">{movement.note}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Created By */}
-              <div className="flex items-start gap-3">
-                <User className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {t("fields.createdBy")}
-                  </p>
-                  <p>{movement.createdByName ?? movement.createdBy}</p>
-                </div>
-              </div>
-
-              {/* Created At */}
-              <div className="flex items-start gap-3">
-                <Calendar className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {t("fields.createdAt")}
-                  </p>
-                  <p>{formatDate(movement.createdAt)}</p>
-                </div>
-              </div>
-
-              {/* Posted At */}
-              {movement.postedAt && (
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="mt-0.5 h-5 w-5 text-green-600 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {t("fields.postedAt")}
-                    </p>
-                    <p>{formatDate(movement.postedAt)}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Posted By */}
-              {movement.postedBy && (
-                <div className="flex items-start gap-3">
-                  <User className="mt-0.5 h-5 w-5 text-muted-foreground shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {t("fields.postedBy")}
-                    </p>
-                    <p>{movement.postedByName ?? movement.postedBy}</p>
                   </div>
                 </div>
               )}
@@ -431,7 +469,9 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={postMovement.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
                 await postMovement.mutateAsync(movement.id);
@@ -439,6 +479,9 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
               }}
               disabled={postMovement.isPending}
             >
+              {postMovement.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {postMovement.isPending ? tCommon("loading") : t("actions.post")}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -455,7 +498,9 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={voidMovement.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
                 await voidMovement.mutateAsync(movement.id);
@@ -464,6 +509,9 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
               disabled={voidMovement.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
+              {voidMovement.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {voidMovement.isPending ? tCommon("loading") : t("actions.void")}
             </AlertDialogAction>
           </AlertDialogFooter>

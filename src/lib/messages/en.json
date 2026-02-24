@@ -40,7 +40,8 @@
       "noAccount": "Don't have an account?",
       "signUp": "Sign up"
     },
-    "logout": "Log out"
+    "logout": "Log out",
+    "sessionExpired": "Your session has expired. Please sign in again."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -179,6 +180,9 @@
         "created": "Product created successfully",
         "updated": "Product updated successfully",
         "deleted": "Product deleted successfully"
+      },
+      "toast": {
+        "error": "An error occurred. Please try again."
       }
     },
     "warehouses": {
@@ -268,6 +272,9 @@
         "deleted": "Warehouse deleted successfully",
         "updateError": "Error updating warehouse",
         "hasStock": "Cannot deactivate warehouse because it has products with stock. Transfer or adjust stock to zero first."
+      },
+      "toast": {
+        "error": "An error occurred. Please try again."
       }
     },
     "stock": {
@@ -318,7 +325,15 @@
         "create": "Create",
         "update": "Update",
         "delete": "Delete",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "messages": {
+          "created": "Reorder rule created successfully",
+          "updated": "Reorder rule updated successfully",
+          "deleted": "Reorder rule deleted successfully"
+        },
+        "toast": {
+          "error": "An error occurred. Please try again."
+        }
       }
     },
     "categories": {
@@ -383,6 +398,9 @@
         "created": "Category created successfully",
         "updated": "Category updated successfully",
         "deleted": "Category deleted successfully"
+      },
+      "toast": {
+        "error": "An error occurred. Please try again."
       }
     },
     "movements": {
@@ -399,7 +417,8 @@
       "status": {
         "draft": "Draft",
         "posted": "Posted",
-        "void": "Void"
+        "void": "Void",
+        "returned": "Returned"
       },
       "fields": {
         "type": "Type",
@@ -422,6 +441,8 @@
         "createdAt": "Date",
         "postedAt": "Posted At",
         "postedBy": "Posted By",
+        "returnedAt": "Returned At",
+        "returnedBy": "Returned By",
         "totalCost": "Total Cost"
       },
       "actions": {
@@ -477,6 +498,9 @@
         "deleted": "Movement deleted successfully",
         "posted": "Movement posted successfully",
         "voided": "Movement voided successfully"
+      },
+      "toast": {
+        "error": "An error occurred. Please try again."
       },
       "confirmDelete": {
         "title": "Delete Movement",
@@ -602,6 +626,9 @@
         "rejected": "Transfer rejected",
         "canceled": "Transfer canceled"
       },
+      "toast": {
+        "error": "An error occurred. Please try again."
+      },
       "receive": {
         "title": "Confirm Receipt",
         "description": "Enter the actual quantities received per product."
@@ -626,7 +653,8 @@
       "picking": "Picking",
       "shipped": "Shipped",
       "completed": "Completed",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "returned": "Returned"
     },
     "fields": {
       "saleNumber": "Sale #",
@@ -716,7 +744,9 @@
       "completed": "Completed",
       "completedDescription": "Sale is fully completed, no further action needed",
       "cancelled": "Cancelled",
-      "cancelledDescription": "Sale was cancelled"
+      "cancelledDescription": "Sale was cancelled",
+      "returned": "Returned",
+      "returnedDescription": "Sale has been returned by the customer"
     },
     "filters": {
       "status": "Status",
@@ -752,7 +782,13 @@
       "pickingStarted": "Sale picking started successfully",
       "shipped": "Sale shipped successfully",
       "completed": "Sale completed successfully",
-      "cancelled": "Sale cancelled successfully"
+      "cancelled": "Sale cancelled successfully",
+      "updated": "Sale updated successfully",
+      "lineAdded": "Product added to sale",
+      "lineRemoved": "Product removed from sale"
+    },
+    "toast": {
+      "error": "An error occurred. Please try again."
     }
   },
   "returns": {
@@ -787,6 +823,11 @@
       "saleReferencePlaceholder": "Select a sale...",
       "saleSearchPlaceholder": "Search by sale number...",
       "saleNotFound": "No sales found",
+      "movementReference": "Source Movement",
+      "movementReferencePlaceholder": "Select an incoming movement...",
+      "movementSearchPlaceholder": "Search by reference...",
+      "movementNotFound": "No incoming movements found",
+      "items": "items",
       "note": "Note",
       "notePlaceholder": "Additional notes (optional)",
       "createdAt": "Created",
@@ -825,6 +866,7 @@
       "linesSection": "Products",
       "noLines": "No products added yet",
       "saleProductsHint": "Products were loaded from the selected sale. You can adjust quantities and remove items you don't want to return.",
+      "movementProductsHint": "Products were loaded from the selected movement. You can adjust quantities and remove items you don't want to return.",
       "error": "An error occurred while creating the return."
     },
     "detail": {
@@ -852,7 +894,13 @@
     "messages": {
       "created": "Return created successfully",
       "confirmed": "Return confirmed successfully",
-      "cancelled": "Return cancelled successfully"
+      "cancelled": "Return cancelled successfully",
+      "updated": "Return updated successfully",
+      "lineAdded": "Product added to return",
+      "lineRemoved": "Product removed from return"
+    },
+    "toast": {
+      "error": "An error occurred. Please try again."
     }
   },
   "users": {
@@ -910,6 +958,9 @@
       "created": "User created successfully",
       "updated": "User updated successfully",
       "statusChanged": "User status updated successfully"
+    },
+    "toast": {
+      "error": "An error occurred. Please try again."
     },
     "roles": {
       "title": "Manage Roles",
@@ -1008,6 +1059,9 @@
       "updated": "Role updated successfully",
       "deleted": "Role deleted successfully",
       "permissionsUpdated": "Permissions updated successfully"
+    },
+    "toast": {
+      "error": "An error occurred. Please try again."
     }
   },
   "reports": {

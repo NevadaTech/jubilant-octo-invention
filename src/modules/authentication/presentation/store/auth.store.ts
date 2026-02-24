@@ -16,6 +16,7 @@ interface AuthState {
 interface AuthActions {
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => Promise<void>;
+  forceLogout: () => void;
   hydrate: () => Promise<void>;
   setHydrated: (hydrated: boolean) => void;
   clearError: () => void;
@@ -75,6 +76,17 @@ export const useAuthStore = create<AuthStore>()(
             error: null,
           });
         }
+      },
+
+      forceLogout: () => {
+        // Immediate cleanup without backend call (session already expired)
+        TokenService.clearTokens();
+        set({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+          error: null,
+        });
       },
 
       hydrate: async () => {

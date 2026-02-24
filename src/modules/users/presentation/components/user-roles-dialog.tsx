@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
 import { Shield, X, Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Skeleton } from "@/ui/components/skeleton";
@@ -65,11 +64,8 @@ export function UserRolesDialog({
     setSelectKey((k) => k + 1);
     try {
       await assignRole.mutateAsync({ userId: user.id, data: { roleId } });
-      toast.success(t("roles.assignSuccess"));
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : t("roles.assignError");
-      toast.error(message);
+    } catch {
+      // Error toast handled by hook
     }
   };
 
@@ -78,11 +74,8 @@ export function UserRolesDialog({
     setRemovingRoleId(roleId);
     try {
       await removeRole.mutateAsync({ userId: user.id, roleId });
-      toast.success(t("roles.removeSuccess"));
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : t("roles.removeError");
-      toast.error(message);
+    } catch {
+      // Error toast handled by hook
     } finally {
       setRemovingRoleId(null);
     }

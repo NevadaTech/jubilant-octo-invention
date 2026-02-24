@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FileEdit, CheckCircle2, XCircle } from "lucide-react";
+import { FileEdit, CheckCircle2, XCircle, Undo2 } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
 import type { MovementStatus } from "../../../domain/entities/stock-movement.entity";
 
@@ -16,7 +16,7 @@ export function MovementStatusBadge({ status }: MovementStatusBadgeProps) {
     MovementStatus,
     {
       label: string;
-      variant: "secondary" | "success" | "error";
+      variant: "secondary" | "success" | "error" | "warning";
       icon: typeof FileEdit;
     }
   > = {
@@ -34,6 +34,11 @@ export function MovementStatusBadge({ status }: MovementStatusBadgeProps) {
       label: t("void"),
       variant: "error",
       icon: XCircle,
+    },
+    RETURNED: {
+      label: t("returned"),
+      variant: "warning",
+      icon: Undo2,
     },
   };
 

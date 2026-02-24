@@ -1,6 +1,8 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { productApiAdapter } from "../../infrastructure/adapters/product-api.adapter";
 import type {
   ProductFilters,
@@ -38,17 +40,23 @@ export function useProduct(id: string) {
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
+  const t = useTranslations("inventory.products");
 
   return useMutation({
     mutationFn: (data: CreateProductDto) => productApiAdapter.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+      toast.success(t("messages.created"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
+  const t = useTranslations("inventory.products");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateProductDto }) =>
@@ -56,12 +64,17 @@ export function useUpdateProduct() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: productKeys.lists() });
       queryClient.invalidateQueries({ queryKey: productKeys.detail(id) });
+      toast.success(t("messages.updated"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useToggleProductStatus() {
   const queryClient = useQueryClient();
+  const t = useTranslations("inventory.products");
 
   return useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
@@ -69,6 +82,10 @@ export function useToggleProductStatus() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: productKeys.lists() });
       queryClient.invalidateQueries({ queryKey: productKeys.detail(id) });
+      toast.success(t("messages.updated"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }

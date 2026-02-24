@@ -14,6 +14,9 @@ import type {
   SaleFilters,
 } from "../../application/dto/sale.dto";
 import { SaleMapper } from "../../application/mappers/sale.mapper";
+import type { ReturnApiRawDto } from "@/modules/returns/application/dto/return.dto";
+import { ReturnMapper } from "@/modules/returns/application/mappers/return.mapper";
+import type { Return } from "@/modules/returns/domain/entities/return.entity";
 
 interface ApiResponse<T> {
   data: T;
@@ -132,6 +135,14 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     );
     const body = unwrapResponse(raw.data);
     return SaleMapper.toDomain(body.data);
+  }
+
+  async getReturns(saleId: string): Promise<Return[]> {
+    const raw = await apiClient.get<{ data: ReturnApiRawDto[] }>(
+      `${this.basePath}/${saleId}/returns`,
+    );
+    const body = unwrapResponse(raw.data);
+    return (body.data ?? []).map(ReturnMapper.fromApiRaw);
   }
 
   private buildQueryParams(filters?: SaleFilters): Record<string, unknown> {

@@ -51,6 +51,9 @@ export interface SaleApiRawDto {
   completedAt?: string | null;
   completedBy?: string | null;
   completedByName?: string | null;
+  returnedAt?: string | null;
+  returnedBy?: string | null;
+  returnedByName?: string | null;
   pickingEnabled?: boolean;
 }
 
@@ -88,6 +91,9 @@ export interface SaleResponseDto {
   completedAt?: string | null;
   completedBy?: string | null;
   completedByName?: string | null;
+  returnedAt?: string | null;
+  returnedBy?: string | null;
+  returnedByName?: string | null;
   pickingEnabled?: boolean;
 }
 

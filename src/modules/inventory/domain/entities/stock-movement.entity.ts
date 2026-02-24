@@ -8,7 +8,7 @@ export type MovementType =
   | "TRANSFER_IN"
   | "TRANSFER_OUT";
 
-export type MovementStatus = "DRAFT" | "POSTED" | "VOID";
+export type MovementStatus = "DRAFT" | "POSTED" | "VOID" | "RETURNED";
 
 export interface MovementLine {
   id: string;
@@ -37,6 +37,9 @@ export interface StockMovementProps {
   postedAt: Date | null;
   postedBy: string | null;
   postedByName: string | null;
+  returnedAt: Date | null;
+  returnedBy: string | null;
+  returnedByName: string | null;
 }
 
 export class StockMovement extends Entity<string> {
@@ -64,6 +67,9 @@ export class StockMovement extends Entity<string> {
       postedAt: props.postedAt,
       postedBy: props.postedBy,
       postedByName: props.postedByName,
+      returnedAt: props.returnedAt,
+      returnedBy: props.returnedBy,
+      returnedByName: props.returnedByName,
     });
   }
 
@@ -135,6 +141,18 @@ export class StockMovement extends Entity<string> {
     return this.props.postedByName;
   }
 
+  get returnedAt(): Date | null {
+    return this.props.returnedAt;
+  }
+
+  get returnedBy(): string | null {
+    return this.props.returnedBy;
+  }
+
+  get returnedByName(): string | null {
+    return this.props.returnedByName;
+  }
+
   // Type helpers
   get isEntry(): boolean {
     return (
@@ -173,6 +191,10 @@ export class StockMovement extends Entity<string> {
 
   get isVoid(): boolean {
     return this.props.status === "VOID";
+  }
+
+  get isReturned(): boolean {
+    return this.props.status === "RETURNED";
   }
 
   get canPost(): boolean {

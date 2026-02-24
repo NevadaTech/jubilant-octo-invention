@@ -11,6 +11,7 @@ import {
   User,
   Calendar,
   FileText,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -130,7 +131,7 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
               </h1>
               <TransferStatusBadge status={transfer.status} />
             </div>
-            <p className="text-neutral-500 dark:text-neutral-400">
+            <p className="text-sm text-muted-foreground">
               {t("detail.subtitle", { id: transfer.id.slice(0, 8) })}
             </p>
           </div>
@@ -143,6 +144,9 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
               onClick={handleStartTransit}
               disabled={updateStatus.isPending}
             >
+              {updateStatus.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {t("actions.startTransit")}
             </Button>
           )}
@@ -161,6 +165,9 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
               onClick={handleReject}
               disabled={updateStatus.isPending}
             >
+              {updateStatus.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {t("actions.reject")}
             </Button>
           )}
@@ -170,6 +177,9 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
               onClick={handleCancel}
               disabled={updateStatus.isPending}
             >
+              {updateStatus.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {t("actions.cancel")}
             </Button>
           )}

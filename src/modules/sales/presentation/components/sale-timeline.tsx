@@ -9,6 +9,7 @@ import {
   Truck,
   PackageCheck,
   XCircle,
+  Undo2,
 } from "lucide-react";
 import { cn } from "@/ui/lib/utils";
 import type { SaleStatus } from "../../domain/entities/sale.entity";
@@ -40,6 +41,8 @@ interface SaleTimelineProps {
   completedByName: string | null;
   cancelledAt: Date | null;
   cancelledByName: string | null;
+  returnedAt?: Date | null;
+  returnedByName?: string | null;
 }
 
 export function SaleTimeline({
@@ -57,6 +60,8 @@ export function SaleTimeline({
   completedByName,
   cancelledAt,
   cancelledByName,
+  returnedAt,
+  returnedByName,
 }: SaleTimelineProps) {
   const t = useTranslations("sales");
 
@@ -66,7 +71,8 @@ export function SaleTimeline({
 
   const currentIndex = statusOrder.indexOf(status);
   const isCancelled = status === "CANCELLED";
-  const isTerminal = status === "COMPLETED" || isCancelled;
+  const isReturned = status === "RETURNED";
+  const isTerminal = status === "COMPLETED" || isCancelled || isReturned;
 
   const getSteps = (): TimelineStep[] => {
     const steps: TimelineStep[] = [
@@ -139,6 +145,19 @@ export function SaleTimeline({
       });
     }
 
+    if (isReturned) {
+      steps.push({
+        key: "RETURNED",
+        label: t("timeline.returned"),
+        description: t("timeline.returnedDescription"),
+        date: returnedAt,
+        byName: returnedByName,
+        isActive: false,
+        isCompleted: true,
+        isCancelled: false,
+      });
+    }
+
     return steps;
   };
 
@@ -163,6 +182,8 @@ export function SaleTimeline({
           return <Truck className="h-5 w-5" />;
         case "COMPLETED":
           return <PackageCheck className="h-5 w-5" />;
+        case "RETURNED":
+          return <Undo2 className="h-5 w-5" />;
         default:
           return <FileEdit className="h-5 w-5" />;
       }

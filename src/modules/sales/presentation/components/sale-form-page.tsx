@@ -4,7 +4,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { CurrencyInput } from "@/ui/components/currency-input";
@@ -89,7 +89,7 @@ export function SaleFormPage() {
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             {t("form.createTitle")}
           </h1>
-          <p className="text-neutral-500 dark:text-neutral-400">
+          <p className="text-sm text-muted-foreground">
             {t("form.createDescription")}
           </p>
         </div>
@@ -97,7 +97,7 @@ export function SaleFormPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {createSale.isError && (
-          <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
             {t("form.error")}
           </div>
         )}
@@ -281,6 +281,7 @@ export function SaleFormPage() {
             <Link href="/dashboard/sales">{tCommon("cancel")}</Link>
           </Button>
           <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isSubmitting ? tCommon("loading") : tCommon("create")}
           </Button>
         </div>

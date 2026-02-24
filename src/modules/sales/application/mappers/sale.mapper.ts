@@ -66,6 +66,10 @@ export class SaleMapper {
         typeof raw.completedAt === "string" ? new Date(raw.completedAt) : null,
       completedBy: raw.completedBy ?? null,
       completedByName: raw.completedByName ?? null,
+      returnedAt:
+        typeof raw.returnedAt === "string" ? new Date(raw.returnedAt) : null,
+      returnedBy: raw.returnedBy ?? null,
+      returnedByName: raw.returnedByName ?? null,
       pickingEnabled: raw.pickingEnabled ?? false,
     });
   }
@@ -116,6 +120,10 @@ export class SaleMapper {
         typeof dto.completedAt === "string" ? new Date(dto.completedAt) : null,
       completedBy: dto.completedBy ?? null,
       completedByName: dto.completedByName ?? null,
+      returnedAt:
+        typeof dto.returnedAt === "string" ? new Date(dto.returnedAt) : null,
+      returnedBy: dto.returnedBy ?? null,
+      returnedByName: dto.returnedByName ?? null,
       pickingEnabled: dto.pickingEnabled ?? false,
     });
   }

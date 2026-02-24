@@ -1,4 +1,8 @@
+"use client";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { roleApiAdapter } from "../../infrastructure/adapters/role-api.adapter";
 import type {
   CreateRoleDto,
@@ -45,42 +49,66 @@ export function useRolePermissions(roleId: string, enabled = true) {
 
 export function useCreateRole() {
   const queryClient = useQueryClient();
+  const t = useTranslations("roles");
+
   return useMutation({
     mutationFn: (data: CreateRoleDto) => roleApiAdapter.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+      toast.success(t("messages.created"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useUpdateRole() {
   const queryClient = useQueryClient();
+  const t = useTranslations("roles");
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateRoleDto }) =>
       roleApiAdapter.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.all });
+      toast.success(t("messages.updated"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useDeleteRole() {
   const queryClient = useQueryClient();
+  const t = useTranslations("roles");
+
   return useMutation({
     mutationFn: (id: string) => roleApiAdapter.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+      toast.success(t("messages.deleted"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useAssignPermissions() {
   const queryClient = useQueryClient();
+  const t = useTranslations("roles");
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: AssignPermissionsDto }) =>
       roleApiAdapter.assignPermissions(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.all });
+      toast.success(t("messages.permissionsUpdated"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }

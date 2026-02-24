@@ -25,6 +25,7 @@ interface SelectContextValue {
   triggerRef: React.RefObject<HTMLButtonElement | null>;
   displayText: string;
   setDisplayText: (text: string) => void;
+  disabled: boolean;
 }
 
 const SelectContext = createContext<SelectContextValue | undefined>(undefined);
@@ -45,6 +46,7 @@ interface SelectProps {
   onValueChange?: (value: string) => void;
   defaultValue?: string;
   defaultOpen?: boolean;
+  disabled?: boolean;
 }
 
 function Select({
@@ -55,6 +57,7 @@ function Select({
   onValueChange,
   defaultValue = "",
   defaultOpen = false,
+  disabled = false,
 }: SelectProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
@@ -98,6 +101,7 @@ function Select({
         triggerRef,
         displayText,
         setDisplayText,
+        disabled,
       }}
     >
       {children}
@@ -111,8 +115,14 @@ interface SelectTriggerProps extends HTMLAttributes<HTMLButtonElement> {
 }
 
 const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
-  ({ className, children, ...props }, ref) => {
-    const { open, onOpenChange, triggerRef } = useSelectContext();
+  ({ className, children, disabled: disabledProp, ...props }, ref) => {
+    const {
+      open,
+      onOpenChange,
+      triggerRef,
+      disabled: disabledCtx,
+    } = useSelectContext();
+    const isDisabled = disabledProp ?? disabledCtx;
 
     const combinedRef = useCallback(
       (node: HTMLButtonElement | null) => {
@@ -139,7 +149,8 @@ const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
           "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
           className,
         )}
-        onClick={() => !props.disabled && onOpenChange(!open)}
+        disabled={isDisabled}
+        onClick={() => !isDisabled && onOpenChange(!open)}
         {...props}
       >
         {children}

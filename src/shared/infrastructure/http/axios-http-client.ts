@@ -18,8 +18,8 @@ import type {
  */
 export class AxiosHttpClient implements HttpClientPort {
   private readonly instance: AxiosInstance;
-  private isRefreshing = false;
   private refreshPromise: Promise<string | null> | null = null;
+  private lastRefreshTime = 0;
 
   constructor(config?: HttpClientConfig) {
     this.instance = axios.create({
@@ -107,22 +107,29 @@ export class AxiosHttpClient implements HttpClientPort {
   /**
    * Performs token refresh with concurrency protection.
    * Multiple 401s will share a single refresh request.
+   * The promise is kept alive for a grace period so late-arriving
+   * 401 responses reuse the result instead of triggering a new refresh.
    * Returns the new access token or null if refresh failed.
    */
   private async performRefresh(): Promise<string | null> {
-    // If already refreshing, wait for the existing promise
-    if (this.isRefreshing && this.refreshPromise) {
+    // If there's an in-flight or recently completed refresh, reuse it.
+    // This handles both concurrent 401s AND late-arriving 401 responses
+    // that arrive after the first refresh has already completed.
+    if (this.refreshPromise) {
       return this.refreshPromise;
     }
 
     const refreshToken = TokenService.getRefreshToken();
     if (!refreshToken) {
-      // No refresh token available — just return null, don't force redirect.
-      // The middleware/auth guard will handle the redirect.
+      TokenService.clearTokens();
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("auth:session-expired"));
+      }
+
       return null;
     }
 
-    this.isRefreshing = true;
     this.refreshPromise = (async () => {
       try {
         const organizationSlug = TokenService.getOrganizationSlug();
@@ -158,22 +165,36 @@ export class AxiosHttpClient implements HttpClientPort {
             expiresAt:
               expiresAt ?? new Date(Date.now() + 3600000).toISOString(),
           });
+          this.lastRefreshTime = Date.now();
           return accessToken as string;
         }
 
-        // No access token in response — return null without forcing logout.
-        // Individual requests will fail with 401 and the UI can handle it.
+        TokenService.clearTokens();
+
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("auth:session-expired"));
+        }
+
         return null;
       } catch {
-        // Refresh failed — return null. Don't clear tokens or redirect here
-        // to avoid a race condition where multiple 401s from non-critical
-        // endpoints (like reports) wipe the session while the user is active.
+        TokenService.clearTokens();
+
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("auth:session-expired"));
+        }
+
         return null;
-      } finally {
-        this.isRefreshing = false;
-        this.refreshPromise = null;
       }
     })();
+
+    // Keep the promise alive for 10 seconds after it settles.
+    // Late-arriving 401s during this window will reuse the result
+    // instead of triggering a second refresh with a stale token.
+    this.refreshPromise.finally(() => {
+      setTimeout(() => {
+        this.refreshPromise = null;
+      }, 10_000);
+    });
 
     return this.refreshPromise;
   }

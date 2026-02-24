@@ -109,6 +109,7 @@ export function MovementFilters({
             <SelectItem value="DRAFT">{t("status.draft")}</SelectItem>
             <SelectItem value="POSTED">{t("status.posted")}</SelectItem>
             <SelectItem value="VOID">{t("status.void")}</SelectItem>
+            <SelectItem value="RETURNED">{t("status.returned")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

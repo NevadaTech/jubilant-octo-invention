@@ -1,6 +1,8 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { warehouseApiAdapter } from "../../infrastructure/adapters/warehouse-api.adapter";
 import type {
   WarehouseFilters,
@@ -38,17 +40,23 @@ export function useWarehouse(id: string) {
 
 export function useCreateWarehouse() {
   const queryClient = useQueryClient();
+  const t = useTranslations("inventory.warehouses");
 
   return useMutation({
     mutationFn: (data: CreateWarehouseDto) => warehouseApiAdapter.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: warehouseKeys.lists() });
+      toast.success(t("messages.created"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useUpdateWarehouse() {
   const queryClient = useQueryClient();
+  const t = useTranslations("inventory.warehouses");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateWarehouseDto }) =>
@@ -56,12 +64,17 @@ export function useUpdateWarehouse() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: warehouseKeys.lists() });
       queryClient.invalidateQueries({ queryKey: warehouseKeys.detail(id) });
+      toast.success(t("messages.updated"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }
 
 export function useToggleWarehouseStatus() {
   const queryClient = useQueryClient();
+  const t = useTranslations("inventory.warehouses");
 
   return useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
@@ -69,6 +82,10 @@ export function useToggleWarehouseStatus() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: warehouseKeys.lists() });
       queryClient.invalidateQueries({ queryKey: warehouseKeys.detail(id) });
+      toast.success(t("messages.updated"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
     },
   });
 }

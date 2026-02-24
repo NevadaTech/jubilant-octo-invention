@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
@@ -55,7 +56,7 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {error && (
-        <div className="rounded-md bg-error-100 p-3 text-sm text-error-700 dark:bg-error-900/20 dark:text-error-400">
+        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
           {tErrors(getAuthErrorKey(error))}
         </div>
       )}
@@ -94,6 +95,7 @@ export function LoginForm() {
       </FormField>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {isLoading ? t("submitting") : t("submit")}
       </Button>
     </form>

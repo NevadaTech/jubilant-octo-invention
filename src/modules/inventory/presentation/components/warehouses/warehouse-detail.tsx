@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { toast } from "sonner";
 import {
   Warehouse as WarehouseIcon,
   Edit,
@@ -236,14 +235,8 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
                     id: warehouseId,
                     isActive: !warehouse.isActive,
                   });
-                } catch (error) {
-                  const message =
-                    (error as { response?: { data?: { message?: string } } })
-                      ?.response?.data?.message ??
-                    (error instanceof Error
-                      ? error.message
-                      : t("messages.updateError"));
-                  toast.error(message);
+                } catch {
+                  // Error toast handled by hook
                 }
               }}
             >

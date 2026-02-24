@@ -79,6 +79,7 @@ export function SaleFiltersComponent({
             <SelectItem value="SHIPPED">{t("status.shipped")}</SelectItem>
             <SelectItem value="COMPLETED">{t("status.completed")}</SelectItem>
             <SelectItem value="CANCELLED">{t("status.cancelled")}</SelectItem>
+            <SelectItem value="RETURNED">{t("status.returned")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

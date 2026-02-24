@@ -13,6 +13,7 @@ import {
   Pencil,
   Trash2,
   Eye,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
@@ -361,12 +362,17 @@ export function MovementList() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMovement.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={deleteMovement.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
+              {deleteMovement.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {deleteMovement.isPending
                 ? tCommon("loading")
                 : tCommon("delete")}
@@ -388,11 +394,16 @@ export function MovementList() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={postMovement.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handlePost}
               disabled={postMovement.isPending}
             >
+              {postMovement.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {postMovement.isPending ? tCommon("loading") : t("actions.post")}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -412,12 +423,17 @@ export function MovementList() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={voidMovement.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleVoid}
               disabled={voidMovement.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
+              {voidMovement.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {voidMovement.isPending ? tCommon("loading") : t("actions.void")}
             </AlertDialogAction>
           </AlertDialogFooter>

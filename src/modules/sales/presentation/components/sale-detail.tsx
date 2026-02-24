@@ -11,6 +11,9 @@ import {
   PackageSearch,
   Truck,
   PackageCheck,
+  Loader2,
+  Undo2,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -39,6 +42,7 @@ import {
 } from "@/ui/components/dialog";
 import {
   useSale,
+  useSaleReturns,
   useConfirmSale,
   useCancelSale,
   useStartPicking,
@@ -55,7 +59,9 @@ interface SaleDetailProps {
 export function SaleDetail({ saleId }: SaleDetailProps) {
   const t = useTranslations("sales");
   const tCommon = useTranslations("common");
+  const tReturns = useTranslations("returns");
   const { data: sale, isLoading, isError } = useSale(saleId);
+  const { data: saleReturns } = useSaleReturns(saleId, !!saleId);
   const confirmSale = useConfirmSale();
   const cancelSale = useCancelSale();
   const startPicking = useStartPicking();
@@ -177,7 +183,7 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
               </h1>
               <SaleStatusBadge status={sale.status} />
             </div>
-            <p className="text-neutral-500 dark:text-neutral-400">
+            <p className="text-sm text-muted-foreground">
               {t("detail.createdAt", { date: formatDate(sale.createdAt) })}
             </p>
           </div>
@@ -187,8 +193,12 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
           {sale.canConfirm && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button>
-                  <CheckCircle className="mr-2 h-4 w-4" />
+                <Button disabled={confirmSale.isPending}>
+                  {confirmSale.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <CheckCircle className="mr-2 h-4 w-4" />
+                  )}
                   {t("actions.confirm")}
                 </Button>
               </AlertDialogTrigger>
@@ -200,11 +210,16 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+                  <AlertDialogCancel disabled={confirmSale.isPending}>
+                    {tCommon("cancel")}
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleConfirm}
                     disabled={confirmSale.isPending}
                   >
+                    {confirmSale.isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {confirmSale.isPending
                       ? tCommon("loading")
                       : t("actions.confirm")}
@@ -216,8 +231,12 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
           {sale.canStartPicking && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline">
-                  <PackageSearch className="mr-2 h-4 w-4" />
+                <Button variant="outline" disabled={startPicking.isPending}>
+                  {startPicking.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <PackageSearch className="mr-2 h-4 w-4" />
+                  )}
                   {t("actions.startPicking")}
                 </Button>
               </AlertDialogTrigger>
@@ -229,11 +248,16 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+                  <AlertDialogCancel disabled={startPicking.isPending}>
+                    {tCommon("cancel")}
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleStartPicking}
                     disabled={startPicking.isPending}
                   >
+                    {startPicking.isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {startPicking.isPending
                       ? tCommon("loading")
                       : t("actions.startPicking")}
@@ -245,8 +269,12 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
           {sale.canShip && (
             <Dialog open={shipDialogOpen} onOpenChange={setShipDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
-                  <Truck className="mr-2 h-4 w-4" />
+                <Button disabled={shipSale.isPending}>
+                  {shipSale.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Truck className="mr-2 h-4 w-4" />
+                  )}
                   {t("actions.shipSale")}
                 </Button>
               </DialogTrigger>
@@ -267,6 +295,7 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                       value={trackingNumber}
                       onChange={(e) => setTrackingNumber(e.target.value)}
                       placeholder={t("fields.trackingNumberPlaceholder")}
+                      disabled={shipSale.isPending}
                     />
                   </div>
                   <div className="space-y-2">
@@ -278,6 +307,7 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                       value={shippingCarrier}
                       onChange={(e) => setShippingCarrier(e.target.value)}
                       placeholder={t("fields.shippingCarrierPlaceholder")}
+                      disabled={shipSale.isPending}
                     />
                   </div>
                   <div className="space-y-2">
@@ -289,6 +319,7 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                       value={shippingNotes}
                       onChange={(e) => setShippingNotes(e.target.value)}
                       placeholder={t("fields.shippingNotesPlaceholder")}
+                      disabled={shipSale.isPending}
                     />
                   </div>
                 </div>
@@ -296,10 +327,14 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                   <Button
                     variant="outline"
                     onClick={() => setShipDialogOpen(false)}
+                    disabled={shipSale.isPending}
                   >
                     {tCommon("cancel")}
                   </Button>
                   <Button onClick={handleShip} disabled={shipSale.isPending}>
+                    {shipSale.isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {shipSale.isPending
                       ? tCommon("loading")
                       : t("actions.shipSale")}
@@ -311,8 +346,12 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
           {sale.canComplete && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button>
-                  <PackageCheck className="mr-2 h-4 w-4" />
+                <Button disabled={completeSale.isPending}>
+                  {completeSale.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <PackageCheck className="mr-2 h-4 w-4" />
+                  )}
                   {t("actions.completeSale")}
                 </Button>
               </AlertDialogTrigger>
@@ -324,11 +363,16 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+                  <AlertDialogCancel disabled={completeSale.isPending}>
+                    {tCommon("cancel")}
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleComplete}
                     disabled={completeSale.isPending}
                   >
+                    {completeSale.isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {completeSale.isPending
                       ? tCommon("loading")
                       : t("completeSale.confirm")}
@@ -340,8 +384,12 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
           {sale.canCancel && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <XCircle className="mr-2 h-4 w-4" />
+                <Button variant="destructive" disabled={cancelSale.isPending}>
+                  {cancelSale.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <XCircle className="mr-2 h-4 w-4" />
+                  )}
                   {t("actions.cancelSale")}
                 </Button>
               </AlertDialogTrigger>
@@ -353,12 +401,17 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+                  <AlertDialogCancel disabled={cancelSale.isPending}>
+                    {tCommon("cancel")}
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleCancel}
                     disabled={cancelSale.isPending}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
+                    {cancelSale.isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {cancelSale.isPending
                       ? tCommon("loading")
                       : t("actions.cancelSale")}
@@ -481,10 +534,51 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
               completedByName={sale.completedByName}
               cancelledAt={sale.cancelledAt}
               cancelledByName={sale.cancelledByName}
+              returnedAt={sale.returnedAt}
+              returnedByName={sale.returnedByName}
             />
           </CardContent>
         </Card>
       </div>
+
+      {/* Returns Card - shown when sale has returns */}
+      {saleReturns && saleReturns.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Undo2 className="h-5 w-5" />
+              {tReturns("title")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {saleReturns.map((ret) => (
+                <div
+                  key={ret.id}
+                  className="flex items-center justify-between rounded-lg border p-4"
+                >
+                  <div>
+                    <p className="font-medium">{ret.returnNumber}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {tReturns(
+                        `types.${ret.type === "RETURN_CUSTOMER" ? "customer" : "supplier"}`,
+                      )}
+                      {" · "}
+                      {tReturns(`status.${ret.status.toLowerCase()}`)}
+                    </p>
+                  </div>
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={`/dashboard/returns/${ret.id}`}>
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      {t("actions.view")}
+                    </Link>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Lines Card */}
       <Card>
