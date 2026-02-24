@@ -784,7 +784,9 @@
       "reason": "Reason",
       "reasonPlaceholder": "Reason for return",
       "saleReference": "Sale Reference",
-      "saleReferencePlaceholder": "Sale ID or number",
+      "saleReferencePlaceholder": "Select a sale...",
+      "saleSearchPlaceholder": "Search by sale number...",
+      "saleNotFound": "No sales found",
       "note": "Note",
       "notePlaceholder": "Additional notes (optional)",
       "createdAt": "Created",
@@ -822,6 +824,7 @@
       "returnInfo": "Return Details",
       "linesSection": "Products",
       "noLines": "No products added yet",
+      "saleProductsHint": "Products were loaded from the selected sale. You can adjust quantities and remove items you don't want to return.",
       "error": "An error occurred while creating the return."
     },
     "detail": {

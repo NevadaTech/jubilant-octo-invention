@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
@@ -24,9 +25,14 @@ import {
   toCreateReturnDto,
   type CreateReturnFormData,
 } from "../schemas/return.schema";
+import { SearchableSelect } from "@/ui/components/searchable-select";
 import { useCreateReturn } from "../hooks/use-returns";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import {
+  useSales,
+  useSale,
+} from "@/modules/sales/presentation/hooks/use-sales";
 
 export function ReturnFormPage() {
   const t = useTranslations("returns");
@@ -38,6 +44,19 @@ export function ReturnFormPage() {
     limit: 100,
     isActive: true,
   });
+  const { data: salesData } = useSales({ limit: 100 });
+
+  const salesOptions = useMemo(
+    () =>
+      (salesData?.data ?? [])
+        .filter((s) => s.status !== "DRAFT" && s.status !== "CANCELLED")
+        .map((sale) => ({
+          value: sale.id,
+          label: sale.saleNumber,
+          description: `${sale.warehouseName} — ${sale.currency} ${sale.totalAmount.toLocaleString()}`,
+        })),
+    [salesData],
+  );
 
   const isSubmitting = createReturn.isPending;
 
@@ -46,6 +65,7 @@ export function ReturnFormPage() {
     handleSubmit,
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<CreateReturnFormData>({
     resolver: zodResolver(createReturnSchema),
@@ -67,11 +87,69 @@ export function ReturnFormPage() {
   });
 
   const returnType = watch("type");
+  const selectedSaleId = watch("saleId");
 
-  const { fields, append, remove } = useFieldArray({
+  // Fetch sale detail when a sale is selected
+  const { data: selectedSale } = useSale(selectedSaleId || "");
+
+  // Build product options from the selected sale's lines
+  const saleLineProducts = useMemo(() => {
+    if (!selectedSale?.lines?.length) return [];
+    return selectedSale.lines.map((line) => ({
+      productId: line.productId,
+      productName: line.productName,
+      productSku: line.productSku,
+      quantity: line.quantity,
+      salePrice: line.salePrice,
+      currency: line.currency,
+    }));
+  }, [selectedSale]);
+
+  // Map productId → sale line info for quick lookup
+  const saleLineMap = useMemo(() => {
+    const map = new Map<
+      string,
+      { quantity: number; salePrice: number; currency: string }
+    >();
+    for (const line of saleLineProducts) {
+      map.set(line.productId, {
+        quantity: line.quantity,
+        salePrice: line.salePrice,
+        currency: line.currency,
+      });
+    }
+    return map;
+  }, [saleLineProducts]);
+
+  // Get max quantity for a line (from sale)
+  const getMaxQuantity = useCallback(
+    (productId: string) => saleLineMap.get(productId)?.quantity,
+    [saleLineMap],
+  );
+
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name: "lines",
   });
+
+  // When customer return sale changes, reset lines to match sale products
+  const prevSaleIdRef = useRef(selectedSaleId);
+  useEffect(() => {
+    if (prevSaleIdRef.current === selectedSaleId) return;
+    prevSaleIdRef.current = selectedSaleId;
+
+    if (returnType !== "RETURN_CUSTOMER" || !saleLineProducts.length) return;
+
+    replace(
+      saleLineProducts.map((line) => ({
+        productId: line.productId,
+        quantity: line.quantity,
+        maxQuantity: line.quantity,
+        originalSalePrice: line.salePrice,
+        originalUnitCost: undefined,
+      })),
+    );
+  }, [selectedSaleId, returnType, saleLineProducts, replace]);
 
   const onSubmit = async (data: CreateReturnFormData) => {
     try {
@@ -92,7 +170,21 @@ export function ReturnFormPage() {
     });
   };
 
+  // When a product is picked from the sale lines, auto-fill price & max
+  const handleProductChange = useCallback(
+    (index: number, productId: string) => {
+      setValue(`lines.${index}.productId`, productId);
+      const saleLine = saleLineMap.get(productId);
+      if (saleLine) {
+        setValue(`lines.${index}.originalSalePrice`, saleLine.salePrice);
+        setValue(`lines.${index}.maxQuantity`, saleLine.quantity);
+      }
+    },
+    [saleLineMap, setValue],
+  );
+
   const isCustomerReturn = returnType === "RETURN_CUSTOMER";
+  const hasSaleLines = isCustomerReturn && saleLineProducts.length > 0;
 
   return (
     <div className="space-y-6">
@@ -177,10 +269,20 @@ export function ReturnFormPage() {
 
             {isCustomerReturn && (
               <FormField error={errors.saleId?.message}>
-                <Label>{t("fields.saleReference")}</Label>
-                <Input
-                  placeholder={t("fields.saleReferencePlaceholder")}
-                  {...register("saleId")}
+                <Label>{t("fields.saleReference")} *</Label>
+                <Controller
+                  name="saleId"
+                  control={control}
+                  render={({ field }) => (
+                    <SearchableSelect
+                      options={salesOptions}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder={t("fields.saleReferencePlaceholder")}
+                      searchPlaceholder={t("fields.saleSearchPlaceholder")}
+                      emptyMessage={t("fields.saleNotFound")}
+                    />
+                  )}
                 />
               </FormField>
             )}
@@ -211,18 +313,26 @@ export function ReturnFormPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>{t("form.linesSection")}</CardTitle>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addLine}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                {t("actions.addLine")}
-              </Button>
+              {!hasSaleLines && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addLine}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("actions.addLine")}
+                </Button>
+              )}
             </div>
           </CardHeader>
           <CardContent>
+            {hasSaleLines && (
+              <div className="mb-4 rounded-md bg-blue-50 p-3 text-sm text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
+                {t("form.saleProductsHint")}
+              </div>
+            )}
+
             {errors.lines?.message && (
               <p className="mb-4 text-sm text-destructive">
                 {errors.lines.message}
@@ -248,38 +358,76 @@ export function ReturnFormPage() {
                         <Controller
                           name={`lines.${index}.productId`}
                           control={control}
-                          render={({ field: selectField }) => (
-                            <Select
-                              value={selectField.value}
-                              onValueChange={selectField.onChange}
-                            >
-                              <SelectTrigger>
-                                <SelectValue
-                                  placeholder={t("fields.productPlaceholder")}
-                                />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {productsData?.data.map((product) => (
-                                  <SelectItem
-                                    key={product.id}
-                                    value={product.id}
-                                  >
-                                    {product.name} ({product.sku})
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          )}
+                          render={({ field: selectField }) =>
+                            hasSaleLines ? (
+                              <Select
+                                value={selectField.value}
+                                onValueChange={(val) =>
+                                  handleProductChange(index, val)
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue
+                                    placeholder={t("fields.productPlaceholder")}
+                                  />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {saleLineProducts.map((line) => (
+                                    <SelectItem
+                                      key={line.productId}
+                                      value={line.productId}
+                                    >
+                                      {line.productName} ({line.productSku})
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : (
+                              <Select
+                                value={selectField.value}
+                                onValueChange={selectField.onChange}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue
+                                    placeholder={t("fields.productPlaceholder")}
+                                  />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {productsData?.data.map((product) => (
+                                    <SelectItem
+                                      key={product.id}
+                                      value={product.id}
+                                    >
+                                      {product.name} ({product.sku})
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            )
+                          }
                         />
                       </FormField>
 
                       <FormField
                         error={errors.lines?.[index]?.quantity?.message}
                       >
-                        <Label>{t("fields.quantity")} *</Label>
+                        <Label>
+                          {t("fields.quantity")} *
+                          {hasSaleLines &&
+                            getMaxQuantity(field.productId) !== undefined && (
+                              <span className="ml-1 text-xs font-normal text-muted-foreground">
+                                (max: {getMaxQuantity(field.productId)})
+                              </span>
+                            )}
+                        </Label>
                         <Input
                           type="number"
                           min="1"
+                          max={
+                            hasSaleLines
+                              ? getMaxQuantity(field.productId)
+                              : undefined
+                          }
                           {...register(`lines.${index}.quantity`, {
                             valueAsNumber: true,
                           })}
@@ -302,6 +450,7 @@ export function ReturnFormPage() {
                                 onChange={(val) =>
                                   field.onChange(val || undefined)
                                 }
+                                disabled={hasSaleLines}
                               />
                             )}
                           />

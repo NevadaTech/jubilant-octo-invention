@@ -784,7 +784,9 @@
       "reason": "Motivo",
       "reasonPlaceholder": "Motivo de la devolución",
       "saleReference": "Referencia de Venta",
-      "saleReferencePlaceholder": "ID o número de venta",
+      "saleReferencePlaceholder": "Seleccionar una venta...",
+      "saleSearchPlaceholder": "Buscar por número de venta...",
+      "saleNotFound": "No se encontraron ventas",
       "note": "Nota",
       "notePlaceholder": "Notas adicionales (opcional)",
       "createdAt": "Creado",
@@ -822,6 +824,7 @@
       "returnInfo": "Detalles de la Devolución",
       "linesSection": "Productos",
       "noLines": "No hay productos agregados",
+      "saleProductsHint": "Los productos fueron cargados de la venta seleccionada. Puedes ajustar cantidades y eliminar los que no deseas devolver.",
       "error": "Ocurrió un error al crear la devolución."
     },
     "detail": {
