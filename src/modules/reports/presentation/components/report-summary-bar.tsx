@@ -1,15 +1,22 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Card, CardContent } from "@/ui/components/card";
 import { formatCellValue, formatSummaryKey } from "../utils/report-utils";
 
 interface ReportSummaryBarProps {
   summary: Record<string, number | string>;
+  currency?: string;
 }
 
-export function ReportSummaryBar({ summary }: ReportSummaryBarProps) {
+export function ReportSummaryBar({ summary, currency }: ReportSummaryBarProps) {
   const locale = useLocale();
+  const t = useTranslations("reports");
+
+  const translateKey = (key: string): string => {
+    const i18nKey = `summary.${key}`;
+    return t.has(i18nKey) ? t(i18nKey) : formatSummaryKey(key);
+  };
   const entries = Object.entries(summary).filter(
     ([, v]) => v !== null && v !== undefined,
   );
@@ -41,10 +48,10 @@ export function ReportSummaryBar({ summary }: ReportSummaryBarProps) {
           {entries.map(([key, value]) => (
             <div key={key} className="flex flex-col">
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {formatSummaryKey(key)}
+                {translateKey(key)}
               </span>
               <span className="text-lg font-bold tabular-nums text-foreground">
-                {formatCellValue(value, getType(key, value), locale)}
+                {formatCellValue(value, getType(key, value), locale, currency)}
               </span>
             </div>
           ))}

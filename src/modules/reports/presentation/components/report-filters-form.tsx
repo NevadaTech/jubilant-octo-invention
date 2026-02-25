@@ -225,9 +225,13 @@ export function ReportFiltersForm({
                   <SelectItem value="all">
                     {t("filters.allStatuses")}
                   </SelectItem>
-                  <SelectItem value="DRAFT">Draft</SelectItem>
-                  <SelectItem value="CONFIRMED">Confirmed</SelectItem>
-                  <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                  <SelectItem value="DRAFT">{t("status.DRAFT")}</SelectItem>
+                  <SelectItem value="CONFIRMED">
+                    {t("status.CONFIRMED")}
+                  </SelectItem>
+                  <SelectItem value="CANCELLED">
+                    {t("status.CANCELLED")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -322,6 +326,25 @@ export function ReportFiltersForm({
                 className="text-sm"
                 value={params.category ?? ""}
                 onChange={(e) => set("category", e.target.value)}
+              />
+            </div>
+          )}
+
+          {config.deadStockDays && (
+            <div className="space-y-1.5">
+              <Label className="text-xs">{t("filters.deadStockDays")}</Label>
+              <Input
+                type="number"
+                min={1}
+                placeholder="90"
+                className="text-sm"
+                value={params.deadStockDays ?? ""}
+                onChange={(e) =>
+                  set(
+                    "deadStockDays",
+                    e.target.value ? Number(e.target.value) : undefined,
+                  )
+                }
               />
             </div>
           )}

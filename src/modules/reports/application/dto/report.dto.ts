@@ -13,7 +13,9 @@ export type ReportTypeValue =
   | "RETURNS_BY_TYPE"
   | "RETURNS_BY_PRODUCT"
   | "RETURNS_CUSTOMER"
-  | "RETURNS_SUPPLIER";
+  | "RETURNS_SUPPLIER"
+  | "ABC_ANALYSIS"
+  | "DEAD_STOCK";
 
 export type ReportFormatValue = "PDF" | "EXCEL" | "CSV";
 export type GroupByValue =
@@ -54,6 +56,7 @@ export interface ReportParameters {
   includeInactive?: boolean;
   locationId?: string;
   severity?: SeverityValue;
+  deadStockDays?: number;
 }
 
 export interface ReportColumn {
@@ -122,6 +125,7 @@ export interface ReportTypeConfig {
     severity?: boolean;
     movementType?: boolean;
     includeInactive?: boolean;
+    deadStockDays?: boolean;
   };
 }
 
@@ -136,6 +140,8 @@ export const REPORT_CATEGORIES: ReportCategoryConfig[] = [
       "MOVEMENTS",
       "FINANCIAL",
       "TURNOVER",
+      "ABC_ANALYSIS",
+      "DEAD_STOCK",
     ],
   },
   {
@@ -209,6 +215,16 @@ export const REPORT_FILTER_CONFIG: Record<
   RETURNS_BY_PRODUCT: { dateRange: true, category: true, period: true },
   RETURNS_CUSTOMER: { dateRange: true, warehouseId: true, status: true },
   RETURNS_SUPPLIER: { dateRange: true, warehouseId: true, status: true },
+  ABC_ANALYSIS: {
+    dateRange: true,
+    warehouseId: true,
+    category: true,
+  },
+  DEAD_STOCK: {
+    warehouseId: true,
+    deadStockDays: true,
+    includeInactive: true,
+  },
 };
 
 export const REPORT_PATHS: Record<ReportTypeValue, string> = {
@@ -227,4 +243,6 @@ export const REPORT_PATHS: Record<ReportTypeValue, string> = {
   RETURNS_BY_PRODUCT: "/reports/returns/by-product",
   RETURNS_CUSTOMER: "/reports/returns/customer",
   RETURNS_SUPPLIER: "/reports/returns/supplier",
+  ABC_ANALYSIS: "/reports/inventory/abc-analysis",
+  DEAD_STOCK: "/reports/inventory/dead-stock",
 };

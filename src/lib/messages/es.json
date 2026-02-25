@@ -156,6 +156,11 @@
         "placeholder": "Buscar productos..."
       },
       "filter": "Filtros",
+      "filters": {
+        "allStatuses": "Todos los Estados",
+        "category": "Categoría",
+        "allCategories": "Todas las Categorías"
+      },
       "pagination": {
         "showing": "Mostrando {from} a {to} de {total} productos"
       },
@@ -751,6 +756,8 @@
     "filters": {
       "status": "Estado",
       "allStatuses": "Todos los Estados",
+      "warehouse": "Almacén",
+      "allWarehouses": "Todos los Almacenes",
       "dateFrom": "Desde Fecha",
       "dateTo": "Hasta Fecha",
       "clear": "Limpiar Filtros"
@@ -879,6 +886,8 @@
       "allTypes": "Todos los Tipos",
       "status": "Estado",
       "allStatuses": "Todos los Estados",
+      "warehouse": "Almacén",
+      "allWarehouses": "Todos los Almacenes",
       "dateFrom": "Desde Fecha",
       "dateTo": "Hasta Fecha",
       "clear": "Limpiar Filtros"
@@ -1074,6 +1083,7 @@
     "noData": "No hay datos disponibles para este reporte",
     "noDataDescription": "Intenta ajustar los filtros o el rango de fechas",
     "fromCache": "En caché",
+    "exportFormat": "Formato de exportación",
     "categories": {
       "inventory": "Inventario",
       "sales": "Ventas",
@@ -1109,7 +1119,11 @@
       "RETURNS_CUSTOMER": "Devoluciones de Clientes",
       "RETURNS_CUSTOMER_desc": "Devoluciones recibidas de clientes con todos los detalles",
       "RETURNS_SUPPLIER": "Devoluciones a Proveedores",
-      "RETURNS_SUPPLIER_desc": "Devoluciones enviadas a proveedores con todos los detalles"
+      "RETURNS_SUPPLIER_desc": "Devoluciones enviadas a proveedores con todos los detalles",
+      "ABC_ANALYSIS": "Análisis ABC",
+      "ABC_ANALYSIS_desc": "Clasificación Pareto de productos por contribución de ingresos (A/B/C)",
+      "DEAD_STOCK": "Stock Muerto",
+      "DEAD_STOCK_desc": "Productos con stock disponible pero sin ventas en un período configurable"
     },
     "filters": {
       "title": "Filtros",
@@ -1134,7 +1148,8 @@
       "allSeverities": "Todas las Severidades",
       "movementType": "Tipo de Movimiento",
       "allMovementTypes": "Todos los Tipos",
-      "includeInactive": "Incluir Productos Inactivos"
+      "includeInactive": "Incluir Productos Inactivos",
+      "deadStockDays": "Días Sin Venta"
     },
     "period": {
       "MONTHLY": "Mensual",
@@ -1166,7 +1181,152 @@
       "SUPPLIER": "Proveedor"
     },
     "summary": {
-      "title": "Resumen"
+      "title": "Resumen",
+      "totalSales": "Total Ventas",
+      "totalAmount": "Monto Total",
+      "totalItems": "Total Artículos",
+      "totalReturns": "Total Devoluciones",
+      "totalRefunded": "Total Reembolsado",
+      "totalProducts": "Total Productos",
+      "totalQuantity": "Cantidad Total",
+      "totalValue": "Valor Total",
+      "totalCost": "Costo Total",
+      "totalRevenue": "Ingresos Totales",
+      "averageCost": "Costo Promedio",
+      "averageValue": "Valor Promedio",
+      "averageMargin": "Margen Promedio",
+      "grossMargin": "Margen Bruto",
+      "totalMovements": "Total Movimientos",
+      "totalRecords": "Total Registros",
+      "turnoverRate": "Tasa de Rotación",
+      "daysOnHand": "Días en Inventario",
+      "totalAlerts": "Total Alertas",
+      "criticalCount": "Críticos",
+      "warningCount": "Advertencias",
+      "totalDeficit": "Déficit Total",
+      "totalInventoryValue": "Valor Total Inventario",
+      "totalGrossMargin": "Margen Bruto Total",
+      "slowMovingCount": "Baja Rotación",
+      "normalCount": "Normal",
+      "fastMovingCount": "Alta Rotación",
+      "totalQuantitySold": "Cantidad Vendida",
+      "totalWarehouses": "Total Almacenes",
+      "totalQuantityReturned": "Cantidad Devuelta",
+      "totalValueReturned": "Valor Devuelto",
+      "classA": "Clase A",
+      "classB": "Clase B",
+      "classC": "Clase C",
+      "totalStockValue": "Valor Total Stock",
+      "highRiskCount": "Riesgo Alto",
+      "mediumRiskCount": "Riesgo Medio",
+      "lowRiskCount": "Riesgo Bajo"
+    },
+    "columnHeaders": {
+      "SKU": "SKU",
+      "Product": "Producto",
+      "Warehouse": "Almacén",
+      "Location": "Ubicación",
+      "Quantity": "Cantidad",
+      "Unit": "Unidad",
+      "Avg Cost": "Costo Prom.",
+      "Avg Cost (PPM)": "Costo Prom. (PPM)",
+      "Total Value": "Valor Total",
+      "Date": "Fecha",
+      "Type": "Tipo",
+      "Status": "Estado",
+      "Category": "Categoría",
+      "Reference": "Referencia",
+      "Created By": "Creado Por",
+      "Unit Cost": "Costo Unitario",
+      "Total Cost": "Costo Total",
+      "Severity": "Severidad",
+      "Current Stock": "Stock Actual",
+      "Minimum": "Mínimo",
+      "Reorder Point": "Punto de Reorden",
+      "Deficit": "Déficit",
+      "Movement Type": "Tipo de Movimiento",
+      "Total Movements": "Total Movimientos",
+      "Total Quantity": "Cantidad Total",
+      "Period": "Período",
+      "Inventory Value": "Valor Inventario",
+      "Total Revenue": "Ingresos Totales",
+      "Gross Margin": "Margen Bruto",
+      "Margin %": "Margen %",
+      "COGS": "COGS",
+      "Avg Inventory": "Inv. Promedio",
+      "Turnover Rate": "Tasa de Rotación",
+      "Days of Inventory": "Días de Inventario",
+      "Classification": "Clasificación",
+      "Sale #": "Venta #",
+      "Customer": "Cliente",
+      "Items": "Artículos",
+      "Total": "Total",
+      "Qty Sold": "Cant. Vendida",
+      "Revenue": "Ingresos",
+      "Avg Price": "Precio Prom.",
+      "Margin": "Margen",
+      "Sales Count": "Nro. Ventas",
+      "Total Sales": "Total Ventas",
+      "Avg per Sale": "Prom. por Venta",
+      "Total Items": "Total Artículos",
+      "Return #": "Devolución #",
+      "Total Returns": "Total Devoluciones",
+      "Return Rate": "Tasa de Devolución",
+      "Return Type": "Tipo de Devolución",
+      "Qty Returned": "Cant. Devuelta",
+      "Value Returned": "Valor Devuelto",
+      "Returns Count": "Nro. Devoluciones",
+      "Reason": "Razón",
+      "Sale ID": "ID Venta",
+      "Movement ID": "ID Movimiento",
+      "Revenue %": "% Ingresos",
+      "Cumulative %": "% Acumulado",
+      "Risk Level": "Nivel de Riesgo",
+      "Stock Value": "Valor Stock",
+      "Days Without Sale": "Días Sin Venta",
+      "Last Sale": "Última Venta"
+    },
+    "viewReport": "Ver Reporte",
+    "exportExcel": "Excel (.xlsx)",
+    "exportCsv": "CSV (.csv)",
+    "noRecordsFound": "No se encontraron registros",
+    "boolean": {
+      "yes": "Sí",
+      "no": "No"
+    },
+    "status": {
+      "DRAFT": "Borrador",
+      "CONFIRMED": "Confirmado",
+      "CANCELLED": "Cancelado"
+    },
+    "badgeLabels": {
+      "CRITICAL": "Crítico",
+      "WARNING": "Advertencia",
+      "FAST_MOVING": "Alta Rotación",
+      "SLOW_MOVING": "Baja Rotación",
+      "NORMAL": "Normal",
+      "CONFIRMED": "Confirmado",
+      "CANCELLED": "Cancelado",
+      "DRAFT": "Borrador",
+      "COMPLETED": "Completado",
+      "PENDING": "Pendiente",
+      "ACTIVE": "Activo",
+      "INACTIVE": "Inactivo",
+      "IN": "Entrada",
+      "OUT": "Salida",
+      "ADJUSTMENT": "Ajuste",
+      "TRANSFER_IN": "Transferencia Entrada",
+      "TRANSFER_OUT": "Transferencia Salida",
+      "CUSTOMER": "Cliente",
+      "SUPPLIER": "Proveedor",
+      "RETURN_CUSTOMER": "Devolución Cliente",
+      "RETURN_SUPPLIER": "Devolución Proveedor",
+      "A": "Clase A",
+      "B": "Clase B",
+      "C": "Clase C",
+      "HIGH": "Alto",
+      "MEDIUM": "Medio",
+      "LOW": "Bajo"
     },
     "errors": {
       "loadFailed": "Error al cargar el reporte",
@@ -1256,6 +1416,59 @@
     "settings": {
       "title": "Configuración",
       "description": "Configura ajustes del sistema"
+    }
+  },
+  "audit": {
+    "list": {
+      "title": "Registro de Actividad"
+    },
+    "columns": {
+      "timestamp": "Fecha/Hora",
+      "action": "Acción",
+      "entityType": "Tipo de Entidad",
+      "entityId": "ID de Entidad",
+      "performedBy": "Realizado Por",
+      "method": "Método",
+      "status": "Estado",
+      "duration": "Duración"
+    },
+    "filters": {
+      "entityType": "Tipo de Entidad",
+      "action": "Acción",
+      "startDate": "Fecha Inicio",
+      "endDate": "Fecha Fin",
+      "allTypes": "Todos los tipos",
+      "allActions": "Todas las acciones",
+      "allMethods": "Todos los métodos",
+      "allUsers": "Todos los usuarios",
+      "httpMethod": "Método HTTP",
+      "performedBy": "Realizado Por",
+      "entityId": "ID de Entidad",
+      "entityIdPlaceholder": "Buscar por ID...",
+      "pageSize": "Por página",
+      "clear": "Limpiar filtros"
+    },
+    "empty": {
+      "title": "Sin registros",
+      "description": "No se ha registrado actividad aún"
+    },
+    "error": {
+      "loading": "Error al cargar registros de auditoría"
+    },
+    "pagination": {
+      "showing": "Mostrando {from} a {to} de {total} registros"
+    },
+    "detail": {
+      "title": "Detalle del Registro",
+      "httpDetails": "Solicitud HTTP",
+      "networkInfo": "Información de Red",
+      "metadata": "Metadatos",
+      "duration": "Duración"
+    },
+    "export": {
+      "excel": "Exportar Excel",
+      "success": "Registro de auditoría exportado exitosamente",
+      "error": "Error al exportar registro de auditoría"
     }
   },
   "theme": {

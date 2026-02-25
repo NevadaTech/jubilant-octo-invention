@@ -14,6 +14,7 @@ import {
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import {
   useProducts,
   useProductFilters,
@@ -151,6 +152,14 @@ export function ProductList() {
     setFilters({ page: newPage });
   };
 
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setFilters({
+      sortBy: order ? (field as ProductFiltersType["sortBy"]) : undefined,
+      sortOrder: order,
+      page: 1,
+    });
+  };
+
   if (isError) {
     return (
       <Card>
@@ -194,10 +203,24 @@ export function ProductList() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border text-left text-sm font-medium text-muted-foreground">
-                    <th className="px-4 py-3">{t("fields.product")}</th>
+                    <SortableHeader
+                      label={t("fields.product")}
+                      field="name"
+                      currentSortBy={filters.sortBy}
+                      currentSortOrder={filters.sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
                     <th className="px-4 py-3">{t("fields.category")}</th>
                     <th className="px-4 py-3">{t("fields.cost")}</th>
-                    <th className="px-4 py-3">{t("fields.price")}</th>
+                    <SortableHeader
+                      label={t("fields.price")}
+                      field="price"
+                      currentSortBy={filters.sortBy}
+                      currentSortOrder={filters.sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
                     <th className="px-4 py-3">{t("fields.status")}</th>
                     <th className="px-4 py-3">{tCommon("actions")}</th>
                   </tr>

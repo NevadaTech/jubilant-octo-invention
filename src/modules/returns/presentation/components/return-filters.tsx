@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/select";
+import { useWarehouses } from "@/modules/inventory/presentation/hooks";
 import type { ReturnFilters } from "../../application/dto/return.dto";
 import type {
   ReturnStatus,
@@ -28,6 +29,7 @@ export function ReturnFiltersComponent({
   onFiltersChange,
 }: ReturnFiltersProps) {
   const t = useTranslations("returns");
+  const { data: warehousesData } = useWarehouses({ limit: 100 });
 
   const handleStatusChange = (status: string) => {
     onFiltersChange({
@@ -41,6 +43,14 @@ export function ReturnFiltersComponent({
     onFiltersChange({
       ...filters,
       type: type === "all" ? undefined : (type as ReturnType),
+      page: 1,
+    });
+  };
+
+  const handleWarehouseChange = (warehouseId: string) => {
+    onFiltersChange({
+      ...filters,
+      warehouseId: warehouseId === "all" ? undefined : warehouseId,
       page: 1,
     });
   };
@@ -69,7 +79,11 @@ export function ReturnFiltersComponent({
   };
 
   const hasActiveFilters =
-    filters.status || filters.type || filters.startDate || filters.endDate;
+    filters.status ||
+    filters.type ||
+    filters.warehouseId ||
+    filters.startDate ||
+    filters.endDate;
 
   return (
     <div className="flex flex-wrap items-end gap-4">
@@ -105,6 +119,26 @@ export function ReturnFiltersComponent({
             <SelectItem value="DRAFT">{t("status.draft")}</SelectItem>
             <SelectItem value="CONFIRMED">{t("status.confirmed")}</SelectItem>
             <SelectItem value="CANCELLED">{t("status.cancelled")}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="min-w-[180px]">
+        <Label className="text-sm">{t("filters.warehouse")}</Label>
+        <Select
+          value={filters.warehouseId || "all"}
+          onValueChange={handleWarehouseChange}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("filters.allWarehouses")}</SelectItem>
+            {warehousesData?.data.map((wh) => (
+              <SelectItem key={wh.id} value={wh.id}>
+                {wh.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

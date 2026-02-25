@@ -1,4 +1,12 @@
 import type { ReportTypeValue } from "../../application/dto/report.dto";
+import { REPORT_CATEGORIES } from "../../application/dto/report.dto";
+
+export function getCategoryForReportType(type: ReportTypeValue): string {
+  for (const cat of REPORT_CATEGORIES) {
+    if (cat.types.includes(type)) return cat.key;
+  }
+  return "inventory";
+}
 
 export const REPORT_SLUG_MAP: Record<string, ReportTypeValue> = {
   "available-inventory": "AVAILABLE_INVENTORY",
@@ -16,6 +24,8 @@ export const REPORT_SLUG_MAP: Record<string, ReportTypeValue> = {
   "returns-by-product": "RETURNS_BY_PRODUCT",
   "returns-customer": "RETURNS_CUSTOMER",
   "returns-supplier": "RETURNS_SUPPLIER",
+  "abc-analysis": "ABC_ANALYSIS",
+  "dead-stock": "DEAD_STOCK",
 };
 
 export function slugToReportType(slug: string): ReportTypeValue | null {
@@ -30,7 +40,8 @@ export function formatCellValue(
   value: unknown,
   type: string,
   locale = "en-US",
-  currency = "USD",
+  currency?: string,
+  boolLabels?: { yes: string; no: string },
 ): string {
   if (value === null || value === undefined || value === "") return "—";
 
@@ -40,7 +51,7 @@ export function formatCellValue(
       if (isNaN(num)) return String(value);
       return new Intl.NumberFormat(locale, {
         style: "currency",
-        currency,
+        currency: currency || "USD",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       }).format(num);
@@ -75,7 +86,7 @@ export function formatCellValue(
       }
     }
     case "boolean":
-      return value ? "Yes" : "No";
+      return value ? (boolLabels?.yes ?? "Yes") : (boolLabels?.no ?? "No");
     default:
       return String(value);
   }

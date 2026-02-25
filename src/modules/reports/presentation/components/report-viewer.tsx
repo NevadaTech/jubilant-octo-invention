@@ -17,6 +17,7 @@ import type {
   ReportTypeValue,
   ReportParameters,
 } from "../../application/dto/report.dto";
+import { getCategoryForReportType } from "../utils/report-utils";
 
 interface ReportViewerProps {
   type: ReportTypeValue;
@@ -28,10 +29,10 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
   const locale = useLocale();
   const t = useTranslations("reports");
   const tCommon = useTranslations("errors");
-  const [params, setParams] = useState<ReportParameters | null>(null);
-  const [queryParams, setQueryParams] = useState<ReportParameters | undefined>(
-    undefined,
-  );
+  const [params, setParams] = useState<ReportParameters>({});
+  const [queryParams, setQueryParams] = useState<ReportParameters>({});
+
+  const category = getCategoryForReportType(type);
 
   const {
     data: report,
@@ -39,12 +40,16 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
     isError,
     error,
     refetch,
-  } = useReportView(params !== null ? type : null, queryParams);
+  } = useReportView(type, queryParams);
 
   const handleGenerate = useCallback((newParams: ReportParameters) => {
     setParams(newParams);
     setQueryParams(newParams);
   }, []);
+
+  // Detect currency from report rows (e.g. stock rows have a "currency" field)
+  const currency = report?.rows?.find((r) => typeof r.currency === "string")
+    ?.currency as string | undefined;
 
   const generatedAt = report?.metadata?.generatedAt
     ? new Date(report.metadata.generatedAt).toLocaleString(locale)
@@ -63,7 +68,7 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
             aria-label={t("backToReports")}
           >
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <Link href={`/${locale}/dashboard/reports` as any}>
+            <Link href={`/${locale}/dashboard/reports?tab=${category}` as any}>
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -118,15 +123,6 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
       />
 
       {/* Results */}
-      {params === null && !isLoading && (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-            <p className="text-sm font-medium">{t("noData")}</p>
-            <p className="mt-1 text-xs">{t("noDataDescription")}</p>
-          </CardContent>
-        </Card>
-      )}
-
       {isLoading && (
         <Card>
           <CardHeader className="pb-3">
@@ -183,14 +179,14 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
 
           {/* Summary */}
           {report.summary && Object.keys(report.summary).length > 0 && (
-            <ReportSummaryBar summary={report.summary} />
+            <ReportSummaryBar summary={report.summary} currency={currency} />
           )}
 
           {/* Table */}
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-semibold text-muted-foreground">
-                {report.metadata.reportTitle}
+                {title}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -198,6 +194,7 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
                 columns={report.columns}
                 rows={report.rows}
                 locale={locale}
+                currency={currency}
               />
             </CardContent>
           </Card>

@@ -33,6 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import {
   useReturns,
   useConfirmReturn,
@@ -62,6 +63,15 @@ export function ReturnList() {
   const handleSearch = (value: string) => {
     setSearchValue(value);
     setFilters((prev) => ({ ...prev, search: value, page: 1 }));
+  };
+
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setFilters((prev) => ({
+      ...prev,
+      sortBy: order ? (field as ReturnFilters["sortBy"]) : undefined,
+      sortOrder: order,
+      page: 1,
+    }));
   };
 
   const formatDate = (date: Date) => {
@@ -165,13 +175,31 @@ export function ReturnList() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                      <th className="pb-3 pr-4">{t("fields.returnNumber")}</th>
+                      <SortableHeader
+                        label={t("fields.returnNumber")}
+                        field="returnNumber"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4">{t("fields.type")}</th>
-                      <th className="pb-3 pr-4">{t("fields.status")}</th>
+                      <SortableHeader
+                        label={t("fields.status")}
+                        field="status"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4">{t("fields.warehouse")}</th>
                       <th className="pb-3 pr-4">{t("fields.items")}</th>
                       <th className="pb-3 pr-4">{t("fields.total")}</th>
-                      <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
+                      <SortableHeader
+                        label={t("fields.createdAt")}
+                        field="createdAt"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4 text-right">
                         {tCommon("actions")}
                       </th>

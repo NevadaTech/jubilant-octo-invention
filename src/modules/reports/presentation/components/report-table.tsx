@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 import {
   Table,
@@ -36,20 +37,37 @@ interface ReportTableProps {
   columns: ReportColumn[];
   rows: Record<string, unknown>[];
   locale?: string;
+  currency?: string;
 }
 
-function renderCell(value: unknown, col: ReportColumn, locale: string) {
+interface CellLabels {
+  boolYes: string;
+  boolNo: string;
+  badge: (key: string) => string;
+}
+
+function renderCell(
+  value: unknown,
+  col: ReportColumn,
+  locale: string,
+  currency?: string,
+  labels?: CellLabels,
+) {
   if (col.type === "boolean") {
     return (
       <Badge variant={value ? "success" : "secondary"}>
-        {value ? "Yes" : "No"}
+        {value ? (labels?.boolYes ?? "Yes") : (labels?.boolNo ?? "No")}
       </Badge>
     );
   }
+  const labelFor = (v: string) => labels?.badge(v) ?? v.replace(/_/g, " ");
+
   if (col.key === "severity") {
     const v = String(value ?? "");
     return (
-      <Badge variant={v === "CRITICAL" ? "destructive" : "warning"}>{v}</Badge>
+      <Badge variant={v === "CRITICAL" ? "destructive" : "warning"}>
+        {labelFor(v)}
+      </Badge>
     );
   }
   if (col.key === "status") {
@@ -60,7 +78,7 @@ function renderCell(value: unknown, col: ReportColumn, locale: string) {
         : v === "CANCELLED" || v === "SLOW_MOVING"
           ? "destructive"
           : "secondary";
-    return <Badge variant={variant}>{v}</Badge>;
+    return <Badge variant={variant}>{labelFor(v)}</Badge>;
   }
   if (col.key === "classification") {
     const v = String(value ?? "");
@@ -70,13 +88,27 @@ function renderCell(value: unknown, col: ReportColumn, locale: string) {
         : v === "SLOW_MOVING"
           ? "destructive"
           : "warning";
-    return <Badge variant={variant}>{v.replace(/_/g, " ")}</Badge>;
+    return <Badge variant={variant}>{labelFor(v)}</Badge>;
+  }
+  if (col.key === "abcClassification") {
+    const v = String(value ?? "");
+    const variant =
+      v === "A" ? "success" : v === "B" ? "warning" : "destructive";
+    return <Badge variant={variant}>{labelFor(v)}</Badge>;
+  }
+  if (col.key === "riskLevel") {
+    const v = String(value ?? "");
+    const variant =
+      v === "HIGH" ? "destructive" : v === "MEDIUM" ? "warning" : "success";
+    return <Badge variant={variant}>{labelFor(v)}</Badge>;
   }
   if (col.key === "type" && String(value ?? "").includes("_")) {
-    return (
-      <Badge variant="outline">{String(value ?? "").replace(/_/g, " ")}</Badge>
-    );
+    const v = String(value ?? "");
+    return <Badge variant="outline">{labelFor(v)}</Badge>;
   }
+  const boolLabels = labels
+    ? { yes: labels.boolYes, no: labels.boolNo }
+    : undefined;
   return (
     <span
       className={cn(
@@ -87,7 +119,7 @@ function renderCell(value: unknown, col: ReportColumn, locale: string) {
           : "",
       )}
     >
-      {formatCellValue(value, col.type, locale)}
+      {formatCellValue(value, col.type, locale, currency, boolLabels)}
     </span>
   );
 }
@@ -96,7 +128,21 @@ export function ReportTable({
   columns,
   rows,
   locale = "en-US",
+  currency,
 }: ReportTableProps) {
+  const t = useTranslations("reports");
+  const cellLabels: CellLabels = {
+    boolYes: t("boolean.yes"),
+    boolNo: t("boolean.no"),
+    badge: (key: string) => {
+      const i18nKey = `badgeLabels.${key}`;
+      return t.has(i18nKey) ? t(i18nKey) : key.replace(/_/g, " ");
+    },
+  };
+  const translateHeader = (header: string): string => {
+    const i18nKey = `columnHeaders.${header}`;
+    return t.has(i18nKey) ? t(i18nKey) : header;
+  };
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>(null);
 
@@ -132,7 +178,7 @@ export function ReportTable({
   if (rows.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-        <p className="text-sm">No records found</p>
+        <p className="text-sm">{t("noRecordsFound")}</p>
       </div>
     );
   }
@@ -160,7 +206,7 @@ export function ReportTable({
                 onClick={() => col.sortable && handleSort(col.key)}
               >
                 <span className="flex items-center gap-0.5">
-                  {col.header}
+                  {translateHeader(col.header)}
                   {col.sortable && (
                     <SortIcon
                       colKey={col.key}
@@ -191,7 +237,7 @@ export function ReportTable({
                         : "",
                   )}
                 >
-                  {renderCell(row[col.key], col, locale)}
+                  {renderCell(row[col.key], col, locale, currency, cellLabels)}
                 </TableCell>
               ))}
             </TableRow>

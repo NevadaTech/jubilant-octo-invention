@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/select";
+import { useWarehouses } from "@/modules/inventory/presentation/hooks";
 import type { SaleFilters } from "../../application/dto/sale.dto";
 import type { SaleStatus } from "../../domain/entities/sale.entity";
 
@@ -25,11 +26,20 @@ export function SaleFiltersComponent({
   onFiltersChange,
 }: SaleFiltersProps) {
   const t = useTranslations("sales");
+  const { data: warehousesData } = useWarehouses({ limit: 100 });
 
   const handleStatusChange = (status: string) => {
     onFiltersChange({
       ...filters,
       status: status === "all" ? undefined : (status as SaleStatus),
+      page: 1,
+    });
+  };
+
+  const handleWarehouseChange = (warehouseId: string) => {
+    onFiltersChange({
+      ...filters,
+      warehouseId: warehouseId === "all" ? undefined : warehouseId,
       page: 1,
     });
   };
@@ -58,7 +68,10 @@ export function SaleFiltersComponent({
   };
 
   const hasActiveFilters =
-    filters.status || filters.startDate || filters.endDate;
+    filters.status ||
+    filters.warehouseId ||
+    filters.startDate ||
+    filters.endDate;
 
   return (
     <div className="flex flex-wrap items-end gap-4">
@@ -80,6 +93,26 @@ export function SaleFiltersComponent({
             <SelectItem value="COMPLETED">{t("status.completed")}</SelectItem>
             <SelectItem value="CANCELLED">{t("status.cancelled")}</SelectItem>
             <SelectItem value="RETURNED">{t("status.returned")}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="min-w-[180px]">
+        <Label className="text-sm">{t("filters.warehouse")}</Label>
+        <Select
+          value={filters.warehouseId || "all"}
+          onValueChange={handleWarehouseChange}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("filters.allWarehouses")}</SelectItem>
+            {warehousesData?.data.map((wh) => (
+              <SelectItem key={wh.id} value={wh.id}>
+                {wh.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

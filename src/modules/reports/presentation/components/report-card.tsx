@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   Package,
   History,
@@ -16,6 +17,8 @@ import {
   Layers,
   User,
   Truck,
+  TrendingUp,
+  Archive,
 } from "lucide-react";
 import {
   Card,
@@ -54,6 +57,8 @@ const REPORT_ICONS: Record<ReportTypeValue, React.ElementType> = {
   RETURNS_BY_PRODUCT: BarChart3,
   RETURNS_CUSTOMER: User,
   RETURNS_SUPPLIER: Truck,
+  ABC_ANALYSIS: TrendingUp,
+  DEAD_STOCK: Archive,
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -82,6 +87,7 @@ export function ReportCard({
   category,
   locale,
 }: ReportCardProps) {
+  const t = useTranslations("reports");
   const Icon = REPORT_ICONS[type];
   const slug = reportTypeToSlug(type);
   const isAlert = ALERT_TYPES.includes(type);
@@ -110,7 +116,7 @@ export function ReportCard({
               CATEGORY_COLORS[category],
             )}
           >
-            {category}
+            {t(`categories.${category}`)}
           </Badge>
         </div>
         <CardTitle className="mt-2 text-base leading-tight">{title}</CardTitle>
@@ -122,7 +128,7 @@ export function ReportCard({
         <Button asChild className="w-full gap-2" size="sm" variant="outline">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           <Link href={`/${locale}/dashboard/reports/${slug}` as any}>
-            View Report
+            {t("viewReport")}
           </Link>
         </Button>
       </CardContent>

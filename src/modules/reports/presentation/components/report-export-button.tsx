@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, FileText, FileSpreadsheet, FileCode } from "lucide-react";
+import { Download, FileSpreadsheet, FileCode } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/ui/components/button";
@@ -36,7 +36,7 @@ export function ReportExportButton({
   const t = useTranslations("reports");
   const tCommon = useTranslations("common");
 
-  const doExport = (format: "PDF" | "EXCEL" | "CSV") => {
+  const doExport = (format: "EXCEL" | "CSV") => {
     const options: ExportOptionsDto = {
       includeHeader: true,
       includeSummary: true,
@@ -59,19 +59,15 @@ export function ReportExportButton({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Export Format</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("exportFormat")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => doExport("PDF")} className="gap-2">
-          <FileText className="h-4 w-4 text-red-500" />
-          Export as PDF
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => doExport("EXCEL")} className="gap-2">
           <FileSpreadsheet className="h-4 w-4 text-green-600" />
-          Export as Excel
+          {t("exportExcel")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => doExport("CSV")} className="gap-2">
           <FileCode className="h-4 w-4 text-blue-500" />
-          Export as CSV
+          {t("exportCsv")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

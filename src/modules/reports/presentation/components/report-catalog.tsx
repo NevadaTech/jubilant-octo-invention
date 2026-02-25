@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { BarChart2, Package, ShoppingCart, PackageX } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/components/tabs";
 import { ReportCard } from "./report-card";
@@ -21,10 +22,16 @@ interface ReportInfo {
   category: string;
 }
 
+const VALID_TABS = new Set(["inventory", "sales", "returns"]);
+
 export function ReportCatalog() {
   const t = useTranslations("reports");
   const locale = useLocale();
-  const [activeTab, setActiveTab] = useState("inventory");
+  const searchParams = useSearchParams();
+  const tabFromUrl = searchParams.get("tab");
+  const initialTab =
+    tabFromUrl && VALID_TABS.has(tabFromUrl) ? tabFromUrl : "inventory";
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   const getReportInfo = (
     type: ReportTypeValue,

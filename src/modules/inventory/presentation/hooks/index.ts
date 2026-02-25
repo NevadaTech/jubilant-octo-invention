@@ -19,6 +19,15 @@ export {
 export { useStock, useStockByLocation, stockKeys } from "./use-stock";
 
 export {
+  useCategories,
+  useCategory,
+  useCreateCategory,
+  useUpdateCategory,
+  useDeleteCategory,
+  categoryKeys,
+} from "./use-categories";
+
+export {
   useProductFilters,
   useSetProductFilters,
   useResetProductFilters,

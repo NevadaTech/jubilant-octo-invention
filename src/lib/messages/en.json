@@ -156,6 +156,11 @@
         "placeholder": "Search products..."
       },
       "filter": "Filters",
+      "filters": {
+        "allStatuses": "All Statuses",
+        "category": "Category",
+        "allCategories": "All Categories"
+      },
       "pagination": {
         "showing": "Showing {from} to {to} of {total} products"
       },
@@ -751,6 +756,8 @@
     "filters": {
       "status": "Status",
       "allStatuses": "All Statuses",
+      "warehouse": "Warehouse",
+      "allWarehouses": "All Warehouses",
       "dateFrom": "From Date",
       "dateTo": "To Date",
       "clear": "Clear Filters"
@@ -879,6 +886,8 @@
       "allTypes": "All Types",
       "status": "Status",
       "allStatuses": "All Statuses",
+      "warehouse": "Warehouse",
+      "allWarehouses": "All Warehouses",
       "dateFrom": "From Date",
       "dateTo": "To Date",
       "clear": "Clear Filters"
@@ -1074,6 +1083,7 @@
     "noData": "No data available for this report",
     "noDataDescription": "Try adjusting the filters or date range",
     "fromCache": "Cached",
+    "exportFormat": "Export Format",
     "categories": {
       "inventory": "Inventory",
       "sales": "Sales",
@@ -1109,7 +1119,11 @@
       "RETURNS_CUSTOMER": "Customer Returns",
       "RETURNS_CUSTOMER_desc": "Returns received from customers with full details",
       "RETURNS_SUPPLIER": "Supplier Returns",
-      "RETURNS_SUPPLIER_desc": "Returns sent back to suppliers with full details"
+      "RETURNS_SUPPLIER_desc": "Returns sent back to suppliers with full details",
+      "ABC_ANALYSIS": "ABC Analysis",
+      "ABC_ANALYSIS_desc": "Pareto classification of products by revenue contribution (A/B/C)",
+      "DEAD_STOCK": "Dead Stock",
+      "DEAD_STOCK_desc": "Products with stock on hand but no sales in a configurable period"
     },
     "filters": {
       "title": "Filters",
@@ -1134,7 +1148,8 @@
       "allSeverities": "All Severities",
       "movementType": "Movement Type",
       "allMovementTypes": "All Types",
-      "includeInactive": "Include Inactive Products"
+      "includeInactive": "Include Inactive Products",
+      "deadStockDays": "Days Without Sale"
     },
     "period": {
       "MONTHLY": "Monthly",
@@ -1166,7 +1181,152 @@
       "SUPPLIER": "Supplier"
     },
     "summary": {
-      "title": "Summary"
+      "title": "Summary",
+      "totalSales": "Total Sales",
+      "totalAmount": "Total Amount",
+      "totalItems": "Total Items",
+      "totalReturns": "Total Returns",
+      "totalRefunded": "Total Refunded",
+      "totalProducts": "Total Products",
+      "totalQuantity": "Total Quantity",
+      "totalValue": "Total Value",
+      "totalCost": "Total Cost",
+      "totalRevenue": "Total Revenue",
+      "averageCost": "Average Cost",
+      "averageValue": "Average Value",
+      "averageMargin": "Average Margin",
+      "grossMargin": "Gross Margin",
+      "totalMovements": "Total Movements",
+      "totalRecords": "Total Records",
+      "turnoverRate": "Turnover Rate",
+      "daysOnHand": "Days on Hand",
+      "totalAlerts": "Total Alerts",
+      "criticalCount": "Critical",
+      "warningCount": "Warning",
+      "totalDeficit": "Total Deficit",
+      "totalInventoryValue": "Total Inventory Value",
+      "totalGrossMargin": "Total Gross Margin",
+      "slowMovingCount": "Slow Moving",
+      "normalCount": "Normal",
+      "fastMovingCount": "Fast Moving",
+      "totalQuantitySold": "Total Qty Sold",
+      "totalWarehouses": "Total Warehouses",
+      "totalQuantityReturned": "Total Qty Returned",
+      "totalValueReturned": "Total Value Returned",
+      "classA": "Class A",
+      "classB": "Class B",
+      "classC": "Class C",
+      "totalStockValue": "Total Stock Value",
+      "highRiskCount": "High Risk",
+      "mediumRiskCount": "Medium Risk",
+      "lowRiskCount": "Low Risk"
+    },
+    "columnHeaders": {
+      "SKU": "SKU",
+      "Product": "Product",
+      "Warehouse": "Warehouse",
+      "Location": "Location",
+      "Quantity": "Quantity",
+      "Unit": "Unit",
+      "Avg Cost": "Avg Cost",
+      "Avg Cost (PPM)": "Avg Cost (PPM)",
+      "Total Value": "Total Value",
+      "Date": "Date",
+      "Type": "Type",
+      "Status": "Status",
+      "Category": "Category",
+      "Reference": "Reference",
+      "Created By": "Created By",
+      "Unit Cost": "Unit Cost",
+      "Total Cost": "Total Cost",
+      "Severity": "Severity",
+      "Current Stock": "Current Stock",
+      "Minimum": "Minimum",
+      "Reorder Point": "Reorder Point",
+      "Deficit": "Deficit",
+      "Movement Type": "Movement Type",
+      "Total Movements": "Total Movements",
+      "Total Quantity": "Total Quantity",
+      "Period": "Period",
+      "Inventory Value": "Inventory Value",
+      "Total Revenue": "Total Revenue",
+      "Gross Margin": "Gross Margin",
+      "Margin %": "Margin %",
+      "COGS": "COGS",
+      "Avg Inventory": "Avg Inventory",
+      "Turnover Rate": "Turnover Rate",
+      "Days of Inventory": "Days of Inventory",
+      "Classification": "Classification",
+      "Sale #": "Sale #",
+      "Customer": "Customer",
+      "Items": "Items",
+      "Total": "Total",
+      "Qty Sold": "Qty Sold",
+      "Revenue": "Revenue",
+      "Avg Price": "Avg Price",
+      "Margin": "Margin",
+      "Sales Count": "Sales Count",
+      "Total Sales": "Total Sales",
+      "Avg per Sale": "Avg per Sale",
+      "Total Items": "Total Items",
+      "Return #": "Return #",
+      "Total Returns": "Total Returns",
+      "Return Rate": "Return Rate",
+      "Return Type": "Return Type",
+      "Qty Returned": "Qty Returned",
+      "Value Returned": "Value Returned",
+      "Returns Count": "Returns Count",
+      "Reason": "Reason",
+      "Sale ID": "Sale ID",
+      "Movement ID": "Movement ID",
+      "Revenue %": "Revenue %",
+      "Cumulative %": "Cumulative %",
+      "Risk Level": "Risk Level",
+      "Stock Value": "Stock Value",
+      "Days Without Sale": "Days Without Sale",
+      "Last Sale": "Last Sale"
+    },
+    "viewReport": "View Report",
+    "exportExcel": "Excel (.xlsx)",
+    "exportCsv": "CSV (.csv)",
+    "noRecordsFound": "No records found",
+    "boolean": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "CONFIRMED": "Confirmed",
+      "CANCELLED": "Cancelled"
+    },
+    "badgeLabels": {
+      "CRITICAL": "Critical",
+      "WARNING": "Warning",
+      "FAST_MOVING": "Fast Moving",
+      "SLOW_MOVING": "Slow Moving",
+      "NORMAL": "Normal",
+      "CONFIRMED": "Confirmed",
+      "CANCELLED": "Cancelled",
+      "DRAFT": "Draft",
+      "COMPLETED": "Completed",
+      "PENDING": "Pending",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "IN": "Incoming",
+      "OUT": "Outgoing",
+      "ADJUSTMENT": "Adjustment",
+      "TRANSFER_IN": "Transfer In",
+      "TRANSFER_OUT": "Transfer Out",
+      "CUSTOMER": "Customer",
+      "SUPPLIER": "Supplier",
+      "RETURN_CUSTOMER": "Customer Return",
+      "RETURN_SUPPLIER": "Supplier Return",
+      "A": "Class A",
+      "B": "Class B",
+      "C": "Class C",
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
     },
     "errors": {
       "loadFailed": "Failed to load report",
@@ -1256,6 +1416,59 @@
     "settings": {
       "title": "Settings",
       "description": "Configure system settings"
+    }
+  },
+  "audit": {
+    "list": {
+      "title": "Activity Log"
+    },
+    "columns": {
+      "timestamp": "Timestamp",
+      "action": "Action",
+      "entityType": "Entity Type",
+      "entityId": "Entity ID",
+      "performedBy": "Performed By",
+      "method": "Method",
+      "status": "Status",
+      "duration": "Duration"
+    },
+    "filters": {
+      "entityType": "Entity Type",
+      "action": "Action",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "allTypes": "All types",
+      "allActions": "All actions",
+      "allMethods": "All methods",
+      "allUsers": "All users",
+      "httpMethod": "HTTP Method",
+      "performedBy": "Performed By",
+      "entityId": "Entity ID",
+      "entityIdPlaceholder": "Search by ID...",
+      "pageSize": "Per page",
+      "clear": "Clear filters"
+    },
+    "empty": {
+      "title": "No audit logs",
+      "description": "No activity has been recorded yet"
+    },
+    "error": {
+      "loading": "Failed to load audit logs"
+    },
+    "pagination": {
+      "showing": "Showing {from} to {to} of {total} entries"
+    },
+    "detail": {
+      "title": "Audit Log Detail",
+      "httpDetails": "HTTP Request",
+      "networkInfo": "Network Information",
+      "metadata": "Metadata",
+      "duration": "Duration"
+    },
+    "export": {
+      "excel": "Export Excel",
+      "success": "Audit log exported successfully",
+      "error": "Failed to export audit log"
     }
   },
   "theme": {

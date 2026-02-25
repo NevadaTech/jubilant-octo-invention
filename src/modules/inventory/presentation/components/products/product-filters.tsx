@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/ui/components/select";
 import { useDebounce } from "@/shared/presentation/hooks";
+import { useCategories } from "../../hooks";
 import type { ProductFilters as ProductFiltersType } from "../../../application/dto/product.dto";
 
 interface ProductFiltersProps {
@@ -30,6 +31,7 @@ export function ProductFilters({
   const [searchValue, setSearchValue] = useState(filters.search || "");
   const [showFilters, setShowFilters] = useState(false);
   const debouncedSearch = useDebounce(searchValue, 300);
+  const { data: categoriesData } = useCategories({ limit: 100 });
 
   // Apply debounced search
   useEffect(() => {
@@ -51,6 +53,14 @@ export function ProductFilters({
     });
   };
 
+  const handleCategoryChange = (categoryId: string) => {
+    onFiltersChange({
+      ...filters,
+      categoryId: categoryId === "all" ? undefined : categoryId,
+      page: 1,
+    });
+  };
+
   const handleClearFilters = () => {
     setSearchValue("");
     onFiltersChange({
@@ -59,7 +69,8 @@ export function ProductFilters({
     });
   };
 
-  const hasActiveFilters = filters.isActive !== undefined || filters.search;
+  const hasActiveFilters =
+    filters.isActive !== undefined || filters.categoryId || filters.search;
 
   return (
     <div className="space-y-4">
@@ -115,9 +126,33 @@ export function ProductFilters({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="all">{t("filters.allStatuses")}</SelectItem>
                 <SelectItem value="active">{t("status.active")}</SelectItem>
                 <SelectItem value="inactive">{t("status.inactive")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="min-w-[180px]">
+            <Label className="mb-2 block text-sm">
+              {t("filters.category")}
+            </Label>
+            <Select
+              value={filters.categoryId || "all"}
+              onValueChange={handleCategoryChange}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">
+                  {t("filters.allCategories")}
+                </SelectItem>
+                {categoriesData?.data.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

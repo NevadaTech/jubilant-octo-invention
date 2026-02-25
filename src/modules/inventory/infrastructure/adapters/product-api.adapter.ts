@@ -170,6 +170,8 @@ export class ProductApiAdapter implements ProductRepositoryPort {
     if (filters.isActive !== undefined) {
       params.status = filters.isActive ? "ACTIVE" : "INACTIVE";
     }
+    if (filters.sortBy) params.sortBy = filters.sortBy;
+    if (filters.sortOrder) params.sortOrder = filters.sortOrder;
     if (filters.page) {
       params.page = filters.page;
     }
