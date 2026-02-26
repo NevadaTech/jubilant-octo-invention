@@ -39,6 +39,9 @@ import {
   useConfirmReturn,
   useCancelReturn,
 } from "../hooks/use-returns";
+import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
+import { PERMISSIONS } from "@/shared/domain/permissions";
+import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { ReturnStatusBadge } from "./return-status-badge";
 import { ReturnTypeBadge } from "./return-type-badge";
 import { ReturnFiltersComponent } from "./return-filters";
@@ -59,6 +62,7 @@ export function ReturnList() {
   const { data, isLoading, isError } = useReturns(filters);
   const confirmReturn = useConfirmReturn();
   const cancelReturn = useCancelReturn();
+  const { hasPermission } = usePermissions();
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
@@ -125,12 +129,14 @@ export function ReturnList() {
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>{t("list.title")}</CardTitle>
-            <Button asChild>
-              <Link href="/dashboard/returns/new">
-                <Plus className="mr-2 h-4 w-4" />
-                {t("actions.new")}
-              </Link>
-            </Button>
+            <PermissionGate permission={PERMISSIONS.RETURNS_CREATE}>
+              <Button asChild>
+                <Link href="/dashboard/returns/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("actions.new")}
+                </Link>
+              </Button>
+            </PermissionGate>
           </div>
           <div className="space-y-4">
             <div className="relative">
@@ -162,12 +168,14 @@ export function ReturnList() {
               <p className="mt-2 text-sm text-muted-foreground">
                 {t("empty.description")}
               </p>
-              <Button className="mt-4" asChild>
-                <Link href="/dashboard/returns/new">
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t("actions.new")}
-                </Link>
-              </Button>
+              <PermissionGate permission={PERMISSIONS.RETURNS_CREATE}>
+                <Button className="mt-4" asChild>
+                  <Link href="/dashboard/returns/new">
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t("actions.new")}
+                  </Link>
+                </Button>
+              </PermissionGate>
             </div>
           ) : (
             <>
@@ -246,23 +254,25 @@ export function ReturnList() {
                                   {t("actions.view")}
                                 </Link>
                               </DropdownMenuItem>
-                              {ret.canConfirm && (
-                                <DropdownMenuItem
-                                  onClick={() => setConfirmDialog(ret)}
-                                >
-                                  <CheckCircle className="mr-2 h-4 w-4" />
-                                  {t("actions.confirm")}
-                                </DropdownMenuItem>
-                              )}
-                              {ret.canCancel && (
-                                <DropdownMenuItem
-                                  onClick={() => setCancelDialog(ret)}
-                                  className="text-destructive"
-                                >
-                                  <XCircle className="mr-2 h-4 w-4" />
-                                  {t("actions.cancelReturn")}
-                                </DropdownMenuItem>
-                              )}
+                              {ret.canConfirm &&
+                                hasPermission(PERMISSIONS.RETURNS_CONFIRM) && (
+                                  <DropdownMenuItem
+                                    onClick={() => setConfirmDialog(ret)}
+                                  >
+                                    <CheckCircle className="mr-2 h-4 w-4" />
+                                    {t("actions.confirm")}
+                                  </DropdownMenuItem>
+                                )}
+                              {ret.canCancel &&
+                                hasPermission(PERMISSIONS.RETURNS_CANCEL) && (
+                                  <DropdownMenuItem
+                                    onClick={() => setCancelDialog(ret)}
+                                    className="text-destructive"
+                                  >
+                                    <XCircle className="mr-2 h-4 w-4" />
+                                    {t("actions.cancelReturn")}
+                                  </DropdownMenuItem>
+                                )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </td>

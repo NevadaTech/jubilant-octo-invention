@@ -32,6 +32,9 @@ import {
   DropdownMenuTrigger,
 } from "@/ui/components/dropdown-menu";
 import { useUsers, useChangeUserStatus } from "../hooks/use-users";
+import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
+import { PERMISSIONS } from "@/shared/domain/permissions";
+import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { UserStatusBadge } from "./user-status-badge";
 import { UserForm } from "./user-form";
 import { UserRolesDialog } from "./user-roles-dialog";
@@ -48,6 +51,7 @@ export function UserList() {
 
   const { data, isLoading, isError } = useUsers(filters);
   const changeStatus = useChangeUserStatus();
+  const { hasPermission } = usePermissions();
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
@@ -92,10 +96,12 @@ export function UserList() {
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>{t("list.title")}</CardTitle>
-            <Button onClick={() => setIsFormOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t("actions.new")}
-            </Button>
+            <PermissionGate permission={PERMISSIONS.USERS_CREATE}>
+              <Button onClick={() => setIsFormOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                {t("actions.new")}
+              </Button>
+            </PermissionGate>
           </div>
           <div className="flex flex-wrap items-end gap-4">
             <div className="relative flex-1 min-w-[200px]">
@@ -191,44 +197,52 @@ export function UserList() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => setRolesDialogUser(user)}
-                              >
-                                <Shield className="mr-2 h-4 w-4" />
-                                {t("actions.manageRoles")}
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              {!user.isActive && (
+                              {hasPermission(
+                                PERMISSIONS.USERS_MANAGE_ROLES,
+                              ) && (
                                 <DropdownMenuItem
-                                  onClick={() =>
-                                    handleChangeStatus(user.id, "ACTIVE")
-                                  }
+                                  onClick={() => setRolesDialogUser(user)}
                                 >
-                                  <CheckCircle className="mr-2 h-4 w-4" />
-                                  {t("actions.activate")}
+                                  <Shield className="mr-2 h-4 w-4" />
+                                  {t("actions.manageRoles")}
                                 </DropdownMenuItem>
                               )}
-                              {user.isActive && (
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleChangeStatus(user.id, "INACTIVE")
-                                  }
-                                >
-                                  <XCircle className="mr-2 h-4 w-4" />
-                                  {t("actions.deactivate")}
-                                </DropdownMenuItem>
-                              )}
-                              <DropdownMenuSeparator />
-                              {!user.isLocked && (
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleChangeStatus(user.id, "LOCKED")
-                                  }
-                                  className="text-destructive"
-                                >
-                                  <Lock className="mr-2 h-4 w-4" />
-                                  {t("actions.lock")}
-                                </DropdownMenuItem>
+                              {hasPermission(PERMISSIONS.USERS_UPDATE) && (
+                                <>
+                                  <DropdownMenuSeparator />
+                                  {!user.isActive && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleChangeStatus(user.id, "ACTIVE")
+                                      }
+                                    >
+                                      <CheckCircle className="mr-2 h-4 w-4" />
+                                      {t("actions.activate")}
+                                    </DropdownMenuItem>
+                                  )}
+                                  {user.isActive && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleChangeStatus(user.id, "INACTIVE")
+                                      }
+                                    >
+                                      <XCircle className="mr-2 h-4 w-4" />
+                                      {t("actions.deactivate")}
+                                    </DropdownMenuItem>
+                                  )}
+                                  <DropdownMenuSeparator />
+                                  {!user.isLocked && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleChangeStatus(user.id, "LOCKED")
+                                      }
+                                      className="text-destructive"
+                                    >
+                                      <Lock className="mr-2 h-4 w-4" />
+                                      {t("actions.lock")}
+                                    </DropdownMenuItem>
+                                  )}
+                                </>
                               )}
                             </DropdownMenuContent>
                           </DropdownMenu>

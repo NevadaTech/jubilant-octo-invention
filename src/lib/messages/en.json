@@ -16,7 +16,10 @@
     "confirm": "Confirm",
     "previous": "Previous",
     "next": "Next",
-    "close": "Close"
+    "close": "Close",
+    "accessDenied": "Access Denied",
+    "accessDeniedDescription": "You do not have the required permissions to access this section. Contact your administrator if you believe this is an error.",
+    "backToDashboard": "Back to Dashboard"
   },
   "auth": {
     "errors": {

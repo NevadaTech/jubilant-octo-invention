@@ -35,6 +35,9 @@ import {
 } from "@/ui/components/alert-dialog";
 import { SortableHeader } from "@/ui/components/sortable-header";
 import { useSales, useConfirmSale, useCancelSale } from "../hooks/use-sales";
+import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
+import { PERMISSIONS } from "@/shared/domain/permissions";
+import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { SaleStatusBadge } from "./sale-status-badge";
 import { SaleFiltersComponent } from "./sale-filters";
 import type { SaleFilters } from "../../application/dto/sale.dto";
@@ -54,6 +57,7 @@ export function SaleList() {
   const { data, isLoading, isError } = useSales(filters);
   const confirmSale = useConfirmSale();
   const cancelSale = useCancelSale();
+  const { hasPermission } = usePermissions();
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
@@ -120,12 +124,14 @@ export function SaleList() {
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>{t("list.title")}</CardTitle>
-            <Button asChild>
-              <Link href="/dashboard/sales/new">
-                <Plus className="mr-2 h-4 w-4" />
-                {t("actions.new")}
-              </Link>
-            </Button>
+            <PermissionGate permission={PERMISSIONS.SALES_CREATE}>
+              <Button asChild>
+                <Link href="/dashboard/sales/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("actions.new")}
+                </Link>
+              </Button>
+            </PermissionGate>
           </div>
           <div className="space-y-4">
             <div className="relative">
@@ -157,12 +163,14 @@ export function SaleList() {
               <p className="mt-2 text-sm text-muted-foreground">
                 {t("empty.description")}
               </p>
-              <Button className="mt-4" asChild>
-                <Link href="/dashboard/sales/new">
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t("actions.new")}
-                </Link>
-              </Button>
+              <PermissionGate permission={PERMISSIONS.SALES_CREATE}>
+                <Button className="mt-4" asChild>
+                  <Link href="/dashboard/sales/new">
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t("actions.new")}
+                  </Link>
+                </Button>
+              </PermissionGate>
             </div>
           ) : (
             <>
@@ -243,23 +251,25 @@ export function SaleList() {
                                   {t("actions.view")}
                                 </Link>
                               </DropdownMenuItem>
-                              {sale.canConfirm && (
-                                <DropdownMenuItem
-                                  onClick={() => setConfirmDialog(sale)}
-                                >
-                                  <CheckCircle className="mr-2 h-4 w-4" />
-                                  {t("actions.confirm")}
-                                </DropdownMenuItem>
-                              )}
-                              {sale.canCancel && (
-                                <DropdownMenuItem
-                                  onClick={() => setCancelDialog(sale)}
-                                  className="text-destructive"
-                                >
-                                  <XCircle className="mr-2 h-4 w-4" />
-                                  {t("actions.cancel")}
-                                </DropdownMenuItem>
-                              )}
+                              {sale.canConfirm &&
+                                hasPermission(PERMISSIONS.SALES_CONFIRM) && (
+                                  <DropdownMenuItem
+                                    onClick={() => setConfirmDialog(sale)}
+                                  >
+                                    <CheckCircle className="mr-2 h-4 w-4" />
+                                    {t("actions.confirm")}
+                                  </DropdownMenuItem>
+                                )}
+                              {sale.canCancel &&
+                                hasPermission(PERMISSIONS.SALES_CANCEL) && (
+                                  <DropdownMenuItem
+                                    onClick={() => setCancelDialog(sale)}
+                                    className="text-destructive"
+                                  >
+                                    <XCircle className="mr-2 h-4 w-4" />
+                                    {t("actions.cancel")}
+                                  </DropdownMenuItem>
+                                )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </td>

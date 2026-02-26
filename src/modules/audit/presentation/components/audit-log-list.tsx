@@ -8,6 +8,8 @@ import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { useAuditLogs } from "../hooks/use-audit-logs";
+import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
+import { PERMISSIONS } from "@/shared/domain/permissions";
 import { auditLogApiAdapter } from "../../infrastructure/adapters/audit-log-api.adapter";
 import { AuditLogFiltersBar } from "./audit-log-filters";
 import { AuditLogDetailDialog } from "./audit-log-detail-dialog";
@@ -28,6 +30,7 @@ export function AuditLogList() {
   const [isExporting, setIsExporting] = useState(false);
 
   const { data, isLoading, isError } = useAuditLogs(filters);
+  const { hasPermission } = usePermissions();
 
   const handleExportExcel = useCallback(async () => {
     setIsExporting(true);
@@ -106,19 +109,21 @@ export function AuditLogList() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>{t("list.title")}</CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExportExcel}
-              disabled={isExporting || !data?.data.length}
-            >
-              {isExporting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="mr-2 h-4 w-4" />
-              )}
-              {t("export.excel")}
-            </Button>
+            {hasPermission(PERMISSIONS.AUDIT_EXPORT) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportExcel}
+                disabled={isExporting || !data?.data.length}
+              >
+                {isExporting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="mr-2 h-4 w-4" />
+                )}
+                {t("export.excel")}
+              </Button>
+            )}
           </div>
           <AuditLogFiltersBar filters={filters} onFiltersChange={setFilters} />
         </CardHeader>

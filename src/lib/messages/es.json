@@ -16,7 +16,10 @@
     "confirm": "Confirmar",
     "previous": "Anterior",
     "next": "Siguiente",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "accessDenied": "Acceso Denegado",
+    "accessDeniedDescription": "No tienes los permisos necesarios para acceder a esta sección. Contacta a tu administrador si crees que esto es un error.",
+    "backToDashboard": "Volver al Dashboard"
   },
   "auth": {
     "errors": {

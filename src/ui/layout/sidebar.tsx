@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/ui/lib/utils";
+import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
+import { PERMISSIONS } from "@/shared/domain/permissions";
+import type { Permission } from "@/shared/domain/permissions";
 import {
   LayoutDashboard,
   Package,
@@ -25,9 +28,12 @@ interface NavItem {
   label: string;
   href?: string;
   icon: React.ReactNode;
+  /** Permissions required to see this item. Empty = always visible. */
+  requiredPermissions?: Permission[];
   children?: {
     label: string;
     href: string;
+    requiredPermissions?: Permission[];
   }[];
 }
 
@@ -40,8 +46,9 @@ export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();
   const [expandedItems, setExpandedItems] = useState<string[]>(["inventory"]);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { hasAnyPermission } = usePermissions();
 
-  const navItems: NavItem[] = [
+  const allNavItems: NavItem[] = [
     {
       label: t("navigation.dashboard"),
       href: "/dashboard",
@@ -50,64 +57,86 @@ export function Sidebar({ className }: SidebarProps) {
     {
       label: t("navigation.inventory"),
       icon: <Package className="h-5 w-5" />,
+      requiredPermissions: [
+        PERMISSIONS.PRODUCTS_READ,
+        PERMISSIONS.WAREHOUSES_READ,
+        PERMISSIONS.INVENTORY_READ,
+        PERMISSIONS.INVENTORY_TRANSFER,
+      ],
       children: [
         {
           label: t("navigation.products"),
           href: "/dashboard/inventory/products",
+          requiredPermissions: [PERMISSIONS.PRODUCTS_READ],
         },
         {
           label: t("navigation.categories"),
           href: "/dashboard/inventory/categories",
+          requiredPermissions: [PERMISSIONS.PRODUCTS_READ],
         },
         {
           label: t("navigation.warehouses"),
           href: "/dashboard/inventory/warehouses",
+          requiredPermissions: [PERMISSIONS.WAREHOUSES_READ],
         },
         {
           label: t("navigation.movements"),
           href: "/dashboard/inventory/movements",
+          requiredPermissions: [PERMISSIONS.INVENTORY_READ],
         },
         {
           label: t("navigation.transfers"),
           href: "/dashboard/inventory/transfers",
+          requiredPermissions: [PERMISSIONS.INVENTORY_TRANSFER],
         },
-        { label: t("navigation.stock"), href: "/dashboard/inventory/stock" },
+        {
+          label: t("navigation.stock"),
+          href: "/dashboard/inventory/stock",
+          requiredPermissions: [PERMISSIONS.INVENTORY_READ],
+        },
       ],
     },
     {
       label: t("navigation.sales"),
       href: "/dashboard/sales",
       icon: <ShoppingCart className="h-5 w-5" />,
+      requiredPermissions: [PERMISSIONS.SALES_READ],
     },
     {
       label: t("navigation.returns"),
       href: "/dashboard/returns",
       icon: <RotateCcw className="h-5 w-5" />,
+      requiredPermissions: [PERMISSIONS.RETURNS_READ],
     },
     {
       label: t("navigation.reports"),
       href: "/dashboard/reports",
       icon: <FileBarChart className="h-5 w-5" />,
+      requiredPermissions: [PERMISSIONS.REPORTS_READ],
     },
     {
       label: t("navigation.imports"),
       href: "/dashboard/imports",
       icon: <Upload className="h-5 w-5" />,
+      requiredPermissions: [PERMISSIONS.PRODUCTS_IMPORT],
     },
     {
       label: t("navigation.users"),
       href: "/dashboard/users",
       icon: <Users className="h-5 w-5" />,
+      requiredPermissions: [PERMISSIONS.USERS_READ],
     },
     {
       label: t("navigation.roles"),
       href: "/dashboard/roles",
       icon: <Shield className="h-5 w-5" />,
+      requiredPermissions: [PERMISSIONS.ROLES_READ],
     },
     {
       label: t("navigation.audit"),
       href: "/dashboard/audit",
       icon: <ClipboardList className="h-5 w-5" />,
+      requiredPermissions: [PERMISSIONS.AUDIT_READ],
     },
     {
       label: t("navigation.settings"),
@@ -115,6 +144,25 @@ export function Sidebar({ className }: SidebarProps) {
       icon: <Settings className="h-5 w-5" />,
     },
   ];
+
+  // Filter nav items based on user permissions
+  const navItems = useMemo(() => {
+    return allNavItems
+      .filter((item) => {
+        if (!item.requiredPermissions?.length) return true;
+        return hasAnyPermission(item.requiredPermissions);
+      })
+      .map((item) => {
+        if (!item.children) return item;
+        const filteredChildren = item.children.filter((child) => {
+          if (!child.requiredPermissions?.length) return true;
+          return hasAnyPermission(child.requiredPermissions);
+        });
+        if (filteredChildren.length === 0) return null;
+        return { ...item, children: filteredChildren };
+      })
+      .filter(Boolean) as NavItem[];
+  }, [allNavItems, hasAnyPermission]);
 
   const toggleExpanded = (label: string) => {
     setExpandedItems((prev) =>

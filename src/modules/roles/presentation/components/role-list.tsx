@@ -34,6 +34,9 @@ import {
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
 import { useRoles, useDeleteRole, useUpdateRole } from "../hooks/use-roles";
+import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
+import { PERMISSIONS } from "@/shared/domain/permissions";
+import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { DropdownMenuSeparator } from "@/ui/components/dropdown-menu";
 import { RoleTypeBadge } from "./role-type-badge";
 import { RoleForm } from "./role-form";
@@ -51,6 +54,7 @@ export function RoleList() {
   const { data: roles, isLoading, isError } = useRoles();
   const deleteRole = useDeleteRole();
   const updateRole = useUpdateRole();
+  const { hasPermission } = usePermissions();
 
   const filteredRoles = roles?.filter((role) => {
     if (!searchValue) return true;
@@ -104,10 +108,12 @@ export function RoleList() {
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>{t("list.title")}</CardTitle>
-            <Button onClick={() => setIsFormOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t("actions.new")}
-            </Button>
+            <PermissionGate permission={PERMISSIONS.ROLES_CREATE}>
+              <Button onClick={() => setIsFormOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                {t("actions.new")}
+              </Button>
+            </PermissionGate>
           </div>
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -185,32 +191,35 @@ export function RoleList() {
                               onClick={() => setPermissionsTarget(role)}
                             >
                               <KeyRound className="mr-2 h-4 w-4" />
-                              {role.isSystem
+                              {role.isSystem ||
+                              !hasPermission(PERMISSIONS.ROLES_UPDATE)
                                 ? t("actions.viewPermissions")
                                 : t("actions.managePermissions")}
                             </DropdownMenuItem>
-                            {role.canEdit && (
-                              <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  onClick={() => handleToggleStatus(role)}
-                                >
-                                  <Edit2 className="mr-2 h-4 w-4" />
-                                  {role.isActive
-                                    ? t("status.inactive")
-                                    : t("status.active")}
-                                </DropdownMenuItem>
-                                {role.canDelete && (
+                            {role.canEdit &&
+                              hasPermission(PERMISSIONS.ROLES_UPDATE) && (
+                                <>
+                                  <DropdownMenuSeparator />
                                   <DropdownMenuItem
-                                    onClick={() => setDeleteTarget(role)}
-                                    className="text-destructive"
+                                    onClick={() => handleToggleStatus(role)}
                                   >
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    {t("actions.delete")}
+                                    <Edit2 className="mr-2 h-4 w-4" />
+                                    {role.isActive
+                                      ? t("status.inactive")
+                                      : t("status.active")}
                                   </DropdownMenuItem>
-                                )}
-                              </>
-                            )}
+                                  {role.canDelete &&
+                                    hasPermission(PERMISSIONS.ROLES_DELETE) && (
+                                      <DropdownMenuItem
+                                        onClick={() => setDeleteTarget(role)}
+                                        className="text-destructive"
+                                      >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        {t("actions.delete")}
+                                      </DropdownMenuItem>
+                                    )}
+                                </>
+                              )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
@@ -258,7 +267,10 @@ export function RoleList() {
         role={permissionsTarget}
         open={!!permissionsTarget}
         onOpenChange={(open) => !open && setPermissionsTarget(null)}
-        readOnly={permissionsTarget?.isSystem ?? false}
+        readOnly={
+          (permissionsTarget?.isSystem ?? false) ||
+          !hasPermission(PERMISSIONS.ROLES_UPDATE)
+        }
       />
     </>
   );
