@@ -8,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/ui/components/dialog";
-import { Badge } from "@/ui/components/badge";
 import type { AuditLog } from "@/modules/audit/domain/entities/audit-log.entity";
 import { AuditActionBadge } from "./audit-action-badge";
 import { AuditMethodBadge } from "./audit-method-badge";
