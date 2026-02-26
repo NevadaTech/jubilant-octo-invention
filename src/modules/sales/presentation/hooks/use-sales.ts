@@ -3,14 +3,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { saleApiAdapter } from "../../infrastructure/adapters/sale-api.adapter";
+import { getContainer } from "@/config/di/container";
 import type {
   SaleFilters,
   CreateSaleDto,
   CreateSaleLineDto,
   ShipSaleDto,
   UpdateSaleDto,
-} from "../../application/dto/sale.dto";
+} from "@/modules/sales/application/dto/sale.dto";
 
 const saleKeys = {
   all: ["sales"] as const,
@@ -24,14 +24,14 @@ const saleKeys = {
 export function useSales(filters?: SaleFilters) {
   return useQuery({
     queryKey: saleKeys.list(filters),
-    queryFn: () => saleApiAdapter.findAll(filters),
+    queryFn: () => getContainer().saleRepository.findAll(filters),
   });
 }
 
 export function useSale(id: string) {
   return useQuery({
     queryKey: saleKeys.detail(id),
-    queryFn: () => saleApiAdapter.findById(id),
+    queryFn: () => getContainer().saleRepository.findById(id),
     enabled: !!id,
   });
 }
@@ -39,7 +39,7 @@ export function useSale(id: string) {
 export function useSaleReturns(saleId: string, enabled = true) {
   return useQuery({
     queryKey: saleKeys.returns(saleId),
-    queryFn: () => saleApiAdapter.getReturns(saleId),
+    queryFn: () => getContainer().saleRepository.getReturns(saleId),
     enabled: !!saleId && enabled,
   });
 }
@@ -49,7 +49,8 @@ export function useCreateSale() {
   const t = useTranslations("sales");
 
   return useMutation({
-    mutationFn: (data: CreateSaleDto) => saleApiAdapter.create(data),
+    mutationFn: (data: CreateSaleDto) =>
+      getContainer().saleRepository.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       toast.success(t("messages.created"));
@@ -66,7 +67,7 @@ export function useUpdateSale() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateSaleDto }) =>
-      saleApiAdapter.update(id, data),
+      getContainer().saleRepository.update(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
@@ -83,7 +84,7 @@ export function useConfirmSale() {
   const t = useTranslations("sales");
 
   return useMutation({
-    mutationFn: (id: string) => saleApiAdapter.confirm(id),
+    mutationFn: (id: string) => getContainer().saleRepository.confirm(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
@@ -100,7 +101,7 @@ export function useCancelSale() {
   const t = useTranslations("sales");
 
   return useMutation({
-    mutationFn: (id: string) => saleApiAdapter.cancel(id),
+    mutationFn: (id: string) => getContainer().saleRepository.cancel(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
@@ -117,7 +118,7 @@ export function useStartPicking() {
   const t = useTranslations("sales");
 
   return useMutation({
-    mutationFn: (id: string) => saleApiAdapter.startPicking(id),
+    mutationFn: (id: string) => getContainer().saleRepository.startPicking(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
@@ -135,7 +136,7 @@ export function useShipSale() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: ShipSaleDto }) =>
-      saleApiAdapter.ship(id, data),
+      getContainer().saleRepository.ship(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
@@ -152,7 +153,7 @@ export function useCompleteSale() {
   const t = useTranslations("sales");
 
   return useMutation({
-    mutationFn: (id: string) => saleApiAdapter.complete(id),
+    mutationFn: (id: string) => getContainer().saleRepository.complete(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
@@ -175,7 +176,7 @@ export function useAddSaleLine() {
     }: {
       saleId: string;
       line: CreateSaleLineDto;
-    }) => saleApiAdapter.addLine(saleId, line),
+    }) => getContainer().saleRepository.addLine(saleId, line),
     onSuccess: (_, { saleId }) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(saleId) });
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
@@ -193,7 +194,7 @@ export function useRemoveSaleLine() {
 
   return useMutation({
     mutationFn: ({ saleId, lineId }: { saleId: string; lineId: string }) =>
-      saleApiAdapter.removeLine(saleId, lineId),
+      getContainer().saleRepository.removeLine(saleId, lineId),
     onSuccess: (_, { saleId }) => {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(saleId) });
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });

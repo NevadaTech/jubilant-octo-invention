@@ -34,14 +34,18 @@ import {
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
 import { SortableHeader } from "@/ui/components/sortable-header";
-import { useSales, useConfirmSale, useCancelSale } from "../hooks/use-sales";
+import {
+  useSales,
+  useConfirmSale,
+  useCancelSale,
+} from "@/modules/sales/presentation/hooks/use-sales";
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { SaleStatusBadge } from "./sale-status-badge";
 import { SaleFiltersComponent } from "./sale-filters";
-import type { SaleFilters } from "../../application/dto/sale.dto";
-import type { Sale } from "../../domain/entities/sale.entity";
+import type { SaleFilters } from "@/modules/sales/application/dto/sale.dto";
+import type { Sale } from "@/modules/sales/domain/entities/sale.entity";
 
 export function SaleList() {
   const t = useTranslations("sales");

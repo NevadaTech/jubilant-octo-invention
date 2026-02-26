@@ -41,13 +41,13 @@ import {
   usePostMovement,
   useVoidMovement,
   useDeleteMovement,
-} from "../../hooks/use-movements";
+} from "@/modules/inventory/presentation/hooks/use-movements";
 import { MovementTypeBadge } from "./movement-type-badge";
 import { MovementStatusBadge } from "./movement-status-badge";
 import { MovementFilters } from "./movement-filters";
 import { MovementForm } from "./movement-form";
-import type { StockMovementFilters } from "../../../application/dto/stock-movement.dto";
-import type { StockMovement } from "../../../domain/entities/stock-movement.entity";
+import type { StockMovementFilters } from "@/modules/inventory/application/dto/stock-movement.dto";
+import type { StockMovement } from "@/modules/inventory/domain/entities/stock-movement.entity";
 
 export function MovementList() {
   const t = useTranslations("inventory.movements");

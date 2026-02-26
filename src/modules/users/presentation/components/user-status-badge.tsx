@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { CheckCircle2, XCircle, Lock } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
-import type { UserStatus } from "../../domain/entities/user.entity";
+import type { UserStatus } from "@/modules/users/domain/entities/user.entity";
 
 interface UserStatusBadgeProps {
   status: UserStatus;

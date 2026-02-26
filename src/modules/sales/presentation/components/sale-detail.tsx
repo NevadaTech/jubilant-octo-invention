@@ -48,7 +48,7 @@ import {
   useStartPicking,
   useShipSale,
   useCompleteSale,
-} from "../hooks/use-sales";
+} from "@/modules/sales/presentation/hooks/use-sales";
 import { SaleStatusBadge } from "./sale-status-badge";
 import { SaleTimeline } from "./sale-timeline";
 

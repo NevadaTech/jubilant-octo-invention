@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/ui/components/select";
 import { useUsers } from "@/modules/users/presentation/hooks/use-users";
-import type { AuditLogFilters } from "../../application/dto/audit-log.dto";
+import type { AuditLogFilters } from "@/modules/audit/application/dto/audit-log.dto";
 
 const ENTITY_TYPES = [
   "System",

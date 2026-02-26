@@ -1,14 +1,17 @@
 import type {
   AuthRepositoryPort,
   LoginCredentials,
-} from "../../domain/ports/auth-repository.port";
-import type { User } from "../../domain/entities/user";
-import { Tokens } from "../../domain/value-objects/tokens";
-import { UserMapper } from "../mappers/user.mapper";
-import type { LoginResponseDto } from "../../application/dto/login.dto";
+} from "@/modules/authentication/domain/ports/auth-repository.port";
+import type { User } from "@/modules/authentication/domain/entities/user";
+import { Tokens } from "@/modules/authentication/domain/value-objects/tokens";
+import { UserMapper } from "@/modules/authentication/infrastructure/mappers/user.mapper";
+import type { LoginResponseDto } from "@/modules/authentication/application/dto/login.dto";
 import { env } from "@/config/env";
-import { TokenService } from "../services/token.service";
-import { AuthApiError, getAuthErrorCode } from "../errors/auth-api.error";
+import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
+import {
+  AuthApiError,
+  getAuthErrorCode,
+} from "@/modules/authentication/infrastructure/errors/auth-api.error";
 
 export class AuthApiAdapter implements AuthRepositoryPort {
   private readonly baseUrl = env.NEXT_PUBLIC_API_URL;

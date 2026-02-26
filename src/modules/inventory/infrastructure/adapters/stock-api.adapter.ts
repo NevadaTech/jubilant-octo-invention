@@ -1,15 +1,15 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { Stock } from "../../domain/entities/stock.entity";
+import type { Stock } from "@/modules/inventory/domain/entities/stock.entity";
 import type {
   StockRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/stock.repository.port";
+} from "@/modules/inventory/application/ports/stock.repository.port";
 import type {
   StockListResponseDto,
   StockResponseDto,
   StockFilters,
-} from "../../application/dto/stock.dto";
-import { StockMapper } from "../../application/mappers/stock.mapper";
+} from "@/modules/inventory/application/dto/stock.dto";
+import { StockMapper } from "@/modules/inventory/application/mappers/stock.mapper";
 
 interface ApiResponse<T> {
   data: T;
@@ -92,5 +92,3 @@ export class StockApiAdapter implements StockRepositoryPort {
     );
   }
 }
-
-export const stockApiAdapter = new StockApiAdapter();

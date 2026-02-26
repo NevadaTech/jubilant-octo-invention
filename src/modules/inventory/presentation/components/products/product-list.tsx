@@ -19,10 +19,10 @@ import {
   useProducts,
   useProductFilters,
   useSetProductFilters,
-} from "../../hooks";
+} from "@/modules/inventory/presentation/hooks";
 import { ProductFilters } from "./product-filters";
-import type { Product } from "../../../domain/entities/product.entity";
-import type { ProductFilters as ProductFiltersType } from "../../../application/dto/product.dto";
+import type { Product } from "@/modules/inventory/domain/entities/product.entity";
+import type { ProductFilters as ProductFiltersType } from "@/modules/inventory/application/dto/product.dto";
 
 function formatCurrency(amount: number | null | undefined): string {
   if (amount == null || amount === 0) return "N/A";

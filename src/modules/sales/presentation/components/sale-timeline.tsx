@@ -12,7 +12,7 @@ import {
   Undo2,
 } from "lucide-react";
 import { cn } from "@/ui/lib/utils";
-import type { SaleStatus } from "../../domain/entities/sale.entity";
+import type { SaleStatus } from "@/modules/sales/domain/entities/sale.entity";
 import styles from "./sale-timeline.module.css";
 
 interface TimelineStep {

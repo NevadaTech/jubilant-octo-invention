@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { auditLogApiAdapter } from "../../infrastructure/adapters/audit-log-api.adapter";
-import type { AuditLogFilters } from "../../application/dto/audit-log.dto";
+import { getContainer } from "@/config/di/container";
+import type { AuditLogFilters } from "@/modules/audit/application/dto/audit-log.dto";
 
 const auditLogKeys = {
   all: ["audit-logs"] as const,
@@ -16,14 +16,14 @@ const auditLogKeys = {
 export function useAuditLogs(filters?: AuditLogFilters) {
   return useQuery({
     queryKey: auditLogKeys.list(filters),
-    queryFn: () => auditLogApiAdapter.findAll(filters),
+    queryFn: () => getContainer().auditLogRepository.findAll(filters),
   });
 }
 
 export function useAuditLog(id: string) {
   return useQuery({
     queryKey: auditLogKeys.detail(id),
-    queryFn: () => auditLogApiAdapter.findById(id),
+    queryFn: () => getContainer().auditLogRepository.findById(id),
     enabled: !!id,
   });
 }

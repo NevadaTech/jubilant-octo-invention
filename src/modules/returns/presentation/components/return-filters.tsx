@@ -13,11 +13,11 @@ import {
   SelectValue,
 } from "@/ui/components/select";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks";
-import type { ReturnFilters } from "../../application/dto/return.dto";
+import type { ReturnFilters } from "@/modules/returns/application/dto/return.dto";
 import type {
   ReturnStatus,
   ReturnType,
-} from "../../domain/entities/return.entity";
+} from "@/modules/returns/domain/entities/return.entity";
 
 interface ReturnFiltersProps {
   filters: ReturnFilters;

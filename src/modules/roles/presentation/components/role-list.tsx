@@ -33,7 +33,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
-import { useRoles, useDeleteRole, useUpdateRole } from "../hooks/use-roles";
+import {
+  useRoles,
+  useDeleteRole,
+  useUpdateRole,
+} from "@/modules/roles/presentation/hooks/use-roles";
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
@@ -41,7 +45,7 @@ import { DropdownMenuSeparator } from "@/ui/components/dropdown-menu";
 import { RoleTypeBadge } from "./role-type-badge";
 import { RoleForm } from "./role-form";
 import { RolePermissionsDialog } from "./role-permissions-dialog";
-import type { Role } from "../../domain/entities/role.entity";
+import type { Role } from "@/modules/roles/domain/entities/role.entity";
 
 export function RoleList() {
   const t = useTranslations("roles");

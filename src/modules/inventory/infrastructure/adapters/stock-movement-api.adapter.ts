@@ -1,17 +1,17 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { StockMovement } from "../../domain/entities/stock-movement.entity";
+import type { StockMovement } from "@/modules/inventory/domain/entities/stock-movement.entity";
 import type {
   StockMovementRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/stock-movement.repository.port";
+} from "@/modules/inventory/application/ports/stock-movement.repository.port";
 import type {
   StockMovementListResponseDto,
   StockMovementResponseDto,
   CreateStockMovementDto,
   UpdateStockMovementDto,
   StockMovementFilters,
-} from "../../application/dto/stock-movement.dto";
-import { StockMovementMapper } from "../../application/mappers/stock-movement.mapper";
+} from "@/modules/inventory/application/dto/stock-movement.dto";
+import { StockMovementMapper } from "@/modules/inventory/application/mappers/stock-movement.mapper";
 
 interface ApiResponse<T> {
   data: T;
@@ -128,5 +128,3 @@ export class StockMovementApiAdapter implements StockMovementRepositoryPort {
     );
   }
 }
-
-export const stockMovementApiAdapter = new StockMovementApiAdapter();

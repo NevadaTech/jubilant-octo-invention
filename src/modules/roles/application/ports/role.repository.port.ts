@@ -1,9 +1,12 @@
-import type { Role, PermissionProps } from "../../domain/entities/role.entity";
+import type {
+  Role,
+  PermissionProps,
+} from "@/modules/roles/domain/entities/role.entity";
 import type {
   CreateRoleDto,
   UpdateRoleDto,
   AssignPermissionsDto,
-} from "../dto/role.dto";
+} from "@/modules/roles/application/dto/role.dto";
 
 export interface RoleRepositoryPort {
   findAll(): Promise<Role[]>;

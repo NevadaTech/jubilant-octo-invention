@@ -18,13 +18,13 @@ import {
   toCreateProductDto,
   toUpdateProductDto,
   type CreateProductFormData,
-} from "../../schemas/product.schema";
+} from "@/modules/inventory/presentation/schemas/product.schema";
 import {
   useCreateProduct,
   useUpdateProduct,
   useProduct,
-} from "../../hooks/use-products";
-import { CategoryMultiSelector } from "../categories/category-multi-selector";
+} from "@/modules/inventory/presentation/hooks/use-products";
+import { CategoryMultiSelector } from "@/modules/inventory/presentation/components/categories/category-multi-selector";
 
 interface ProductFormPageProps {
   productId?: string;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { CreateUserDto } from "../../application/dto/user.dto";
+import type { CreateUserDto } from "@/modules/users/application/dto/user.dto";
 
 export const createUserSchema = z.object({
   email: z.string().email("Please enter a valid email"),

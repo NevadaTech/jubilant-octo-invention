@@ -27,15 +27,15 @@ import {
   createMovementSchema,
   toCreateMovementDto,
   type CreateMovementFormData,
-} from "../../schemas/movement.schema";
+} from "@/modules/inventory/presentation/schemas/movement.schema";
 import {
   useCreateMovement,
   useUpdateMovement,
   useMovement,
-} from "../../hooks/use-movements";
-import { useProducts } from "../../hooks/use-products";
-import { useWarehouses } from "../../hooks/use-warehouses";
-import type { UpdateStockMovementDto } from "../../../application/dto/stock-movement.dto";
+} from "@/modules/inventory/presentation/hooks/use-movements";
+import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
+import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import type { UpdateStockMovementDto } from "@/modules/inventory/application/dto/stock-movement.dto";
 
 interface MovementFormPageProps {
   movementId?: string;

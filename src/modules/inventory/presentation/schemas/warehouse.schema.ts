@@ -2,7 +2,7 @@ import { z } from "zod";
 import type {
   CreateWarehouseDto,
   UpdateWarehouseDto,
-} from "../../application/dto/warehouse.dto";
+} from "@/modules/inventory/application/dto/warehouse.dto";
 
 export const createWarehouseSchema = z.object({
   code: z

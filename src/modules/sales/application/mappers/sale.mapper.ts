@@ -1,13 +1,13 @@
-import { Sale, type SaleLineProps } from "../../domain/entities/sale.entity";
+import { Sale, SaleLine } from "@/modules/sales/domain/entities/sale.entity";
 import type {
   SaleResponseDto,
   SaleLineResponseDto,
   SaleApiRawDto,
-} from "../dto/sale.dto";
+} from "@/modules/sales/application/dto/sale.dto";
 
 export class SaleMapper {
-  static lineToDomain(dto: SaleLineResponseDto): SaleLineProps {
-    return {
+  static lineToDomain(dto: SaleLineResponseDto): SaleLine {
+    return SaleLine.create({
       id: dto.id,
       productId: dto.productId,
       productName: dto.productName,
@@ -16,7 +16,7 @@ export class SaleMapper {
       salePrice: dto.salePrice,
       currency: dto.currency,
       totalPrice: dto.totalPrice,
-    };
+    });
   }
 
   /** Convert raw API list item (may lack lines, warehouseName, etc.) */

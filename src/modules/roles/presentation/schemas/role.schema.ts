@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { CreateRoleDto } from "../../application/dto/role.dto";
+import type { CreateRoleDto } from "@/modules/roles/application/dto/role.dto";
 
 export const createRoleSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters").max(50),

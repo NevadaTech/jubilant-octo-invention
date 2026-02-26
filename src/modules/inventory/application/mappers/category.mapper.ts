@@ -1,5 +1,5 @@
-import { Category } from "../../domain/entities/category.entity";
-import type { CategoryResponseDto } from "../dto/category.dto";
+import { Category } from "@/modules/inventory/domain/entities/category.entity";
+import type { CategoryResponseDto } from "@/modules/inventory/application/dto/category.dto";
 
 export class CategoryMapper {
   static toDomain(dto: CategoryResponseDto): Category {

@@ -6,8 +6,8 @@ import { useSearchParams } from "next/navigation";
 import { BarChart2, Package, ShoppingCart, PackageX } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/components/tabs";
 import { ReportCard } from "./report-card";
-import type { ReportTypeValue } from "../../application/dto/report.dto";
-import { REPORT_CATEGORIES } from "../../application/dto/report.dto";
+import type { ReportTypeValue } from "@/modules/reports/application/dto/report.dto";
+import { REPORT_CATEGORIES } from "@/modules/reports/application/dto/report.dto";
 
 const CATEGORY_ICONS = {
   inventory: Package,

@@ -1,9 +1,9 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { Return } from "../../domain/entities/return.entity";
+import type { Return } from "@/modules/returns/domain/entities/return.entity";
 import type {
   ReturnRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/return.repository.port";
+} from "@/modules/returns/application/ports/return.repository.port";
 import type {
   ReturnListResponseDto,
   ReturnResponseDto,
@@ -11,8 +11,8 @@ import type {
   CreateReturnLineDto,
   UpdateReturnDto,
   ReturnFilters,
-} from "../../application/dto/return.dto";
-import { ReturnMapper } from "../../application/mappers/return.mapper";
+} from "@/modules/returns/application/dto/return.dto";
+import { ReturnMapper } from "@/modules/returns/application/mappers/return.mapper";
 
 interface ApiResponse<T> {
   data: T;
@@ -138,5 +138,3 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
     );
   }
 }
-
-export const returnApiAdapter = new ReturnApiAdapter();

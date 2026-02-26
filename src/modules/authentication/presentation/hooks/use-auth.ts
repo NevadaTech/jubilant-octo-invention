@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthStore } from "../store/auth.store";
+import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
 
 export function useAuth() {
   const user = useAuthStore((state) => state.user);

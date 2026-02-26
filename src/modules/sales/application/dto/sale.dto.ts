@@ -1,4 +1,4 @@
-import type { SaleStatus } from "../../domain/entities/sale.entity";
+import type { SaleStatus } from "@/modules/sales/domain/entities/sale.entity";
 
 /**
  * API Response DTOs for Sales

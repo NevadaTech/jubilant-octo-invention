@@ -33,8 +33,8 @@ import {
 import {
   useWarehouse,
   useToggleWarehouseStatus,
-} from "../../hooks/use-warehouses";
-import { useStock } from "../../hooks/use-stock";
+} from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { useStock } from "@/modules/inventory/presentation/hooks/use-stock";
 import { useState, useMemo } from "react";
 
 interface WarehouseDetailProps {

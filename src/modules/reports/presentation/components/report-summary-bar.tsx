@@ -2,7 +2,10 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Card, CardContent } from "@/ui/components/card";
-import { formatCellValue, formatSummaryKey } from "../utils/report-utils";
+import {
+  formatCellValue,
+  formatSummaryKey,
+} from "@/modules/reports/presentation/utils/report-utils";
 
 interface ReportSummaryBarProps {
   summary: Record<string, number | string>;

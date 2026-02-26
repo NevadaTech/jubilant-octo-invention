@@ -23,8 +23,8 @@ import {
   createSaleSchema,
   toCreateSaleDto,
   type CreateSaleFormData,
-} from "../schemas/sale.schema";
-import { useCreateSale } from "../hooks/use-sales";
+} from "@/modules/sales/presentation/schemas/sale.schema";
+import { useCreateSale } from "@/modules/sales/presentation/hooks/use-sales";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 

@@ -1,7 +1,7 @@
 import type {
   ReturnStatus,
   ReturnType,
-} from "../../domain/entities/return.entity";
+} from "@/modules/returns/domain/entities/return.entity";
 
 export interface ReturnLineResponseDto {
   id: string;

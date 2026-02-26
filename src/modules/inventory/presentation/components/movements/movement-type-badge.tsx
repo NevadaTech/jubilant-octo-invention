@@ -8,7 +8,7 @@ import {
   ArrowRightLeft,
 } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
-import type { MovementType } from "../../../domain/entities/stock-movement.entity";
+import type { MovementType } from "@/modules/inventory/domain/entities/stock-movement.entity";
 
 interface MovementTypeBadgeProps {
   type: MovementType;

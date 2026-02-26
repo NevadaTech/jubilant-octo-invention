@@ -5,7 +5,7 @@ import type {
   CreateReorderRuleDto,
   UpdateReorderRuleDto,
   ReorderRuleApiDto,
-} from "../../application/dto/reorder-rule.dto";
+} from "@/modules/inventory/application/dto/reorder-rule.dto";
 
 class ReorderRuleApiAdapter {
   private readonly basePath = "/inventory/stock/reorder-rules";

@@ -1,5 +1,5 @@
-import type { ReportTypeValue } from "../../application/dto/report.dto";
-import { REPORT_CATEGORIES } from "../../application/dto/report.dto";
+import type { ReportTypeValue } from "@/modules/reports/application/dto/report.dto";
+import { REPORT_CATEGORIES } from "@/modules/reports/application/dto/report.dto";
 
 export function getCategoryForReportType(type: ReportTypeValue): string {
   for (const cat of REPORT_CATEGORIES) {

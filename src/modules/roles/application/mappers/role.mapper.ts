@@ -1,6 +1,9 @@
-import { Role } from "../../domain/entities/role.entity";
-import type { PermissionProps } from "../../domain/entities/role.entity";
-import type { RoleResponseDto, PermissionResponseDto } from "../dto/role.dto";
+import { Role } from "@/modules/roles/domain/entities/role.entity";
+import type { PermissionProps } from "@/modules/roles/domain/entities/role.entity";
+import type {
+  RoleResponseDto,
+  PermissionResponseDto,
+} from "@/modules/roles/application/dto/role.dto";
 
 export class RoleMapper {
   static toDomain(dto: RoleResponseDto): Role {

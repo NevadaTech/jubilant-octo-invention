@@ -1,17 +1,17 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { Category } from "../../domain/entities/category.entity";
+import type { Category } from "@/modules/inventory/domain/entities/category.entity";
 import type {
   CategoryRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/category.repository.port";
+} from "@/modules/inventory/application/ports/category.repository.port";
 import type {
   CategoryListResponseDto,
   CategoryResponseDto,
   CreateCategoryDto,
   UpdateCategoryDto,
   CategoryFilters,
-} from "../../application/dto/category.dto";
-import { CategoryMapper } from "../../application/mappers/category.mapper";
+} from "@/modules/inventory/application/dto/category.dto";
+import { CategoryMapper } from "@/modules/inventory/application/mappers/category.mapper";
 
 interface ApiResponse<T> {
   data: T;
@@ -103,5 +103,3 @@ export class CategoryApiAdapter implements CategoryRepositoryPort {
     );
   }
 }
-
-export const categoryApiAdapter = new CategoryApiAdapter();

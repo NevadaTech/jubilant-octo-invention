@@ -108,4 +108,25 @@ export class AuditLog extends Entity<string> {
       this.props.httpStatusCode !== null && this.props.httpStatusCode >= 400
     );
   }
+
+  /** Whether this was a write operation (POST, PUT, PATCH, DELETE) */
+  get isWriteOperation(): boolean {
+    return ["POST", "PUT", "PATCH", "DELETE"].includes(
+      this.props.httpMethod ?? "",
+    );
+  }
+
+  /** Whether this was a read operation */
+  get isReadOperation(): boolean {
+    return this.props.httpMethod === "GET";
+  }
+
+  /** Whether this request was slow (over 3 seconds) */
+  get isSlowRequest(): boolean {
+    return (
+      this.props.duration !== null &&
+      this.props.duration !== undefined &&
+      this.props.duration > 3000
+    );
+  }
 }

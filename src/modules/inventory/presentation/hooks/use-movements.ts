@@ -3,12 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { stockMovementApiAdapter } from "../../infrastructure/adapters/stock-movement-api.adapter";
+import { getContainer } from "@/config/di/container";
 import type {
   StockMovementFilters,
   CreateStockMovementDto,
   UpdateStockMovementDto,
-} from "../../application/dto/stock-movement.dto";
+} from "@/modules/inventory/application/dto/stock-movement.dto";
 import { stockKeys } from "./use-stock";
 
 const STALE_TIME = 2 * 60 * 1000; // 2 minutes
@@ -25,7 +25,7 @@ export const movementKeys = {
 export function useMovements(filters?: StockMovementFilters) {
   return useQuery({
     queryKey: movementKeys.list(filters),
-    queryFn: () => stockMovementApiAdapter.findAll(filters),
+    queryFn: () => getContainer().movementRepository.findAll(filters),
     staleTime: STALE_TIME,
   });
 }
@@ -33,7 +33,7 @@ export function useMovements(filters?: StockMovementFilters) {
 export function useMovement(id: string) {
   return useQuery({
     queryKey: movementKeys.detail(id),
-    queryFn: () => stockMovementApiAdapter.findById(id),
+    queryFn: () => getContainer().movementRepository.findById(id),
     staleTime: STALE_TIME,
     enabled: Boolean(id),
   });
@@ -45,7 +45,7 @@ export function useCreateMovement() {
 
   return useMutation({
     mutationFn: (data: CreateStockMovementDto) =>
-      stockMovementApiAdapter.create(data),
+      getContainer().movementRepository.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
       toast.success(t("messages.created"));
@@ -62,7 +62,7 @@ export function useUpdateMovement() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateStockMovementDto }) =>
-      stockMovementApiAdapter.update(id, data),
+      getContainer().movementRepository.update(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
       queryClient.invalidateQueries({ queryKey: movementKeys.detail(id) });
@@ -79,7 +79,7 @@ export function useDeleteMovement() {
   const t = useTranslations("inventory.movements");
 
   return useMutation({
-    mutationFn: (id: string) => stockMovementApiAdapter.delete(id),
+    mutationFn: (id: string) => getContainer().movementRepository.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
       toast.success(t("messages.deleted"));
@@ -95,7 +95,7 @@ export function usePostMovement() {
   const t = useTranslations("inventory.movements");
 
   return useMutation({
-    mutationFn: (id: string) => stockMovementApiAdapter.post(id),
+    mutationFn: (id: string) => getContainer().movementRepository.post(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
       queryClient.invalidateQueries({ queryKey: movementKeys.detail(id) });
@@ -114,7 +114,7 @@ export function useVoidMovement() {
   const t = useTranslations("inventory.movements");
 
   return useMutation({
-    mutationFn: (id: string) => stockMovementApiAdapter.void(id),
+    mutationFn: (id: string) => getContainer().movementRepository.void(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
       queryClient.invalidateQueries({ queryKey: movementKeys.detail(id) });

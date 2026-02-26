@@ -5,7 +5,7 @@ import { X, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/ui/components/badge";
 import { Button } from "@/ui/components/button";
-import { useCategories } from "../../hooks/use-categories";
+import { useCategories } from "@/modules/inventory/presentation/hooks/use-categories";
 
 interface CategoryMultiSelectorProps {
   value: string[];

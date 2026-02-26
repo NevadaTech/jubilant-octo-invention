@@ -2,7 +2,7 @@ import { z } from "zod";
 import type {
   CreateReturnDto,
   CreateReturnLineDto,
-} from "../../application/dto/return.dto";
+} from "@/modules/returns/application/dto/return.dto";
 
 export const returnLineSchema = z
   .object({

@@ -1,7 +1,7 @@
 "use client";
 
 import { useShallow } from "zustand/react/shallow";
-import { useInventoryStore } from "../../infrastructure/store/inventory.store";
+import { useInventoryStore } from "@/modules/inventory/infrastructure/store/inventory.store";
 
 // Product filters selectors
 export function useProductFilters() {

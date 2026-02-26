@@ -1,17 +1,8 @@
-import type { AuditLog } from "../../domain/entities/audit-log.entity";
-import type { AuditLogFilters } from "../dto/audit-log.dto";
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
+import type { AuditLog } from "@/modules/audit/domain/entities/audit-log.entity";
+import type { AuditLogFilters } from "@/modules/audit/application/dto/audit-log.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
+export type { PaginatedResult };
 
 export interface AuditLogRepositoryPort {
   findAll(filters?: AuditLogFilters): Promise<PaginatedResult<AuditLog>>;

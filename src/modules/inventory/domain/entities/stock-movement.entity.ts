@@ -1,4 +1,6 @@
-import { Entity } from "@/shared/domain";
+import { AggregateRoot } from "@/shared/domain";
+import { ValueObject } from "@/shared/domain/value-objects/value-object";
+import { movementWorkflow } from "@/modules/inventory/domain/services/movement-workflow.service";
 
 export type MovementType =
   | "IN"
@@ -10,7 +12,7 @@ export type MovementType =
 
 export type MovementStatus = "DRAFT" | "POSTED" | "VOID" | "RETURNED";
 
-export interface MovementLine {
+export interface MovementLineProps {
   id: string;
   productId: string;
   productName: string;
@@ -18,6 +20,44 @@ export interface MovementLine {
   quantity: number;
   unitCost: number | null;
   currency: string | null;
+}
+
+export class MovementLine extends ValueObject<MovementLineProps> {
+  private constructor(props: MovementLineProps) {
+    super(props);
+  }
+
+  static create(props: MovementLineProps): MovementLine {
+    return new MovementLine(props);
+  }
+
+  get id(): string {
+    return this.props.id;
+  }
+
+  get productId(): string {
+    return this.props.productId;
+  }
+
+  get productName(): string {
+    return this.props.productName;
+  }
+
+  get productSku(): string {
+    return this.props.productSku;
+  }
+
+  get quantity(): number {
+    return this.props.quantity;
+  }
+
+  get unitCost(): number | null {
+    return this.props.unitCost;
+  }
+
+  get currency(): string | null {
+    return this.props.currency;
+  }
 }
 
 export interface StockMovementProps {
@@ -42,7 +82,7 @@ export interface StockMovementProps {
   returnedByName: string | null;
 }
 
-export class StockMovement extends Entity<string> {
+export class StockMovement extends AggregateRoot<string> {
   private readonly props: Omit<StockMovementProps, "id">;
 
   private constructor(id: string, props: Omit<StockMovementProps, "id">) {
@@ -198,10 +238,10 @@ export class StockMovement extends Entity<string> {
   }
 
   get canPost(): boolean {
-    return this.props.status === "DRAFT";
+    return movementWorkflow.canTransition(this.props.status, "POSTED");
   }
 
   get canVoid(): boolean {
-    return this.props.status === "POSTED";
+    return movementWorkflow.canTransition(this.props.status, "VOID");
   }
 }

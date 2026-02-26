@@ -3,12 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { reorderRuleApiAdapter } from "../../infrastructure/adapters/reorder-rule-api.adapter";
+import { reorderRuleApiAdapter } from "@/modules/inventory/infrastructure/adapters/reorder-rule-api.adapter";
 import { stockKeys } from "./use-stock";
 import type {
   CreateReorderRuleDto,
   UpdateReorderRuleDto,
-} from "../../application/dto/reorder-rule.dto";
+} from "@/modules/inventory/application/dto/reorder-rule.dto";
 
 export const reorderRuleKeys = {
   all: ["reorder-rules"] as const,

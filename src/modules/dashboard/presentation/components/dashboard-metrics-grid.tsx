@@ -8,7 +8,7 @@ import {
   ShoppingCart,
   RefreshCw,
 } from "lucide-react";
-import { useDashboardMetrics } from "../hooks/use-dashboard-metrics";
+import { useDashboardMetrics } from "@/modules/dashboard/presentation/hooks/use-dashboard-metrics";
 import { StatCard, type StatCardColor } from "./stat-card";
 import { StatCardSkeleton } from "./stat-card-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";

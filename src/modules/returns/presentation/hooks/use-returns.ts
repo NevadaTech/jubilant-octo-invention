@@ -3,13 +3,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { returnApiAdapter } from "../../infrastructure/adapters/return-api.adapter";
+import { getContainer } from "@/config/di/container";
 import type {
   ReturnFilters,
   CreateReturnDto,
   CreateReturnLineDto,
   UpdateReturnDto,
-} from "../../application/dto/return.dto";
+} from "@/modules/returns/application/dto/return.dto";
 
 const returnKeys = {
   all: ["returns"] as const,
@@ -22,14 +22,14 @@ const returnKeys = {
 export function useReturns(filters?: ReturnFilters) {
   return useQuery({
     queryKey: returnKeys.list(filters),
-    queryFn: () => returnApiAdapter.findAll(filters),
+    queryFn: () => getContainer().returnRepository.findAll(filters),
   });
 }
 
 export function useReturn(id: string) {
   return useQuery({
     queryKey: returnKeys.detail(id),
-    queryFn: () => returnApiAdapter.findById(id),
+    queryFn: () => getContainer().returnRepository.findById(id),
     enabled: !!id,
   });
 }
@@ -39,7 +39,8 @@ export function useCreateReturn() {
   const t = useTranslations("returns");
 
   return useMutation({
-    mutationFn: (data: CreateReturnDto) => returnApiAdapter.create(data),
+    mutationFn: (data: CreateReturnDto) =>
+      getContainer().returnRepository.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });
       toast.success(t("messages.created"));
@@ -56,7 +57,7 @@ export function useUpdateReturn() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateReturnDto }) =>
-      returnApiAdapter.update(id, data),
+      getContainer().returnRepository.update(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });
       queryClient.invalidateQueries({ queryKey: returnKeys.detail(id) });
@@ -73,7 +74,7 @@ export function useConfirmReturn() {
   const t = useTranslations("returns");
 
   return useMutation({
-    mutationFn: (id: string) => returnApiAdapter.confirm(id),
+    mutationFn: (id: string) => getContainer().returnRepository.confirm(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });
       queryClient.invalidateQueries({ queryKey: returnKeys.detail(id) });
@@ -90,7 +91,7 @@ export function useCancelReturn() {
   const t = useTranslations("returns");
 
   return useMutation({
-    mutationFn: (id: string) => returnApiAdapter.cancel(id),
+    mutationFn: (id: string) => getContainer().returnRepository.cancel(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });
       queryClient.invalidateQueries({ queryKey: returnKeys.detail(id) });
@@ -113,7 +114,7 @@ export function useAddReturnLine() {
     }: {
       returnId: string;
       line: CreateReturnLineDto;
-    }) => returnApiAdapter.addLine(returnId, line),
+    }) => getContainer().returnRepository.addLine(returnId, line),
     onSuccess: (_, { returnId }) => {
       queryClient.invalidateQueries({ queryKey: returnKeys.detail(returnId) });
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });
@@ -131,7 +132,7 @@ export function useRemoveReturnLine() {
 
   return useMutation({
     mutationFn: ({ returnId, lineId }: { returnId: string; lineId: string }) =>
-      returnApiAdapter.removeLine(returnId, lineId),
+      getContainer().returnRepository.removeLine(returnId, lineId),
     onSuccess: (_, { returnId }) => {
       queryClient.invalidateQueries({ queryKey: returnKeys.detail(returnId) });
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });

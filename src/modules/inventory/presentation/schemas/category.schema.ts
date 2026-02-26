@@ -2,7 +2,7 @@ import { z } from "zod";
 import type {
   CreateCategoryDto,
   UpdateCategoryDto,
-} from "../../application/dto/category.dto";
+} from "@/modules/inventory/application/dto/category.dto";
 
 export const createCategorySchema = z.object({
   name: z

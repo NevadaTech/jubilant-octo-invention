@@ -1,19 +1,12 @@
-import type { StockMovement } from "../../domain/entities/stock-movement.entity";
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
+import type { StockMovement } from "@/modules/inventory/domain/entities/stock-movement.entity";
 import type {
   CreateStockMovementDto,
   UpdateStockMovementDto,
   StockMovementFilters,
-} from "../dto/stock-movement.dto";
+} from "@/modules/inventory/application/dto/stock-movement.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type { PaginatedResult };
 
 export interface StockMovementRepositoryPort {
   findAll(

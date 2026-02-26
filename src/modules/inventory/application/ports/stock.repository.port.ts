@@ -1,15 +1,8 @@
-import type { Stock } from "../../domain/entities/stock.entity";
-import type { StockFilters } from "../dto/stock.dto";
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
+import type { Stock } from "@/modules/inventory/domain/entities/stock.entity";
+import type { StockFilters } from "@/modules/inventory/application/dto/stock.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type { PaginatedResult };
 
 export interface StockRepositoryPort {
   findAll(filters?: StockFilters): Promise<PaginatedResult<Stock>>;

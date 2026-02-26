@@ -27,7 +27,7 @@ import {
   useReturn,
   useConfirmReturn,
   useCancelReturn,
-} from "../hooks/use-returns";
+} from "@/modules/returns/presentation/hooks/use-returns";
 import { ReturnStatusBadge } from "./return-status-badge";
 import { ReturnTypeBadge } from "./return-type-badge";
 

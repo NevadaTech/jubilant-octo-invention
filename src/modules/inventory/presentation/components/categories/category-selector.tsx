@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/select";
-import { useCategories } from "../../hooks/use-categories";
+import { useCategories } from "@/modules/inventory/presentation/hooks/use-categories";
 
 interface CategorySelectorProps {
   value: string;

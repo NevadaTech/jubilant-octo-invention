@@ -1,9 +1,9 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { User } from "../../domain/entities/user.entity";
+import type { User } from "@/modules/users/domain/entities/user.entity";
 import type {
   UserRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/user.repository.port";
+} from "@/modules/users/application/ports/user.repository.port";
 import type {
   UserListResponseDto,
   UserResponseDto,
@@ -12,8 +12,8 @@ import type {
   ChangeUserStatusDto,
   AssignRoleDto,
   UserFilters,
-} from "../../application/dto/user.dto";
-import { UserMapper } from "../../application/mappers/user.mapper";
+} from "@/modules/users/application/dto/user.dto";
+import { UserMapper } from "@/modules/users/application/mappers/user.mapper";
 
 interface ApiResponse<T> {
   success: boolean;
@@ -115,5 +115,3 @@ export class UserApiAdapter implements UserRepositoryPort {
     );
   }
 }
-
-export const userApiAdapter = new UserApiAdapter();

@@ -18,8 +18,8 @@ import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-wareho
 import type {
   ReportTypeValue,
   ReportParameters,
-} from "../../application/dto/report.dto";
-import { REPORT_FILTER_CONFIG } from "../../application/dto/report.dto";
+} from "@/modules/reports/application/dto/report.dto";
+import { REPORT_FILTER_CONFIG } from "@/modules/reports/application/dto/report.dto";
 
 interface ReportFiltersFormProps {
   type: ReportTypeValue;

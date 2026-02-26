@@ -45,11 +45,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/ui/components/dropdown-menu";
-import { useProduct, useToggleProductStatus } from "../../hooks/use-products";
-import { useReorderRules } from "../../hooks/use-reorder-rules";
-import { useWarehouses } from "../../hooks/use-warehouses";
-import { ReorderRuleDialog } from "../stock/reorder-rule-dialog";
-import type { Warehouse as WarehouseEntity } from "../../../domain/entities/warehouse.entity";
+import {
+  useProduct,
+  useToggleProductStatus,
+} from "@/modules/inventory/presentation/hooks/use-products";
+import { useReorderRules } from "@/modules/inventory/presentation/hooks/use-reorder-rules";
+import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { ReorderRuleDialog } from "@/modules/inventory/presentation/components/stock/reorder-rule-dialog";
+import type { Warehouse as WarehouseEntity } from "@/modules/inventory/domain/entities/warehouse.entity";
 
 interface ProductDetailProps {
   productId: string;

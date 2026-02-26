@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { User } from "../../domain/entities/user";
-import type { LoginCredentials } from "../../domain/ports/auth-repository.port";
-import { AuthApiAdapter } from "../../infrastructure/adapters/auth-api.adapter";
-import { TokenService } from "../../infrastructure/services/token.service";
+import type { User } from "@/modules/authentication/domain/entities/user";
+import type { LoginCredentials } from "@/modules/authentication/domain/ports/auth-repository.port";
+import { getContainer } from "@/config/di/container";
+import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
 
 interface AuthState {
   user: User | null;
@@ -24,7 +24,7 @@ interface AuthActions {
 
 type AuthStore = AuthState & AuthActions;
 
-const authRepository = new AuthApiAdapter();
+const authRepository = getContainer().authRepository;
 
 export const useAuthStore = create<AuthStore>()(
   persist(

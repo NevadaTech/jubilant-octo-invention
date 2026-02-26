@@ -14,8 +14,8 @@ import {
   createRoleSchema,
   toCreateRoleDto,
   type CreateRoleFormData,
-} from "../schemas/role.schema";
-import { useCreateRole } from "../hooks/use-roles";
+} from "@/modules/roles/presentation/schemas/role.schema";
+import { useCreateRole } from "@/modules/roles/presentation/hooks/use-roles";
 
 interface RoleFormProps {
   open: boolean;

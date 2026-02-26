@@ -12,12 +12,12 @@ import { ReportFiltersForm } from "./report-filters-form";
 import { ReportTable } from "./report-table";
 import { ReportSummaryBar } from "./report-summary-bar";
 import { ReportExportButton } from "./report-export-button";
-import { useReportView } from "../hooks/use-reports";
+import { useReportView } from "@/modules/reports/presentation/hooks/use-reports";
 import type {
   ReportTypeValue,
   ReportParameters,
-} from "../../application/dto/report.dto";
-import { getCategoryForReportType } from "../utils/report-utils";
+} from "@/modules/reports/application/dto/report.dto";
+import { getCategoryForReportType } from "@/modules/reports/presentation/utils/report-utils";
 
 interface ReportViewerProps {
   type: ReportTypeValue;

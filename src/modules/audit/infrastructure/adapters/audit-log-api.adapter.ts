@@ -1,14 +1,14 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { AuditLog } from "../../domain/entities/audit-log.entity";
+import type { AuditLog } from "@/modules/audit/domain/entities/audit-log.entity";
 import type {
   AuditLogRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/audit-log.repository.port";
+} from "@/modules/audit/application/ports/audit-log.repository.port";
 import type {
   AuditLogResponseDto,
   AuditLogFilters,
-} from "../../application/dto/audit-log.dto";
-import { AuditLogMapper } from "../../application/mappers/audit-log.mapper";
+} from "@/modules/audit/application/dto/audit-log.dto";
+import { AuditLogMapper } from "@/modules/audit/application/mappers/audit-log.mapper";
 
 interface ApiListResponse {
   success: boolean;
@@ -85,5 +85,3 @@ export class AuditLogApiAdapter implements AuditLogRepositoryPort {
     );
   }
 }
-
-export const auditLogApiAdapter = new AuditLogApiAdapter();

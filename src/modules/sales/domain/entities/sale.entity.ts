@@ -1,4 +1,6 @@
-import { Entity } from "@/shared/domain";
+import { AggregateRoot } from "@/shared/domain";
+import { ValueObject } from "@/shared/domain/value-objects/value-object";
+import { saleWorkflow } from "@/modules/sales/domain/services/sale-workflow.service";
 
 export type SaleStatus =
   | "DRAFT"
@@ -31,7 +33,7 @@ export interface SaleProps {
   note: string | null;
   totalAmount: number;
   currency: string;
-  lines: SaleLineProps[];
+  lines: SaleLine[];
   movementId: string | null;
   createdBy: string;
   createdByName: string | null;
@@ -60,8 +62,14 @@ export interface SaleProps {
   pickingEnabled: boolean;
 }
 
-export class SaleLine {
-  constructor(private readonly props: SaleLineProps) {}
+export class SaleLine extends ValueObject<SaleLineProps> {
+  private constructor(props: SaleLineProps) {
+    super(props);
+  }
+
+  static create(props: SaleLineProps): SaleLine {
+    return new SaleLine(props);
+  }
 
   get id(): string {
     return this.props.id;
@@ -96,7 +104,7 @@ export class SaleLine {
   }
 }
 
-export class Sale extends Entity<string> {
+export class Sale extends AggregateRoot<string> {
   private readonly props: Omit<SaleProps, "id">;
 
   private constructor(id: string, props: Omit<SaleProps, "id">) {
@@ -181,7 +189,7 @@ export class Sale extends Entity<string> {
     return this.props.currency;
   }
 
-  get lines(): SaleLineProps[] {
+  get lines(): SaleLine[] {
     return this.props.lines;
   }
 
@@ -327,27 +335,35 @@ export class Sale extends Entity<string> {
   }
 
   get canConfirm(): boolean {
-    return this.props.status === "DRAFT" && this.props.lines.length > 0;
+    return (
+      saleWorkflow.canTransition(this.props.status, "CONFIRMED") &&
+      this.props.lines.length > 0
+    );
   }
 
   get canStartPicking(): boolean {
-    return this.props.status === "CONFIRMED" && this.props.pickingEnabled;
+    return (
+      saleWorkflow.canTransition(this.props.status, "PICKING") &&
+      this.props.pickingEnabled
+    );
   }
 
   get canShip(): boolean {
-    return this.props.status === "PICKING" && this.props.pickingEnabled;
+    return (
+      saleWorkflow.canTransition(this.props.status, "SHIPPED") &&
+      this.props.pickingEnabled
+    );
   }
 
   get canComplete(): boolean {
-    return this.props.status === "SHIPPED" && this.props.pickingEnabled;
+    return (
+      saleWorkflow.canTransition(this.props.status, "COMPLETED") &&
+      this.props.pickingEnabled
+    );
   }
 
   get canCancel(): boolean {
-    return (
-      this.props.status === "DRAFT" ||
-      this.props.status === "CONFIRMED" ||
-      this.props.status === "PICKING"
-    );
+    return saleWorkflow.canTransition(this.props.status, "CANCELLED");
   }
 
   get canEdit(): boolean {

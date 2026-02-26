@@ -2,7 +2,7 @@ import { z } from "zod";
 import type {
   CreateSaleDto,
   CreateSaleLineDto,
-} from "../../application/dto/sale.dto";
+} from "@/modules/sales/application/dto/sale.dto";
 
 export const saleLineSchema = z.object({
   productId: z.string().min(1, "Please select a product"),

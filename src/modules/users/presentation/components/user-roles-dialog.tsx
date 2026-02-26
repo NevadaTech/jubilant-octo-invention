@@ -20,8 +20,11 @@ import {
   SelectValue,
 } from "@/ui/components/select";
 import { useRoles } from "@/modules/roles/presentation/hooks/use-roles";
-import { useAssignRole, useRemoveRole } from "../hooks/use-users";
-import type { User } from "../../domain/entities/user.entity";
+import {
+  useAssignRole,
+  useRemoveRole,
+} from "@/modules/users/presentation/hooks/use-users";
+import type { User } from "@/modules/users/domain/entities/user.entity";
 
 interface UserRolesDialogProps {
   user: User | null;

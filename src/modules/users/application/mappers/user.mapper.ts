@@ -1,5 +1,5 @@
-import { User } from "../../domain/entities/user.entity";
-import type { UserResponseDto } from "../dto/user.dto";
+import { User } from "@/modules/users/domain/entities/user.entity";
+import type { UserResponseDto } from "@/modules/users/application/dto/user.dto";
 
 export class UserMapper {
   static toDomain(dto: UserResponseDto): User {

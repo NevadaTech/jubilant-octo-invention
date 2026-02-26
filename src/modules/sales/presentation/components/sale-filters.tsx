@@ -13,8 +13,8 @@ import {
   SelectValue,
 } from "@/ui/components/select";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks";
-import type { SaleFilters } from "../../application/dto/sale.dto";
-import type { SaleStatus } from "../../domain/entities/sale.entity";
+import type { SaleFilters } from "@/modules/sales/application/dto/sale.dto";
+import type { SaleStatus } from "@/modules/sales/domain/entities/sale.entity";
 
 interface SaleFiltersProps {
   filters: SaleFilters;

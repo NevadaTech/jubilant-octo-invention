@@ -1,4 +1,4 @@
-import type { UserStatus } from "../../domain/entities/user.entity";
+import type { UserStatus } from "@/modules/users/domain/entities/user.entity";
 
 export interface UserResponseDto {
   id: string;

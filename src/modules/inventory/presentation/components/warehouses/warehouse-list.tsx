@@ -20,8 +20,8 @@ import {
   useWarehouses,
   useWarehouseFilters,
   useSetWarehouseFilters,
-} from "../../hooks";
-import type { Warehouse } from "../../../domain/entities/warehouse.entity";
+} from "@/modules/inventory/presentation/hooks";
+import type { Warehouse } from "@/modules/inventory/domain/entities/warehouse.entity";
 
 function WarehouseRow({ warehouse }: { warehouse: Warehouse }) {
   const t = useTranslations("inventory.warehouses");

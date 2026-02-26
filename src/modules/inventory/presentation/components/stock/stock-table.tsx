@@ -14,10 +14,14 @@ import {
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { useStock, useStockFilters, useSetStockFilters } from "../../hooks";
-import { WarehouseSelector } from "../warehouses/warehouse-selector";
+import {
+  useStock,
+  useStockFilters,
+  useSetStockFilters,
+} from "@/modules/inventory/presentation/hooks";
+import { WarehouseSelector } from "@/modules/inventory/presentation/components/warehouses/warehouse-selector";
 import { ReorderRuleDialog } from "./reorder-rule-dialog";
-import type { Stock } from "../../../domain/entities/stock.entity";
+import type { Stock } from "@/modules/inventory/domain/entities/stock.entity";
 
 function formatCurrency(value: number, currency: string): string {
   return new Intl.NumberFormat("en-US", {

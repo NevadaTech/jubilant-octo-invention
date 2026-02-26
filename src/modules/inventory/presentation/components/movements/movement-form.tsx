@@ -22,10 +22,10 @@ import {
   createMovementSchema,
   toCreateMovementDto,
   type CreateMovementFormData,
-} from "../../schemas/movement.schema";
-import { useCreateMovement } from "../../hooks/use-movements";
-import { useProducts } from "../../hooks/use-products";
-import { useWarehouses } from "../../hooks/use-warehouses";
+} from "@/modules/inventory/presentation/schemas/movement.schema";
+import { useCreateMovement } from "@/modules/inventory/presentation/hooks/use-movements";
+import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
+import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 
 interface MovementFormProps {
   open: boolean;

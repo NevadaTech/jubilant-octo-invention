@@ -22,14 +22,14 @@ import {
   toCreateCategoryDto,
   toUpdateCategoryDto,
   type CreateCategoryFormData,
-} from "../../schemas/category.schema";
+} from "@/modules/inventory/presentation/schemas/category.schema";
 import {
   useCreateCategory,
   useUpdateCategory,
   useCategory,
   useCategories,
-} from "../../hooks/use-categories";
-import { useCategoryFormState } from "../../hooks/use-inventory-store";
+} from "@/modules/inventory/presentation/hooks/use-categories";
+import { useCategoryFormState } from "@/modules/inventory/presentation/hooks/use-inventory-store";
 
 export function CategoryForm() {
   const t = useTranslations("inventory.categories");

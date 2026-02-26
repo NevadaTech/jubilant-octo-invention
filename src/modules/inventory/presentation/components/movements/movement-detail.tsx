@@ -34,7 +34,7 @@ import {
   useMovement,
   usePostMovement,
   useVoidMovement,
-} from "../../hooks/use-movements";
+} from "@/modules/inventory/presentation/hooks/use-movements";
 import { MovementTypeBadge } from "./movement-type-badge";
 import { MovementStatusBadge } from "./movement-status-badge";
 

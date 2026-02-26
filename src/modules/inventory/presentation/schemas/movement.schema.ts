@@ -2,7 +2,7 @@ import { z } from "zod";
 import type {
   CreateStockMovementDto,
   CreateMovementLineDto,
-} from "../../application/dto/stock-movement.dto";
+} from "@/modules/inventory/application/dto/stock-movement.dto";
 
 export const movementLineSchema = z.object({
   productId: z.string().min(1, "Please select a product"),

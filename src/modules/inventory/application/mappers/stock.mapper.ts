@@ -1,5 +1,8 @@
-import { Stock } from "../../domain/entities/stock.entity";
-import type { StockResponseDto, StockApiRawDto } from "../dto/stock.dto";
+import { Stock } from "@/modules/inventory/domain/entities/stock.entity";
+import type {
+  StockResponseDto,
+  StockApiRawDto,
+} from "@/modules/inventory/application/dto/stock.dto";
 
 export class StockMapper {
   static toDomain(

@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { UserCheck, Truck } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
-import type { ReturnType } from "../../domain/entities/return.entity";
+import type { ReturnType } from "@/modules/returns/domain/entities/return.entity";
 
 interface ReturnTypeBadgeProps {
   type: ReturnType;

@@ -1,23 +1,23 @@
 import {
   Transfer,
-  type TransferLine,
-} from "../../domain/entities/transfer.entity";
+  TransferLine,
+} from "@/modules/inventory/domain/entities/transfer.entity";
 import type {
   TransferResponseDto,
   TransferLineResponseDto,
   TransferApiRawDto,
-} from "../dto/transfer.dto";
+} from "@/modules/inventory/application/dto/transfer.dto";
 
 export class TransferMapper {
   static lineToDomain(dto: TransferLineResponseDto): TransferLine {
-    return {
+    return TransferLine.create({
       id: dto.id,
       productId: dto.productId,
       productName: dto.productName,
       productSku: dto.productSku,
       quantity: dto.quantity,
       receivedQuantity: dto.receivedQuantity ?? null,
-    };
+    });
   }
 
   /** Convert the raw API list item to domain entity */

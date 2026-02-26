@@ -1,5 +1,5 @@
-import { AuditLog } from "../../domain/entities/audit-log.entity";
-import type { AuditLogResponseDto } from "../dto/audit-log.dto";
+import { AuditLog } from "@/modules/audit/domain/entities/audit-log.entity";
+import type { AuditLogResponseDto } from "@/modules/audit/application/dto/audit-log.dto";
 
 export class AuditLogMapper {
   static toDomain(dto: AuditLogResponseDto): AuditLog {

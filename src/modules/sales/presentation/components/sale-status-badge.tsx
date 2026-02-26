@@ -11,7 +11,7 @@ import {
   Undo2,
 } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
-import type { SaleStatus } from "../../domain/entities/sale.entity";
+import type { SaleStatus } from "@/modules/sales/domain/entities/sale.entity";
 
 interface SaleStatusBadgeProps {
   status: SaleStatus;

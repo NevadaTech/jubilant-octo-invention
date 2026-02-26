@@ -1,21 +1,14 @@
-import type { User } from "../../domain/entities/user.entity";
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
+import type { User } from "@/modules/users/domain/entities/user.entity";
 import type {
   CreateUserDto,
   UpdateUserDto,
   ChangeUserStatusDto,
   AssignRoleDto,
   UserFilters,
-} from "../dto/user.dto";
+} from "@/modules/users/application/dto/user.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type { PaginatedResult };
 
 export interface UserRepositoryPort {
   findAll(filters?: UserFilters): Promise<PaginatedResult<User>>;

@@ -13,8 +13,8 @@ import {
   createUserSchema,
   toCreateUserDto,
   type CreateUserFormData,
-} from "../schemas/user.schema";
-import { useCreateUser } from "../hooks/use-users";
+} from "@/modules/users/presentation/schemas/user.schema";
+import { useCreateUser } from "@/modules/users/presentation/hooks/use-users";
 
 interface UserFormProps {
   open: boolean;

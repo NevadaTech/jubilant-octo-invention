@@ -7,17 +7,17 @@ import { toast } from "sonner";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
-import { useAuditLogs } from "../hooks/use-audit-logs";
+import { useAuditLogs } from "@/modules/audit/presentation/hooks/use-audit-logs";
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
 import { PERMISSIONS } from "@/shared/domain/permissions";
-import { auditLogApiAdapter } from "../../infrastructure/adapters/audit-log-api.adapter";
+import { getContainer } from "@/config/di/container";
 import { AuditLogFiltersBar } from "./audit-log-filters";
 import { AuditLogDetailDialog } from "./audit-log-detail-dialog";
 import { AuditActionBadge } from "./audit-action-badge";
 import { AuditMethodBadge } from "./audit-method-badge";
 import { AuditStatusIndicator } from "./audit-status-indicator";
-import type { AuditLogFilters } from "../../application/dto/audit-log.dto";
-import type { AuditLog } from "../../domain/entities/audit-log.entity";
+import type { AuditLogFilters } from "@/modules/audit/application/dto/audit-log.dto";
+import type { AuditLog } from "@/modules/audit/domain/entities/audit-log.entity";
 
 export function AuditLogList() {
   const t = useTranslations("audit");
@@ -37,7 +37,8 @@ export function AuditLogList() {
     try {
       // Fetch all records (up to 10000) for export
       const exportFilters = { ...filters, page: 1, limit: 10000 };
-      const allData = await auditLogApiAdapter.findAll(exportFilters);
+      const allData =
+        await getContainer().auditLogRepository.findAll(exportFilters);
 
       const { utils, writeFile } = await import("xlsx");
 

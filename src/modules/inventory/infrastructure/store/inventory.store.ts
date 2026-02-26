@@ -5,7 +5,7 @@ import type {
   WarehouseFilters,
   StockFilters,
   CategoryFilters,
-} from "../../application/dto";
+} from "@/modules/inventory/application/dto";
 
 interface InventoryState {
   // Selected items

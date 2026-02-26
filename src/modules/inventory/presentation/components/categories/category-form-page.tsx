@@ -24,13 +24,13 @@ import {
   toCreateCategoryDto,
   toUpdateCategoryDto,
   type CreateCategoryFormData,
-} from "../../schemas/category.schema";
+} from "@/modules/inventory/presentation/schemas/category.schema";
 import {
   useCreateCategory,
   useUpdateCategory,
   useCategory,
   useCategories,
-} from "../../hooks/use-categories";
+} from "@/modules/inventory/presentation/hooks/use-categories";
 
 interface CategoryFormPageProps {
   categoryId?: string;

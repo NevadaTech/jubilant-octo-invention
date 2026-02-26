@@ -3,12 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { warehouseApiAdapter } from "../../infrastructure/adapters/warehouse-api.adapter";
+import { getContainer } from "@/config/di/container";
 import type {
   WarehouseFilters,
   CreateWarehouseDto,
   UpdateWarehouseDto,
-} from "../../application/dto";
+} from "@/modules/inventory/application/dto";
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
@@ -24,7 +24,7 @@ export const warehouseKeys = {
 export function useWarehouses(filters?: WarehouseFilters) {
   return useQuery({
     queryKey: warehouseKeys.list(filters),
-    queryFn: () => warehouseApiAdapter.findAll(filters),
+    queryFn: () => getContainer().warehouseRepository.findAll(filters),
     staleTime: STALE_TIME,
   });
 }
@@ -32,7 +32,7 @@ export function useWarehouses(filters?: WarehouseFilters) {
 export function useWarehouse(id: string) {
   return useQuery({
     queryKey: warehouseKeys.detail(id),
-    queryFn: () => warehouseApiAdapter.findById(id),
+    queryFn: () => getContainer().warehouseRepository.findById(id),
     staleTime: STALE_TIME,
     enabled: Boolean(id),
   });
@@ -43,7 +43,8 @@ export function useCreateWarehouse() {
   const t = useTranslations("inventory.warehouses");
 
   return useMutation({
-    mutationFn: (data: CreateWarehouseDto) => warehouseApiAdapter.create(data),
+    mutationFn: (data: CreateWarehouseDto) =>
+      getContainer().warehouseRepository.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: warehouseKeys.lists() });
       toast.success(t("messages.created"));
@@ -60,7 +61,7 @@ export function useUpdateWarehouse() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateWarehouseDto }) =>
-      warehouseApiAdapter.update(id, data),
+      getContainer().warehouseRepository.update(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: warehouseKeys.lists() });
       queryClient.invalidateQueries({ queryKey: warehouseKeys.detail(id) });
@@ -78,7 +79,7 @@ export function useToggleWarehouseStatus() {
 
   return useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
-      warehouseApiAdapter.update(id, { isActive }),
+      getContainer().warehouseRepository.update(id, { isActive }),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: warehouseKeys.lists() });
       queryClient.invalidateQueries({ queryKey: warehouseKeys.detail(id) });

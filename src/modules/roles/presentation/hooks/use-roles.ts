@@ -3,12 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { roleApiAdapter } from "../../infrastructure/adapters/role-api.adapter";
+import { getContainer } from "@/config/di/container";
 import type {
   CreateRoleDto,
   UpdateRoleDto,
   AssignPermissionsDto,
-} from "../../application/dto/role.dto";
+} from "@/modules/roles/application/dto/role.dto";
 
 const roleKeys = {
   all: ["roles"] as const,
@@ -20,14 +20,14 @@ const roleKeys = {
 export function useRoles() {
   return useQuery({
     queryKey: roleKeys.lists(),
-    queryFn: () => roleApiAdapter.findAll(),
+    queryFn: () => getContainer().roleRepository.findAll(),
   });
 }
 
 export function useRole(id: string) {
   return useQuery({
     queryKey: roleKeys.detail(id),
-    queryFn: () => roleApiAdapter.findById(id),
+    queryFn: () => getContainer().roleRepository.findById(id),
     enabled: !!id,
   });
 }
@@ -35,14 +35,14 @@ export function useRole(id: string) {
 export function usePermissions() {
   return useQuery({
     queryKey: roleKeys.permissions(),
-    queryFn: () => roleApiAdapter.getPermissions(),
+    queryFn: () => getContainer().roleRepository.getPermissions(),
   });
 }
 
 export function useRolePermissions(roleId: string, enabled = true) {
   return useQuery({
     queryKey: [...roleKeys.detail(roleId), "permissions"] as const,
-    queryFn: () => roleApiAdapter.getRolePermissions(roleId),
+    queryFn: () => getContainer().roleRepository.getRolePermissions(roleId),
     enabled: !!roleId && enabled,
   });
 }
@@ -52,7 +52,8 @@ export function useCreateRole() {
   const t = useTranslations("roles");
 
   return useMutation({
-    mutationFn: (data: CreateRoleDto) => roleApiAdapter.create(data),
+    mutationFn: (data: CreateRoleDto) =>
+      getContainer().roleRepository.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
       toast.success(t("messages.created"));
@@ -69,7 +70,7 @@ export function useUpdateRole() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateRoleDto }) =>
-      roleApiAdapter.update(id, data),
+      getContainer().roleRepository.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.all });
       toast.success(t("messages.updated"));
@@ -85,7 +86,7 @@ export function useDeleteRole() {
   const t = useTranslations("roles");
 
   return useMutation({
-    mutationFn: (id: string) => roleApiAdapter.delete(id),
+    mutationFn: (id: string) => getContainer().roleRepository.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
       toast.success(t("messages.deleted"));
@@ -102,7 +103,7 @@ export function useAssignPermissions() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: AssignPermissionsDto }) =>
-      roleApiAdapter.assignPermissions(id, data),
+      getContainer().roleRepository.assignPermissions(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.all });
       toast.success(t("messages.permissionsUpdated"));

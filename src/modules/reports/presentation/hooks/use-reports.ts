@@ -1,13 +1,13 @@
 "use client";
 
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { reportApiAdapter } from "../../infrastructure/adapters/report-api.adapter";
+import { getContainer } from "@/config/di/container";
 import type {
   ReportTypeValue,
   ReportFormatValue,
   ReportParameters,
   ExportOptionsDto,
-} from "../../application/dto/report.dto";
+} from "@/modules/reports/application/dto/report.dto";
 
 const reportKeys = {
   all: ["reports"] as const,
@@ -23,7 +23,8 @@ export function useReportView(
 ) {
   return useQuery({
     queryKey: type ? reportKeys.view(type, parameters) : reportKeys.all,
-    queryFn: () => reportApiAdapter.viewReport(type!, parameters),
+    queryFn: () =>
+      getContainer().reportRepository.viewReport(type!, parameters),
     enabled: !!type && enabled,
     staleTime: 5 * 60 * 1000,
     retry: 1,
@@ -43,7 +44,7 @@ export function useReportExport() {
       parameters?: ReportParameters;
       options?: ExportOptionsDto;
     }) => {
-      const blob = await reportApiAdapter.exportReport(
+      const blob = await getContainer().reportRepository.exportReport(
         type,
         format,
         parameters,

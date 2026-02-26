@@ -12,11 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/select";
-import type { StockMovementFilters } from "../../../application/dto/stock-movement.dto";
+import type { StockMovementFilters } from "@/modules/inventory/application/dto/stock-movement.dto";
 import type {
   MovementType,
   MovementStatus,
-} from "../../../domain/entities/stock-movement.entity";
+} from "@/modules/inventory/domain/entities/stock-movement.entity";
 
 interface MovementFiltersProps {
   filters: StockMovementFilters;

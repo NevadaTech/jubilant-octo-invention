@@ -1,19 +1,12 @@
-import type { Product } from "../../domain/entities/product.entity";
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
+import type { Product } from "@/modules/inventory/domain/entities/product.entity";
 import type {
   CreateProductDto,
   UpdateProductDto,
   ProductFilters,
-} from "../dto/product.dto";
+} from "@/modules/inventory/application/dto/product.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type { PaginatedResult };
 
 export interface ProductRepositoryPort {
   findAll(filters?: ProductFilters): Promise<PaginatedResult<Product>>;

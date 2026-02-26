@@ -1,4 +1,6 @@
-import { Entity } from "@/shared/domain";
+import { AggregateRoot } from "@/shared/domain";
+import { ValueObject } from "@/shared/domain/value-objects/value-object";
+import { returnWorkflow } from "@/modules/returns/domain/services/return-workflow.service";
 
 export type ReturnStatus = "DRAFT" | "CONFIRMED" | "CANCELLED";
 export type ReturnType = "RETURN_CUSTOMER" | "RETURN_SUPPLIER";
@@ -13,6 +15,52 @@ export interface ReturnLineProps {
   originalUnitCost: number | null;
   currency: string;
   totalPrice: number;
+}
+
+export class ReturnLine extends ValueObject<ReturnLineProps> {
+  private constructor(props: ReturnLineProps) {
+    super(props);
+  }
+
+  static create(props: ReturnLineProps): ReturnLine {
+    return new ReturnLine(props);
+  }
+
+  get id(): string {
+    return this.props.id;
+  }
+
+  get productId(): string {
+    return this.props.productId;
+  }
+
+  get productName(): string {
+    return this.props.productName;
+  }
+
+  get productSku(): string {
+    return this.props.productSku;
+  }
+
+  get quantity(): number {
+    return this.props.quantity;
+  }
+
+  get originalSalePrice(): number | null {
+    return this.props.originalSalePrice;
+  }
+
+  get originalUnitCost(): number | null {
+    return this.props.originalUnitCost;
+  }
+
+  get currency(): string {
+    return this.props.currency;
+  }
+
+  get totalPrice(): number {
+    return this.props.totalPrice;
+  }
 }
 
 export interface ReturnProps {
@@ -30,14 +78,14 @@ export interface ReturnProps {
   note: string | null;
   totalAmount: number;
   currency: string;
-  lines: ReturnLineProps[];
+  lines: ReturnLine[];
   createdBy: string;
   createdAt: Date;
   confirmedAt: Date | null;
   cancelledAt: Date | null;
 }
 
-export class Return extends Entity<string> {
+export class Return extends AggregateRoot<string> {
   private readonly props: Omit<ReturnProps, "id">;
 
   private constructor(id: string, props: Omit<ReturnProps, "id">) {
@@ -120,7 +168,7 @@ export class Return extends Entity<string> {
     return this.props.currency;
   }
 
-  get lines(): ReturnLineProps[] {
+  get lines(): ReturnLine[] {
     return this.props.lines;
   }
 
@@ -171,14 +219,22 @@ export class Return extends Entity<string> {
   }
 
   get canConfirm(): boolean {
-    return this.props.status === "DRAFT" && this.props.lines.length > 0;
+    return (
+      returnWorkflow.canTransition(this.props.status, "CONFIRMED") &&
+      this.props.lines.length > 0
+    );
   }
 
   get canCancel(): boolean {
-    return this.props.status !== "CANCELLED";
+    return returnWorkflow.canTransition(this.props.status, "CANCELLED");
   }
 
   get canEdit(): boolean {
     return this.props.status === "DRAFT";
+  }
+
+  /** Total number of line items */
+  get lineCount(): number {
+    return this.props.lines?.length ?? 0;
   }
 }

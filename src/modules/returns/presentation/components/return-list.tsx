@@ -38,15 +38,15 @@ import {
   useReturns,
   useConfirmReturn,
   useCancelReturn,
-} from "../hooks/use-returns";
+} from "@/modules/returns/presentation/hooks/use-returns";
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { ReturnStatusBadge } from "./return-status-badge";
 import { ReturnTypeBadge } from "./return-type-badge";
 import { ReturnFiltersComponent } from "./return-filters";
-import type { ReturnFilters } from "../../application/dto/return.dto";
-import type { Return } from "../../domain/entities/return.entity";
+import type { ReturnFilters } from "@/modules/returns/application/dto/return.dto";
+import type { Return } from "@/modules/returns/domain/entities/return.entity";
 
 export function ReturnList() {
   const t = useTranslations("returns");

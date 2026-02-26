@@ -10,19 +10,19 @@ import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { CategoryMultiSelector } from "../categories/category-multi-selector";
+import { CategoryMultiSelector } from "@/modules/inventory/presentation/components/categories/category-multi-selector";
 import {
   createProductSchema,
   toCreateProductDto,
   toUpdateProductDto,
   type CreateProductFormData,
-} from "../../schemas/product.schema";
+} from "@/modules/inventory/presentation/schemas/product.schema";
 import {
   useCreateProduct,
   useUpdateProduct,
   useProduct,
-} from "../../hooks/use-products";
-import { useProductFormState } from "../../hooks/use-inventory-store";
+} from "@/modules/inventory/presentation/hooks/use-products";
+import { useProductFormState } from "@/modules/inventory/presentation/hooks/use-inventory-store";
 
 export function ProductForm() {
   const t = useTranslations("inventory.products");

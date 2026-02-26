@@ -30,8 +30,8 @@ import {
 import { Badge } from "@/ui/components/badge";
 import { Button } from "@/ui/components/button";
 import { cn } from "@/ui/lib/utils";
-import type { ReportTypeValue } from "../../application/dto/report.dto";
-import { reportTypeToSlug } from "../utils/report-utils";
+import type { ReportTypeValue } from "@/modules/reports/application/dto/report.dto";
+import { reportTypeToSlug } from "@/modules/reports/presentation/utils/report-utils";
 
 interface ReportCardProps {
   type: ReportTypeValue;

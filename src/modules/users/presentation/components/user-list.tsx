@@ -31,15 +31,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/ui/components/dropdown-menu";
-import { useUsers, useChangeUserStatus } from "../hooks/use-users";
+import {
+  useUsers,
+  useChangeUserStatus,
+} from "@/modules/users/presentation/hooks/use-users";
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { UserStatusBadge } from "./user-status-badge";
 import { UserForm } from "./user-form";
 import { UserRolesDialog } from "./user-roles-dialog";
-import type { UserFilters } from "../../application/dto/user.dto";
-import type { User, UserStatus } from "../../domain/entities/user.entity";
+import type { UserFilters } from "@/modules/users/application/dto/user.dto";
+import type {
+  User,
+  UserStatus,
+} from "@/modules/users/domain/entities/user.entity";
 
 export function UserList() {
   const t = useTranslations("users");

@@ -2,8 +2,8 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
-import { useAuthStore } from "../store/auth.store";
-import type { LoginDto } from "../../application/dto/login.dto";
+import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
+import type { LoginDto } from "@/modules/authentication/application/dto/login.dto";
 
 export function useLogin() {
   const router = useRouter();

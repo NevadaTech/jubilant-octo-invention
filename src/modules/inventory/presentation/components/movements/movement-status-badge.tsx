@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { FileEdit, CheckCircle2, XCircle, Undo2 } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
-import type { MovementStatus } from "../../../domain/entities/stock-movement.entity";
+import type { MovementStatus } from "@/modules/inventory/domain/entities/stock-movement.entity";
 
 interface MovementStatusBadgeProps {
   status: MovementStatus;

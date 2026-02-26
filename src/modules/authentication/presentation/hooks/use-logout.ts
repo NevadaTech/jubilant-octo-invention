@@ -2,7 +2,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
-import { useAuthStore } from "../store/auth.store";
+import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
 
 export function useLogout() {
   const router = useRouter();

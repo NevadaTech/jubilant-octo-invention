@@ -13,8 +13,8 @@ import {
 } from "@/ui/components/table";
 import { Badge } from "@/ui/components/badge";
 import { cn } from "@/ui/lib/utils";
-import type { ReportColumn } from "../../application/dto/report.dto";
-import { formatCellValue } from "../utils/report-utils";
+import type { ReportColumn } from "@/modules/reports/application/dto/report.dto";
+import { formatCellValue } from "@/modules/reports/presentation/utils/report-utils";
 
 type SortDir = "asc" | "desc" | null;
 

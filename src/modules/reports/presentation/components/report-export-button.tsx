@@ -12,12 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/ui/components/dropdown-menu";
-import { useReportExport } from "../hooks/use-reports";
+import { useReportExport } from "@/modules/reports/presentation/hooks/use-reports";
 import type {
   ReportTypeValue,
   ReportParameters,
   ExportOptionsDto,
-} from "../../application/dto/report.dto";
+} from "@/modules/reports/application/dto/report.dto";
 
 interface ReportExportButtonProps {
   type: ReportTypeValue;

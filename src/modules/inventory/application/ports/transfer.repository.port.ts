@@ -1,22 +1,15 @@
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
 import type {
   Transfer,
   TransferStatus,
-} from "../../domain/entities/transfer.entity";
+} from "@/modules/inventory/domain/entities/transfer.entity";
 import type {
   CreateTransferDto,
   ReceiveTransferDto,
   TransferFilters,
-} from "../dto/transfer.dto";
+} from "@/modules/inventory/application/dto/transfer.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type { PaginatedResult };
 
 export interface TransferRepositoryPort {
   findAll(filters?: TransferFilters): Promise<PaginatedResult<Transfer>>;

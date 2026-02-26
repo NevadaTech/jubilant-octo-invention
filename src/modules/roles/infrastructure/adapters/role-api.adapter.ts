@@ -1,14 +1,17 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { Role, PermissionProps } from "../../domain/entities/role.entity";
-import type { RoleRepositoryPort } from "../../application/ports/role.repository.port";
+import type {
+  Role,
+  PermissionProps,
+} from "@/modules/roles/domain/entities/role.entity";
+import type { RoleRepositoryPort } from "@/modules/roles/application/ports/role.repository.port";
 import type {
   RoleResponseDto,
   PermissionResponseDto,
   CreateRoleDto,
   UpdateRoleDto,
   AssignPermissionsDto,
-} from "../../application/dto/role.dto";
-import { RoleMapper } from "../../application/mappers/role.mapper";
+} from "@/modules/roles/application/dto/role.dto";
+import { RoleMapper } from "@/modules/roles/application/mappers/role.mapper";
 
 interface ApiResponse<T> {
   success: boolean;
@@ -75,5 +78,3 @@ export class RoleApiAdapter implements RoleRepositoryPort {
     return response.data.data.map(RoleMapper.permissionToDomain);
   }
 }
-
-export const roleApiAdapter = new RoleApiAdapter();

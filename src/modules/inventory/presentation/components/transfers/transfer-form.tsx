@@ -20,10 +20,10 @@ import {
   createTransferSchema,
   toCreateTransferDto,
   type CreateTransferFormData,
-} from "../../schemas/transfer.schema";
-import { useCreateTransfer } from "../../hooks/use-transfers";
-import { useProducts } from "../../hooks/use-products";
-import { useWarehouses } from "../../hooks/use-warehouses";
+} from "@/modules/inventory/presentation/schemas/transfer.schema";
+import { useCreateTransfer } from "@/modules/inventory/presentation/hooks/use-transfers";
+import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
+import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 
 interface TransferFormProps {
   open: boolean;

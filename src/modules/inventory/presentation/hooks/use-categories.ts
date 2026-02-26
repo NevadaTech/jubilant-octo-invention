@@ -3,12 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { categoryApiAdapter } from "../../infrastructure/adapters/category-api.adapter";
+import { getContainer } from "@/config/di/container";
 import type {
   CategoryFilters,
   CreateCategoryDto,
   UpdateCategoryDto,
-} from "../../application/dto/category.dto";
+} from "@/modules/inventory/application/dto/category.dto";
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
@@ -24,7 +24,7 @@ export const categoryKeys = {
 export function useCategories(filters?: CategoryFilters) {
   return useQuery({
     queryKey: categoryKeys.list(filters),
-    queryFn: () => categoryApiAdapter.findAll(filters),
+    queryFn: () => getContainer().categoryRepository.findAll(filters),
     staleTime: STALE_TIME,
   });
 }
@@ -32,7 +32,7 @@ export function useCategories(filters?: CategoryFilters) {
 export function useCategory(id: string) {
   return useQuery({
     queryKey: categoryKeys.detail(id),
-    queryFn: () => categoryApiAdapter.findById(id),
+    queryFn: () => getContainer().categoryRepository.findById(id),
     staleTime: STALE_TIME,
     enabled: Boolean(id),
   });
@@ -43,7 +43,8 @@ export function useCreateCategory() {
   const t = useTranslations("inventory.categories");
 
   return useMutation({
-    mutationFn: (data: CreateCategoryDto) => categoryApiAdapter.create(data),
+    mutationFn: (data: CreateCategoryDto) =>
+      getContainer().categoryRepository.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
       toast.success(t("messages.created"));
@@ -60,7 +61,7 @@ export function useUpdateCategory() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateCategoryDto }) =>
-      categoryApiAdapter.update(id, data),
+      getContainer().categoryRepository.update(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
       queryClient.invalidateQueries({ queryKey: categoryKeys.detail(id) });
@@ -77,7 +78,7 @@ export function useDeleteCategory() {
   const t = useTranslations("inventory.categories");
 
   return useMutation({
-    mutationFn: (id: string) => categoryApiAdapter.delete(id),
+    mutationFn: (id: string) => getContainer().categoryRepository.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
       toast.success(t("messages.deleted"));

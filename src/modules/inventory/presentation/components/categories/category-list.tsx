@@ -31,12 +31,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
-import { useCategories, useDeleteCategory } from "../../hooks/use-categories";
+import {
+  useCategories,
+  useDeleteCategory,
+} from "@/modules/inventory/presentation/hooks/use-categories";
 import {
   useCategoryFilters,
   useSetCategoryFilters,
   useCategoryFormState,
-} from "../../hooks/use-inventory-store";
+} from "@/modules/inventory/presentation/hooks/use-inventory-store";
 import { CategoryForm } from "./category-form";
 
 export function CategoryList() {

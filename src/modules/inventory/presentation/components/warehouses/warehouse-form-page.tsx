@@ -17,12 +17,12 @@ import {
   toCreateWarehouseDto,
   toUpdateWarehouseDto,
   type CreateWarehouseFormData,
-} from "../../schemas/warehouse.schema";
+} from "@/modules/inventory/presentation/schemas/warehouse.schema";
 import {
   useCreateWarehouse,
   useUpdateWarehouse,
   useWarehouse,
-} from "../../hooks/use-warehouses";
+} from "@/modules/inventory/presentation/hooks/use-warehouses";
 
 interface WarehouseFormPageProps {
   warehouseId?: string;

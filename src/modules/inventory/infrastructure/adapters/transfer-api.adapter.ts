@@ -2,11 +2,11 @@ import { apiClient } from "@/shared/infrastructure/http";
 import type {
   Transfer,
   TransferStatus,
-} from "../../domain/entities/transfer.entity";
+} from "@/modules/inventory/domain/entities/transfer.entity";
 import type {
   TransferRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/transfer.repository.port";
+} from "@/modules/inventory/application/ports/transfer.repository.port";
 import type {
   TransferListResponseDto,
   TransferDetailApiResponse,
@@ -14,8 +14,8 @@ import type {
   CreateTransferDto,
   ReceiveTransferDto,
   TransferFilters,
-} from "../../application/dto/transfer.dto";
-import { TransferMapper } from "../../application/mappers/transfer.mapper";
+} from "@/modules/inventory/application/dto/transfer.dto";
+import { TransferMapper } from "@/modules/inventory/application/mappers/transfer.mapper";
 
 interface ApiResponse<T> {
   data: T;
@@ -124,5 +124,3 @@ export class TransferApiAdapter implements TransferRepositoryPort {
     );
   }
 }
-
-export const transferApiAdapter = new TransferApiAdapter();

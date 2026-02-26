@@ -2,7 +2,7 @@ import { z } from "zod";
 import type {
   CreateProductDto,
   UpdateProductDto,
-} from "../../application/dto/product.dto";
+} from "@/modules/inventory/application/dto/product.dto";
 
 export const createProductSchema = z.object({
   sku: z

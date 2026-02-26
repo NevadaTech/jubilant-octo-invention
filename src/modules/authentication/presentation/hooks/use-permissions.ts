@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { useAuthStore } from "../store/auth.store";
+import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
 import type { Permission } from "@/shared/domain/permissions";
 
 /**

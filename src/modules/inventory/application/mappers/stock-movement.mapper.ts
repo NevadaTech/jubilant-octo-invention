@@ -1,17 +1,17 @@
 import {
   StockMovement,
-  type MovementLine,
-} from "../../domain/entities/stock-movement.entity";
+  MovementLine,
+} from "@/modules/inventory/domain/entities/stock-movement.entity";
 import type {
   StockMovementResponseDto,
   MovementLineResponseDto,
-} from "../dto/stock-movement.dto";
+} from "@/modules/inventory/application/dto/stock-movement.dto";
 
 export class StockMovementMapper {
   static lineToDomain(
     dto: MovementLineResponseDto & { name?: string; sku?: string },
   ): MovementLine {
-    return {
+    return MovementLine.create({
       id: dto.id,
       productId: dto.productId,
       productName: dto.productName ?? (dto as { name?: string }).name ?? "",
@@ -19,7 +19,7 @@ export class StockMovementMapper {
       quantity: dto.quantity,
       unitCost: dto.unitCost,
       currency: dto.currency ?? null,
-    };
+    });
   }
 
   static toDomain(dto: StockMovementResponseDto): StockMovement {

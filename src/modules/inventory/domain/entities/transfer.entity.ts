@@ -1,4 +1,6 @@
-import { Entity } from "@/shared/domain";
+import { AggregateRoot } from "@/shared/domain";
+import { ValueObject } from "@/shared/domain/value-objects/value-object";
+import { transferWorkflow } from "@/modules/inventory/domain/services/transfer-workflow.service";
 
 export type TransferStatus =
   | "DRAFT"
@@ -8,13 +10,47 @@ export type TransferStatus =
   | "REJECTED"
   | "CANCELED";
 
-export interface TransferLine {
+export interface TransferLineProps {
   id: string;
   productId: string;
   productName: string;
   productSku: string;
   quantity: number;
   receivedQuantity: number | null;
+}
+
+export class TransferLine extends ValueObject<TransferLineProps> {
+  private constructor(props: TransferLineProps) {
+    super(props);
+  }
+
+  static create(props: TransferLineProps): TransferLine {
+    return new TransferLine(props);
+  }
+
+  get id(): string {
+    return this.props.id;
+  }
+
+  get productId(): string {
+    return this.props.productId;
+  }
+
+  get productName(): string {
+    return this.props.productName;
+  }
+
+  get productSku(): string {
+    return this.props.productSku;
+  }
+
+  get quantity(): number {
+    return this.props.quantity;
+  }
+
+  get receivedQuantity(): number | null {
+    return this.props.receivedQuantity;
+  }
 }
 
 export interface TransferProps {
@@ -33,7 +69,7 @@ export interface TransferProps {
   completedAt: Date | null;
 }
 
-export class Transfer extends Entity<string> {
+export class Transfer extends AggregateRoot<string> {
   private readonly props: Omit<TransferProps, "id">;
 
   private constructor(id: string, props: Omit<TransferProps, "id">) {
@@ -139,18 +175,18 @@ export class Transfer extends Entity<string> {
   }
 
   get canStartTransit(): boolean {
-    return this.props.status === "DRAFT";
+    return transferWorkflow.canTransition(this.props.status, "IN_TRANSIT");
   }
 
   get canReceive(): boolean {
-    return this.props.status === "IN_TRANSIT";
+    return transferWorkflow.canTransition(this.props.status, "RECEIVED");
   }
 
   get canReject(): boolean {
-    return this.props.status === "IN_TRANSIT";
+    return transferWorkflow.canTransition(this.props.status, "REJECTED");
   }
 
   get canCancel(): boolean {
-    return this.props.status === "DRAFT" || this.props.status === "IN_TRANSIT";
+    return transferWorkflow.canTransition(this.props.status, "CANCELED");
   }
 }

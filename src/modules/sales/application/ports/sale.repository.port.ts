@@ -1,20 +1,23 @@
-import type { Sale } from "../../domain/entities/sale.entity";
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
+import type { Sale } from "@/modules/sales/domain/entities/sale.entity";
 import type {
   CreateSaleDto,
   CreateSaleLineDto,
   ShipSaleDto,
   UpdateSaleDto,
   SaleFilters,
-} from "../dto/sale.dto";
+} from "@/modules/sales/application/dto/sale.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+export type { PaginatedResult };
+
+export interface SaleReturnSummary {
+  id: string;
+  returnNumber: string;
+  status: string;
+  type: string;
+  totalAmount: number;
+  currency: string;
+  createdAt: Date;
 }
 
 export interface SaleRepositoryPort {
@@ -29,4 +32,5 @@ export interface SaleRepositoryPort {
   complete(id: string): Promise<Sale>;
   addLine(saleId: string, line: CreateSaleLineDto): Promise<Sale>;
   removeLine(saleId: string, lineId: string): Promise<Sale>;
+  getReturns(saleId: string): Promise<SaleReturnSummary[]>;
 }

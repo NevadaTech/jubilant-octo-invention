@@ -1,20 +1,13 @@
-import type { Return } from "../../domain/entities/return.entity";
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
+import type { Return } from "@/modules/returns/domain/entities/return.entity";
 import type {
   CreateReturnDto,
   CreateReturnLineDto,
   UpdateReturnDto,
   ReturnFilters,
-} from "../dto/return.dto";
+} from "@/modules/returns/application/dto/return.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type { PaginatedResult };
 
 export interface ReturnRepositoryPort {
   findAll(filters?: ReturnFilters): Promise<PaginatedResult<Return>>;

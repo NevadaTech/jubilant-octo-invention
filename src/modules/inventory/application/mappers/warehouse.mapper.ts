@@ -1,5 +1,5 @@
-import { Warehouse } from "../../domain/entities/warehouse.entity";
-import type { WarehouseResponseDto } from "../dto/warehouse.dto";
+import { Warehouse } from "@/modules/inventory/domain/entities/warehouse.entity";
+import type { WarehouseResponseDto } from "@/modules/inventory/application/dto/warehouse.dto";
 
 export class WarehouseMapper {
   static toDomain(dto: WarehouseResponseDto): Warehouse {

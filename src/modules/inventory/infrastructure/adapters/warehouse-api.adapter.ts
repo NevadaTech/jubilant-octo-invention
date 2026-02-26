@@ -1,17 +1,17 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { Warehouse } from "../../domain/entities/warehouse.entity";
+import type { Warehouse } from "@/modules/inventory/domain/entities/warehouse.entity";
 import type {
   WarehouseRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/warehouse.repository.port";
+} from "@/modules/inventory/application/ports/warehouse.repository.port";
 import type {
   WarehouseListResponseDto,
   WarehouseResponseDto,
   CreateWarehouseDto,
   UpdateWarehouseDto,
   WarehouseFilters,
-} from "../../application/dto/warehouse.dto";
-import { WarehouseMapper } from "../../application/mappers/warehouse.mapper";
+} from "@/modules/inventory/application/dto/warehouse.dto";
+import { WarehouseMapper } from "@/modules/inventory/application/mappers/warehouse.mapper";
 
 interface ApiResponse<T> {
   data: T;
@@ -100,5 +100,3 @@ export class WarehouseApiAdapter implements WarehouseRepositoryPort {
     );
   }
 }
-
-export const warehouseApiAdapter = new WarehouseApiAdapter();

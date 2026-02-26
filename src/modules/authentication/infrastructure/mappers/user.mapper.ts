@@ -1,5 +1,5 @@
-import { User } from "../../domain/entities/user";
-import type { LoginResponseDto } from "../../application/dto/login.dto";
+import { User } from "@/modules/authentication/domain/entities/user";
+import type { LoginResponseDto } from "@/modules/authentication/application/dto/login.dto";
 
 type UserDto = LoginResponseDto["data"]["user"];
 

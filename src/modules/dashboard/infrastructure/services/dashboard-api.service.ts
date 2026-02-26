@@ -4,7 +4,7 @@ import type {
   InventoryAvailableResponseDto,
   LowStockResponseDto,
   SalesReportResponseDto,
-} from "../../application/dto/metrics.dto";
+} from "@/modules/dashboard/application/dto/metrics.dto";
 
 /**
  * Dashboard API Service

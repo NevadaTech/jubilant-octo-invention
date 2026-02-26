@@ -96,4 +96,27 @@ export class Stock extends Entity<string> {
   get isOutOfStock(): boolean {
     return this.props.availableQuantity === 0;
   }
+
+  /** Whether stock is below a given minimum threshold */
+  isLowStock(minStock: number): boolean {
+    return this.props.availableQuantity <= minStock;
+  }
+
+  /** Whether all stock is reserved (nothing available for sale) */
+  get isFullyReserved(): boolean {
+    return this.props.quantity > 0 && this.props.availableQuantity <= 0;
+  }
+
+  /** Percentage of stock that is reserved (0-100) */
+  get reservedPercentage(): number {
+    if (this.props.quantity === 0) return 0;
+    return Math.round(
+      (this.props.reservedQuantity / this.props.quantity) * 100,
+    );
+  }
+
+  /** Value of available stock only (excluding reserved) */
+  get availableValue(): number {
+    return this.props.availableQuantity * this.props.averageCost;
+  }
 }

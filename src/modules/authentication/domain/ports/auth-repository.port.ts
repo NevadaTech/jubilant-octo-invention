@@ -1,5 +1,5 @@
-import { User } from "../entities/user";
-import { Tokens } from "../value-objects/tokens";
+import { User } from "@/modules/authentication/domain/entities/user";
+import { Tokens } from "@/modules/authentication/domain/value-objects/tokens";
 
 export interface LoginCredentials {
   organizationSlug: string;

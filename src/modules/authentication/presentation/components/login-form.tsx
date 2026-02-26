@@ -8,9 +8,12 @@ import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
-import { loginSchema, type LoginDto } from "../../application/dto/login.dto";
-import { useLogin } from "../hooks/use-login";
-import { AuthApiError } from "../../infrastructure/errors/auth-api.error";
+import {
+  loginSchema,
+  type LoginDto,
+} from "@/modules/authentication/application/dto/login.dto";
+import { useLogin } from "@/modules/authentication/presentation/hooks/use-login";
+import { AuthApiError } from "@/modules/authentication/infrastructure/errors/auth-api.error";
 
 const AUTH_ERROR_KEYS = [
   "unauthorized",

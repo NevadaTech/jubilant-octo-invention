@@ -4,7 +4,7 @@ import type {
   ReportTypeValue,
   ReportResult,
   ExportOptionsDto,
-} from "../dto/report.dto";
+} from "@/modules/reports/application/dto/report.dto";
 
 export interface ReportRepositoryPort {
   viewReport(

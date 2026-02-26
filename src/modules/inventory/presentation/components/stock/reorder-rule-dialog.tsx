@@ -19,14 +19,14 @@ import { FormField } from "@/ui/components/form-field";
 import {
   reorderRuleSchema,
   type ReorderRuleFormData,
-} from "../../schemas/reorder-rule.schema";
+} from "@/modules/inventory/presentation/schemas/reorder-rule.schema";
 import {
   useReorderRules,
   useCreateReorderRule,
   useUpdateReorderRule,
   useDeleteReorderRule,
-} from "../../hooks/use-reorder-rules";
-import type { ReorderRuleApiDto } from "../../../application/dto/reorder-rule.dto";
+} from "@/modules/inventory/presentation/hooks/use-reorder-rules";
+import type { ReorderRuleApiDto } from "@/modules/inventory/application/dto/reorder-rule.dto";
 
 interface ReorderRuleDialogProps {
   open: boolean;

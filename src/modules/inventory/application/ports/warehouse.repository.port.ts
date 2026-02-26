@@ -1,19 +1,12 @@
-import type { Warehouse } from "../../domain/entities/warehouse.entity";
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
+import type { Warehouse } from "@/modules/inventory/domain/entities/warehouse.entity";
 import type {
   CreateWarehouseDto,
   UpdateWarehouseDto,
   WarehouseFilters,
-} from "../dto/warehouse.dto";
+} from "@/modules/inventory/application/dto/warehouse.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type { PaginatedResult };
 
 export interface WarehouseRepositoryPort {
   findAll(filters?: WarehouseFilters): Promise<PaginatedResult<Warehouse>>;

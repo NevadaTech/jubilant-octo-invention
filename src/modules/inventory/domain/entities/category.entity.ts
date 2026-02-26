@@ -72,4 +72,14 @@ export class Category extends Entity<string> {
   get hasProducts(): boolean {
     return this.props.productCount > 0;
   }
+
+  /** Whether this category can be safely deleted (no associated products) */
+  get canDelete(): boolean {
+    return this.props.productCount === 0;
+  }
+
+  /** Whether this is a root-level category (no parent) */
+  get isRoot(): boolean {
+    return this.props.parentId === null;
+  }
 }

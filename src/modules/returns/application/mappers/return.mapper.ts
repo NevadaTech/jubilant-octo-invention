@@ -1,17 +1,17 @@
 import {
   Return,
-  type ReturnLineProps,
-} from "../../domain/entities/return.entity";
+  ReturnLine,
+} from "@/modules/returns/domain/entities/return.entity";
 import type {
   ReturnResponseDto,
   ReturnLineResponseDto,
   ReturnApiRawDto,
   ReturnLineApiRawDto,
-} from "../dto/return.dto";
+} from "@/modules/returns/application/dto/return.dto";
 
 export class ReturnMapper {
-  static lineToDomain(dto: ReturnLineResponseDto): ReturnLineProps {
-    return {
+  static lineToDomain(dto: ReturnLineResponseDto): ReturnLine {
+    return ReturnLine.create({
       id: dto.id,
       productId: dto.productId,
       productName: dto.productName,
@@ -21,11 +21,11 @@ export class ReturnMapper {
       originalUnitCost: dto.originalUnitCost,
       currency: dto.currency,
       totalPrice: dto.totalPrice,
-    };
+    });
   }
 
-  static lineFromApiRaw(dto: ReturnLineApiRawDto): ReturnLineProps {
-    return {
+  static lineFromApiRaw(dto: ReturnLineApiRawDto): ReturnLine {
+    return ReturnLine.create({
       id: dto.id,
       productId: dto.productId,
       productName: dto.productName ?? "",
@@ -35,7 +35,7 @@ export class ReturnMapper {
       originalUnitCost: dto.originalUnitCost ?? null,
       currency: dto.currency,
       totalPrice: dto.totalPrice,
-    };
+    });
   }
 
   /** Convert raw API item to domain entity */

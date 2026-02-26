@@ -1,7 +1,7 @@
 import type {
   MovementType,
   MovementStatus,
-} from "../../domain/entities/stock-movement.entity";
+} from "@/modules/inventory/domain/entities/stock-movement.entity";
 
 /**
  * API Response DTOs for Stock Movements

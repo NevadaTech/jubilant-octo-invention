@@ -7,7 +7,7 @@ import {
   useWarehouses,
   useSelectedWarehouseId,
   useSetSelectedWarehouse,
-} from "../../hooks";
+} from "@/modules/inventory/presentation/hooks";
 
 export function WarehouseSelector() {
   const t = useTranslations("inventory.warehouses");

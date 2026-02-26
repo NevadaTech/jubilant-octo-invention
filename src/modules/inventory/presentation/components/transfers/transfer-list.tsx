@@ -34,11 +34,11 @@ import {
 import {
   useTransfers,
   useUpdateTransferStatus,
-} from "../../hooks/use-transfers";
+} from "@/modules/inventory/presentation/hooks/use-transfers";
 import { TransferStatusBadge } from "./transfer-status-badge";
 import { TransferForm } from "./transfer-form";
-import type { TransferFilters } from "../../../application/dto/transfer.dto";
-import type { TransferStatus } from "../../../domain/entities/transfer.entity";
+import type { TransferFilters } from "@/modules/inventory/application/dto/transfer.dto";
+import type { TransferStatus } from "@/modules/inventory/domain/entities/transfer.entity";
 
 export function TransferList() {
   const t = useTranslations("inventory.transfers");

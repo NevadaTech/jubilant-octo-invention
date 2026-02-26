@@ -10,7 +10,7 @@ import {
   Ban,
 } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
-import type { TransferStatus } from "../../../domain/entities/transfer.entity";
+import type { TransferStatus } from "@/modules/inventory/domain/entities/transfer.entity";
 
 interface TransferStatusBadgeProps {
   status: TransferStatus;

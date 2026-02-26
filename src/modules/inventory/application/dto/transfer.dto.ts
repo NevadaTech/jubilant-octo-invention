@@ -1,4 +1,4 @@
-import type { TransferStatus } from "../../domain/entities/transfer.entity";
+import type { TransferStatus } from "@/modules/inventory/domain/entities/transfer.entity";
 
 /**
  * API Response DTOs for Transfers

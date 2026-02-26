@@ -14,8 +14,8 @@ import {
   SelectValue,
 } from "@/ui/components/select";
 import { useDebounce } from "@/shared/presentation/hooks";
-import { useCategories } from "../../hooks";
-import type { ProductFilters as ProductFiltersType } from "../../../application/dto/product.dto";
+import { useCategories } from "@/modules/inventory/presentation/hooks";
+import type { ProductFilters as ProductFiltersType } from "@/modules/inventory/application/dto/product.dto";
 
 interface ProductFiltersProps {
   filters: ProductFiltersType;

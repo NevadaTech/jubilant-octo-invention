@@ -1,9 +1,9 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { Sale } from "../../domain/entities/sale.entity";
+import type { Sale } from "@/modules/sales/domain/entities/sale.entity";
 import type {
   SaleRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/sale.repository.port";
+} from "@/modules/sales/application/ports/sale.repository.port";
 import type {
   SaleListResponseDto,
   SaleResponseDto,
@@ -12,11 +12,9 @@ import type {
   ShipSaleDto,
   UpdateSaleDto,
   SaleFilters,
-} from "../../application/dto/sale.dto";
-import { SaleMapper } from "../../application/mappers/sale.mapper";
-import type { ReturnApiRawDto } from "@/modules/returns/application/dto/return.dto";
-import { ReturnMapper } from "@/modules/returns/application/mappers/return.mapper";
-import type { Return } from "@/modules/returns/domain/entities/return.entity";
+} from "@/modules/sales/application/dto/sale.dto";
+import { SaleMapper } from "@/modules/sales/application/mappers/sale.mapper";
+import type { SaleReturnSummary } from "@/modules/sales/application/ports/sale.repository.port";
 
 interface ApiResponse<T> {
   data: T;
@@ -137,12 +135,29 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     return SaleMapper.toDomain(body.data);
   }
 
-  async getReturns(saleId: string): Promise<Return[]> {
-    const raw = await apiClient.get<{ data: ReturnApiRawDto[] }>(
+  async getReturns(saleId: string): Promise<SaleReturnSummary[]> {
+    interface ReturnRawDto {
+      id: string;
+      returnNumber: string;
+      status: string;
+      type: string;
+      totalAmount: number;
+      currency: string;
+      createdAt: string;
+    }
+    const raw = await apiClient.get<{ data: ReturnRawDto[] }>(
       `${this.basePath}/${saleId}/returns`,
     );
     const body = unwrapResponse(raw.data);
-    return (body.data ?? []).map(ReturnMapper.fromApiRaw);
+    return (body.data ?? []).map((r) => ({
+      id: r.id,
+      returnNumber: r.returnNumber,
+      status: r.status,
+      type: r.type,
+      totalAmount: r.totalAmount,
+      currency: r.currency,
+      createdAt: new Date(r.createdAt),
+    }));
   }
 
   private buildQueryParams(filters?: SaleFilters): Record<string, unknown> {
@@ -174,5 +189,3 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     );
   }
 }
-
-export const saleApiAdapter = new SaleApiAdapter();

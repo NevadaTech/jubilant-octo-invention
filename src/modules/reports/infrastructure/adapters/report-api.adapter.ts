@@ -1,5 +1,5 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { ReportRepositoryPort } from "../../application/ports/report.repository.port";
+import type { ReportRepositoryPort } from "@/modules/reports/application/ports/report.repository.port";
 import type {
   ReportTypeValue,
   ReportFormatValue,
@@ -7,8 +7,8 @@ import type {
   ReportResult,
   ReportViewResponseDto,
   ExportOptionsDto,
-} from "../../application/dto/report.dto";
-import { REPORT_PATHS } from "../../application/dto/report.dto";
+} from "@/modules/reports/application/dto/report.dto";
+import { REPORT_PATHS } from "@/modules/reports/application/dto/report.dto";
 
 export class ReportApiAdapter implements ReportRepositoryPort {
   private buildQueryParams(
@@ -76,5 +76,3 @@ export class ReportApiAdapter implements ReportRepositoryPort {
     return response.data;
   }
 }
-
-export const reportApiAdapter = new ReportApiAdapter();

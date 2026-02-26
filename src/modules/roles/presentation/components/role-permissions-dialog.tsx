@@ -17,8 +17,8 @@ import {
   usePermissions,
   useRolePermissions,
   useAssignPermissions,
-} from "../hooks/use-roles";
-import type { Role } from "../../domain/entities/role.entity";
+} from "@/modules/roles/presentation/hooks/use-roles";
+import type { Role } from "@/modules/roles/domain/entities/role.entity";
 
 interface RolePermissionsDialogProps {
   role: Role | null;

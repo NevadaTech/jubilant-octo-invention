@@ -15,13 +15,13 @@ import {
   toCreateWarehouseDto,
   toUpdateWarehouseDto,
   type CreateWarehouseFormData,
-} from "../../schemas/warehouse.schema";
+} from "@/modules/inventory/presentation/schemas/warehouse.schema";
 import {
   useCreateWarehouse,
   useUpdateWarehouse,
   useWarehouse,
-} from "../../hooks/use-warehouses";
-import { useWarehouseFormState } from "../../hooks/use-inventory-store";
+} from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { useWarehouseFormState } from "@/modules/inventory/presentation/hooks/use-inventory-store";
 
 export function WarehouseForm() {
   const t = useTranslations("inventory.warehouses");

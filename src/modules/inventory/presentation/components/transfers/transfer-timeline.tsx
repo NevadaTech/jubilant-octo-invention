@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Check, FileEdit, Truck, XCircle, Package, Ban } from "lucide-react";
 import { cn } from "@/ui/lib/utils";
-import type { TransferStatus } from "../../../domain/entities/transfer.entity";
+import type { TransferStatus } from "@/modules/inventory/domain/entities/transfer.entity";
 
 interface TimelineStep {
   status: TransferStatus | "CREATED";

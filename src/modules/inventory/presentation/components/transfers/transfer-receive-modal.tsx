@@ -13,8 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/ui/components/dialog";
-import { useReceiveTransfer } from "../../hooks/use-transfers";
-import type { Transfer } from "../../../domain/entities/transfer.entity";
+import { useReceiveTransfer } from "@/modules/inventory/presentation/hooks/use-transfers";
+import type { Transfer } from "@/modules/inventory/domain/entities/transfer.entity";
 
 interface TransferReceiveModalProps {
   transfer: Transfer;

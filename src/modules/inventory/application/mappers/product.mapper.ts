@@ -1,5 +1,5 @@
-import { Product } from "../../domain/entities/product.entity";
-import type { ProductResponseDto } from "../dto/product.dto";
+import { Product } from "@/modules/inventory/domain/entities/product.entity";
+import type { ProductResponseDto } from "@/modules/inventory/application/dto/product.dto";
 
 export class ProductMapper {
   static toDomain(dto: ProductResponseDto): Product {

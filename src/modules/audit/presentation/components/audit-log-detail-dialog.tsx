@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/ui/components/dialog";
 import { Badge } from "@/ui/components/badge";
-import type { AuditLog } from "../../domain/entities/audit-log.entity";
+import type { AuditLog } from "@/modules/audit/domain/entities/audit-log.entity";
 import { AuditActionBadge } from "./audit-action-badge";
 import { AuditMethodBadge } from "./audit-method-badge";
 import { AuditStatusIndicator } from "./audit-status-indicator";

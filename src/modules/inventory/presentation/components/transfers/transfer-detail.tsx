@@ -19,7 +19,7 @@ import { Skeleton } from "@/ui/components/skeleton";
 import {
   useTransfer,
   useUpdateTransferStatus,
-} from "../../hooks/use-transfers";
+} from "@/modules/inventory/presentation/hooks/use-transfers";
 import { useUser } from "@/modules/users/presentation/hooks/use-users";
 import { TransferStatusBadge } from "./transfer-status-badge";
 import { TransferTimeline } from "./transfer-timeline";

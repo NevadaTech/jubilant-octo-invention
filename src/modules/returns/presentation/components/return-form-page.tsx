@@ -25,9 +25,9 @@ import {
   createReturnSchema,
   toCreateReturnDto,
   type CreateReturnFormData,
-} from "../schemas/return.schema";
+} from "@/modules/returns/presentation/schemas/return.schema";
 import { SearchableSelect } from "@/ui/components/searchable-select";
-import { useCreateReturn } from "../hooks/use-returns";
+import { useCreateReturn } from "@/modules/returns/presentation/hooks/use-returns";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import {

@@ -1,9 +1,9 @@
 import { apiClient } from "@/shared/infrastructure/http";
-import type { Product } from "../../domain/entities/product.entity";
+import type { Product } from "@/modules/inventory/domain/entities/product.entity";
 import type {
   ProductRepositoryPort,
   PaginatedResult,
-} from "../../application/ports/product.repository.port";
+} from "@/modules/inventory/application/ports/product.repository.port";
 import type {
   ProductListResponseDto,
   ProductResponseDto,
@@ -13,8 +13,8 @@ import type {
   CreateProductApiDto,
   UpdateProductApiDto,
   ProductFilters,
-} from "../../application/dto/product.dto";
-import { ProductMapper } from "../../application/mappers/product.mapper";
+} from "@/modules/inventory/application/dto/product.dto";
+import { ProductMapper } from "@/modules/inventory/application/mappers/product.mapper";
 
 interface ApiResponse<T> {
   data: T;
@@ -193,5 +193,3 @@ export class ProductApiAdapter implements ProductRepositoryPort {
     );
   }
 }
-
-export const productApiAdapter = new ProductApiAdapter();

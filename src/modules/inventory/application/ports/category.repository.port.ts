@@ -1,19 +1,12 @@
-import type { Category } from "../../domain/entities/category.entity";
+import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
+import type { Category } from "@/modules/inventory/domain/entities/category.entity";
 import type {
   CreateCategoryDto,
   UpdateCategoryDto,
   CategoryFilters,
-} from "../dto/category.dto";
+} from "@/modules/inventory/application/dto/category.dto";
 
-export interface PaginatedResult<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type { PaginatedResult };
 
 export interface CategoryRepositoryPort {
   findAll(filters?: CategoryFilters): Promise<PaginatedResult<Category>>;
