@@ -58,3 +58,8 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 /generated/prisma
 .next
 .claude
+
+# Playwright
+e2e/.auth/
+test-results/
+playwright-report/
