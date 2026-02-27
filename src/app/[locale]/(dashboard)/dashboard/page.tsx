@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { DashboardMetricsGrid } from "@/modules/dashboard";
+import { DashboardContent } from "@/modules/dashboard";
 
 interface DashboardPageProps {
   params: Promise<{ locale: string }>;
@@ -17,7 +17,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
-      <DashboardMetricsGrid />
+      <DashboardContent />
     </div>
   );
 }

@@ -1,59 +1,52 @@
 /**
- * API Response DTOs for dashboard metrics
- */
-
-export interface ReportMetadata {
-  reportType: string;
-  reportTitle: string;
-  generatedAt: string;
-  totalRecords: number;
-  parameters?: Record<string, unknown>;
-}
-
-export interface InventoryAvailableResponseDto {
-  data: {
-    columns: Array<{ key: string; header: string; type: string }>;
-    rows: Array<Record<string, unknown>>;
-    metadata: ReportMetadata;
-    summary: {
-      totalItems: number;
-      totalValue: number;
-      totalQuantity: number;
-    };
-  };
-}
-
-export interface LowStockResponseDto {
-  data: {
-    columns: Array<{ key: string; header: string; type: string }>;
-    rows: Array<Record<string, unknown>>;
-    metadata: ReportMetadata;
-  };
-}
-
-export interface SalesReportResponseDto {
-  data: {
-    columns: Array<{ key: string; header: string; type: string }>;
-    rows: Array<Record<string, unknown>>;
-    metadata: ReportMetadata;
-  };
-}
-
-/**
- * Internal DTO for dashboard metrics
+ * Dashboard metrics DTO — matches backend GET /dashboard/metrics response
  */
 export interface DashboardMetricsDto {
   inventory: {
     totalProducts: number;
-    totalValue: number;
-    totalQuantity: number;
+    totalStockQuantity: number;
+    totalInventoryValue: number;
     currency: string;
   };
   lowStock: {
-    criticalCount: number;
+    count: number;
   };
   sales: {
-    monthlyTotal: number;
+    monthlyCount: number;
     monthlyRevenue: number;
+    currency: string;
   };
+  salesTrend: Array<{
+    date: string;
+    count: number;
+    revenue: number;
+  }>;
+  topProducts: Array<{
+    name: string;
+    sku: string;
+    revenue: number;
+    quantitySold: number;
+  }>;
+  stockByWarehouse: Array<{
+    warehouseName: string;
+    quantity: number;
+    value: number;
+  }>;
+  recentActivity: Array<{
+    type: string;
+    reference: string;
+    status: string;
+    description: string;
+    createdAt: string;
+  }>;
+}
+
+/**
+ * Backend response wrapper for dashboard metrics
+ */
+export interface DashboardMetricsApiResponse {
+  success: boolean;
+  message: string;
+  data: DashboardMetricsDto;
+  timestamp: string;
 }

@@ -24,7 +24,9 @@ export function useDashboardMetrics() {
 
   return {
     metrics: query.data,
-    isLoading: query.isLoading,
+    // Fix: In TanStack Query v5, isPending is true when enabled=false.
+    // Use !canFetch || query.isLoading to avoid perpetual skeleton.
+    isLoading: !canFetch ? false : query.isLoading,
     isError: query.isError,
     error: query.error,
     refetch: query.refetch,

@@ -32,6 +32,7 @@ export class TransferMapper {
       notes: typeof raw.note === "string" ? raw.note : null,
       lines: (raw.lines ?? []).map(TransferMapper.lineToDomain),
       linesCount: raw.linesCount ?? raw.lines?.length ?? 0,
+      totalQuantity: raw.totalQuantity,
       createdBy: raw.createdBy,
       receivedBy: raw.receivedBy ?? null,
       createdAt: new Date(raw.createdAt),

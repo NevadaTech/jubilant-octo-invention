@@ -157,7 +157,7 @@ export interface ProductFilters {
   search?: string;
   categoryId?: string;
   isActive?: boolean;
-  sortBy?: "name" | "sku" | "price" | "createdAt";
+  sortBy?: "name" | "sku" | "price" | "status" | "createdAt" | "updatedAt";
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;

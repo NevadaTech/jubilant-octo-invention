@@ -63,6 +63,7 @@ export interface TransferProps {
   notes: string | null;
   lines: TransferLine[];
   linesCount: number;
+  totalQuantity?: number;
   createdBy: string;
   receivedBy: string | null;
   createdAt: Date;
@@ -87,6 +88,7 @@ export class Transfer extends AggregateRoot<string> {
       notes: props.notes,
       lines: props.lines,
       linesCount: props.linesCount,
+      totalQuantity: props.totalQuantity,
       createdBy: props.createdBy,
       receivedBy: props.receivedBy,
       createdAt: props.createdAt,
@@ -131,7 +133,10 @@ export class Transfer extends AggregateRoot<string> {
   }
 
   get totalQuantity(): number {
-    return this.props.lines.reduce((sum, line) => sum + line.quantity, 0);
+    if (this.props.lines.length > 0) {
+      return this.props.lines.reduce((sum, line) => sum + line.quantity, 0);
+    }
+    return this.props.totalQuantity ?? 0;
   }
 
   get createdBy(): string {

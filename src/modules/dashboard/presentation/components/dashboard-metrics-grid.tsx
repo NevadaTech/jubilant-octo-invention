@@ -1,84 +1,23 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import {
-  Package,
-  DollarSign,
-  AlertTriangle,
-  ShoppingCart,
-  RefreshCw,
-} from "lucide-react";
-import { useDashboardMetrics } from "@/modules/dashboard/presentation/hooks/use-dashboard-metrics";
+import { Package, DollarSign, AlertTriangle, ShoppingCart } from "lucide-react";
 import { StatCard, type StatCardColor } from "./stat-card";
-import { StatCardSkeleton } from "./stat-card-skeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Button } from "@/ui/components/button";
+import type { DashboardMetricsDto } from "@/modules/dashboard/application/dto/metrics.dto";
 import { formatCurrency, formatNumber } from "@/lib/number";
 
-export function DashboardMetricsGrid() {
+interface DashboardMetricsGridProps {
+  metrics: DashboardMetricsDto;
+}
+
+export function DashboardMetricsGrid({ metrics }: DashboardMetricsGridProps) {
   const t = useTranslations("dashboard.metrics");
   const locale = useLocale();
-  const { metrics, isLoading, isError, refetch } = useDashboardMetrics();
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCardSkeleton />
-        <StatCardSkeleton />
-        <StatCardSkeleton />
-        <StatCardSkeleton />
-      </div>
-    );
-  }
-
-  // Error state
-  if (isError) {
-    return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="col-span-full">
-          <CardHeader>
-            <CardTitle className="text-destructive">
-              {t("error.title")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-start gap-4">
-            <p className="text-sm text-muted-foreground">
-              {t("error.description")}
-            </p>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              {t("error.retry")}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Empty state
-  if (!metrics) {
-    return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="col-span-full">
-          <CardHeader>
-            <CardTitle>{t("empty.title")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              {t("empty.description")}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Determine low stock card color based on count
   const lowStockColor: StatCardColor =
-    metrics.lowStock.criticalCount > 0 ? "error" : "success";
+    metrics.lowStock.count > 0 ? "error" : "success";
   const lowStockDescription =
-    metrics.lowStock.criticalCount > 0
+    metrics.lowStock.count > 0
       ? t("lowStock.descriptionAlert")
       : t("lowStock.descriptionOk");
 
@@ -88,7 +27,7 @@ export function DashboardMetricsGrid() {
         title={t("totalProducts.title")}
         value={formatNumber(metrics.inventory.totalProducts, locale)}
         description={t("totalProducts.description", {
-          quantity: formatNumber(metrics.inventory.totalQuantity, locale),
+          quantity: formatNumber(metrics.inventory.totalStockQuantity, locale),
         })}
         icon={Package}
         color="primary"
@@ -97,7 +36,7 @@ export function DashboardMetricsGrid() {
       <StatCard
         title={t("inventoryValue.title")}
         value={formatCurrency(
-          metrics.inventory.totalValue,
+          metrics.inventory.totalInventoryValue,
           metrics.inventory.currency,
           locale,
         )}
@@ -108,7 +47,7 @@ export function DashboardMetricsGrid() {
 
       <StatCard
         title={t("lowStock.title")}
-        value={formatNumber(metrics.lowStock.criticalCount, locale)}
+        value={formatNumber(metrics.lowStock.count, locale)}
         description={lowStockDescription}
         icon={AlertTriangle}
         color={lowStockColor}
@@ -116,9 +55,13 @@ export function DashboardMetricsGrid() {
 
       <StatCard
         title={t("monthlySales.title")}
-        value={formatCurrency(metrics.sales.monthlyRevenue, "USD", locale)}
+        value={formatCurrency(
+          metrics.sales.monthlyRevenue,
+          metrics.sales.currency,
+          locale,
+        )}
         description={t("monthlySales.description", {
-          count: metrics.sales.monthlyTotal,
+          count: metrics.sales.monthlyCount,
         })}
         icon={ShoppingCart}
         color="primary"

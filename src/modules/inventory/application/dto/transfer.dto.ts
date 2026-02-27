@@ -34,6 +34,7 @@ export interface TransferApiRawDto {
   status: TransferStatus;
   note: string | null;
   linesCount?: number;
+  totalQuantity?: number;
   lines?: TransferLineResponseDto[];
   createdBy: string;
   receivedBy?: string | null;
