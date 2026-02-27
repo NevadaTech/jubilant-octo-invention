@@ -32,7 +32,7 @@ export const SEEDED_COUNTS = {
 };
 
 export const AUTH_STORAGE = {
-  admin: "e2e/.auth/admin.json",
-  vendedor: "e2e/.auth/vendedor.json",
-  consultor: "e2e/.auth/consultor.json",
+  admin: "tests/e2e/.auth/admin.json",
+  vendedor: "tests/e2e/.auth/vendedor.json",
+  consultor: "tests/e2e/.auth/consultor.json",
 };

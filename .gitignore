@@ -60,6 +60,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .claude
 
 # Playwright
-e2e/.auth/
+tests/e2e/.auth/
 test-results/
 playwright-report/

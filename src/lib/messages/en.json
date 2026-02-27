@@ -1478,5 +1478,48 @@
     "light": "Light mode",
     "dark": "Dark mode",
     "system": "System"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your profile and system configuration",
+    "profile": {
+      "title": "Profile",
+      "description": "Update your personal information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "username": "Username",
+      "phone": "Phone",
+      "jobTitle": "Job Title",
+      "department": "Department",
+      "timezone": "Timezone",
+      "language": "Language",
+      "saveChanges": "Save Changes",
+      "saved": "Profile updated successfully",
+      "errorSaving": "Failed to update profile"
+    },
+    "alerts": {
+      "title": "Stock Alert Configuration",
+      "description": "Configure frequency and recipients for stock alerts",
+      "enabled": "Enable stock alerts",
+      "frequency": "Check frequency",
+      "severities": "Alert severities",
+      "everyHour": "Every hour",
+      "every6Hours": "Every 6 hours",
+      "every12Hours": "Every 12 hours",
+      "everyDay": "Daily",
+      "everyWeek": "Weekly",
+      "every2Weeks": "Every 2 weeks",
+      "everyMonth": "Monthly",
+      "lowStock": "Low stock alerts",
+      "criticalStock": "Critical stock alerts",
+      "outOfStock": "Out of stock alerts",
+      "recipients": "Notification recipients",
+      "recipientsHelp": "Separate email addresses with commas",
+      "save": "Save Alert Settings",
+      "saved": "Alert settings updated successfully",
+      "errorSaving": "Failed to update alert settings",
+      "lastRun": "Last run"
+    }
   }
 }

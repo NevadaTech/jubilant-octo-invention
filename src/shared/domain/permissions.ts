@@ -69,6 +69,9 @@ export const PERMISSIONS = {
   // Audit
   AUDIT_READ: "AUDIT:READ",
   AUDIT_EXPORT: "AUDIT:EXPORT",
+
+  // Settings
+  SETTINGS_MANAGE: "SETTINGS:MANAGE",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

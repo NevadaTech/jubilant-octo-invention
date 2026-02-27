@@ -8,6 +8,7 @@ import { useAuth } from "@/modules/authentication/presentation/hooks/use-auth";
 import { useLogout } from "@/modules/authentication/presentation/hooks/use-logout";
 import { LocaleSwitcher } from "./locale-switcher";
 import { Button } from "@/ui/components/button";
+import { UserAvatar } from "@/ui/components/user-avatar";
 import { cn } from "@/ui/lib/utils";
 
 interface DashboardHeaderProps {
@@ -54,6 +55,11 @@ export function DashboardHeader({ className }: DashboardHeaderProps) {
 
         {user && (
           <div className="flex items-center gap-3">
+            <UserAvatar
+              name={user.email}
+              size={32}
+              className="hidden md:block"
+            />
             <div className="hidden text-right text-sm md:block">
               <p className="font-medium text-neutral-900 dark:text-neutral-100">
                 {user.firstName} {user.lastName}

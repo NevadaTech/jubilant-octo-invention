@@ -6,6 +6,11 @@ export interface UserProps {
   username: string;
   firstName: string;
   lastName: string;
+  phone?: string;
+  timezone?: string;
+  language?: string;
+  jobTitle?: string;
+  department?: string;
   roles: string[];
   permissions: string[];
 }
@@ -24,6 +29,11 @@ export class User extends Entity<string> {
       username: props.username,
       firstName: props.firstName,
       lastName: props.lastName,
+      phone: props.phone,
+      timezone: props.timezone,
+      language: props.language,
+      jobTitle: props.jobTitle,
+      department: props.department,
       roles: props.roles,
       permissions: props.permissions,
     });
@@ -47,6 +57,26 @@ export class User extends Entity<string> {
 
   get fullName(): string {
     return `${this.props.firstName} ${this.props.lastName}`;
+  }
+
+  get phone(): string | undefined {
+    return this.props.phone;
+  }
+
+  get timezone(): string | undefined {
+    return this.props.timezone;
+  }
+
+  get language(): string | undefined {
+    return this.props.language;
+  }
+
+  get jobTitle(): string | undefined {
+    return this.props.jobTitle;
+  }
+
+  get department(): string | undefined {
+    return this.props.department;
   }
 
   get roles(): string[] {

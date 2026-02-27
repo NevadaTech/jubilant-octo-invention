@@ -1478,5 +1478,48 @@
     "light": "Modo claro",
     "dark": "Modo oscuro",
     "system": "Sistema"
+  },
+  "settings": {
+    "title": "Configuración",
+    "description": "Administra tu perfil y configuración del sistema",
+    "profile": {
+      "title": "Perfil",
+      "description": "Actualiza tu información personal",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo electrónico",
+      "username": "Nombre de usuario",
+      "phone": "Teléfono",
+      "jobTitle": "Cargo",
+      "department": "Departamento",
+      "timezone": "Zona horaria",
+      "language": "Idioma",
+      "saveChanges": "Guardar cambios",
+      "saved": "Perfil actualizado exitosamente",
+      "errorSaving": "Error al actualizar el perfil"
+    },
+    "alerts": {
+      "title": "Configuración de alertas de stock",
+      "description": "Configura la frecuencia y destinatarios de las alertas de stock",
+      "enabled": "Habilitar alertas de stock",
+      "frequency": "Frecuencia de verificación",
+      "severities": "Severidades de alerta",
+      "everyHour": "Cada hora",
+      "every6Hours": "Cada 6 horas",
+      "every12Hours": "Cada 12 horas",
+      "everyDay": "Diario",
+      "everyWeek": "Semanal",
+      "every2Weeks": "Cada 2 semanas",
+      "everyMonth": "Mensual",
+      "lowStock": "Alertas de stock bajo",
+      "criticalStock": "Alertas de stock crítico",
+      "outOfStock": "Alertas sin stock",
+      "recipients": "Destinatarios de notificaciones",
+      "recipientsHelp": "Separa las direcciones de correo con comas",
+      "save": "Guardar configuración de alertas",
+      "saved": "Configuración de alertas actualizada",
+      "errorSaving": "Error al actualizar la configuración de alertas",
+      "lastRun": "Última ejecución"
+    }
   }
 }

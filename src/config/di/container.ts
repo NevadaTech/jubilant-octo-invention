@@ -12,6 +12,7 @@ import type { UserRepositoryPort } from "@/modules/users/application/ports/user.
 import type { RoleRepositoryPort } from "@/modules/roles/application/ports/role.repository.port";
 import type { AuditLogRepositoryPort } from "@/modules/audit/application/ports/audit-log.repository.port";
 import type { ReportRepositoryPort } from "@/modules/reports/application/ports/report.repository.port";
+import type { SettingsRepositoryPort } from "@/modules/settings/application/ports/settings.port";
 
 // ── Adapter implementations ─────────────────────────────────────────
 import { AuthApiAdapter } from "@/modules/authentication/infrastructure/adapters/auth-api.adapter";
@@ -27,6 +28,7 @@ import { UserApiAdapter } from "@/modules/users/infrastructure/adapters/user-api
 import { RoleApiAdapter } from "@/modules/roles/infrastructure/adapters/role-api.adapter";
 import { AuditLogApiAdapter } from "@/modules/audit/infrastructure/adapters/audit-log-api.adapter";
 import { ReportApiAdapter } from "@/modules/reports/infrastructure/adapters/report-api.adapter";
+import { SettingsApiAdapter } from "@/modules/settings/infrastructure/adapters/settings-api.adapter";
 
 // ── Use case implementations ────────────────────────────────────────
 import {
@@ -90,6 +92,9 @@ export interface Container {
 
   // Reports
   reportRepository: ReportRepositoryPort;
+
+  // Settings
+  settingsRepository: SettingsRepositoryPort;
 }
 
 // ── Factory ─────────────────────────────────────────────────────────
@@ -108,6 +113,7 @@ export function createContainer(): Container {
   const roleRepository = new RoleApiAdapter();
   const auditLogRepository = new AuditLogApiAdapter();
   const reportRepository = new ReportApiAdapter();
+  const settingsRepository = new SettingsApiAdapter();
 
   return {
     // Authentication
@@ -153,6 +159,9 @@ export function createContainer(): Container {
 
     // Reports
     reportRepository,
+
+    // Settings
+    settingsRepository,
   };
 }
 

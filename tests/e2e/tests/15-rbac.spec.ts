@@ -80,20 +80,13 @@ test.describe("RBAC - Consultor (Read only)", () => {
   test("should be able to view sales list", async ({ page }) => {
     await page.goto("/en/dashboard/sales", { waitUntil: "domcontentloaded" });
 
-    await page.waitForFunction(
-      () => document.querySelectorAll(".animate-pulse").length === 0,
-      { timeout: 15_000 },
-    );
+    // Wait for the page to render with the Sales heading (h1 page title)
+    const heading = page.locator("h1").getByText(/sales/i);
+    await expect(heading).toBeVisible({ timeout: 10_000 });
 
-    // Table should be visible (read access)
-    const table = page.locator("table");
-    const accessDenied = page.getByText(/access denied/i);
-
-    const tableVisible = await table.isVisible().catch(() => false);
-    const deniedVisible = await accessDenied.isVisible().catch(() => false);
-
-    // Either can view the table or gets access denied (depends on role permissions)
-    expect(tableVisible || deniedVisible).toBeTruthy();
+    // Consultor has SALES_READ, so should NOT see access denied
+    const accessDenied = page.getByText("Access Denied");
+    await expect(accessDenied).not.toBeVisible();
   });
 });
 

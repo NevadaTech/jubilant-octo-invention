@@ -24,6 +24,11 @@ export interface LoginResponseDto {
       username: string;
       firstName: string;
       lastName: string;
+      phone?: string;
+      timezone?: string;
+      language?: string;
+      jobTitle?: string;
+      department?: string;
       roles: string[];
       permissions: string[];
     };

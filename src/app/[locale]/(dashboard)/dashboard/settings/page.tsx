@@ -1,5 +1,5 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { PagePlaceholder } from "@/ui/components/page-placeholder";
+import { setRequestLocale } from "next-intl/server";
+import { SettingsPage as SettingsPageContent } from "@/modules/settings/presentation/components";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -8,7 +8,6 @@ interface Props {
 export default async function SettingsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("pages.settings");
 
-  return <PagePlaceholder title={t("title")} description={t("description")} />;
+  return <SettingsPageContent />;
 }
