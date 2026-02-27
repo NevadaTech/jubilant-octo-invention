@@ -19,7 +19,11 @@
     "close": "Close",
     "accessDenied": "Access Denied",
     "accessDeniedDescription": "You do not have the required permissions to access this section. Contact your administrator if you believe this is an error.",
-    "backToDashboard": "Back to Dashboard"
+    "backToDashboard": "Back to Dashboard",
+    "pagination": {
+      "showing": "Showing {from} to {to} of {total}",
+      "perPage": "Per page"
+    }
   },
   "auth": {
     "errors": {
@@ -75,6 +79,35 @@
       "empty": {
         "title": "No data available",
         "description": "Start adding products to see your metrics."
+      }
+    },
+    "charts": {
+      "noData": "No data available",
+      "salesTrend": {
+        "title": "Sales Trend",
+        "description": "Revenue over the last 7 days",
+        "revenue": "Revenue",
+        "orders": "Orders"
+      },
+      "topProducts": {
+        "title": "Top Products",
+        "description": "Best sellers this month by revenue",
+        "revenue": "Revenue",
+        "sold": "Qty sold"
+      },
+      "stockDistribution": {
+        "title": "Stock by Warehouse",
+        "description": "Inventory value distribution",
+        "value": "Value",
+        "units": "Units"
+      },
+      "recentActivity": {
+        "title": "Recent Activity",
+        "description": "Latest transactions across modules",
+        "justNow": "Just now",
+        "minutesAgo": "{count, plural, =1 {1 minute ago} other {# minutes ago}}",
+        "hoursAgo": "{count, plural, =1 {1 hour ago} other {# hours ago}}",
+        "daysAgo": "{count, plural, =1 {1 day ago} other {# days ago}}"
       }
     }
   },
@@ -317,7 +350,9 @@
       },
       "summary": {
         "totalQuantity": "Total Units",
-        "totalValue": "Total Value"
+        "totalValue": "Total Value",
+        "totalItems": "Products",
+        "lowStockItems": "Low Stock"
       },
       "actions": {
         "setRule": "Set Rule"

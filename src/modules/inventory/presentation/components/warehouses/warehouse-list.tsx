@@ -8,14 +8,13 @@ import {
   Search,
   Edit,
   Eye,
-  ChevronLeft,
-  ChevronRight,
   MapPin,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
+import { TablePagination } from "@/ui/components/table-pagination";
 import {
   useWarehouses,
   useWarehouseFilters,
@@ -131,6 +130,10 @@ export function WarehouseList() {
     setFilters({ page: newPage });
   };
 
+  const handlePageSizeChange = (size: number) => {
+    setFilters({ limit: size, page: 1 });
+  };
+
   if (isError) {
     return (
       <Card>
@@ -194,45 +197,23 @@ export function WarehouseList() {
               </table>
             </div>
 
-            {/* Pagination */}
-            {data.pagination.totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-700">
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  {t("pagination.showing", {
-                    from:
-                      (data.pagination.page - 1) * data.pagination.limit + 1,
-                    to: Math.min(
-                      data.pagination.page * data.pagination.limit,
-                      data.pagination.total,
-                    ),
-                    total: data.pagination.total,
-                  })}
-                </p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(data.pagination.page - 1)}
-                    disabled={data.pagination.page <= 1}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <span className="text-sm text-neutral-600 dark:text-neutral-300">
-                    {data.pagination.page} / {data.pagination.totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(data.pagination.page + 1)}
-                    disabled={
-                      data.pagination.page >= data.pagination.totalPages
-                    }
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
+            <TablePagination
+              page={data.pagination.page}
+              totalPages={data.pagination.totalPages}
+              total={data.pagination.total}
+              limit={data.pagination.limit}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+              showingLabel={tCommon("pagination.showing", {
+                from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                to: Math.min(
+                  data.pagination.page * data.pagination.limit,
+                  data.pagination.total,
+                ),
+                total: data.pagination.total,
+              })}
+              perPageLabel={tCommon("pagination.perPage")}
+            />
           </>
         )}
       </CardContent>

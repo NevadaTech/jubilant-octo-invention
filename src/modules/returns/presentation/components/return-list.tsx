@@ -34,6 +34,7 @@ import {
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
 import { SortableHeader } from "@/ui/components/sortable-header";
+import { TablePagination } from "@/ui/components/table-pagination";
 import {
   useReturns,
   useConfirmReturn,
@@ -67,6 +68,10 @@ export function ReturnList() {
   const handleSearch = (value: string) => {
     setSearchValue(value);
     setFilters((prev) => ({ ...prev, search: value, page: 1 }));
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
   };
 
   const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
@@ -282,51 +287,25 @@ export function ReturnList() {
                 </table>
               </div>
 
-              {data.pagination.totalPages > 1 && (
-                <div className="mt-4 flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    {t("pagination.showing", {
-                      from:
-                        (data.pagination.page - 1) * data.pagination.limit + 1,
-                      to: Math.min(
-                        data.pagination.page * data.pagination.limit,
-                        data.pagination.total,
-                      ),
-                      total: data.pagination.total,
-                    })}
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={data.pagination.page <= 1}
-                      onClick={() =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          page: data.pagination.page - 1,
-                        }))
-                      }
-                    >
-                      {tCommon("previous")}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={
-                        data.pagination.page >= data.pagination.totalPages
-                      }
-                      onClick={() =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          page: data.pagination.page + 1,
-                        }))
-                      }
-                    >
-                      {tCommon("next")}
-                    </Button>
-                  </div>
-                </div>
-              )}
+              <TablePagination
+                page={data.pagination.page}
+                totalPages={data.pagination.totalPages}
+                total={data.pagination.total}
+                limit={data.pagination.limit}
+                onPageChange={(p) =>
+                  setFilters((prev) => ({ ...prev, page: p }))
+                }
+                onPageSizeChange={handlePageSizeChange}
+                showingLabel={tCommon("pagination.showing", {
+                  from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                  to: Math.min(
+                    data.pagination.page * data.pagination.limit,
+                    data.pagination.total,
+                  ),
+                  total: data.pagination.total,
+                })}
+                perPageLabel={tCommon("pagination.perPage")}
+              />
             </>
           )}
         </CardContent>

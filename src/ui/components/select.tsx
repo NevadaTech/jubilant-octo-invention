@@ -178,6 +178,41 @@ interface SelectContentProps extends HTMLAttributes<HTMLDivElement> {
   position?: "popper" | "item-aligned";
 }
 
+function computePosition(
+  triggerRect: DOMRect,
+  contentEl: HTMLDivElement | null,
+): { top: number; left: number; width: number } {
+  const gap = 4;
+  const viewportW = window.innerWidth;
+  const viewportH = window.innerHeight;
+  const width = Math.max(triggerRect.width, 128);
+
+  // Measure content height (fallback to 200 if not yet rendered)
+  const contentH = contentEl?.offsetHeight || 200;
+
+  // Vertical: prefer below, flip above if not enough space
+  const spaceBelow = viewportH - triggerRect.bottom - gap;
+  const spaceAbove = triggerRect.top - gap;
+  let top: number;
+  if (spaceBelow >= contentH || spaceBelow >= spaceAbove) {
+    top = triggerRect.bottom + window.scrollY + gap;
+  } else {
+    top = triggerRect.top + window.scrollY - contentH - gap;
+  }
+
+  // Horizontal: prefer left-aligned, shift left if overflows right
+  let left = triggerRect.left + window.scrollX;
+  if (left + width > viewportW + window.scrollX) {
+    left = triggerRect.right + window.scrollX - width;
+  }
+  // Clamp to viewport left edge
+  if (left < window.scrollX) {
+    left = window.scrollX + gap;
+  }
+
+  return { top, left, width };
+}
+
 const SelectContent = forwardRef<HTMLDivElement, SelectContentProps>(
   ({ className, children, position = "popper", ...props }, ref) => {
     const { open, onOpenChange, triggerRef } = useSelectContext();
@@ -194,22 +229,24 @@ const SelectContent = forwardRef<HTMLDivElement, SelectContentProps>(
         } else if (ref) {
           (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
         }
+        // Re-position once the content DOM node mounts (real height is known)
+        if (node && triggerRef.current) {
+          const rect = triggerRef.current.getBoundingClientRect();
+          setCoords(computePosition(rect, node));
+        }
       },
-      [ref],
+      [ref, triggerRef],
     );
 
     useEffect(() => {
       setMounted(true);
     }, []);
 
+    // Initial position pass (before content renders, uses estimated height)
     useLayoutEffect(() => {
       if (open && triggerRef.current) {
         const rect = triggerRef.current.getBoundingClientRect();
-        setCoords({
-          top: rect.bottom + window.scrollY + 4,
-          left: rect.left + window.scrollX,
-          width: rect.width,
-        });
+        setCoords(computePosition(rect, null));
       }
     }, [open, triggerRef]);
 
@@ -241,7 +278,7 @@ const SelectContent = forwardRef<HTMLDivElement, SelectContentProps>(
       <div
         ref={combinedRef}
         className={cn(
-          "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "fixed z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           position === "popper" &&
             "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2",
           className,

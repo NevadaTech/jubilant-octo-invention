@@ -5,11 +5,11 @@ import { useTranslations } from "next-intl";
 import {
   Package,
   Search,
-  ChevronLeft,
-  ChevronRight,
   AlertTriangle,
   Warehouse,
   Settings2,
+  Boxes,
+  DollarSign,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
@@ -148,29 +148,69 @@ function EmptyState() {
   );
 }
 
-function StockSummary({ items }: { items: Stock[] }) {
+function StockSummaryCards({ items }: { items: Stock[] }) {
   const t = useTranslations("inventory.stock");
   const totalQuantity = items.reduce((sum, s) => sum + s.quantity, 0);
   const totalValue = items.reduce((sum, s) => sum + s.totalValue, 0);
+  const lowStockCount = items.filter(
+    (s) => s.availableQuantity <= 10 && s.availableQuantity > 0,
+  ).length;
   const currency = items.find((s) => s.currency)?.currency || "USD";
 
+  const cards = [
+    {
+      label: t("summary.totalItems"),
+      value: items.length.toLocaleString(),
+      icon: Package,
+      color: "text-primary-600 dark:text-primary-400",
+      bg: "bg-primary-100 dark:bg-primary-900/30",
+    },
+    {
+      label: t("summary.totalQuantity"),
+      value: totalQuantity.toLocaleString(),
+      icon: Boxes,
+      color: "text-blue-600 dark:text-blue-400",
+      bg: "bg-blue-100 dark:bg-blue-900/30",
+    },
+    {
+      label: t("summary.totalValue"),
+      value: formatCurrency(totalValue, currency),
+      icon: DollarSign,
+      color: "text-green-600 dark:text-green-400",
+      bg: "bg-green-100 dark:bg-green-900/30",
+    },
+    {
+      label: t("summary.lowStockItems"),
+      value: lowStockCount.toLocaleString(),
+      icon: AlertTriangle,
+      color: "text-warning-600 dark:text-warning-400",
+      bg: "bg-warning-100 dark:bg-warning-900/30",
+    },
+  ];
+
   return (
-    <tr className="border-t-2 border-neutral-300 bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-800/70">
-      <td
-        className="px-4 py-3 font-semibold text-neutral-900 dark:text-neutral-100"
-        colSpan={2}
-      >
-        {t("summary.totalQuantity")}
-      </td>
-      <td className="px-4 py-3 text-right font-semibold text-neutral-900 dark:text-neutral-100">
-        {totalQuantity.toLocaleString()}
-      </td>
-      <td className="px-4 py-3 text-right" />
-      <td className="px-4 py-3 text-right font-semibold text-neutral-900 dark:text-neutral-100">
-        {formatCurrency(totalValue, currency)}
-      </td>
-      <td className="px-4 py-3" colSpan={2} />
-    </tr>
+    <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {cards.map((card) => (
+        <div
+          key={card.label}
+          className="flex items-center gap-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-700"
+        >
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${card.bg}`}
+          >
+            <card.icon className={`h-5 w-5 ${card.color}`} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm text-muted-foreground truncate">
+              {card.label}
+            </p>
+            <p className="text-lg font-semibold text-foreground truncate">
+              {card.value}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -185,10 +225,6 @@ export function StockTable() {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({ search: e.target.value, page: 1 });
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setFilters({ page: newPage });
   };
 
   const handleSetRule = (stock: Stock) => {
@@ -250,6 +286,8 @@ export function StockTable() {
             <EmptyState />
           ) : (
             <>
+              <StockSummaryCards items={data.data} />
+
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -277,50 +315,9 @@ export function StockTable() {
                         onSetRule={handleSetRule}
                       />
                     ))}
-                    {data.data.length > 0 && <StockSummary items={data.data} />}
                   </tbody>
                 </table>
               </div>
-
-              {/* Pagination */}
-              {data.pagination?.totalPages > 1 && (
-                <div className="mt-4 flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-700">
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                    {t("pagination.showing", {
-                      from:
-                        (data.pagination.page - 1) * data.pagination.limit + 1,
-                      to: Math.min(
-                        data.pagination.page * data.pagination.limit,
-                        data.pagination.total,
-                      ),
-                      total: data.pagination.total,
-                    })}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(data.pagination.page - 1)}
-                      disabled={data.pagination.page <= 1}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <span className="text-sm text-neutral-600 dark:text-neutral-300">
-                      {data.pagination.page} / {data.pagination.totalPages}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(data.pagination.page + 1)}
-                      disabled={
-                        data.pagination.page >= data.pagination.totalPages
-                      }
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              )}
             </>
           )}
         </CardContent>

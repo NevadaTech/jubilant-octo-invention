@@ -3,18 +3,12 @@
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import {
-  Package,
-  Plus,
-  Edit,
-  Eye,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Package, Plus, Edit, Eye } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import { SortableHeader } from "@/ui/components/sortable-header";
+import { TablePagination } from "@/ui/components/table-pagination";
 import {
   useProducts,
   useProductFilters,
@@ -63,9 +57,6 @@ function ProductRow({ product }: { product: Product }) {
         ) : (
           <span className="text-muted-foreground">—</span>
         )}
-      </td>
-      <td className="px-4 py-3 text-sm font-medium text-foreground">
-        {formatCurrency(product.cost)}
       </td>
       <td className="px-4 py-3 text-sm font-medium text-foreground">
         {formatCurrency(product.price)}
@@ -152,6 +143,10 @@ export function ProductList() {
     setFilters({ page: newPage });
   };
 
+  const handlePageSizeChange = (size: number) => {
+    setFilters({ limit: size, page: 1 });
+  };
+
   const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
     setFilters({
       sortBy: order ? (field as ProductFiltersType["sortBy"]) : undefined,
@@ -212,7 +207,6 @@ export function ProductList() {
                       className="px-4 py-3"
                     />
                     <th className="px-4 py-3">{t("fields.category")}</th>
-                    <th className="px-4 py-3">{t("fields.cost")}</th>
                     <SortableHeader
                       label={t("fields.price")}
                       field="price"
@@ -233,45 +227,23 @@ export function ProductList() {
               </table>
             </div>
 
-            {/* Pagination */}
-            {data.pagination.totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-between border-t pt-4">
-                <p className="text-sm text-muted-foreground">
-                  {t("pagination.showing", {
-                    from:
-                      (data.pagination.page - 1) * data.pagination.limit + 1,
-                    to: Math.min(
-                      data.pagination.page * data.pagination.limit,
-                      data.pagination.total,
-                    ),
-                    total: data.pagination.total,
-                  })}
-                </p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(data.pagination.page - 1)}
-                    disabled={data.pagination.page <= 1}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <span className="text-sm text-muted-foreground">
-                    {data.pagination.page} / {data.pagination.totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(data.pagination.page + 1)}
-                    disabled={
-                      data.pagination.page >= data.pagination.totalPages
-                    }
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
+            <TablePagination
+              page={data.pagination.page}
+              totalPages={data.pagination.totalPages}
+              total={data.pagination.total}
+              limit={data.pagination.limit}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+              showingLabel={tCommon("pagination.showing", {
+                from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                to: Math.min(
+                  data.pagination.page * data.pagination.limit,
+                  data.pagination.total,
+                ),
+                total: data.pagination.total,
+              })}
+              perPageLabel={tCommon("pagination.perPage")}
+            />
           </>
         )}
       </CardContent>

@@ -19,7 +19,11 @@
     "close": "Cerrar",
     "accessDenied": "Acceso Denegado",
     "accessDeniedDescription": "No tienes los permisos necesarios para acceder a esta sección. Contacta a tu administrador si crees que esto es un error.",
-    "backToDashboard": "Volver al Dashboard"
+    "backToDashboard": "Volver al Dashboard",
+    "pagination": {
+      "showing": "Mostrando {from} a {to} de {total}",
+      "perPage": "Por página"
+    }
   },
   "auth": {
     "errors": {
@@ -75,6 +79,35 @@
       "empty": {
         "title": "Sin datos disponibles",
         "description": "Comienza agregando productos para ver tus métricas."
+      }
+    },
+    "charts": {
+      "noData": "Sin datos disponibles",
+      "salesTrend": {
+        "title": "Tendencia de Ventas",
+        "description": "Ingresos de los últimos 7 días",
+        "revenue": "Ingresos",
+        "orders": "Pedidos"
+      },
+      "topProducts": {
+        "title": "Productos Top",
+        "description": "Más vendidos del mes por ingresos",
+        "revenue": "Ingresos",
+        "sold": "Cant. vendida"
+      },
+      "stockDistribution": {
+        "title": "Stock por Almacén",
+        "description": "Distribución del valor de inventario",
+        "value": "Valor",
+        "units": "Unidades"
+      },
+      "recentActivity": {
+        "title": "Actividad Reciente",
+        "description": "Últimas transacciones en todos los módulos",
+        "justNow": "Ahora mismo",
+        "minutesAgo": "{count, plural, =1 {Hace 1 minuto} other {Hace # minutos}}",
+        "hoursAgo": "{count, plural, =1 {Hace 1 hora} other {Hace # horas}}",
+        "daysAgo": "{count, plural, =1 {Hace 1 día} other {Hace # días}}"
       }
     }
   },
@@ -317,7 +350,9 @@
       },
       "summary": {
         "totalQuantity": "Total Unidades",
-        "totalValue": "Valor Total"
+        "totalValue": "Valor Total",
+        "totalItems": "Productos",
+        "lowStockItems": "Stock Bajo"
       },
       "actions": {
         "setRule": "Configurar Regla"
