@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import {
   Package,
@@ -10,18 +10,22 @@ import {
   Settings2,
   Boxes,
   DollarSign,
+  Filter,
+  X,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
+import { Label } from "@/ui/components/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { SortableHeader } from "@/ui/components/sortable-header";
+import { MultiSelect } from "@/ui/components/multi-select";
 import {
   useStock,
   useStockFilters,
   useSetStockFilters,
+  useWarehouses,
 } from "@/modules/inventory/presentation/hooks";
 import type { StockFilters } from "@/modules/inventory/application/dto/stock.dto";
-import { WarehouseSelector } from "@/modules/inventory/presentation/components/warehouses/warehouse-selector";
 import { ReorderRuleDialog } from "./reorder-rule-dialog";
 import type { Stock } from "@/modules/inventory/domain/entities/stock.entity";
 
@@ -218,6 +222,7 @@ function StockSummaryCards({ items }: { items: Stock[] }) {
 
 export function StockTable() {
   const t = useTranslations("inventory.stock");
+  const tCommon = useTranslations("common");
   const filters = useStockFilters();
   const setFilters = useSetStockFilters();
   const { data, isLoading, isError, error } = useStock(filters);
@@ -226,10 +231,25 @@ export function StockTable() {
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
   const [sortBy, setSortBy] = useState<StockFilters["sortBy"]>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
+  const [showFilters, setShowFilters] = useState(false);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({ search: e.target.value, page: 1 });
   };
+
+  const { data: warehousesData } = useWarehouses({ limit: 100 });
+
+  const warehouseOptions = useMemo(
+    () =>
+      warehousesData?.data.map((wh) => ({
+        value: wh.id,
+        label: wh.name,
+      })) ?? [],
+    [warehousesData],
+  );
+
+  const hasActiveFilters =
+    filters.lowStock || (filters.warehouseIds?.length ?? 0) > 0;
 
   const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
     setSortBy(order ? (field as StockFilters["sortBy"]) : undefined);
@@ -278,31 +298,84 @@ export function StockTable() {
         </CardHeader>
         <CardContent>
           {/* Search and Filters */}
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative max-w-sm flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-              <Input
-                type="search"
-                placeholder={t("search.placeholder")}
-                className="pl-9"
-                value={filters.search || ""}
-                onChange={handleSearch}
-              />
-            </div>
-            <div className="flex items-center gap-3">
+          <div className="mb-6 space-y-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder={t("search.placeholder")}
+                  className="pl-9"
+                  value={filters.search || ""}
+                  onChange={handleSearch}
+                />
+              </div>
+
               <Button
-                variant={filters.lowStock ? "default" : "outline"}
-                size="sm"
-                onClick={() =>
-                  setFilters({ lowStock: !filters.lowStock, page: 1 })
-                }
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
                 className="gap-2"
               >
-                <AlertTriangle className="h-4 w-4" />
-                {t("filters.lowStock")}
+                <Filter className="h-4 w-4" />
+                {tCommon("filter")}
+                {hasActiveFilters && (
+                  <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                    !
+                  </span>
+                )}
               </Button>
-              <WarehouseSelector />
+
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    setFilters({
+                      lowStock: false,
+                      warehouseIds: undefined,
+                      page: 1,
+                    })
+                  }
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  {tCommon("clearFilters")}
+                </Button>
+              )}
             </div>
+
+            {showFilters && (
+              <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-muted/30 p-4">
+                <Button
+                  variant={filters.lowStock ? "default" : "outline"}
+                  size="sm"
+                  onClick={() =>
+                    setFilters({ lowStock: !filters.lowStock, page: 1 })
+                  }
+                  className="gap-2"
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                  {t("filters.lowStock")}
+                </Button>
+
+                <div className="min-w-[220px]">
+                  <Label className="mb-1 block text-sm">
+                    {t("fields.warehouse")}
+                  </Label>
+                  <MultiSelect
+                    value={filters.warehouseIds ?? []}
+                    onValueChange={(values) =>
+                      setFilters({
+                        warehouseIds: values.length > 0 ? values : undefined,
+                        page: 1,
+                      })
+                    }
+                    options={warehouseOptions}
+                    allLabel={t("filters.allWarehouses")}
+                    selectedLabel={t("fields.warehouse")}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Table */}

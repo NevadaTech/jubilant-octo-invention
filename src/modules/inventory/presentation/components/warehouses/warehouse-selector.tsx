@@ -13,7 +13,10 @@ export function WarehouseSelector() {
   const t = useTranslations("inventory.warehouses");
   const selectedId = useSelectedWarehouseId();
   const setSelected = useSetSelectedWarehouse();
-  const { data, isLoading } = useWarehouses({ isActive: true, limit: 100 });
+  const { data, isLoading } = useWarehouses({
+    statuses: ["ACTIVE"],
+    limit: 100,
+  });
 
   const selectedWarehouse = data?.data.find((w) => w.id === selectedId);
 

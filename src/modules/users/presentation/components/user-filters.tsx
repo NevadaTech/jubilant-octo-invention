@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Search, X, Filter } from "lucide-react";
 import { Button } from "@/ui/components/button";
@@ -8,35 +8,25 @@ import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { MultiSelect } from "@/ui/components/multi-select";
 import { useDebounce } from "@/shared/presentation/hooks";
-import { useWarehouses } from "@/modules/inventory/presentation/hooks";
-import type { SaleFilters } from "@/modules/sales/application/dto/sale.dto";
-import type { SaleStatus } from "@/modules/sales/domain/entities/sale.entity";
+import type { UserFilters } from "@/modules/users/application/dto/user.dto";
+import type { UserStatus } from "@/modules/users/domain/entities/user.entity";
 
-interface SaleFiltersProps {
-  filters: SaleFilters;
-  onFiltersChange: (filters: SaleFilters) => void;
+interface UserFiltersProps {
+  filters: UserFilters;
+  onFiltersChange: (filters: UserFilters) => void;
 }
 
-const SALE_STATUSES: SaleStatus[] = [
-  "DRAFT",
-  "CONFIRMED",
-  "PICKING",
-  "SHIPPED",
-  "COMPLETED",
-  "CANCELLED",
-  "RETURNED",
-];
+const USER_STATUSES: UserStatus[] = ["ACTIVE", "INACTIVE", "LOCKED"];
 
-export function SaleFiltersComponent({
+export function UserFiltersComponent({
   filters,
   onFiltersChange,
-}: SaleFiltersProps) {
-  const t = useTranslations("sales");
+}: UserFiltersProps) {
+  const t = useTranslations("users");
   const tCommon = useTranslations("common");
   const [searchValue, setSearchValue] = useState(filters.search || "");
   const [showFilters, setShowFilters] = useState(false);
   const debouncedSearch = useDebounce(searchValue, 300);
-  const { data: warehousesData } = useWarehouses({ limit: 100 });
 
   useEffect(() => {
     const currentSearch = filters.search || "";
@@ -52,40 +42,7 @@ export function SaleFiltersComponent({
   const handleStatusChange = (statuses: string[]) => {
     onFiltersChange({
       ...filters,
-      status: statuses.length > 0 ? (statuses as SaleStatus[]) : undefined,
-      page: 1,
-    });
-  };
-
-  const warehouseOptions = useMemo(
-    () =>
-      warehousesData?.data.map((wh) => ({
-        value: wh.id,
-        label: wh.name,
-      })) ?? [],
-    [warehousesData],
-  );
-
-  const handleWarehouseChange = (values: string[]) => {
-    onFiltersChange({
-      ...filters,
-      warehouseIds: values.length > 0 ? values : undefined,
-      page: 1,
-    });
-  };
-
-  const handleDateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onFiltersChange({
-      ...filters,
-      startDate: e.target.value || undefined,
-      page: 1,
-    });
-  };
-
-  const handleDateToChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onFiltersChange({
-      ...filters,
-      endDate: e.target.value || undefined,
+      status: statuses.length > 0 ? (statuses as UserStatus[]) : undefined,
       page: 1,
     });
   };
@@ -99,13 +56,9 @@ export function SaleFiltersComponent({
   };
 
   const hasActiveFilters =
-    (filters.status?.length ?? 0) > 0 ||
-    (filters.warehouseIds?.length ?? 0) > 0 ||
-    filters.startDate ||
-    filters.endDate ||
-    filters.search;
+    (filters.status && filters.status.length > 0) || filters.search;
 
-  const statusOptions = SALE_STATUSES.map((s) => ({
+  const statusOptions = USER_STATUSES.map((s) => ({
     value: s,
     label: t(`status.${s.toLowerCase()}`),
   }));
@@ -156,41 +109,6 @@ export function SaleFiltersComponent({
               options={statusOptions}
               allLabel={t("filters.allStatuses")}
               selectedLabel={tCommon("selected")}
-            />
-          </div>
-
-          <div className="min-w-[200px] flex-1">
-            <Label className="mb-2 block text-sm">
-              {t("filters.warehouse")}
-            </Label>
-            <MultiSelect
-              value={filters.warehouseIds ?? []}
-              onValueChange={handleWarehouseChange}
-              options={warehouseOptions}
-              allLabel={t("filters.allWarehouses")}
-              selectedLabel={t("filters.warehouse")}
-            />
-          </div>
-
-          <div className="min-w-[150px]">
-            <Label className="mb-2 block text-sm">
-              {t("filters.dateFrom")}
-            </Label>
-            <Input
-              type="date"
-              value={filters.startDate || ""}
-              onChange={handleDateFromChange}
-              className="w-auto"
-            />
-          </div>
-
-          <div className="min-w-[150px]">
-            <Label className="mb-2 block text-sm">{t("filters.dateTo")}</Label>
-            <Input
-              type="date"
-              value={filters.endDate || ""}
-              onChange={handleDateToChange}
-              className="w-auto"
             />
           </div>
         </div>

@@ -76,8 +76,8 @@ export class WarehouseApiAdapter implements WarehouseRepositoryPort {
     if (filters.search) {
       params.search = filters.search;
     }
-    if (filters.isActive !== undefined) {
-      params.isActive = filters.isActive;
+    if (filters.statuses?.length === 1) {
+      params.isActive = filters.statuses[0] === "ACTIVE";
     }
     if (filters.page) {
       params.page = filters.page;

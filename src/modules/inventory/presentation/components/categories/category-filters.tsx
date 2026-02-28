@@ -8,31 +8,27 @@ import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { MultiSelect } from "@/ui/components/multi-select";
 import { useDebounce } from "@/shared/presentation/hooks";
-import { useCategories } from "@/modules/inventory/presentation/hooks";
-import type { ProductFilters as ProductFiltersType } from "@/modules/inventory/application/dto/product.dto";
+import type { CategoryFilters } from "@/modules/inventory/application/dto/category.dto";
 
-interface ProductFiltersProps {
-  filters: ProductFiltersType;
-  onFiltersChange: (filters: ProductFiltersType) => void;
+interface CategoryFiltersProps {
+  filters: CategoryFilters;
+  onFiltersChange: (filters: Partial<CategoryFilters>) => void;
 }
 
-export function ProductFilters({
+export function CategoryFiltersComponent({
   filters,
   onFiltersChange,
-}: ProductFiltersProps) {
-  const t = useTranslations("inventory.products");
-  const tCommon = useTranslations("inventory.common.filters");
+}: CategoryFiltersProps) {
+  const t = useTranslations("inventory.categories");
+  const tCommon = useTranslations("common");
   const [searchValue, setSearchValue] = useState(filters.search || "");
   const [showFilters, setShowFilters] = useState(false);
   const debouncedSearch = useDebounce(searchValue, 300);
-  const { data: categoriesData } = useCategories({ limit: 100 });
 
-  // Apply debounced search
   useEffect(() => {
     const currentSearch = filters.search || "";
     if (debouncedSearch !== currentSearch) {
       onFiltersChange({
-        ...filters,
         search: debouncedSearch || undefined,
         page: 1,
       });
@@ -47,27 +43,9 @@ export function ProductFilters({
     [t],
   );
 
-  const categoryOptions = useMemo(
-    () =>
-      categoriesData?.data.map((cat) => ({
-        value: cat.id,
-        label: cat.name,
-      })) ?? [],
-    [categoriesData],
-  );
-
   const handleStatusChange = (values: string[]) => {
     onFiltersChange({
-      ...filters,
       statuses: values.length > 0 ? values : undefined,
-      page: 1,
-    });
-  };
-
-  const handleCategoryChange = (values: string[]) => {
-    onFiltersChange({
-      ...filters,
-      categoryIds: values.length > 0 ? values : undefined,
       page: 1,
     });
   };
@@ -75,20 +53,14 @@ export function ProductFilters({
   const handleClearFilters = () => {
     setSearchValue("");
     onFiltersChange({
-      page: 1,
-      limit: filters.limit,
-      categoryIds: undefined,
-      statuses: undefined,
       search: undefined,
-      sortBy: filters.sortBy,
-      sortOrder: filters.sortOrder,
+      statuses: undefined,
+      page: 1,
     });
   };
 
   const hasActiveFilters =
-    (filters.statuses?.length ?? 0) > 0 ||
-    (filters.categoryIds?.length ?? 0) > 0 ||
-    filters.search;
+    (filters.statuses?.length ?? 0) > 0 || filters.search;
 
   return (
     <div className="space-y-4">
@@ -110,7 +82,7 @@ export function ProductFilters({
           className="gap-2"
         >
           <Filter className="h-4 w-4" />
-          {t("filter")}
+          {tCommon("filter")}
           {hasActiveFilters && (
             <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
               !
@@ -121,7 +93,7 @@ export function ProductFilters({
         {hasActiveFilters && (
           <Button variant="ghost" size="sm" onClick={handleClearFilters}>
             <X className="mr-2 h-4 w-4" />
-            {tCommon("clear")}
+            {tCommon("clearFilters")}
           </Button>
         )}
       </div>
@@ -129,26 +101,13 @@ export function ProductFilters({
       {showFilters && (
         <div className="flex flex-wrap gap-4 rounded-lg border bg-muted/30 p-4">
           <div className="min-w-[180px] flex-1">
-            <Label className="mb-2 block text-sm">{tCommon("status")}</Label>
+            <Label className="mb-2 block text-sm">{t("filters.status")}</Label>
             <MultiSelect
               value={filters.statuses ?? []}
               onValueChange={handleStatusChange}
               options={statusOptions}
               allLabel={t("filters.allStatuses")}
-              selectedLabel={tCommon("status")}
-            />
-          </div>
-
-          <div className="min-w-[220px] flex-1">
-            <Label className="mb-2 block text-sm">
-              {t("filters.category")}
-            </Label>
-            <MultiSelect
-              value={filters.categoryIds ?? []}
-              onValueChange={handleCategoryChange}
-              options={categoryOptions}
-              allLabel={t("filters.allCategories")}
-              selectedLabel={t("filters.category")}
+              selectedLabel={t("filters.status")}
             />
           </div>
         </div>

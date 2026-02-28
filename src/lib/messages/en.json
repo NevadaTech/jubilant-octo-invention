@@ -20,6 +20,8 @@
     "accessDenied": "Access Denied",
     "accessDeniedDescription": "You do not have the required permissions to access this section. Contact your administrator if you believe this is an error.",
     "backToDashboard": "Back to Dashboard",
+    "clearFilters": "Clear filters",
+    "selected": "selected",
     "pagination": {
       "showing": "Showing {from} to {to} of {total}",
       "perPage": "Per page"
@@ -281,6 +283,11 @@
           "description": "The warehouse will become active and available for operations again. Do you want to continue?"
         }
       },
+      "filters": {
+        "status": "Status",
+        "allStatuses": "All Statuses",
+        "clear": "Clear Filters"
+      },
       "search": {
         "placeholder": "Search warehouses..."
       },
@@ -336,7 +343,8 @@
         "placeholder": "Search by product or SKU..."
       },
       "filters": {
-        "lowStock": "Low Stock"
+        "lowStock": "Low Stock",
+        "allWarehouses": "All Warehouses"
       },
       "pagination": {
         "showing": "Showing {from} to {to} of {total} items"
@@ -404,6 +412,11 @@
       },
       "list": {
         "title": "Categories"
+      },
+      "filters": {
+        "status": "Status",
+        "allStatuses": "All Statuses",
+        "clear": "Clear Filters"
       },
       "search": {
         "placeholder": "Search categories..."
@@ -531,6 +544,8 @@
         "allTypes": "All Types",
         "status": "Status",
         "allStatuses": "All Statuses",
+        "warehouse": "Warehouse",
+        "allWarehouses": "All Warehouses",
         "dateFrom": "From Date",
         "dateTo": "To Date",
         "clear": "Clear Filters"
@@ -640,6 +655,16 @@
         "rejectedDescription": "Transfer was rejected at destination",
         "canceled": "Canceled",
         "canceledDescription": "Transfer was canceled"
+      },
+      "filters": {
+        "status": "Status",
+        "allStatuses": "All Statuses",
+        "fromWarehouse": "From Warehouse",
+        "toWarehouse": "To Warehouse",
+        "allWarehouses": "All Warehouses",
+        "dateFrom": "From Date",
+        "dateTo": "To Date",
+        "clear": "Clear Filters"
       },
       "search": {
         "placeholder": "Search transfers..."
@@ -985,7 +1010,8 @@
     },
     "filters": {
       "status": "Status",
-      "allStatuses": "All Statuses"
+      "allStatuses": "All Statuses",
+      "clear": "Clear Filters"
     },
     "pagination": {
       "showing": "Showing {from} to {to} of {total} users"
@@ -1210,7 +1236,8 @@
     "movementType": {
       "IN": "Incoming",
       "OUT": "Outgoing",
-      "ADJUSTMENT": "Adjustment",
+      "ADJUST_IN": "Adjust In",
+      "ADJUST_OUT": "Adjust Out",
       "TRANSFER_IN": "Transfer In",
       "TRANSFER_OUT": "Transfer Out"
     },
@@ -1335,7 +1362,11 @@
     "status": {
       "DRAFT": "Draft",
       "CONFIRMED": "Confirmed",
-      "CANCELLED": "Cancelled"
+      "PICKING": "Picking",
+      "SHIPPED": "Shipped",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "RETURNED": "Returned"
     },
     "badgeLabels": {
       "CRITICAL": "Critical",
@@ -1345,11 +1376,22 @@
       "NORMAL": "Normal",
       "CONFIRMED": "Confirmed",
       "CANCELLED": "Cancelled",
+      "CANCELED": "Canceled",
       "DRAFT": "Draft",
       "COMPLETED": "Completed",
       "PENDING": "Pending",
+      "PICKING": "Picking",
+      "SHIPPED": "Shipped",
+      "RETURNED": "Returned",
+      "POSTED": "Posted",
+      "VOID": "Void",
+      "IN_TRANSIT": "In Transit",
+      "PARTIAL": "Partial",
+      "RECEIVED": "Received",
+      "REJECTED": "Rejected",
       "ACTIVE": "Active",
       "INACTIVE": "Inactive",
+      "LOCKED": "Locked",
       "IN": "Incoming",
       "OUT": "Outgoing",
       "ADJUSTMENT": "Adjustment",

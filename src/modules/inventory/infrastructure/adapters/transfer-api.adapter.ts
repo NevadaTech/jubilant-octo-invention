@@ -91,14 +91,14 @@ export class TransferApiAdapter implements TransferRepositoryPort {
 
     const params: Record<string, unknown> = {};
 
-    if (filters.fromWarehouseId) {
-      params.fromWarehouseId = filters.fromWarehouseId;
+    if (filters.fromWarehouseIds?.length) {
+      params.fromWarehouseId = filters.fromWarehouseIds.join(",");
     }
-    if (filters.toWarehouseId) {
-      params.toWarehouseId = filters.toWarehouseId;
+    if (filters.toWarehouseIds?.length) {
+      params.toWarehouseId = filters.toWarehouseIds.join(",");
     }
-    if (filters.status) {
-      params.status = filters.status;
+    if (filters.status?.length) {
+      params.status = filters.status.join(",");
     }
     if (filters.search) {
       params.search = filters.search;

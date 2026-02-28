@@ -72,12 +72,32 @@ function renderCell(
   }
   if (col.key === "status") {
     const v = String(value ?? "");
-    const variant =
-      v === "CONFIRMED" || v === "FAST_MOVING"
-        ? "success"
-        : v === "CANCELLED" || v === "SLOW_MOVING"
-          ? "destructive"
-          : "secondary";
+    const STATUS_VARIANTS: Record<
+      string,
+      "success" | "warning" | "info" | "destructive" | "secondary"
+    > = {
+      CONFIRMED: "success",
+      COMPLETED: "success",
+      POSTED: "success",
+      RECEIVED: "success",
+      ACTIVE: "success",
+      PICKING: "warning",
+      RETURNED: "warning",
+      PARTIAL: "warning",
+      PENDING: "warning",
+      SHIPPED: "info",
+      IN_TRANSIT: "info",
+      CANCELLED: "destructive",
+      CANCELED: "destructive",
+      REJECTED: "destructive",
+      VOID: "destructive",
+      LOCKED: "destructive",
+      DRAFT: "secondary",
+      INACTIVE: "secondary",
+      FAST_MOVING: "success",
+      SLOW_MOVING: "destructive",
+    };
+    const variant = STATUS_VARIANTS[v] ?? "secondary";
     return <Badge variant={variant}>{labelFor(v)}</Badge>;
   }
   if (col.key === "classification") {

@@ -42,20 +42,20 @@ export interface ReportDateRange {
 
 export interface ReportParameters {
   dateRange?: ReportDateRange;
-  warehouseId?: string;
+  warehouseIds?: string[];
   productId?: string;
-  category?: string;
-  status?: string;
-  returnType?: "CUSTOMER" | "SUPPLIER";
+  categoryIds?: string[];
+  status?: string[];
+  returnTypes?: ("CUSTOMER" | "SUPPLIER")[];
   groupBy?: GroupByValue;
   period?: PeriodValue;
-  movementType?: MovementTypeValue;
+  movementTypes?: MovementTypeValue[];
   customerReference?: string;
   saleId?: string;
   movementId?: string;
   includeInactive?: boolean;
   locationId?: string;
-  severity?: SeverityValue;
+  severities?: SeverityValue[];
   deadStockDays?: number;
 }
 
@@ -116,14 +116,14 @@ export interface ReportTypeConfig {
   category: string;
   filters: {
     dateRange?: boolean;
-    warehouseId?: boolean;
-    category?: boolean;
+    warehouseIds?: boolean;
+    categoryIds?: boolean;
     period?: boolean;
     groupBy?: boolean;
     status?: boolean;
-    returnType?: boolean;
-    severity?: boolean;
-    movementType?: boolean;
+    returnTypes?: boolean;
+    severities?: boolean;
+    movementTypes?: boolean;
     includeInactive?: boolean;
     deadStockDays?: boolean;
   };
@@ -164,72 +164,66 @@ export const REPORT_FILTER_CONFIG: Record<
   ReportTypeValue,
   ReportTypeConfig["filters"]
 > = {
-  // Snapshot — no dateRange (backend ignores it)
   AVAILABLE_INVENTORY: {
-    warehouseId: true,
+    warehouseIds: true,
     includeInactive: true,
   },
-  MOVEMENT_HISTORY: { dateRange: true, warehouseId: true, movementType: true },
-  VALUATION: { warehouseId: true, category: true },
-  LOW_STOCK: { warehouseId: true, severity: true },
-  // Removed groupBy (backend ignores it)
+  MOVEMENT_HISTORY: {
+    dateRange: true,
+    warehouseIds: true,
+    movementTypes: true,
+  },
+  VALUATION: { warehouseIds: true, categoryIds: true },
+  LOW_STOCK: { warehouseIds: true, severities: true },
   MOVEMENTS: {
     dateRange: true,
-    warehouseId: true,
-    movementType: true,
+    warehouseIds: true,
+    movementTypes: true,
   },
-  // Removed period (backend ignores it)
   FINANCIAL: {
     dateRange: true,
-    warehouseId: true,
-    category: true,
+    warehouseIds: true,
+    categoryIds: true,
   },
-  // Removed period (backend ignores it)
   TURNOVER: {
     dateRange: true,
-    warehouseId: true,
-    category: true,
+    warehouseIds: true,
+    categoryIds: true,
   },
-  // Removed groupBy and period (backend ignores them)
   SALES: {
     dateRange: true,
-    warehouseId: true,
+    warehouseIds: true,
     status: true,
   },
-  // Removed groupBy and period (backend ignores them)
   SALES_BY_PRODUCT: {
     dateRange: true,
-    warehouseId: true,
-    category: true,
+    warehouseIds: true,
+    categoryIds: true,
   },
-  // Added warehouseId (backend supports it), removed period (ignored)
-  SALES_BY_WAREHOUSE: { dateRange: true, warehouseId: true },
+  SALES_BY_WAREHOUSE: { dateRange: true, warehouseIds: true },
   RETURNS: {
     dateRange: true,
-    warehouseId: true,
+    warehouseIds: true,
     status: true,
-    returnType: true,
+    returnTypes: true,
   },
-  // Added warehouseId + returnType (backend supports them), removed period (ignored)
-  RETURNS_BY_TYPE: { dateRange: true, warehouseId: true, returnType: true },
-  // Added warehouseId + returnType (backend supports them), removed period (ignored)
+  RETURNS_BY_TYPE: { dateRange: true, warehouseIds: true, returnTypes: true },
   RETURNS_BY_PRODUCT: {
     dateRange: true,
-    warehouseId: true,
-    category: true,
-    returnType: true,
+    warehouseIds: true,
+    categoryIds: true,
+    returnTypes: true,
   },
-  RETURNS_CUSTOMER: { dateRange: true, warehouseId: true, status: true },
-  RETURNS_SUPPLIER: { dateRange: true, warehouseId: true, status: true },
+  RETURNS_CUSTOMER: { dateRange: true, warehouseIds: true, status: true },
+  RETURNS_SUPPLIER: { dateRange: true, warehouseIds: true, status: true },
   ABC_ANALYSIS: {
     dateRange: true,
-    warehouseId: true,
-    category: true,
+    warehouseIds: true,
+    categoryIds: true,
   },
-  // Added category (backend supports it)
   DEAD_STOCK: {
-    warehouseId: true,
-    category: true,
+    warehouseIds: true,
+    categoryIds: true,
     deadStockDays: true,
     includeInactive: true,
   },

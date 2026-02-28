@@ -24,7 +24,10 @@ export function CategorySelector({
   disabled = false,
 }: CategorySelectorProps) {
   const t = useTranslations("inventory.categories");
-  const { data, isLoading } = useCategories({ limit: 100, isActive: true });
+  const { data, isLoading } = useCategories({
+    limit: 100,
+    statuses: ["ACTIVE"],
+  });
 
   return (
     <Select value={value} onValueChange={onValueChange}>

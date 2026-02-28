@@ -97,7 +97,7 @@ export class UserApiAdapter implements UserRepositoryPort {
   private buildQueryParams(filters?: UserFilters): Record<string, unknown> {
     if (!filters) return {};
     const params: Record<string, unknown> = {};
-    if (filters.status) params.status = filters.status;
+    if (filters.status?.length) params.status = filters.status.join(",");
     if (filters.search) params.search = filters.search;
     if (filters.page) params.page = filters.page;
     if (filters.limit) params.limit = filters.limit;

@@ -9,25 +9,28 @@ import { Label } from "@/ui/components/label";
 import { MultiSelect } from "@/ui/components/multi-select";
 import { useDebounce } from "@/shared/presentation/hooks";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks";
-import type { ReturnFilters } from "@/modules/returns/application/dto/return.dto";
-import type {
-  ReturnStatus,
-  ReturnType,
-} from "@/modules/returns/domain/entities/return.entity";
+import type { TransferFilters } from "@/modules/inventory/application/dto/transfer.dto";
+import type { TransferStatus } from "@/modules/inventory/domain/entities/transfer.entity";
 
-interface ReturnFiltersProps {
-  filters: ReturnFilters;
-  onFiltersChange: (filters: ReturnFilters) => void;
+interface TransferFiltersProps {
+  filters: TransferFilters;
+  onFiltersChange: (filters: TransferFilters) => void;
 }
 
-const RETURN_STATUSES: ReturnStatus[] = ["DRAFT", "CONFIRMED", "CANCELLED"];
-const RETURN_TYPES: ReturnType[] = ["RETURN_CUSTOMER", "RETURN_SUPPLIER"];
+const TRANSFER_STATUSES: TransferStatus[] = [
+  "DRAFT",
+  "IN_TRANSIT",
+  "PARTIAL",
+  "RECEIVED",
+  "REJECTED",
+  "CANCELED",
+];
 
-export function ReturnFiltersComponent({
+export function TransferFiltersComponent({
   filters,
   onFiltersChange,
-}: ReturnFiltersProps) {
-  const t = useTranslations("returns");
+}: TransferFiltersProps) {
+  const t = useTranslations("inventory.transfers");
   const tCommon = useTranslations("common");
   const [searchValue, setSearchValue] = useState(filters.search || "");
   const [showFilters, setShowFilters] = useState(false);
@@ -45,20 +48,9 @@ export function ReturnFiltersComponent({
     }
   }, [debouncedSearch]);
 
-  const typeOptions = useMemo(
-    () =>
-      RETURN_TYPES.map((type) => ({
-        value: type,
-        label: t(
-          `types.${type === "RETURN_CUSTOMER" ? "customer" : "supplier"}`,
-        ),
-      })),
-    [t],
-  );
-
   const statusOptions = useMemo(
     () =>
-      RETURN_STATUSES.map((s) => ({
+      TRANSFER_STATUSES.map((s) => ({
         value: s,
         label: t(`status.${s.toLowerCase()}`),
       })),
@@ -74,26 +66,26 @@ export function ReturnFiltersComponent({
     [warehousesData],
   );
 
-  const handleTypeChange = (values: string[]) => {
-    onFiltersChange({
-      ...filters,
-      types: values.length > 0 ? (values as ReturnType[]) : undefined,
-      page: 1,
-    });
-  };
-
   const handleStatusChange = (values: string[]) => {
     onFiltersChange({
       ...filters,
-      status: values.length > 0 ? (values as ReturnStatus[]) : undefined,
+      status: values.length > 0 ? (values as TransferStatus[]) : undefined,
       page: 1,
     });
   };
 
-  const handleWarehouseChange = (values: string[]) => {
+  const handleFromWarehouseChange = (values: string[]) => {
     onFiltersChange({
       ...filters,
-      warehouseIds: values.length > 0 ? values : undefined,
+      fromWarehouseIds: values.length > 0 ? values : undefined,
+      page: 1,
+    });
+  };
+
+  const handleToWarehouseChange = (values: string[]) => {
+    onFiltersChange({
+      ...filters,
+      toWarehouseIds: values.length > 0 ? values : undefined,
       page: 1,
     });
   };
@@ -119,9 +111,9 @@ export function ReturnFiltersComponent({
     onFiltersChange({
       page: 1,
       limit: filters.limit,
-      types: undefined,
       status: undefined,
-      warehouseIds: undefined,
+      fromWarehouseIds: undefined,
+      toWarehouseIds: undefined,
       startDate: undefined,
       endDate: undefined,
       search: undefined,
@@ -131,9 +123,9 @@ export function ReturnFiltersComponent({
   };
 
   const hasActiveFilters =
-    (filters.types?.length ?? 0) > 0 ||
     (filters.status?.length ?? 0) > 0 ||
-    (filters.warehouseIds?.length ?? 0) > 0 ||
+    (filters.fromWarehouseIds?.length ?? 0) > 0 ||
+    (filters.toWarehouseIds?.length ?? 0) > 0 ||
     filters.startDate ||
     filters.endDate ||
     filters.search;
@@ -176,17 +168,6 @@ export function ReturnFiltersComponent({
 
       {showFilters && (
         <div className="flex flex-wrap gap-4 rounded-lg border bg-muted/30 p-4">
-          <div className="min-w-[180px] flex-1">
-            <Label className="mb-2 block text-sm">{t("filters.type")}</Label>
-            <MultiSelect
-              value={filters.types ?? []}
-              onValueChange={handleTypeChange}
-              options={typeOptions}
-              allLabel={t("filters.allTypes")}
-              selectedLabel={t("filters.type")}
-            />
-          </div>
-
           <div className="min-w-[200px] flex-1">
             <Label className="mb-2 block text-sm">{t("filters.status")}</Label>
             <MultiSelect
@@ -200,14 +181,27 @@ export function ReturnFiltersComponent({
 
           <div className="min-w-[200px] flex-1">
             <Label className="mb-2 block text-sm">
-              {t("filters.warehouse")}
+              {t("filters.fromWarehouse")}
             </Label>
             <MultiSelect
-              value={filters.warehouseIds ?? []}
-              onValueChange={handleWarehouseChange}
+              value={filters.fromWarehouseIds ?? []}
+              onValueChange={handleFromWarehouseChange}
               options={warehouseOptions}
               allLabel={t("filters.allWarehouses")}
-              selectedLabel={t("filters.warehouse")}
+              selectedLabel={t("filters.fromWarehouse")}
+            />
+          </div>
+
+          <div className="min-w-[200px] flex-1">
+            <Label className="mb-2 block text-sm">
+              {t("filters.toWarehouse")}
+            </Label>
+            <MultiSelect
+              value={filters.toWarehouseIds ?? []}
+              onValueChange={handleToWarehouseChange}
+              options={warehouseOptions}
+              allLabel={t("filters.allWarehouses")}
+              selectedLabel={t("filters.toWarehouse")}
             />
           </div>
 

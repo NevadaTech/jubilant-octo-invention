@@ -39,7 +39,7 @@ export interface UpdateWarehouseDto {
 
 export interface WarehouseFilters {
   search?: string;
-  isActive?: boolean;
+  statuses?: string[];
   page?: number;
   limit?: number;
   sortBy?: "name" | "code" | "isActive" | "createdAt" | "updatedAt";

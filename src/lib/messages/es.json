@@ -20,6 +20,8 @@
     "accessDenied": "Acceso Denegado",
     "accessDeniedDescription": "No tienes los permisos necesarios para acceder a esta sección. Contacta a tu administrador si crees que esto es un error.",
     "backToDashboard": "Volver al Dashboard",
+    "clearFilters": "Limpiar filtros",
+    "selected": "seleccionados",
     "pagination": {
       "showing": "Mostrando {from} a {to} de {total}",
       "perPage": "Por página"
@@ -281,6 +283,11 @@
           "description": "El almacén volverá a estar activo y disponible para operaciones. ¿Deseas continuar?"
         }
       },
+      "filters": {
+        "status": "Estado",
+        "allStatuses": "Todos los Estados",
+        "clear": "Limpiar Filtros"
+      },
       "search": {
         "placeholder": "Buscar almacenes..."
       },
@@ -336,7 +343,8 @@
         "placeholder": "Buscar por producto o SKU..."
       },
       "filters": {
-        "lowStock": "Stock Bajo"
+        "lowStock": "Stock Bajo",
+        "allWarehouses": "Todas las Bodegas"
       },
       "pagination": {
         "showing": "Mostrando {from} a {to} de {total} items"
@@ -404,6 +412,11 @@
       },
       "list": {
         "title": "Categorías"
+      },
+      "filters": {
+        "status": "Estado",
+        "allStatuses": "Todos los Estados",
+        "clear": "Limpiar Filtros"
       },
       "search": {
         "placeholder": "Buscar categorías..."
@@ -531,6 +544,8 @@
         "allTypes": "Todos los Tipos",
         "status": "Estado",
         "allStatuses": "Todos los Estados",
+        "warehouse": "Almacén",
+        "allWarehouses": "Todos los Almacenes",
         "dateFrom": "Desde Fecha",
         "dateTo": "Hasta Fecha",
         "clear": "Limpiar Filtros"
@@ -640,6 +655,16 @@
         "rejectedDescription": "La transferencia fue rechazada en destino",
         "canceled": "Cancelada",
         "canceledDescription": "La transferencia fue cancelada"
+      },
+      "filters": {
+        "status": "Estado",
+        "allStatuses": "Todos los Estados",
+        "fromWarehouse": "Almacén Origen",
+        "toWarehouse": "Almacén Destino",
+        "allWarehouses": "Todos los Almacenes",
+        "dateFrom": "Desde Fecha",
+        "dateTo": "Hasta Fecha",
+        "clear": "Limpiar Filtros"
       },
       "search": {
         "placeholder": "Buscar transferencias..."
@@ -985,7 +1010,8 @@
     },
     "filters": {
       "status": "Estado",
-      "allStatuses": "Todos los Estados"
+      "allStatuses": "Todos los Estados",
+      "clear": "Limpiar Filtros"
     },
     "pagination": {
       "showing": "Mostrando {from} a {to} de {total} usuarios"
@@ -1210,7 +1236,8 @@
     "movementType": {
       "IN": "Entrada",
       "OUT": "Salida",
-      "ADJUSTMENT": "Ajuste",
+      "ADJUST_IN": "Ajuste Entrada",
+      "ADJUST_OUT": "Ajuste Salida",
       "TRANSFER_IN": "Transferencia Entrada",
       "TRANSFER_OUT": "Transferencia Salida"
     },
@@ -1335,7 +1362,11 @@
     "status": {
       "DRAFT": "Borrador",
       "CONFIRMED": "Confirmado",
-      "CANCELLED": "Cancelado"
+      "PICKING": "En Preparaci\u00f3n",
+      "SHIPPED": "Enviado",
+      "COMPLETED": "Completado",
+      "CANCELLED": "Cancelado",
+      "RETURNED": "Devuelto"
     },
     "badgeLabels": {
       "CRITICAL": "Crítico",
@@ -1345,11 +1376,22 @@
       "NORMAL": "Normal",
       "CONFIRMED": "Confirmado",
       "CANCELLED": "Cancelado",
+      "CANCELED": "Cancelado",
       "DRAFT": "Borrador",
       "COMPLETED": "Completado",
       "PENDING": "Pendiente",
+      "PICKING": "En Preparación",
+      "SHIPPED": "Enviado",
+      "RETURNED": "Devuelto",
+      "POSTED": "Contabilizado",
+      "VOID": "Anulado",
+      "IN_TRANSIT": "En Tránsito",
+      "PARTIAL": "Parcial",
+      "RECEIVED": "Recibido",
+      "REJECTED": "Rechazado",
       "ACTIVE": "Activo",
       "INACTIVE": "Inactivo",
+      "LOCKED": "Bloqueado",
       "IN": "Entrada",
       "OUT": "Salida",
       "ADJUSTMENT": "Ajuste",

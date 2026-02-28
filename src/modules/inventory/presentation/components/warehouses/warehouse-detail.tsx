@@ -112,7 +112,7 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
     error,
   } = useWarehouse(warehouseId);
   const { data: stockData, isLoading: isLoadingStock } = useStock({
-    warehouseId,
+    warehouseIds: [warehouseId],
     search: search || undefined,
     limit: 100,
   });

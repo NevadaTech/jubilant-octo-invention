@@ -5,6 +5,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -54,13 +55,25 @@ export function SalesTrendChart({ data, currency }: SalesTrendChartProps) {
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="hsl(var(--primary))"
+                    stopColor="var(--color-chart-1)"
+                    stopOpacity={0.35}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor="var(--color-chart-1)"
+                    stopOpacity={0.02}
+                  />
+                </linearGradient>
+                <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="5%"
+                    stopColor="var(--color-chart-2)"
                     stopOpacity={0.3}
                   />
                   <stop
                     offset="95%"
-                    stopColor="hsl(var(--primary))"
-                    stopOpacity={0}
+                    stopColor="var(--color-chart-2)"
+                    stopOpacity={0.02}
                   />
                 </linearGradient>
               </defs>
@@ -72,6 +85,7 @@ export function SalesTrendChart({ data, currency }: SalesTrendChartProps) {
                 className="text-muted-foreground"
               />
               <YAxis
+                yAxisId="revenue"
                 tickFormatter={(v) =>
                   formatCompactCurrency(v, currency, locale)
                 }
@@ -79,35 +93,85 @@ export function SalesTrendChart({ data, currency }: SalesTrendChartProps) {
                 width={90}
                 className="text-muted-foreground"
               />
+              <YAxis
+                yAxisId="orders"
+                orientation="right"
+                tick={{ fontSize: 11 }}
+                width={40}
+                className="text-muted-foreground"
+              />
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (!active || !payload?.length) return null;
+                  const rev = payload.find((p) => p.dataKey === "revenue");
+                  const ord = payload.find((p) => p.dataKey === "count");
                   return (
-                    <div className="rounded-lg border bg-background p-3 shadow-sm">
-                      <p className="text-sm font-medium">
+                    <div className="rounded-lg border bg-card p-3 shadow-md">
+                      <p className="text-sm font-medium text-card-foreground">
                         {formatDate(String(label))}
                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        {t("salesTrend.revenue")}:{" "}
-                        {formatCurrency(
-                          payload[0].value as number,
-                          currency,
-                          locale,
-                        )}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {t("salesTrend.orders")}: {payload[0].payload.count}
-                      </p>
+                      {rev && (
+                        <div className="mt-1 flex items-center gap-2">
+                          <span
+                            className="inline-block h-2.5 w-2.5 rounded-full"
+                            style={{ backgroundColor: "var(--color-chart-1)" }}
+                          />
+                          <span className="text-sm text-muted-foreground">
+                            {t("salesTrend.revenue")}:{" "}
+                            {formatCurrency(
+                              rev.value as number,
+                              currency,
+                              locale,
+                            )}
+                          </span>
+                        </div>
+                      )}
+                      {ord && (
+                        <div className="mt-0.5 flex items-center gap-2">
+                          <span
+                            className="inline-block h-2.5 w-2.5 rounded-full"
+                            style={{ backgroundColor: "var(--color-chart-2)" }}
+                          />
+                          <span className="text-sm text-muted-foreground">
+                            {t("salesTrend.orders")}: {ord.value}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   );
                 }}
               />
+              <Legend
+                verticalAlign="top"
+                height={30}
+                formatter={(value: string) => (
+                  <span className="text-xs text-muted-foreground">
+                    {value === "revenue"
+                      ? t("salesTrend.revenue")
+                      : t("salesTrend.orders")}
+                  </span>
+                )}
+              />
               <Area
+                yAxisId="revenue"
                 type="monotone"
                 dataKey="revenue"
-                stroke="hsl(var(--primary))"
+                stroke="var(--color-chart-1)"
                 fill="url(#colorRevenue)"
+                strokeWidth={2.5}
+                dot={false}
+                activeDot={{ r: 4, strokeWidth: 2 }}
+              />
+              <Area
+                yAxisId="orders"
+                type="monotone"
+                dataKey="count"
+                stroke="var(--color-chart-2)"
+                fill="url(#colorOrders)"
                 strokeWidth={2}
+                strokeDasharray="5 3"
+                dot={false}
+                activeDot={{ r: 4, strokeWidth: 2 }}
               />
             </AreaChart>
           </ResponsiveContainer>

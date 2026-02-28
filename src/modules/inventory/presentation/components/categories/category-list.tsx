@@ -2,16 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import {
-  Plus,
-  Search,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  FolderTree,
-} from "lucide-react";
+import { Plus, MoreHorizontal, Pencil, Trash2, FolderTree } from "lucide-react";
 import { Button } from "@/ui/components/button";
-import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import { Skeleton } from "@/ui/components/skeleton";
@@ -43,6 +35,7 @@ import {
   useCategoryFormState,
 } from "@/modules/inventory/presentation/hooks/use-inventory-store";
 import type { CategoryFilters } from "@/modules/inventory/application/dto/category.dto";
+import { CategoryFiltersComponent } from "./category-filters";
 import { CategoryForm } from "./category-form";
 
 export function CategoryList() {
@@ -54,14 +47,8 @@ export function CategoryList() {
   const { data, isLoading, isError } = useCategories(filters);
   const deleteCategory = useDeleteCategory();
 
-  const [searchValue, setSearchValue] = useState(filters.search || "");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
-
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
-    setFilters({ search: value, page: 1 });
-  };
 
   const handlePageSizeChange = (size: number) => {
     setFilters({ limit: size, page: 1 });
@@ -109,15 +96,10 @@ export function CategoryList() {
               {t("actions.new")}
             </Button>
           </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder={t("search.placeholder")}
-              value={searchValue}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="pl-9"
-            />
-          </div>
+          <CategoryFiltersComponent
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
         </CardHeader>
         <CardContent>
           {isLoading ? (

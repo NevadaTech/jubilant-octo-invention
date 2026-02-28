@@ -5,13 +5,11 @@ import { Link } from "@/i18n/navigation";
 import {
   Warehouse as WarehouseIcon,
   Plus,
-  Search,
   Edit,
   Eye,
   MapPin,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
-import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import { TablePagination } from "@/ui/components/table-pagination";
@@ -21,6 +19,7 @@ import {
   useWarehouseFilters,
   useSetWarehouseFilters,
 } from "@/modules/inventory/presentation/hooks";
+import { WarehouseFiltersComponent } from "./warehouse-filters";
 import type { Warehouse } from "@/modules/inventory/domain/entities/warehouse.entity";
 import type { WarehouseFilters } from "@/modules/inventory/application/dto/warehouse.dto";
 
@@ -124,10 +123,6 @@ export function WarehouseList() {
   const setFilters = useSetWarehouseFilters();
   const { data, isLoading, isError, error } = useWarehouses(filters);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters({ search: e.target.value, page: 1 });
-  };
-
   const handlePageChange = (newPage: number) => {
     setFilters({ page: newPage });
   };
@@ -168,18 +163,11 @@ export function WarehouseList() {
         </Button>
       </CardHeader>
       <CardContent>
-        {/* Search and Filters */}
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-            <Input
-              type="search"
-              placeholder={t("search.placeholder")}
-              className="pl-9"
-              value={filters.search || ""}
-              onChange={handleSearch}
-            />
-          </div>
+        <div className="mb-6">
+          <WarehouseFiltersComponent
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
         </div>
 
         {/* Table */}

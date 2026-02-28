@@ -135,8 +135,8 @@ export interface UpdateSaleDto {
 }
 
 export interface SaleFilters {
-  warehouseId?: string;
-  status?: SaleStatus;
+  warehouseIds?: string[];
+  status?: SaleStatus[];
   startDate?: string;
   endDate?: string;
   search?: string;

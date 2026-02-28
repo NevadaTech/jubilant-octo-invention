@@ -40,7 +40,7 @@ export interface UpdateCategoryDto {
 export interface CategoryFilters {
   search?: string;
   parentId?: string;
-  isActive?: boolean;
+  statuses?: string[];
   page?: number;
   limit?: number;
   sortBy?: "name" | "isActive" | "productCount" | "createdAt" | "updatedAt";

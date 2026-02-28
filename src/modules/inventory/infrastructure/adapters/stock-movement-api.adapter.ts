@@ -86,14 +86,14 @@ export class StockMovementApiAdapter implements StockMovementRepositoryPort {
 
     const params: Record<string, unknown> = {};
 
-    if (filters.warehouseId) {
-      params.warehouseId = filters.warehouseId;
+    if (filters.warehouseIds?.length) {
+      params.warehouseId = filters.warehouseIds.join(",");
     }
-    if (filters.type) {
-      params.type = filters.type;
+    if (filters.types?.length) {
+      params.type = filters.types.join(",");
     }
-    if (filters.status) {
-      params.status = filters.status;
+    if (filters.status?.length) {
+      params.status = filters.status.join(",");
     }
     if (filters.productId) {
       params.productId = filters.productId;

@@ -62,8 +62,8 @@ export class StockApiAdapter implements StockRepositoryPort {
     if (filters.productId) {
       params.productId = filters.productId;
     }
-    if (filters.warehouseId) {
-      params.warehouseId = filters.warehouseId;
+    if (filters.warehouseIds?.length) {
+      params.warehouseId = filters.warehouseIds.join(",");
     }
     if (filters.search) {
       params.search = filters.search;

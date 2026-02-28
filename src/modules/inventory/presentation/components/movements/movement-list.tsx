@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   Plus,
-  Search,
   ArrowRightLeft,
   CheckCircle,
   XCircle,
@@ -16,7 +15,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
-import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
@@ -58,7 +56,6 @@ export function MovementList() {
     page: 1,
     limit: 10,
   });
-  const [searchValue, setSearchValue] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [postConfirm, setPostConfirm] = useState<StockMovement | null>(null);
   const [voidConfirm, setVoidConfirm] = useState<StockMovement | null>(null);
@@ -70,11 +67,6 @@ export function MovementList() {
   const postMovement = usePostMovement();
   const voidMovement = useVoidMovement();
   const deleteMovement = useDeleteMovement();
-
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
-    setFilters((prev) => ({ ...prev, search: value, page: 1 }));
-  };
 
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
@@ -147,18 +139,7 @@ export function MovementList() {
               {t("actions.new")}
             </Button>
           </div>
-          <div className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder={t("search.placeholder")}
-                value={searchValue}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <MovementFilters filters={filters} onFiltersChange={setFilters} />
-          </div>
+          <MovementFilters filters={filters} onFiltersChange={setFilters} />
         </CardHeader>
         <CardContent>
           {isLoading ? (

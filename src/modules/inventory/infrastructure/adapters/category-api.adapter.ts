@@ -79,8 +79,8 @@ export class CategoryApiAdapter implements CategoryRepositoryPort {
     if (filters.parentId) {
       params.parentId = filters.parentId;
     }
-    if (filters.isActive !== undefined) {
-      params.isActive = filters.isActive;
+    if (filters.statuses?.length === 1) {
+      params.isActive = filters.statuses[0] === "ACTIVE";
     }
     if (filters.page) {
       params.page = filters.page;

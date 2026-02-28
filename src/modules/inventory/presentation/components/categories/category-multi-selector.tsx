@@ -20,7 +20,10 @@ export function CategoryMultiSelector({
 }: CategoryMultiSelectorProps) {
   const t = useTranslations("inventory.categories");
   const [open, setOpen] = useState(false);
-  const { data, isLoading } = useCategories({ limit: 100, isActive: true });
+  const { data, isLoading } = useCategories({
+    limit: 100,
+    statuses: ["ACTIVE"],
+  });
 
   const allCategories = data?.data ?? [];
   const selected = allCategories.filter((c) => value.includes(c.id));

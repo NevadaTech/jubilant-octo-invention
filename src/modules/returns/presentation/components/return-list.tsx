@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   Plus,
-  Search,
   RotateCcw,
   CheckCircle,
   XCircle,
@@ -14,7 +13,6 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/ui/components/button";
-import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import {
@@ -56,7 +54,6 @@ export function ReturnList() {
     page: 1,
     limit: 10,
   });
-  const [searchValue, setSearchValue] = useState("");
   const [confirmDialog, setConfirmDialog] = useState<Return | null>(null);
   const [cancelDialog, setCancelDialog] = useState<Return | null>(null);
 
@@ -64,11 +61,6 @@ export function ReturnList() {
   const confirmReturn = useConfirmReturn();
   const cancelReturn = useCancelReturn();
   const { hasPermission } = usePermissions();
-
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
-    setFilters((prev) => ({ ...prev, search: value, page: 1 }));
-  };
 
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
@@ -143,21 +135,10 @@ export function ReturnList() {
               </Button>
             </PermissionGate>
           </div>
-          <div className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder={t("search.placeholder")}
-                value={searchValue}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <ReturnFiltersComponent
-              filters={filters}
-              onFiltersChange={setFilters}
-            />
-          </div>
+          <ReturnFiltersComponent
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
         </CardHeader>
         <CardContent>
           {isLoading ? (

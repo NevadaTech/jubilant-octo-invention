@@ -49,7 +49,7 @@ export interface StockListResponseDto {
 
 export interface StockFilters {
   productId?: string;
-  warehouseId?: string;
+  warehouseIds?: string[];
   search?: string;
   lowStock?: boolean;
   page?: number;

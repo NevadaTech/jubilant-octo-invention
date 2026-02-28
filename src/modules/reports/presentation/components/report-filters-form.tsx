@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { CalendarIcon, FilterX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/ui/components/button";
@@ -13,8 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/select";
+import { MultiSelect } from "@/ui/components/multi-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { useCategories } from "@/modules/inventory/presentation/hooks/use-categories";
 import type {
   ReportTypeValue,
   ReportParameters,
@@ -27,7 +29,50 @@ interface ReportFiltersFormProps {
   loading?: boolean;
 }
 
-const EMPTY_PARAMS: ReportParameters = {};
+const SALE_REPORT_STATUSES = [
+  "DRAFT",
+  "CONFIRMED",
+  "PICKING",
+  "SHIPPED",
+  "COMPLETED",
+  "CANCELLED",
+  "RETURNED",
+];
+
+const RETURN_REPORT_STATUSES = ["DRAFT", "CONFIRMED", "CANCELLED"];
+
+const MOVEMENT_TYPES = [
+  "IN",
+  "OUT",
+  "ADJUST_IN",
+  "ADJUST_OUT",
+  "TRANSFER_IN",
+  "TRANSFER_OUT",
+];
+
+const RETURN_TYPES = ["CUSTOMER", "SUPPLIER"];
+
+const SEVERITIES = ["CRITICAL", "WARNING"];
+
+// Sales reports exclude DRAFT by default
+const SALE_DEFAULT_STATUSES = SALE_REPORT_STATUSES.filter((s) => s !== "DRAFT");
+
+function isSalesReport(type: ReportTypeValue): boolean {
+  return type === "SALES";
+}
+
+function getStatusOptions(type: ReportTypeValue): string[] {
+  if (isSalesReport(type)) return SALE_REPORT_STATUSES;
+  return RETURN_REPORT_STATUSES;
+}
+
+function getDefaultParams(type: ReportTypeValue): ReportParameters {
+  if (isSalesReport(type)) {
+    return { status: SALE_DEFAULT_STATUSES };
+  }
+  return {};
+}
+
 const DEBOUNCE_MS = 500;
 
 export function ReportFiltersForm({
@@ -36,18 +81,25 @@ export function ReportFiltersForm({
 }: ReportFiltersFormProps) {
   const config = REPORT_FILTER_CONFIG[type];
   const t = useTranslations("reports");
-  const [params, setParams] = useState<ReportParameters>(EMPTY_PARAMS);
+  const tCommon = useTranslations("common");
+  const defaultParams = useMemo(() => getDefaultParams(type), [type]);
+  const [params, setParams] = useState<ReportParameters>(defaultParams);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
 
   const { data: warehouseData } = useWarehouses(
-    config.warehouseId ? {} : undefined,
+    config.warehouseIds ? {} : undefined,
   );
   const warehouses = warehouseData?.data ?? [];
 
-  // Auto-generate on mount
+  const { data: categoryData } = useCategories(
+    config.categoryIds ? { statuses: ["ACTIVE"], limit: 100 } : undefined,
+  );
+  const categories = categoryData?.data ?? [];
+
+  // Auto-generate on mount with defaults
   useEffect(() => {
-    onGenerate({});
+    onGenerate(defaultParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -74,6 +126,13 @@ export function ReportFiltersForm({
     }));
   };
 
+  const setArray = (key: keyof ReportParameters, values: string[]) => {
+    setParams((prev) => ({
+      ...prev,
+      [key]: values.length > 0 ? values : undefined,
+    }));
+  };
+
   const setDateRange = (field: "startDate" | "endDate", value: string) => {
     setParams((prev) => ({
       ...prev,
@@ -82,17 +141,79 @@ export function ReportFiltersForm({
   };
 
   const clearAll = () => {
-    setParams(EMPTY_PARAMS);
+    setParams(defaultParams);
   };
 
   const hasFilters = Object.keys(params).some((k) => {
     if (k === "dateRange")
       return params.dateRange?.startDate || params.dateRange?.endDate;
-    return params[k as keyof ReportParameters] !== undefined;
+    if (k === "status") {
+      const defaultStatus = defaultParams.status;
+      const currentStatus = params.status;
+      if (!defaultStatus && !currentStatus) return false;
+      if (!defaultStatus && currentStatus) return currentStatus.length > 0;
+      if (defaultStatus && !currentStatus) return true;
+      return JSON.stringify(currentStatus) !== JSON.stringify(defaultStatus);
+    }
+    const val = params[k as keyof ReportParameters];
+    if (Array.isArray(val)) return val.length > 0;
+    return val !== undefined;
   });
 
   const visibleCount = Object.values(config).filter(Boolean).length;
   if (visibleCount === 0) return null;
+
+  const statusOptions = config.status
+    ? getStatusOptions(type).map((s) => ({
+        value: s,
+        label: t(`status.${s}`),
+      }))
+    : [];
+
+  const warehouseOptions = useMemo(
+    () =>
+      warehouses.map((w) => ({
+        value: w.id,
+        label: w.name,
+      })),
+    [warehouses],
+  );
+
+  const categoryOptions = useMemo(
+    () =>
+      categories.map((c) => ({
+        value: c.id,
+        label: c.name,
+      })),
+    [categories],
+  );
+
+  const movementTypeOptions = useMemo(
+    () =>
+      MOVEMENT_TYPES.map((mt) => ({
+        value: mt,
+        label: t(`movementType.${mt}`),
+      })),
+    [t],
+  );
+
+  const returnTypeOptions = useMemo(
+    () =>
+      RETURN_TYPES.map((rt) => ({
+        value: rt,
+        label: t(`returnType.${rt}`),
+      })),
+    [t],
+  );
+
+  const severityOptions = useMemo(
+    () =>
+      SEVERITIES.map((s) => ({
+        value: s,
+        label: t(`severity.${s}`),
+      })),
+    [t],
+  );
 
   return (
     <Card>
@@ -145,27 +266,31 @@ export function ReportFiltersForm({
             </>
           )}
 
-          {config.warehouseId && warehouses.length > 0 && (
+          {config.warehouseIds && warehouses.length > 0 && (
             <div className="space-y-1.5">
               <Label className="text-xs">{t("filters.warehouse")}</Label>
-              <Select
-                value={params.warehouseId ?? "all"}
-                onValueChange={(v) => set("warehouseId", v)}
-              >
-                <SelectTrigger className="text-sm">
-                  <SelectValue placeholder={t("filters.allWarehouses")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t("filters.allWarehouses")}
-                  </SelectItem>
-                  {warehouses.map((w) => (
-                    <SelectItem key={w.id} value={w.id}>
-                      {w.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                value={params.warehouseIds ?? []}
+                onValueChange={(v) => setArray("warehouseIds", v)}
+                options={warehouseOptions}
+                allLabel={t("filters.allWarehouses")}
+                selectedLabel={t("filters.warehouse")}
+                className="text-sm"
+              />
+            </div>
+          )}
+
+          {config.categoryIds && categories.length > 0 && (
+            <div className="space-y-1.5">
+              <Label className="text-xs">{t("filters.category")}</Label>
+              <MultiSelect
+                value={params.categoryIds ?? []}
+                onValueChange={(v) => setArray("categoryIds", v)}
+                options={categoryOptions}
+                allLabel={t("filters.allCategories")}
+                selectedLabel={t("filters.category")}
+                className="text-sm"
+              />
             </div>
           )}
 
@@ -228,118 +353,57 @@ export function ReportFiltersForm({
           {config.status && (
             <div className="space-y-1.5">
               <Label className="text-xs">{t("filters.status")}</Label>
-              <Select
-                value={params.status ?? "all"}
-                onValueChange={(v) => set("status", v)}
-              >
-                <SelectTrigger className="text-sm">
-                  <SelectValue placeholder={t("filters.allStatuses")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t("filters.allStatuses")}
-                  </SelectItem>
-                  <SelectItem value="DRAFT">{t("status.DRAFT")}</SelectItem>
-                  <SelectItem value="CONFIRMED">
-                    {t("status.CONFIRMED")}
-                  </SelectItem>
-                  <SelectItem value="CANCELLED">
-                    {t("status.CANCELLED")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                value={params.status || []}
+                onValueChange={(statuses) =>
+                  set("status", statuses.length > 0 ? statuses : undefined)
+                }
+                options={statusOptions}
+                allLabel={t("filters.allStatuses")}
+                selectedLabel={tCommon("selected")}
+                className="text-sm"
+              />
             </div>
           )}
 
-          {config.returnType && (
+          {config.returnTypes && (
             <div className="space-y-1.5">
               <Label className="text-xs">{t("filters.returnType")}</Label>
-              <Select
-                value={params.returnType ?? "all"}
-                onValueChange={(v) => set("returnType", v)}
-              >
-                <SelectTrigger className="text-sm">
-                  <SelectValue placeholder={t("filters.allReturnTypes")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t("filters.allReturnTypes")}
-                  </SelectItem>
-                  <SelectItem value="CUSTOMER">
-                    {t("returnType.CUSTOMER")}
-                  </SelectItem>
-                  <SelectItem value="SUPPLIER">
-                    {t("returnType.SUPPLIER")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                value={params.returnTypes ?? []}
+                onValueChange={(v) => setArray("returnTypes", v)}
+                options={returnTypeOptions}
+                allLabel={t("filters.allReturnTypes")}
+                selectedLabel={t("filters.returnType")}
+                className="text-sm"
+              />
             </div>
           )}
 
-          {config.severity && (
+          {config.severities && (
             <div className="space-y-1.5">
               <Label className="text-xs">{t("filters.severity")}</Label>
-              <Select
-                value={params.severity ?? "all"}
-                onValueChange={(v) => set("severity", v)}
-              >
-                <SelectTrigger className="text-sm">
-                  <SelectValue placeholder={t("filters.allSeverities")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t("filters.allSeverities")}
-                  </SelectItem>
-                  <SelectItem value="CRITICAL">
-                    {t("severity.CRITICAL")}
-                  </SelectItem>
-                  <SelectItem value="WARNING">
-                    {t("severity.WARNING")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                value={params.severities ?? []}
+                onValueChange={(v) => setArray("severities", v)}
+                options={severityOptions}
+                allLabel={t("filters.allSeverities")}
+                selectedLabel={t("filters.severity")}
+                className="text-sm"
+              />
             </div>
           )}
 
-          {config.movementType && (
+          {config.movementTypes && (
             <div className="space-y-1.5">
               <Label className="text-xs">{t("filters.movementType")}</Label>
-              <Select
-                value={params.movementType ?? "all"}
-                onValueChange={(v) => set("movementType", v)}
-              >
-                <SelectTrigger className="text-sm">
-                  <SelectValue placeholder={t("filters.allMovementTypes")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t("filters.allMovementTypes")}
-                  </SelectItem>
-                  <SelectItem value="IN">{t("movementType.IN")}</SelectItem>
-                  <SelectItem value="OUT">{t("movementType.OUT")}</SelectItem>
-                  <SelectItem value="ADJUSTMENT">
-                    {t("movementType.ADJUSTMENT")}
-                  </SelectItem>
-                  <SelectItem value="TRANSFER_IN">
-                    {t("movementType.TRANSFER_IN")}
-                  </SelectItem>
-                  <SelectItem value="TRANSFER_OUT">
-                    {t("movementType.TRANSFER_OUT")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {config.category && (
-            <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.category")}</Label>
-              <Input
-                type="text"
-                placeholder={t("filters.allCategories")}
+              <MultiSelect
+                value={params.movementTypes ?? []}
+                onValueChange={(v) => setArray("movementTypes", v)}
+                options={movementTypeOptions}
+                allLabel={t("filters.allMovementTypes")}
+                selectedLabel={t("filters.movementType")}
                 className="text-sm"
-                value={params.category ?? ""}
-                onChange={(e) => set("category", e.target.value)}
               />
             </div>
           )}

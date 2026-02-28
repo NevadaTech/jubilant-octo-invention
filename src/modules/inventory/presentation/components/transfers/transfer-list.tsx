@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   Plus,
-  Search,
   ArrowRightLeft,
   MoreHorizontal,
   Play,
@@ -15,18 +14,10 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/ui/components/button";
-import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
 import { SortableHeader } from "@/ui/components/sortable-header";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/ui/components/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +29,7 @@ import {
   useUpdateTransferStatus,
 } from "@/modules/inventory/presentation/hooks/use-transfers";
 import { TransferStatusBadge } from "./transfer-status-badge";
+import { TransferFiltersComponent } from "./transfer-filters";
 import { TransferForm } from "./transfer-form";
 import type { TransferFilters } from "@/modules/inventory/application/dto/transfer.dto";
 import type { TransferStatus } from "@/modules/inventory/domain/entities/transfer.entity";
@@ -49,15 +41,9 @@ export function TransferList() {
     page: 1,
     limit: 10,
   });
-  const [searchValue, setSearchValue] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { data, isLoading, isError } = useTransfers(filters);
   const updateStatus = useUpdateTransferStatus();
-
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
-    setFilters((prev) => ({ ...prev, search: value, page: 1 }));
-  };
 
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
@@ -68,14 +54,6 @@ export function TransferList() {
       ...prev,
       sortBy: order ? (field as TransferFilters["sortBy"]) : undefined,
       sortOrder: order,
-      page: 1,
-    }));
-  };
-
-  const handleStatusFilter = (status: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      status: status === "all" ? undefined : (status as TransferStatus),
       page: 1,
     }));
   };
@@ -112,36 +90,10 @@ export function TransferList() {
               {t("actions.new")}
             </Button>
           </div>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder={t("search.placeholder")}
-                value={searchValue}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <Select
-              value={filters.status || "all"}
-              onValueChange={handleStatusFilter}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("status.all")}</SelectItem>
-                <SelectItem value="DRAFT">{t("status.draft")}</SelectItem>
-                <SelectItem value="IN_TRANSIT">
-                  {t("status.in_transit")}
-                </SelectItem>
-                <SelectItem value="PARTIAL">{t("status.partial")}</SelectItem>
-                <SelectItem value="RECEIVED">{t("status.received")}</SelectItem>
-                <SelectItem value="REJECTED">{t("status.rejected")}</SelectItem>
-                <SelectItem value="CANCELED">{t("status.canceled")}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <TransferFiltersComponent
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
         </CardHeader>
         <CardContent>
           {isLoading ? (

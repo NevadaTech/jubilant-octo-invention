@@ -21,14 +21,18 @@ export class ReportApiAdapter implements ReportRepositoryPort {
       params["dateRange[startDate]"] = parameters.dateRange.startDate;
     if (parameters.dateRange?.endDate)
       params["dateRange[endDate]"] = parameters.dateRange.endDate;
-    if (parameters.warehouseId) params.warehouseId = parameters.warehouseId;
+    if (parameters.warehouseIds?.length)
+      params.warehouseId = parameters.warehouseIds.join(",");
     if (parameters.productId) params.productId = parameters.productId;
-    if (parameters.category) params.category = parameters.category;
-    if (parameters.status) params.status = parameters.status;
-    if (parameters.returnType) params.returnType = parameters.returnType;
+    if (parameters.categoryIds?.length)
+      params.category = parameters.categoryIds.join(",");
+    if (parameters.status?.length) params.status = parameters.status.join(",");
+    if (parameters.returnTypes?.length)
+      params.returnType = parameters.returnTypes.join(",");
     if (parameters.groupBy) params.groupBy = parameters.groupBy;
     if (parameters.period) params.period = parameters.period;
-    if (parameters.movementType) params.movementType = parameters.movementType;
+    if (parameters.movementTypes?.length)
+      params.movementType = parameters.movementTypes.join(",");
     if (parameters.customerReference)
       params.customerReference = parameters.customerReference;
     if (parameters.saleId) params.saleId = parameters.saleId;
@@ -36,7 +40,8 @@ export class ReportApiAdapter implements ReportRepositoryPort {
     if (parameters.includeInactive !== undefined)
       params.includeInactive = parameters.includeInactive;
     if (parameters.locationId) params.locationId = parameters.locationId;
-    if (parameters.severity) params.severity = parameters.severity;
+    if (parameters.severities?.length)
+      params.severity = parameters.severities.join(",");
     if (parameters.deadStockDays)
       params.deadStockDays = parameters.deadStockDays;
 

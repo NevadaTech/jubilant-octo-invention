@@ -33,10 +33,13 @@ export function SaleFormPage() {
   const tCommon = useTranslations("common");
   const router = useRouter();
   const createSale = useCreateSale();
-  const { data: productsData } = useProducts({ limit: 100, isActive: true });
+  const { data: productsData } = useProducts({
+    limit: 100,
+    statuses: ["ACTIVE"],
+  });
   const { data: warehousesData } = useWarehouses({
     limit: 100,
-    isActive: true,
+    statuses: ["ACTIVE"],
   });
 
   const isSubmitting = createSale.isPending;

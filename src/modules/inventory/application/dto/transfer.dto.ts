@@ -97,9 +97,11 @@ export interface UpdateTransferStatusDto {
 }
 
 export interface TransferFilters {
-  fromWarehouseId?: string;
-  toWarehouseId?: string;
-  status?: TransferStatus;
+  fromWarehouseIds?: string[];
+  toWarehouseIds?: string[];
+  status?: TransferStatus[];
+  startDate?: string;
+  endDate?: string;
   search?: string;
   page?: number;
   limit?: number;

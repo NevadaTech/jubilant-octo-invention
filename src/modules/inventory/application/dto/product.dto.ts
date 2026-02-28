@@ -155,8 +155,8 @@ export interface UpdateProductDto {
 
 export interface ProductFilters {
   search?: string;
-  categoryId?: string;
-  isActive?: boolean;
+  categoryIds?: string[];
+  statuses?: string[];
   sortBy?: "name" | "sku" | "price" | "status" | "createdAt" | "updatedAt";
   sortOrder?: "asc" | "desc";
   page?: number;

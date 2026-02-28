@@ -74,9 +74,9 @@ export interface UpdateStockMovementDto {
 }
 
 export interface StockMovementFilters {
-  warehouseId?: string;
-  type?: MovementType;
-  status?: MovementStatus;
+  warehouseIds?: string[];
+  types?: MovementType[];
+  status?: MovementStatus[];
   productId?: string;
   startDate?: string;
   endDate?: string;

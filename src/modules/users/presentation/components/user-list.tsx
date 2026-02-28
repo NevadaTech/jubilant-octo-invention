@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   Plus,
-  Search,
   Users,
   MoreHorizontal,
   CheckCircle,
@@ -13,19 +12,10 @@ import {
   Shield,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
-import { Input } from "@/ui/components/input";
-import { Label } from "@/ui/components/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
 import { SortableHeader } from "@/ui/components/sortable-header";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/ui/components/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,6 +31,7 @@ import { usePermissions } from "@/modules/authentication/presentation/hooks/use-
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { UserStatusBadge } from "./user-status-badge";
+import { UserFiltersComponent } from "./user-filters";
 import { UserForm } from "./user-form";
 import { UserRolesDialog } from "./user-roles-dialog";
 import type { UserFilters } from "@/modules/users/application/dto/user.dto";
@@ -53,18 +44,12 @@ export function UserList() {
   const t = useTranslations("users");
   const tCommon = useTranslations("common");
   const [filters, setFilters] = useState<UserFilters>({ page: 1, limit: 10 });
-  const [searchValue, setSearchValue] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [rolesDialogUser, setRolesDialogUser] = useState<User | null>(null);
 
   const { data, isLoading, isError } = useUsers(filters);
   const changeStatus = useChangeUserStatus();
   const { hasPermission } = usePermissions();
-
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
-    setFilters((prev) => ({ ...prev, search: value, page: 1 }));
-  };
 
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
@@ -75,14 +60,6 @@ export function UserList() {
       ...prev,
       sortBy: order ? (field as UserFilters["sortBy"]) : undefined,
       sortOrder: order,
-      page: 1,
-    }));
-  };
-
-  const handleStatusFilter = (status: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      status: status === "all" ? undefined : (status as UserStatus),
       page: 1,
     }));
   };
@@ -124,38 +101,10 @@ export function UserList() {
               </Button>
             </PermissionGate>
           </div>
-          <div className="flex flex-wrap items-end gap-4">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder={t("search.placeholder")}
-                value={searchValue}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <div className="min-w-[150px]">
-              <Label className="text-sm">{t("filters.status")}</Label>
-              <Select
-                value={filters.status || "all"}
-                onValueChange={handleStatusFilter}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {t("filters.allStatuses")}
-                  </SelectItem>
-                  <SelectItem value="ACTIVE">{t("status.active")}</SelectItem>
-                  <SelectItem value="INACTIVE">
-                    {t("status.inactive")}
-                  </SelectItem>
-                  <SelectItem value="LOCKED">{t("status.locked")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <UserFiltersComponent
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
         </CardHeader>
         <CardContent>
           {isLoading ? (

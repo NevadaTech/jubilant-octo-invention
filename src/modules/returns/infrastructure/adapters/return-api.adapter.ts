@@ -113,9 +113,10 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
 
     const params: Record<string, unknown> = {};
 
-    if (filters.warehouseId) params.warehouseId = filters.warehouseId;
-    if (filters.status) params.status = filters.status;
-    if (filters.type) params.type = filters.type;
+    if (filters.warehouseIds?.length)
+      params.warehouseId = filters.warehouseIds.join(",");
+    if (filters.status?.length) params.status = filters.status.join(",");
+    if (filters.types?.length) params.type = filters.types.join(",");
     if (filters.startDate) params.startDate = filters.startDate;
     if (filters.endDate) params.endDate = filters.endDate;
     if (filters.search) params.search = filters.search;

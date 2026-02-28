@@ -164,11 +164,11 @@ export class ProductApiAdapter implements ProductRepositoryPort {
     if (filters.search) {
       params.search = filters.search;
     }
-    if (filters.categoryId) {
-      params.categoryId = filters.categoryId;
+    if (filters.categoryIds?.length) {
+      params.categoryIds = filters.categoryIds.join(",");
     }
-    if (filters.isActive !== undefined) {
-      params.status = filters.isActive ? "ACTIVE" : "INACTIVE";
+    if (filters.statuses?.length === 1) {
+      params.status = filters.statuses[0];
     }
     if (filters.sortBy) params.sortBy = filters.sortBy;
     if (filters.sortOrder) params.sortOrder = filters.sortOrder;

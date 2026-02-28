@@ -5,6 +5,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -28,6 +29,14 @@ interface TopProductsChartProps {
   }>;
   currency: string;
 }
+
+const BAR_COLORS = [
+  "var(--color-chart-1)",
+  "var(--color-chart-2)",
+  "var(--color-chart-3)",
+  "var(--color-chart-4)",
+  "var(--color-chart-5)",
+];
 
 export function TopProductsChart({ data, currency }: TopProductsChartProps) {
   const t = useTranslations("dashboard.charts");
@@ -75,10 +84,22 @@ export function TopProductsChart({ data, currency }: TopProductsChartProps) {
                 content={({ active, payload }) => {
                   if (!active || !payload?.length) return null;
                   const item = payload[0].payload;
+                  const idx = data.findIndex((d) => d.sku === item.sku);
                   return (
-                    <div className="rounded-lg border bg-background p-3 shadow-sm">
-                      <p className="text-sm font-medium">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                    <div className="rounded-lg border bg-card p-3 shadow-md">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="inline-block h-2.5 w-2.5 rounded-full"
+                          style={{
+                            backgroundColor:
+                              BAR_COLORS[idx % BAR_COLORS.length],
+                          }}
+                        />
+                        <p className="text-sm font-medium text-card-foreground">
+                          {item.name}
+                        </p>
+                      </div>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
                         SKU: {item.sku}
                       </p>
                       <p className="text-sm text-muted-foreground">
@@ -92,12 +113,11 @@ export function TopProductsChart({ data, currency }: TopProductsChartProps) {
                   );
                 }}
               />
-              <Bar
-                dataKey="revenue"
-                fill="hsl(var(--primary))"
-                radius={[0, 4, 4, 0]}
-                barSize={24}
-              />
+              <Bar dataKey="revenue" radius={[0, 4, 4, 0]} barSize={24}>
+                {data.map((_, idx) => (
+                  <Cell key={idx} fill={BAR_COLORS[idx % BAR_COLORS.length]} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         )}

@@ -46,16 +46,16 @@ export function ReturnFormPage() {
   const createReturn = useCreateReturn();
   const { data: productsData, isLoading: productsLoading } = useProducts({
     limit: 100,
-    isActive: true,
+    statuses: ["ACTIVE"],
   });
   const { data: warehousesData, isLoading: warehousesLoading } = useWarehouses({
     limit: 100,
-    isActive: true,
+    statuses: ["ACTIVE"],
   });
   const { data: salesData, isLoading: salesLoading } = useSales({ limit: 100 });
   const { data: movementsData, isLoading: movementsLoading } = useMovements({
-    type: "IN",
-    status: "POSTED",
+    types: ["IN"],
+    status: ["POSTED"],
     limit: 100,
   });
 

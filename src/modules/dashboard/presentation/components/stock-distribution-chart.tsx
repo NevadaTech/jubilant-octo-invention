@@ -17,11 +17,14 @@ interface StockDistributionChartProps {
 }
 
 const COLORS = [
-  "hsl(var(--primary))",
-  "hsl(var(--chart-2, 160 60% 45%))",
-  "hsl(var(--chart-3, 30 80% 55%))",
-  "hsl(var(--chart-4, 280 65% 60%))",
-  "hsl(var(--chart-5, 340 75% 55%))",
+  "var(--color-chart-1)",
+  "var(--color-chart-2)",
+  "var(--color-chart-3)",
+  "var(--color-chart-4)",
+  "var(--color-chart-5)",
+  "var(--color-chart-6)",
+  "var(--color-chart-7)",
+  "var(--color-chart-8)",
 ];
 
 export function StockDistributionChart({
@@ -59,6 +62,8 @@ export function StockDistributionChart({
                   innerRadius={50}
                   outerRadius={90}
                   paddingAngle={2}
+                  stroke="var(--color-card)"
+                  strokeWidth={2}
                 >
                   {data.map((_, idx) => (
                     <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
@@ -68,12 +73,23 @@ export function StockDistributionChart({
                   content={({ active, payload }) => {
                     if (!active || !payload?.length) return null;
                     const item = payload[0].payload;
+                    const idx = data.findIndex(
+                      (d) => d.warehouseName === item.warehouseName,
+                    );
                     return (
-                      <div className="rounded-lg border bg-background p-3 shadow-sm">
-                        <p className="text-sm font-medium">
-                          {item.warehouseName}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
+                      <div className="rounded-lg border bg-card p-3 shadow-md">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="inline-block h-2.5 w-2.5 rounded-full"
+                            style={{
+                              backgroundColor: COLORS[idx % COLORS.length],
+                            }}
+                          />
+                          <p className="text-sm font-medium text-card-foreground">
+                            {item.warehouseName}
+                          </p>
+                        </div>
+                        <p className="mt-1 text-sm text-muted-foreground">
                           {t("stockDistribution.value")}:{" "}
                           {formatCurrency(item.value, currency, locale)}
                         </p>
@@ -95,7 +111,9 @@ export function StockDistributionChart({
                 >
                   <div
                     className="h-3 w-3 shrink-0 rounded-full"
-                    style={{ backgroundColor: COLORS[idx % COLORS.length] }}
+                    style={{
+                      backgroundColor: COLORS[idx % COLORS.length],
+                    }}
                   />
                   <span className="truncate max-w-[120px]">
                     {item.warehouseName}

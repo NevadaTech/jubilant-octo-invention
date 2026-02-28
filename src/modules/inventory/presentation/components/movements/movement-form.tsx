@@ -36,10 +36,13 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
   const t = useTranslations("inventory.movements");
   const tCommon = useTranslations("common");
   const createMovement = useCreateMovement();
-  const { data: productsData } = useProducts({ limit: 100, isActive: true });
+  const { data: productsData } = useProducts({
+    limit: 100,
+    statuses: ["ACTIVE"],
+  });
   const { data: warehousesData } = useWarehouses({
     limit: 100,
-    isActive: true,
+    statuses: ["ACTIVE"],
   });
 
   const {

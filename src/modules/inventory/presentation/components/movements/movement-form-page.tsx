@@ -55,10 +55,13 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
   const { data: existingMovement, isLoading: isLoadingMovement } = useMovement(
     movementId ?? "",
   );
-  const { data: productsData } = useProducts({ limit: 100, isActive: true });
+  const { data: productsData } = useProducts({
+    limit: 100,
+    statuses: ["ACTIVE"],
+  });
   const { data: warehousesData } = useWarehouses({
     limit: 100,
-    isActive: true,
+    statuses: ["ACTIVE"],
   });
 
   const isSubmitting = isEditing

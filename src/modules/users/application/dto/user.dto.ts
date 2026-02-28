@@ -49,7 +49,7 @@ export interface AssignRoleDto {
 }
 
 export interface UserFilters {
-  status?: UserStatus;
+  status?: UserStatus[];
   search?: string;
   page?: number;
   limit?: number;
