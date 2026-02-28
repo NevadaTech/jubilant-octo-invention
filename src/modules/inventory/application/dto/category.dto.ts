@@ -43,4 +43,6 @@ export interface CategoryFilters {
   isActive?: boolean;
   page?: number;
   limit?: number;
+  sortBy?: "name" | "isActive" | "productCount" | "createdAt" | "updatedAt";
+  sortOrder?: "asc" | "desc";
 }

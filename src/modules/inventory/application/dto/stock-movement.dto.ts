@@ -83,4 +83,6 @@ export interface StockMovementFilters {
   search?: string;
   page?: number;
   limit?: number;
+  sortBy?: "type" | "status" | "createdAt" | "postedAt";
+  sortOrder?: "asc" | "desc";
 }

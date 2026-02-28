@@ -140,7 +140,15 @@ export interface SaleFilters {
   startDate?: string;
   endDate?: string;
   search?: string;
-  sortBy?: "saleNumber" | "status" | "createdAt" | "confirmedAt";
+  sortBy?:
+    | "saleNumber"
+    | "status"
+    | "total"
+    | "warehouseName"
+    | "customerReference"
+    | "items"
+    | "createdAt"
+    | "confirmedAt";
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;

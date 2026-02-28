@@ -24,9 +24,15 @@ import {
   SelectValue,
 } from "@/ui/components/select";
 import { Skeleton } from "@/ui/components/skeleton";
+import { Badge } from "@/ui/components/badge";
 import { UserAvatar } from "@/ui/components/user-avatar";
 import { useProfile, useUpdateProfile } from "../hooks";
 import { profileSchema, type ProfileFormValues } from "../schemas";
+
+const LANGUAGES = [
+  { value: "en", label: "English" },
+  { value: "es", label: "Español" },
+];
 
 const TIMEZONES = [
   { value: "UTC", label: "UTC" },
@@ -146,6 +152,18 @@ export function ProfileForm() {
               <p className="text-sm text-neutral-500 dark:text-neutral-400">
                 @{profile?.username}
               </p>
+              {profile?.roles && profile.roles.length > 0 && (
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">
+                    {t("role")}:
+                  </span>
+                  {profile.roles.map((role) => (
+                    <Badge key={role} variant="secondary" className="text-xs">
+                      {role}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -234,11 +252,16 @@ export function ProfileForm() {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t("language")} />
+                  <SelectValue placeholder={t("language")}>
+                    {LANGUAGES.find((l) => l.value === language)?.label}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="es">Español</SelectItem>
+                  {LANGUAGES.map((lang) => (
+                    <SelectItem key={lang.value} value={lang.value}>
+                      {lang.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </FormField>

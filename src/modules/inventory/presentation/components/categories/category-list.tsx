@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,6 +42,7 @@ import {
   useSetCategoryFilters,
   useCategoryFormState,
 } from "@/modules/inventory/presentation/hooks/use-inventory-store";
+import type { CategoryFilters } from "@/modules/inventory/application/dto/category.dto";
 import { CategoryForm } from "./category-form";
 
 export function CategoryList() {
@@ -63,6 +65,14 @@ export function CategoryList() {
 
   const handlePageSizeChange = (size: number) => {
     setFilters({ limit: size, page: 1 });
+  };
+
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setFilters({
+      sortBy: order ? (field as CategoryFilters["sortBy"]) : undefined,
+      sortOrder: order,
+      page: 1,
+    });
   };
 
   const handleDelete = async () => {
@@ -134,10 +144,28 @@ export function CategoryList() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                      <th className="pb-3 pr-4">{t("fields.name")}</th>
+                      <SortableHeader
+                        label={t("fields.name")}
+                        field="name"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4">{t("fields.parent")}</th>
-                      <th className="pb-3 pr-4">{t("fields.products")}</th>
-                      <th className="pb-3 pr-4">{t("fields.status")}</th>
+                      <SortableHeader
+                        label={t("fields.products")}
+                        field="productCount"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.status")}
+                        field="isActive"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 text-right">{tCommon("actions")}</th>
                     </tr>
                   </thead>

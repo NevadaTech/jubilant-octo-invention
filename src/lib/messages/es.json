@@ -1530,6 +1530,7 @@
       "timezone": "Zona horaria",
       "language": "Idioma",
       "saveChanges": "Guardar cambios",
+      "role": "Rol",
       "saved": "Perfil actualizado exitosamente",
       "errorSaving": "Error al actualizar el perfil"
     },

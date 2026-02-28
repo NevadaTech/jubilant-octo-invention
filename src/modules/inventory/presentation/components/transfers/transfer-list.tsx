@@ -19,6 +19,7 @@ import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import {
   Select,
   SelectContent,
@@ -60,6 +61,15 @@ export function TransferList() {
 
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
+  };
+
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setFilters((prev) => ({
+      ...prev,
+      sortBy: order ? (field as TransferFilters["sortBy"]) : undefined,
+      sortOrder: order,
+      page: 1,
+    }));
   };
 
   const handleStatusFilter = (status: string) => {
@@ -158,12 +168,24 @@ export function TransferList() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                      <th className="pb-3 pr-4">{t("fields.status")}</th>
+                      <SortableHeader
+                        label={t("fields.status")}
+                        field="status"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4">{t("fields.items")}</th>
                       <th className="pb-3 pr-4">{t("fields.from")}</th>
                       <th className="pb-3 pr-4">{t("fields.to")}</th>
                       <th className="pb-3 pr-4">{t("fields.totalQuantity")}</th>
-                      <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
+                      <SortableHeader
+                        label={t("fields.createdAt")}
+                        field="createdAt"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 text-right">{t("fields.actions")}</th>
                     </tr>
                   </thead>

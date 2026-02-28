@@ -18,6 +18,7 @@ import { Label } from "@/ui/components/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import {
   Select,
   SelectContent,
@@ -67,6 +68,15 @@ export function UserList() {
 
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
+  };
+
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setFilters((prev) => ({
+      ...prev,
+      sortBy: order ? (field as UserFilters["sortBy"]) : undefined,
+      sortOrder: order,
+      page: 1,
+    }));
   };
 
   const handleStatusFilter = (status: string) => {
@@ -168,12 +178,48 @@ export function UserList() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                      <th className="pb-3 pr-4">{t("fields.name")}</th>
-                      <th className="pb-3 pr-4">{t("fields.email")}</th>
-                      <th className="pb-3 pr-4">{t("fields.username")}</th>
-                      <th className="pb-3 pr-4">{t("fields.status")}</th>
-                      <th className="pb-3 pr-4">{t("fields.lastLogin")}</th>
-                      <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
+                      <SortableHeader
+                        label={t("fields.name")}
+                        field="firstName"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.email")}
+                        field="email"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.username")}
+                        field="username"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.status")}
+                        field="status"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.lastLogin")}
+                        field="lastLoginAt"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.createdAt")}
+                        field="createdAt"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4 text-right">
                         {tCommon("actions")}
                       </th>

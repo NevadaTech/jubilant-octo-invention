@@ -201,10 +201,34 @@ export function SaleList() {
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
                       />
-                      <th className="pb-3 pr-4">{t("fields.warehouse")}</th>
-                      <th className="pb-3 pr-4">{t("fields.customer")}</th>
-                      <th className="pb-3 pr-4">{t("fields.items")}</th>
-                      <th className="pb-3 pr-4">{t("fields.total")}</th>
+                      <SortableHeader
+                        label={t("fields.warehouse")}
+                        field="warehouseName"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.customer")}
+                        field="customerReference"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.items")}
+                        field="items"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.total")}
+                        field="total"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <SortableHeader
                         label={t("fields.createdAt")}
                         field="createdAt"

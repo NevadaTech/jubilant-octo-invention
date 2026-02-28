@@ -25,4 +25,11 @@ export interface AuditLogFilters {
   endDate?: string;
   page?: number;
   limit?: number;
+  sortBy?:
+    | "action"
+    | "entityType"
+    | "httpMethod"
+    | "httpStatusCode"
+    | "createdAt";
+  sortOrder?: "asc" | "desc";
 }

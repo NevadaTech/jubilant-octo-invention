@@ -188,35 +188,38 @@ export function ReportTable({
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50">
-            {columns.map((col) => (
-              <TableHead
-                key={col.key}
-                className={cn(
-                  "whitespace-nowrap text-xs font-semibold uppercase tracking-wide",
-                  col.align === "right" ||
-                    col.type === "currency" ||
-                    col.type === "number"
-                    ? "text-right"
-                    : col.align === "center"
-                      ? "text-center"
-                      : "text-left",
-                  col.sortable && "cursor-pointer select-none hover:bg-muted",
-                )}
-                style={{ width: col.width }}
-                onClick={() => col.sortable && handleSort(col.key)}
-              >
-                <span className="flex items-center gap-0.5">
-                  {translateHeader(col.header)}
-                  {col.sortable && (
-                    <SortIcon
-                      colKey={col.key}
-                      sortKey={sortKey}
-                      sortDir={sortDir}
-                    />
+            {columns.map((col) => {
+              const isSortable = col.sortable !== false;
+              return (
+                <TableHead
+                  key={col.key}
+                  className={cn(
+                    "whitespace-nowrap text-xs font-semibold uppercase tracking-wide",
+                    col.align === "right" ||
+                      col.type === "currency" ||
+                      col.type === "number"
+                      ? "text-right"
+                      : col.align === "center"
+                        ? "text-center"
+                        : "text-left",
+                    isSortable && "cursor-pointer select-none hover:bg-muted",
                   )}
-                </span>
-              </TableHead>
-            ))}
+                  style={{ width: col.width }}
+                  onClick={() => isSortable && handleSort(col.key)}
+                >
+                  <span className="flex items-center gap-0.5">
+                    {translateHeader(col.header)}
+                    {isSortable && (
+                      <SortIcon
+                        colKey={col.key}
+                        sortKey={sortKey}
+                        sortDir={sortDir}
+                      />
+                    )}
+                  </span>
+                </TableHead>
+              );
+            })}
           </TableRow>
         </TableHeader>
         <TableBody>

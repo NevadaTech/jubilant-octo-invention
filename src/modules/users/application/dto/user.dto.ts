@@ -53,4 +53,13 @@ export interface UserFilters {
   search?: string;
   page?: number;
   limit?: number;
+  sortBy?:
+    | "email"
+    | "username"
+    | "firstName"
+    | "lastName"
+    | "status"
+    | "createdAt"
+    | "lastLoginAt";
+  sortOrder?: "asc" | "desc";
 }

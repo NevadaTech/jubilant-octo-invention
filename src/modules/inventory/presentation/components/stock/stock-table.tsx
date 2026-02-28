@@ -14,11 +14,13 @@ import {
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import {
   useStock,
   useStockFilters,
   useSetStockFilters,
 } from "@/modules/inventory/presentation/hooks";
+import type { StockFilters } from "@/modules/inventory/application/dto/stock.dto";
 import { WarehouseSelector } from "@/modules/inventory/presentation/components/warehouses/warehouse-selector";
 import { ReorderRuleDialog } from "./reorder-rule-dialog";
 import type { Stock } from "@/modules/inventory/domain/entities/stock.entity";
@@ -222,10 +224,34 @@ export function StockTable() {
 
   const [ruleDialogOpen, setRuleDialogOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
+  const [sortBy, setSortBy] = useState<StockFilters["sortBy"]>();
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({ search: e.target.value, page: 1 });
   };
+
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setSortBy(order ? (field as StockFilters["sortBy"]) : undefined);
+    setSortOrder(order);
+  };
+
+  const sortedData = (() => {
+    if (!data?.data || !sortBy) return data?.data;
+    const items = [...data.data];
+    const field = sortBy;
+    const dir = sortOrder === "desc" ? -1 : 1;
+    return items.sort((a, b) => {
+      const aVal = a[field as keyof Stock];
+      const bVal = b[field as keyof Stock];
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+      if (typeof aVal === "string" && typeof bVal === "string")
+        return aVal.localeCompare(bVal) * dir;
+      return ((aVal as number) - (bVal as number)) * dir;
+    });
+  })();
 
   const handleSetRule = (stock: Stock) => {
     setSelectedStock(stock);
@@ -292,23 +318,59 @@ export function StockTable() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-neutral-200 text-left text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
-                      <th className="px-4 py-3">{t("fields.product")}</th>
-                      <th className="px-4 py-3">{t("fields.warehouse")}</th>
-                      <th className="px-4 py-3 text-right">
-                        {t("fields.quantity")}
-                      </th>
-                      <th className="px-4 py-3 text-right">
-                        {t("fields.avgCost")}
-                      </th>
-                      <th className="px-4 py-3 text-right">
-                        {t("fields.totalValue")}
-                      </th>
-                      <th className="px-4 py-3">{t("fields.lastMovement")}</th>
+                      <SortableHeader
+                        label={t("fields.product")}
+                        field="productName"
+                        currentSortBy={sortBy}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        className="px-4 py-3"
+                      />
+                      <SortableHeader
+                        label={t("fields.warehouse")}
+                        field="warehouseName"
+                        currentSortBy={sortBy}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        className="px-4 py-3"
+                      />
+                      <SortableHeader
+                        label={t("fields.quantity")}
+                        field="quantity"
+                        currentSortBy={sortBy}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        className="px-4 py-3 text-right"
+                      />
+                      <SortableHeader
+                        label={t("fields.avgCost")}
+                        field="averageCost"
+                        currentSortBy={sortBy}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        className="px-4 py-3 text-right"
+                      />
+                      <SortableHeader
+                        label={t("fields.totalValue")}
+                        field="totalValue"
+                        currentSortBy={sortBy}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        className="px-4 py-3 text-right"
+                      />
+                      <SortableHeader
+                        label={t("fields.lastMovement")}
+                        field="lastMovementAt"
+                        currentSortBy={sortBy}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        className="px-4 py-3"
+                      />
                       <th className="px-4 py-3">{t("fields.actions")}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {data.data.map((stock) => (
+                    {(sortedData ?? data?.data ?? []).map((stock) => (
                       <StockRow
                         key={stock.id}
                         stock={stock}

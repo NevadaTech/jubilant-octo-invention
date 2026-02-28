@@ -1530,6 +1530,7 @@
       "timezone": "Timezone",
       "language": "Language",
       "saveChanges": "Save Changes",
+      "role": "Role",
       "saved": "Profile updated successfully",
       "errorSaving": "Failed to update profile"
     },

@@ -103,4 +103,6 @@ export interface TransferFilters {
   search?: string;
   page?: number;
   limit?: number;
+  sortBy?: "status" | "createdAt" | "initiatedAt" | "receivedAt";
+  sortOrder?: "asc" | "desc";
 }

@@ -20,6 +20,7 @@ import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -77,6 +78,15 @@ export function MovementList() {
 
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
+  };
+
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setFilters((prev) => ({
+      ...prev,
+      sortBy: order ? (field as StockMovementFilters["sortBy"]) : undefined,
+      sortOrder: order,
+      page: 1,
+    }));
   };
 
   const formatDate = (date: Date) => {
@@ -175,14 +185,38 @@ export function MovementList() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                      <th className="pb-3 pr-4">{t("fields.type")}</th>
-                      <th className="pb-3 pr-4">{t("fields.status")}</th>
+                      <SortableHeader
+                        label={t("fields.type")}
+                        field="type"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.status")}
+                        field="status"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4">{t("fields.warehouse")}</th>
                       <th className="pb-3 pr-4">{t("fields.totalItems")}</th>
                       <th className="pb-3 pr-4">{t("fields.totalQuantity")}</th>
                       <th className="pb-3 pr-4">{t("fields.reference")}</th>
-                      <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
-                      <th className="pb-3 pr-4">{t("fields.postedAt")}</th>
+                      <SortableHeader
+                        label={t("fields.createdAt")}
+                        field="createdAt"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("fields.postedAt")}
+                        field="postedAt"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4 text-right">
                         {tCommon("actions")}
                       </th>

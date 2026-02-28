@@ -42,4 +42,6 @@ export interface WarehouseFilters {
   isActive?: boolean;
   page?: number;
   limit?: number;
+  sortBy?: "name" | "code" | "isActive" | "createdAt" | "updatedAt";
+  sortOrder?: "asc" | "desc";
 }

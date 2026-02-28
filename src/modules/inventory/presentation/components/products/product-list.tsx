@@ -215,7 +215,14 @@ export function ProductList() {
                       onSort={handleSort}
                       className="px-4 py-3"
                     />
-                    <th className="px-4 py-3">{t("fields.status")}</th>
+                    <SortableHeader
+                      label={t("fields.status")}
+                      field="status"
+                      currentSortBy={filters.sortBy}
+                      currentSortOrder={filters.sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
                     <th className="px-4 py-3">{tCommon("actions")}</th>
                   </tr>
                 </thead>

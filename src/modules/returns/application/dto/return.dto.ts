@@ -116,7 +116,15 @@ export interface ReturnFilters {
   startDate?: string;
   endDate?: string;
   search?: string;
-  sortBy?: "returnNumber" | "status" | "createdAt" | "confirmedAt";
+  sortBy?:
+    | "returnNumber"
+    | "type"
+    | "status"
+    | "total"
+    | "warehouseName"
+    | "items"
+    | "createdAt"
+    | "confirmedAt";
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;

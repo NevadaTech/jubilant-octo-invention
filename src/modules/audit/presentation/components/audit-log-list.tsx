@@ -8,6 +8,7 @@ import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import { useAuditLogs } from "@/modules/audit/presentation/hooks/use-audit-logs";
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
 import { PERMISSIONS } from "@/shared/domain/permissions";
@@ -35,6 +36,15 @@ export function AuditLogList() {
 
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
+  };
+
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setFilters((prev) => ({
+      ...prev,
+      sortBy: order ? (field as AuditLogFilters["sortBy"]) : undefined,
+      sortOrder: order,
+      page: 1,
+    }));
   };
 
   const handleExportExcel = useCallback(async () => {
@@ -154,12 +164,42 @@ export function AuditLogList() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                      <th className="pb-3 pr-4">{t("columns.timestamp")}</th>
-                      <th className="pb-3 pr-4">{t("columns.action")}</th>
-                      <th className="pb-3 pr-4">{t("columns.entityType")}</th>
+                      <SortableHeader
+                        label={t("columns.timestamp")}
+                        field="createdAt"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("columns.action")}
+                        field="action"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("columns.entityType")}
+                        field="entityType"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4">{t("columns.entityId")}</th>
-                      <th className="pb-3 pr-4">{t("columns.method")}</th>
-                      <th className="pb-3 pr-4">{t("columns.status")}</th>
+                      <SortableHeader
+                        label={t("columns.method")}
+                        field="httpMethod"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <SortableHeader
+                        label={t("columns.status")}
+                        field="httpStatusCode"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
                       <th className="pb-3 pr-4">{t("columns.duration")}</th>
                       <th className="pb-3 pr-4 text-right">
                         {tCommon("actions")}

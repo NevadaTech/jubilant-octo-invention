@@ -15,12 +15,14 @@ import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import { TablePagination } from "@/ui/components/table-pagination";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import {
   useWarehouses,
   useWarehouseFilters,
   useSetWarehouseFilters,
 } from "@/modules/inventory/presentation/hooks";
 import type { Warehouse } from "@/modules/inventory/domain/entities/warehouse.entity";
+import type { WarehouseFilters } from "@/modules/inventory/application/dto/warehouse.dto";
 
 function WarehouseRow({ warehouse }: { warehouse: Warehouse }) {
   const t = useTranslations("inventory.warehouses");
@@ -134,6 +136,14 @@ export function WarehouseList() {
     setFilters({ limit: size, page: 1 });
   };
 
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setFilters({
+      sortBy: order ? (field as WarehouseFilters["sortBy"]) : undefined,
+      sortOrder: order,
+      page: 1,
+    });
+  };
+
   if (isError) {
     return (
       <Card>
@@ -183,9 +193,23 @@ export function WarehouseList() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border text-left text-sm font-medium text-muted-foreground">
-                    <th className="px-4 py-3">{t("fields.warehouse")}</th>
+                    <SortableHeader
+                      label={t("fields.warehouse")}
+                      field="name"
+                      currentSortBy={filters.sortBy}
+                      currentSortOrder={filters.sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
                     <th className="px-4 py-3">{t("fields.address")}</th>
-                    <th className="px-4 py-3">{t("fields.status")}</th>
+                    <SortableHeader
+                      label={t("fields.status")}
+                      field="isActive"
+                      currentSortBy={filters.sortBy}
+                      currentSortOrder={filters.sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
                     <th className="px-4 py-3">{tCommon("actions")}</th>
                   </tr>
                 </thead>

@@ -54,4 +54,12 @@ export interface StockFilters {
   lowStock?: boolean;
   page?: number;
   limit?: number;
+  sortBy?:
+    | "productName"
+    | "warehouseName"
+    | "quantity"
+    | "averageCost"
+    | "totalValue"
+    | "lastMovementAt";
+  sortOrder?: "asc" | "desc";
 }
