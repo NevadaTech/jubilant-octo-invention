@@ -37,6 +37,8 @@ export class ReportApiAdapter implements ReportRepositoryPort {
       params.includeInactive = parameters.includeInactive;
     if (parameters.locationId) params.locationId = parameters.locationId;
     if (parameters.severity) params.severity = parameters.severity;
+    if (parameters.deadStockDays)
+      params.deadStockDays = parameters.deadStockDays;
 
     return params;
   }

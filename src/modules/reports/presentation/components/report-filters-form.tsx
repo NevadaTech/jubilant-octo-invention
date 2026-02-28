@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CalendarIcon, FilterX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/ui/components/button";
@@ -28,20 +28,44 @@ interface ReportFiltersFormProps {
 }
 
 const EMPTY_PARAMS: ReportParameters = {};
+const DEBOUNCE_MS = 500;
 
 export function ReportFiltersForm({
   type,
   onGenerate,
-  loading,
 }: ReportFiltersFormProps) {
   const config = REPORT_FILTER_CONFIG[type];
   const t = useTranslations("reports");
   const [params, setParams] = useState<ReportParameters>(EMPTY_PARAMS);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstRender = useRef(true);
 
   const { data: warehouseData } = useWarehouses(
     config.warehouseId ? {} : undefined,
   );
   const warehouses = warehouseData?.data ?? [];
+
+  // Auto-generate on mount
+  useEffect(() => {
+    onGenerate({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-generate when params change (debounced for text inputs)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onGenerate(params);
+    }, DEBOUNCE_MS);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
 
   const set = (key: keyof ReportParameters, value: unknown) => {
     setParams((prev) => ({
@@ -57,7 +81,9 @@ export function ReportFiltersForm({
     }));
   };
 
-  const clearAll = () => setParams(EMPTY_PARAMS);
+  const clearAll = () => {
+    setParams(EMPTY_PARAMS);
+  };
 
   const hasFilters = Object.keys(params).some((k) => {
     if (k === "dateRange")
@@ -66,19 +92,7 @@ export function ReportFiltersForm({
   });
 
   const visibleCount = Object.values(config).filter(Boolean).length;
-  if (visibleCount === 0) {
-    return (
-      <div className="flex justify-end">
-        <Button
-          onClick={() => onGenerate({})}
-          disabled={loading}
-          className="min-w-32"
-        >
-          {loading ? t("generating") : t("generate")}
-        </Button>
-      </div>
-    );
-  }
+  if (visibleCount === 0) return null;
 
   return (
     <Card>
@@ -364,16 +378,6 @@ export function ReportFiltersForm({
               </label>
             </div>
           )}
-        </div>
-
-        <div className="mt-4 flex justify-end">
-          <Button
-            onClick={() => onGenerate(params)}
-            disabled={loading}
-            className="min-w-36"
-          >
-            {loading ? t("generating") : t("generate")}
-          </Button>
         </div>
       </CardContent>
     </Card>

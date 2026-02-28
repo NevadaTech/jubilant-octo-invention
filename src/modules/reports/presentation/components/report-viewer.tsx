@@ -29,7 +29,6 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
   const locale = useLocale();
   const t = useTranslations("reports");
   const tCommon = useTranslations("errors");
-  const [params, setParams] = useState<ReportParameters>({});
   const [queryParams, setQueryParams] = useState<ReportParameters>({});
 
   const category = getCategoryForReportType(type);
@@ -42,8 +41,7 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
     refetch,
   } = useReportView(type, queryParams);
 
-  const handleGenerate = useCallback((newParams: ReportParameters) => {
-    setParams(newParams);
+  const handleFiltersChange = useCallback((newParams: ReportParameters) => {
     setQueryParams(newParams);
   }, []);
 
@@ -118,7 +116,7 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
       {/* Filters */}
       <ReportFiltersForm
         type={type}
-        onGenerate={handleGenerate}
+        onGenerate={handleFiltersChange}
         loading={isLoading}
       />
 

@@ -173,9 +173,10 @@ export function Sidebar({ className }: SidebarProps) {
   };
 
   const isActive = (href: string) => {
-    // Remove locale prefix for comparison
-    const cleanPathname = pathname.replace(/^\/[a-z]{2}/, "");
-    return cleanPathname === href || cleanPathname.startsWith(`${href}/`);
+    if (href === "/dashboard") {
+      return pathname === "/dashboard";
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   const isChildActive = (children?: { href: string }[]) => {

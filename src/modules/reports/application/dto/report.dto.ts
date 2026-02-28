@@ -164,55 +164,61 @@ export const REPORT_FILTER_CONFIG: Record<
   ReportTypeValue,
   ReportTypeConfig["filters"]
 > = {
+  // Snapshot — no dateRange (backend ignores it)
   AVAILABLE_INVENTORY: {
-    dateRange: true,
     warehouseId: true,
     includeInactive: true,
   },
   MOVEMENT_HISTORY: { dateRange: true, warehouseId: true, movementType: true },
   VALUATION: { warehouseId: true, category: true },
   LOW_STOCK: { warehouseId: true, severity: true },
+  // Removed groupBy (backend ignores it)
   MOVEMENTS: {
     dateRange: true,
     warehouseId: true,
     movementType: true,
-    groupBy: true,
   },
+  // Removed period (backend ignores it)
   FINANCIAL: {
     dateRange: true,
     warehouseId: true,
     category: true,
-    period: true,
   },
+  // Removed period (backend ignores it)
   TURNOVER: {
     dateRange: true,
     warehouseId: true,
     category: true,
-    period: true,
   },
+  // Removed groupBy and period (backend ignores them)
   SALES: {
     dateRange: true,
     warehouseId: true,
     status: true,
-    groupBy: true,
-    period: true,
   },
+  // Removed groupBy and period (backend ignores them)
   SALES_BY_PRODUCT: {
     dateRange: true,
     warehouseId: true,
     category: true,
-    period: true,
-    groupBy: true,
   },
-  SALES_BY_WAREHOUSE: { dateRange: true, period: true },
+  // Added warehouseId (backend supports it), removed period (ignored)
+  SALES_BY_WAREHOUSE: { dateRange: true, warehouseId: true },
   RETURNS: {
     dateRange: true,
     warehouseId: true,
     status: true,
     returnType: true,
   },
-  RETURNS_BY_TYPE: { dateRange: true, period: true },
-  RETURNS_BY_PRODUCT: { dateRange: true, category: true, period: true },
+  // Added warehouseId + returnType (backend supports them), removed period (ignored)
+  RETURNS_BY_TYPE: { dateRange: true, warehouseId: true, returnType: true },
+  // Added warehouseId + returnType (backend supports them), removed period (ignored)
+  RETURNS_BY_PRODUCT: {
+    dateRange: true,
+    warehouseId: true,
+    category: true,
+    returnType: true,
+  },
   RETURNS_CUSTOMER: { dateRange: true, warehouseId: true, status: true },
   RETURNS_SUPPLIER: { dateRange: true, warehouseId: true, status: true },
   ABC_ANALYSIS: {
@@ -220,8 +226,10 @@ export const REPORT_FILTER_CONFIG: Record<
     warehouseId: true,
     category: true,
   },
+  // Added category (backend supports it)
   DEAD_STOCK: {
     warehouseId: true,
+    category: true,
     deadStockDays: true,
     includeInactive: true,
   },
