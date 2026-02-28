@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { X, Calendar, Search } from "lucide-react";
+import { X, Calendar } from "lucide-react";
 import { Input } from "@/ui/components/input";
 import { Button } from "@/ui/components/button";
 import {
@@ -23,9 +23,10 @@ const ENTITY_TYPES = [
   "Warehouse",
   "Movement",
   "Transfer",
+  "Stock",
   "Sale",
   "Return",
-  "StockLevel",
+  "Report",
 ];
 
 const ACTIONS = [
@@ -110,29 +111,11 @@ export function AuditLogFiltersBar({ filters, onFiltersChange }: Props) {
     });
   };
 
-  const handleEntityIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.trim();
-    onFiltersChange({
-      ...filters,
-      entityId: value || undefined,
-      page: 1,
-    });
-  };
-
-  const handlePageSizeChange = (value: string) => {
-    onFiltersChange({
-      ...filters,
-      limit: parseInt(value),
-      page: 1,
-    });
-  };
-
   const hasFilters =
     filters.entityType ||
     filters.action ||
     filters.performedBy ||
     filters.httpMethod ||
-    filters.entityId ||
     filters.startDate ||
     filters.endDate;
 
@@ -261,40 +244,6 @@ export function AuditLogFiltersBar({ filters, onFiltersChange }: Props) {
               onChange={handleEndDateChange}
             />
           </div>
-        </div>
-
-        <div className="min-w-[180px]">
-          <label className="mb-1 block text-sm text-muted-foreground">
-            {t("filters.entityId")}
-          </label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder={t("filters.entityIdPlaceholder")}
-              className="pl-9"
-              onChange={handleEntityIdChange}
-            />
-          </div>
-        </div>
-
-        <div className="min-w-[100px]">
-          <label className="mb-1 block text-sm text-muted-foreground">
-            {t("filters.pageSize")}
-          </label>
-          <Select
-            value={String(filters.limit || 20)}
-            onValueChange={handlePageSizeChange}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
         {hasFilters && (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { ClipboardList, Eye, Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
 import { SortableHeader } from "@/ui/components/sortable-header";
 import { useAuditLogs } from "@/modules/audit/presentation/hooks/use-audit-logs";
+import { useUsers } from "@/modules/users/presentation/hooks/use-users";
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import { getContainer } from "@/config/di/container";
@@ -32,7 +33,14 @@ export function AuditLogList() {
   const [isExporting, setIsExporting] = useState(false);
 
   const { data, isLoading, isError } = useAuditLogs(filters);
+  const { data: usersData } = useUsers({ limit: 100 });
   const { hasPermission } = usePermissions();
+
+  const userNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    usersData?.data.forEach((user) => map.set(user.id, user.fullName));
+    return map;
+  }, [usersData]);
 
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
@@ -61,8 +69,9 @@ export function AuditLogList() {
         [t("columns.timestamp")]: log.createdAt.toISOString(),
         [t("columns.action")]: log.action,
         [t("columns.entityType")]: log.entityType,
-        [t("columns.entityId")]: log.entityId || "-",
-        [t("columns.performedBy")]: log.performedBy || "-",
+        [t("columns.performedBy")]: log.performedBy
+          ? userNameMap.get(log.performedBy) || log.performedBy
+          : "-",
         [t("columns.method")]: log.httpMethod || "-",
         [t("columns.status")]: log.httpStatusCode?.toString() || "-",
         [t("columns.duration")]:
@@ -102,11 +111,6 @@ export function AuditLogList() {
       dateStyle: "short",
       timeStyle: "medium",
     }).format(date);
-  };
-
-  const truncateId = (id: string | null) => {
-    if (!id) return "-";
-    return id.length > 12 ? `${id.slice(0, 12)}...` : id;
   };
 
   if (isError) {
@@ -185,7 +189,6 @@ export function AuditLogList() {
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
                       />
-                      <th className="pb-3 pr-4">{t("columns.entityId")}</th>
                       <SortableHeader
                         label={t("columns.method")}
                         field="httpMethod"
@@ -221,9 +224,6 @@ export function AuditLogList() {
                         </td>
                         <td className="py-3 pr-4 text-sm font-medium">
                           {log.entityType}
-                        </td>
-                        <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">
-                          {truncateId(log.entityId)}
                         </td>
                         <td className="py-3 pr-4">
                           <AuditMethodBadge method={log.httpMethod} />
@@ -280,6 +280,7 @@ export function AuditLogList() {
 
       <AuditLogDetailDialog
         auditLog={selectedLog}
+        userNameMap={userNameMap}
         open={!!selectedLog}
         onOpenChange={(open) => {
           if (!open) setSelectedLog(null);

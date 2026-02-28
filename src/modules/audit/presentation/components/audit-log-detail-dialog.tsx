@@ -15,11 +15,17 @@ import { AuditStatusIndicator } from "./audit-status-indicator";
 
 interface Props {
   auditLog: AuditLog | null;
+  userNameMap: Map<string, string>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function AuditLogDetailDialog({ auditLog, open, onOpenChange }: Props) {
+export function AuditLogDetailDialog({
+  auditLog,
+  userNameMap,
+  open,
+  onOpenChange,
+}: Props) {
   const t = useTranslations("audit");
 
   if (!auditLog) return null;
@@ -61,18 +67,13 @@ export function AuditLogDetailDialog({ auditLog, open, onOpenChange }: Props) {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">
-                {t("columns.entityId")}
-              </p>
-              <p className="mt-1 font-mono text-sm">
-                {auditLog.entityId || "-"}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">
                 {t("columns.performedBy")}
               </p>
-              <p className="mt-1 font-mono text-sm">
-                {auditLog.performedBy || "-"}
+              <p className="mt-1 text-sm font-medium">
+                {auditLog.performedBy
+                  ? userNameMap.get(auditLog.performedBy) ||
+                    auditLog.performedBy
+                  : "-"}
               </p>
             </div>
           </div>
