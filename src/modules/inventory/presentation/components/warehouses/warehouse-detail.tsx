@@ -19,6 +19,7 @@ import {
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { SortableHeader } from "@/ui/components/sortable-header";
 import { Badge } from "@/ui/components/badge";
 import {
   AlertDialog,
@@ -103,6 +104,8 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
   const tCommon = useTranslations("common");
   const [search, setSearch] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<string | undefined>();
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
   const toggleStatus = useToggleWarehouseStatus();
 
   const {
@@ -128,6 +131,46 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
     const currency = stockData.data.find((s) => s.currency)?.currency || "USD";
     return { totalQuantity, totalValue, currency };
   }, [stockData]);
+
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    setSortBy(order ? field : undefined);
+    setSortOrder(order);
+  };
+
+  const sortedStock = useMemo(() => {
+    if (!stockData?.data || !sortBy) return stockData?.data;
+    const items = [...stockData.data];
+    const dir = sortOrder === "desc" ? -1 : 1;
+    return items.sort((a, b) => {
+      let aVal: string | number;
+      let bVal: string | number;
+      switch (sortBy) {
+        case "productName":
+          aVal = (a.productName || "").toLowerCase();
+          bVal = (b.productName || "").toLowerCase();
+          return aVal.localeCompare(bVal) * dir;
+        case "quantity":
+          aVal = a.quantity;
+          bVal = b.quantity;
+          break;
+        case "averageCost":
+          aVal = a.averageCost;
+          bVal = b.averageCost;
+          break;
+        case "totalValue":
+          aVal = a.totalValue;
+          bVal = b.totalValue;
+          break;
+        case "availableQuantity":
+          aVal = a.availableQuantity;
+          bVal = b.availableQuantity;
+          break;
+        default:
+          return 0;
+      }
+      return ((aVal as number) - (bVal as number)) * dir;
+    });
+  }, [stockData?.data, sortBy, sortOrder]);
 
   if (isLoading) {
     return (
@@ -375,23 +418,50 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-neutral-200 text-left text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
-                    <th className="px-4 py-3">{tStock("fields.product")}</th>
-                    <th className="px-4 py-3 text-right">
-                      {tStock("fields.quantity")}
-                    </th>
-                    <th className="px-4 py-3 text-right">
-                      {tStock("fields.avgCost")}
-                    </th>
-                    <th className="px-4 py-3 text-right">
-                      {tStock("fields.totalValue")}
-                    </th>
-                    <th className="px-4 py-3 text-right">
-                      {tStock("fields.available")}
-                    </th>
+                    <SortableHeader
+                      label={tStock("fields.product")}
+                      field="productName"
+                      currentSortBy={sortBy}
+                      currentSortOrder={sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
+                    <SortableHeader
+                      label={tStock("fields.quantity")}
+                      field="quantity"
+                      currentSortBy={sortBy}
+                      currentSortOrder={sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3 text-right"
+                    />
+                    <SortableHeader
+                      label={tStock("fields.avgCost")}
+                      field="averageCost"
+                      currentSortBy={sortBy}
+                      currentSortOrder={sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3 text-right"
+                    />
+                    <SortableHeader
+                      label={tStock("fields.totalValue")}
+                      field="totalValue"
+                      currentSortBy={sortBy}
+                      currentSortOrder={sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3 text-right"
+                    />
+                    <SortableHeader
+                      label={tStock("fields.available")}
+                      field="availableQuantity"
+                      currentSortBy={sortBy}
+                      currentSortOrder={sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3 text-right"
+                    />
                   </tr>
                 </thead>
                 <tbody>
-                  {stockData.data.map((stock) => (
+                  {(sortedStock ?? stockData.data).map((stock) => (
                     <tr
                       key={stock.id}
                       className="border-b border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
