@@ -31,6 +31,14 @@ function isClient(): boolean {
   return typeof window !== "undefined";
 }
 
+function isSecureContext(): boolean {
+  return isClient() && window.location.protocol === "https:";
+}
+
+function secureCookieFlag(): string {
+  return isSecureContext() ? "; Secure" : "";
+}
+
 export class TokenService {
   static setTokens(tokens: StoredTokens): void {
     if (!isClient()) return;
@@ -41,7 +49,7 @@ export class TokenService {
       localStorage.setItem(`${TOKEN_KEY}_expires`, tokens.expiresAt);
 
       // Sync with cookie for middleware auth check
-      document.cookie = `${TOKEN_KEY}=${tokens.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      document.cookie = `${TOKEN_KEY}=${tokens.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${secureCookieFlag()}`;
     } catch (error) {
       console.error("Failed to store tokens:", error);
     }
@@ -134,7 +142,7 @@ export class TokenService {
       localStorage.removeItem(USER_KEY);
 
       // Clear auth cookie
-      document.cookie = `${TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax`;
+      document.cookie = `${TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax${secureCookieFlag()}`;
     } catch (error) {
       console.error("Failed to clear tokens:", error);
     }

@@ -1,17 +1,32 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { RefreshCw } from "lucide-react";
 import { useDashboardMetrics } from "@/modules/dashboard/presentation/hooks/use-dashboard-metrics";
 import { DashboardMetricsGrid } from "./dashboard-metrics-grid";
-import { SalesTrendChart } from "./sales-trend-chart";
-import { TopProductsChart } from "./top-products-chart";
-import { StockDistributionChart } from "./stock-distribution-chart";
-import { RecentActivityFeed } from "./recent-activity-feed";
 import { StatCardSkeleton } from "./stat-card-skeleton";
 import { ChartSkeleton } from "./chart-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Button } from "@/ui/components/button";
+
+const SalesTrendChart = dynamic(
+  () => import("./sales-trend-chart").then((m) => m.SalesTrendChart),
+  { ssr: false, loading: () => <ChartSkeleton /> },
+);
+const TopProductsChart = dynamic(
+  () => import("./top-products-chart").then((m) => m.TopProductsChart),
+  { ssr: false, loading: () => <ChartSkeleton /> },
+);
+const StockDistributionChart = dynamic(
+  () =>
+    import("./stock-distribution-chart").then((m) => m.StockDistributionChart),
+  { ssr: false, loading: () => <ChartSkeleton /> },
+);
+const RecentActivityFeed = dynamic(
+  () => import("./recent-activity-feed").then((m) => m.RecentActivityFeed),
+  { ssr: false, loading: () => <ChartSkeleton /> },
+);
 
 export function DashboardContent() {
   const t = useTranslations("dashboard.metrics");

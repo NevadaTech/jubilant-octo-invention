@@ -55,10 +55,11 @@ function AuthHydration({ children }: { children: ReactNode }) {
       const token = TokenService.getAccessToken();
       const name =
         process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME ?? "nevada_auth_token";
+      const secure = window.location.protocol === "https:" ? "; Secure" : "";
       if (token) {
-        document.cookie = `${name}=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+        document.cookie = `${name}=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${secure}`;
       } else {
-        document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${secure}`;
       }
     };
 
