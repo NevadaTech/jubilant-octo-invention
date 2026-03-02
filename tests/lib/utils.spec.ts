@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { cn, isDefined, capitalize, truncate } from "@/lib/utils";
+import { describe, it, expect, vi } from "vitest";
+import { cn, isDefined, capitalize, truncate, sleep, generateId } from "@/lib/utils";
 
 describe("Utils", () => {
   describe("cn", () => {
@@ -168,6 +168,52 @@ describe("Utils", () => {
 
       // Assert
       expect(result).toBe("Hello W…");
+    });
+
+    it("Given: string exactly at maxLength When: truncating Then: should return original", () => {
+      const input = "Hello";
+      const result = truncate(input, 5);
+      expect(result).toBe("Hello");
+    });
+  });
+
+  describe("sleep", () => {
+    it("Given: milliseconds When: sleeping Then: should resolve after delay", async () => {
+      vi.useFakeTimers();
+      const promise = sleep(100);
+      vi.advanceTimersByTime(100);
+      await expect(promise).resolves.toBeUndefined();
+      vi.useRealTimers();
+    });
+
+    it("Given: 0ms When: sleeping Then: should resolve immediately", async () => {
+      vi.useFakeTimers();
+      const promise = sleep(0);
+      vi.advanceTimersByTime(0);
+      await expect(promise).resolves.toBeUndefined();
+      vi.useRealTimers();
+    });
+  });
+
+  describe("generateId", () => {
+    it("Given: no params When: generating id Then: should return a UUID string", () => {
+      const id = generateId();
+      expect(id).toBeDefined();
+      expect(typeof id).toBe("string");
+      expect(id.length).toBeGreaterThan(0);
+    });
+
+    it("Given: multiple calls When: generating ids Then: should return unique values", () => {
+      const id1 = generateId();
+      const id2 = generateId();
+      expect(id1).not.toBe(id2);
+    });
+
+    it("Given: uuid format When: generating id Then: should match UUID pattern", () => {
+      const id = generateId();
+      expect(id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+      );
     });
   });
 });

@@ -18,14 +18,6 @@ interface ApiResponse<T> {
   data: T;
 }
 
-/** Unwrap Effect-style { _tag, _value } if present */
-function unwrapResponse<T>(data: T): T {
-  if (data && typeof data === "object" && "_tag" in data && "_value" in data) {
-    return (data as unknown as { _value: T })._value;
-  }
-  return data;
-}
-
 export class ReturnApiAdapter implements ReturnRepositoryPort {
   private readonly basePath = "/returns";
 
@@ -34,7 +26,7 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
       params: this.buildQueryParams(filters),
     });
 
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
 
     return {
       data: (body.data ?? []).map(ReturnMapper.fromApiRaw),
@@ -47,7 +39,7 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
       const raw = await apiClient.get<ApiResponse<ReturnResponseDto>>(
         `${this.basePath}/${id}`,
       );
-      const body = unwrapResponse(raw.data);
+      const body = raw.data;
       return ReturnMapper.toDomain(body.data);
     } catch (error) {
       if (this.isNotFoundError(error)) {
@@ -62,7 +54,7 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
       this.basePath,
       data,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return ReturnMapper.toDomain(body.data);
   }
 
@@ -71,7 +63,7 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
       `${this.basePath}/${id}`,
       data,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return ReturnMapper.toDomain(body.data);
   }
 
@@ -79,7 +71,7 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
     const raw = await apiClient.post<ApiResponse<ReturnResponseDto>>(
       `${this.basePath}/${id}/confirm`,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return ReturnMapper.toDomain(body.data);
   }
 
@@ -87,7 +79,7 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
     const raw = await apiClient.post<ApiResponse<ReturnResponseDto>>(
       `${this.basePath}/${id}/cancel`,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return ReturnMapper.toDomain(body.data);
   }
 
@@ -96,7 +88,7 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
       `${this.basePath}/${returnId}/lines`,
       line,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return ReturnMapper.toDomain(body.data);
   }
 
@@ -104,7 +96,7 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
     const raw = await apiClient.delete<ApiResponse<ReturnResponseDto>>(
       `${this.basePath}/${returnId}/lines/${lineId}`,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return ReturnMapper.toDomain(body.data);
   }
 

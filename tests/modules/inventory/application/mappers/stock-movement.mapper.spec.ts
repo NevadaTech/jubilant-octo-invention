@@ -3,22 +3,45 @@ import { StockMovementMapper } from "@/modules/inventory/application/mappers/sto
 import type { StockMovementResponseDto } from "@/modules/inventory/application/dto/stock-movement.dto";
 
 describe("StockMovementMapper", () => {
-  const mockMovementDto: StockMovementResponseDto = {
-    id: "123e4567-e89b-12d3-a456-426614174000",
+  const mockLineDto = {
+    id: "line-1",
     productId: "456e7890-e89b-12d3-a456-426614174000",
     productName: "Test Product",
     productSku: "PROD-001",
+    quantity: 50,
+    unitCost: 10.5,
+    currency: "USD",
+  };
+
+  const mockMovementDto: StockMovementResponseDto = {
+    id: "123e4567-e89b-12d3-a456-426614174000",
     warehouseId: "789e0123-e89b-12d3-a456-426614174000",
     warehouseName: "Main Warehouse",
     type: "IN",
-    quantity: 50,
-    previousQuantity: 100,
-    newQuantity: 150,
-    reason: "Stock replenishment",
+    status: "DRAFT",
     reference: "PO-2025-001",
+    reason: "Stock replenishment",
+    note: "Test note",
+    lines: [mockLineDto],
     createdBy: "john.doe@example.com",
     createdAt: "2025-01-15T10:30:00.000Z",
+    postedAt: null,
   };
+
+  describe("lineToDomain", () => {
+    it("Given: a valid MovementLineResponseDto When: mapping to domain Then: should return a MovementLine", () => {
+      // Act
+      const line = StockMovementMapper.lineToDomain(mockLineDto);
+
+      // Assert
+      expect(line.id).toBe(mockLineDto.id);
+      expect(line.productId).toBe(mockLineDto.productId);
+      expect(line.productName).toBe(mockLineDto.productName);
+      expect(line.productSku).toBe(mockLineDto.productSku);
+      expect(line.quantity).toBe(mockLineDto.quantity);
+      expect(line.unitCost).toBe(mockLineDto.unitCost);
+    });
+  });
 
   describe("toDomain", () => {
     it("Given: a valid StockMovementResponseDto When: mapping to domain Then: should return a StockMovement entity", () => {
@@ -27,74 +50,40 @@ describe("StockMovementMapper", () => {
 
       // Assert
       expect(movement.id).toBe(mockMovementDto.id);
-      expect(movement.productId).toBe(mockMovementDto.productId);
-      expect(movement.productName).toBe(mockMovementDto.productName);
-      expect(movement.productSku).toBe(mockMovementDto.productSku);
       expect(movement.warehouseId).toBe(mockMovementDto.warehouseId);
       expect(movement.warehouseName).toBe(mockMovementDto.warehouseName);
       expect(movement.type).toBe(mockMovementDto.type);
-      expect(movement.quantity).toBe(mockMovementDto.quantity);
-      expect(movement.previousQuantity).toBe(mockMovementDto.previousQuantity);
-      expect(movement.newQuantity).toBe(mockMovementDto.newQuantity);
-      expect(movement.reason).toBe(mockMovementDto.reason);
+      expect(movement.status).toBe(mockMovementDto.status);
       expect(movement.reference).toBe(mockMovementDto.reference);
+      expect(movement.reason).toBe(mockMovementDto.reason);
+      expect(movement.note).toBe(mockMovementDto.note);
+      expect(movement.lines).toHaveLength(1);
       expect(movement.createdBy).toBe(mockMovementDto.createdBy);
+      expect(movement.createdAt).toBeInstanceOf(Date);
     });
 
     it("Given: a movement with type IN When: mapping to domain Then: isEntry should be true", () => {
-      // Arrange
-      const inMovementDto: StockMovementResponseDto = {
-        ...mockMovementDto,
-        type: "IN",
-      };
-
       // Act
-      const movement = StockMovementMapper.toDomain(inMovementDto);
+      const movement = StockMovementMapper.toDomain(mockMovementDto);
 
       // Assert
       expect(movement.isEntry).toBe(true);
       expect(movement.isExit).toBe(false);
-      expect(movement.isAdjustment).toBe(false);
     });
 
     it("Given: a movement with type OUT When: mapping to domain Then: isExit should be true", () => {
       // Arrange
-      const outMovementDto: StockMovementResponseDto = {
+      const outDto: StockMovementResponseDto = {
         ...mockMovementDto,
         type: "OUT",
       };
 
       // Act
-      const movement = StockMovementMapper.toDomain(outMovementDto);
+      const movement = StockMovementMapper.toDomain(outDto);
 
       // Assert
       expect(movement.isEntry).toBe(false);
       expect(movement.isExit).toBe(true);
-      expect(movement.isAdjustment).toBe(false);
-    });
-
-    it("Given: a movement with type ADJUSTMENT When: mapping to domain Then: isAdjustment should be true", () => {
-      // Arrange
-      const adjustmentDto: StockMovementResponseDto = {
-        ...mockMovementDto,
-        type: "ADJUSTMENT",
-      };
-
-      // Act
-      const movement = StockMovementMapper.toDomain(adjustmentDto);
-
-      // Assert
-      expect(movement.isEntry).toBe(false);
-      expect(movement.isExit).toBe(false);
-      expect(movement.isAdjustment).toBe(true);
-    });
-
-    it("Given: a movement When: getting quantityDifference Then: should return correct difference", () => {
-      // Act
-      const movement = StockMovementMapper.toDomain(mockMovementDto);
-
-      // Assert
-      expect(movement.quantityDifference).toBe(50); // 150 - 100
     });
 
     it("Given: a movement without reference When: mapping to domain Then: reference should be null", () => {
@@ -110,10 +99,19 @@ describe("StockMovementMapper", () => {
       // Assert
       expect(movement.reference).toBeNull();
     });
+
+    it("Given: a movement with date string When: mapping to domain Then: should convert createdAt to Date", () => {
+      // Act
+      const movement = StockMovementMapper.toDomain(mockMovementDto);
+
+      // Assert
+      expect(movement.createdAt).toBeInstanceOf(Date);
+      expect(movement.createdAt.toISOString()).toBe(mockMovementDto.createdAt);
+    });
   });
 
   describe("toDto", () => {
-    it("Given: a StockMovement entity When: mapping to DTO Then: should return a StockMovementResponseDto", () => {
+    it("Given: a StockMovement entity When: mapping to DTO Then: should return correct DTO", () => {
       // Arrange
       const movement = StockMovementMapper.toDomain(mockMovementDto);
 
@@ -122,20 +120,27 @@ describe("StockMovementMapper", () => {
 
       // Assert
       expect(dto.id).toBe(movement.id);
-      expect(dto.productId).toBe(movement.productId);
+      expect(dto.warehouseId).toBe(movement.warehouseId);
       expect(dto.type).toBe(movement.type);
-      expect(dto.quantity).toBe(movement.quantity);
+      expect(dto.status).toBe(movement.status);
+      expect(typeof dto.createdAt).toBe("string");
     });
   });
 
   describe("round-trip", () => {
-    it("Given: a StockMovementResponseDto When: mapping to domain and back to DTO Then: should be equivalent", () => {
+    it("Given: a StockMovementResponseDto When: mapping to domain and back to DTO Then: key fields should match", () => {
       // Act
       const movement = StockMovementMapper.toDomain(mockMovementDto);
       const resultDto = StockMovementMapper.toDto(movement);
 
       // Assert
-      expect(resultDto).toEqual(mockMovementDto);
+      expect(resultDto.id).toBe(mockMovementDto.id);
+      expect(resultDto.warehouseId).toBe(mockMovementDto.warehouseId);
+      expect(resultDto.type).toBe(mockMovementDto.type);
+      expect(resultDto.status).toBe(mockMovementDto.status);
+      expect(resultDto.reference).toBe(mockMovementDto.reference);
+      expect(resultDto.reason).toBe(mockMovementDto.reason);
+      expect(resultDto.createdAt).toBe(mockMovementDto.createdAt);
     });
   });
 });

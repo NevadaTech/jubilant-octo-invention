@@ -20,6 +20,19 @@ describe("ProductMapper", () => {
     imageUrl: "https://example.com/image.jpg",
     createdAt: "2025-01-15T10:30:00.000Z",
     updatedAt: "2025-01-16T14:20:00.000Z",
+    averageCost: 10.5,
+    totalStock: 50,
+    margin: 47.5,
+    profit: 9.49,
+    safetyStock: 10,
+    totalIn30d: 100,
+    totalOut30d: 50,
+    avgDailyConsumption: 1.67,
+    daysOfStock: 30,
+    turnoverRate: 1.0,
+    lastMovementDate: null,
+    statusChangedBy: null,
+    statusChangedAt: null,
   };
 
   describe("toDomain", () => {

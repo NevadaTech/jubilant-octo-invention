@@ -20,14 +20,6 @@ interface ApiResponse<T> {
   data: T;
 }
 
-/** Unwrap Effect-style { _tag, _value } if present */
-function unwrapResponse<T>(data: T): T {
-  if (data && typeof data === "object" && "_tag" in data && "_value" in data) {
-    return (data as unknown as { _value: T })._value;
-  }
-  return data;
-}
-
 export class SaleApiAdapter implements SaleRepositoryPort {
   private readonly basePath = "/sales";
 
@@ -36,7 +28,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       params: this.buildQueryParams(filters),
     });
 
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
 
     return {
       data: (body.data ?? []).map(SaleMapper.fromApiRaw),
@@ -49,7 +41,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       const raw = await apiClient.get<ApiResponse<SaleResponseDto>>(
         `${this.basePath}/${id}`,
       );
-      const body = unwrapResponse(raw.data);
+      const body = raw.data;
       return SaleMapper.toDomain(body.data);
     } catch (error) {
       if (this.isNotFoundError(error)) {
@@ -64,7 +56,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       this.basePath,
       data,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return SaleMapper.toDomain(body.data);
   }
 
@@ -73,7 +65,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       `${this.basePath}/${id}`,
       data,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return SaleMapper.toDomain(body.data);
   }
 
@@ -81,7 +73,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
       `${this.basePath}/${id}/confirm`,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return SaleMapper.toDomain(body.data);
   }
 
@@ -89,7 +81,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
       `${this.basePath}/${id}/cancel`,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return SaleMapper.toDomain(body.data);
   }
 
@@ -97,7 +89,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
       `${this.basePath}/${id}/pick`,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return SaleMapper.toDomain(body.data);
   }
 
@@ -106,7 +98,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       `${this.basePath}/${id}/ship`,
       data,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return SaleMapper.toDomain(body.data);
   }
 
@@ -114,7 +106,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     const raw = await apiClient.post<ApiResponse<SaleResponseDto>>(
       `${this.basePath}/${id}/complete`,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return SaleMapper.toDomain(body.data);
   }
 
@@ -123,7 +115,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       `${this.basePath}/${saleId}/lines`,
       line,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return SaleMapper.toDomain(body.data);
   }
 
@@ -131,7 +123,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     const raw = await apiClient.delete<ApiResponse<SaleResponseDto>>(
       `${this.basePath}/${saleId}/lines/${lineId}`,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return SaleMapper.toDomain(body.data);
   }
 
@@ -148,7 +140,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     const raw = await apiClient.get<{ data: ReturnRawDto[] }>(
       `${this.basePath}/${saleId}/returns`,
     );
-    const body = unwrapResponse(raw.data);
+    const body = raw.data;
     return (body.data ?? []).map((r) => ({
       id: r.id,
       returnNumber: r.returnNumber,

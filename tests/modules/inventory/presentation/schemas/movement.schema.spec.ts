@@ -7,14 +7,15 @@ import {
 
 describe("Movement Schema", () => {
   describe("createMovementSchema", () => {
-    it("Given: valid movement data When: validating Then: should pass validation", () => {
+    it("Given: valid movement data with lines When: validating Then: should pass validation", () => {
       // Arrange
       const validData = {
-        productId: "123e4567-e89b-12d3-a456-426614174000",
         warehouseId: "456e7890-e89b-12d3-a456-426614174000",
         type: "IN" as const,
-        quantity: 50,
         reason: "Stock replenishment",
+        lines: [
+          { productId: "123e4567-e89b-12d3-a456-426614174000", quantity: 50 },
+        ],
       };
 
       // Act
@@ -24,14 +25,12 @@ describe("Movement Schema", () => {
       expect(result.success).toBe(true);
     });
 
-    it("Given: invalid productId When: validating Then: should fail validation", () => {
+    it("Given: empty warehouseId When: validating Then: should fail validation", () => {
       // Arrange
       const invalidData = {
-        productId: "not-a-uuid",
-        warehouseId: "456e7890-e89b-12d3-a456-426614174000",
+        warehouseId: "",
         type: "IN" as const,
-        quantity: 50,
-        reason: "Stock replenishment",
+        lines: [{ productId: "123", quantity: 10 }],
       };
 
       // Act
@@ -41,14 +40,12 @@ describe("Movement Schema", () => {
       expect(result.success).toBe(false);
     });
 
-    it("Given: zero quantity When: validating Then: should fail validation", () => {
+    it("Given: empty lines array When: validating Then: should fail validation", () => {
       // Arrange
       const invalidData = {
-        productId: "123e4567-e89b-12d3-a456-426614174000",
-        warehouseId: "456e7890-e89b-12d3-a456-426614174000",
+        warehouseId: "wh-1",
         type: "IN" as const,
-        quantity: 0,
-        reason: "Stock replenishment",
+        lines: [],
       };
 
       // Act
@@ -58,14 +55,12 @@ describe("Movement Schema", () => {
       expect(result.success).toBe(false);
     });
 
-    it("Given: negative quantity When: validating Then: should fail validation", () => {
+    it("Given: line with zero quantity When: validating Then: should fail validation", () => {
       // Arrange
       const invalidData = {
-        productId: "123e4567-e89b-12d3-a456-426614174000",
-        warehouseId: "456e7890-e89b-12d3-a456-426614174000",
+        warehouseId: "wh-1",
         type: "OUT" as const,
-        quantity: -10,
-        reason: "Damaged goods",
+        lines: [{ productId: "prod-1", quantity: 0 }],
       };
 
       // Act
@@ -75,14 +70,12 @@ describe("Movement Schema", () => {
       expect(result.success).toBe(false);
     });
 
-    it("Given: empty reason When: validating Then: should fail validation", () => {
+    it("Given: line with negative quantity When: validating Then: should fail validation", () => {
       // Arrange
       const invalidData = {
-        productId: "123e4567-e89b-12d3-a456-426614174000",
-        warehouseId: "456e7890-e89b-12d3-a456-426614174000",
-        type: "ADJUSTMENT" as const,
-        quantity: 10,
-        reason: "",
+        warehouseId: "wh-1",
+        type: "OUT" as const,
+        lines: [{ productId: "prod-1", quantity: -10 }],
       };
 
       // Act
@@ -92,14 +85,10 @@ describe("Movement Schema", () => {
       expect(result.success).toBe(false);
     });
 
-    it("Given: all movement types When: validating Then: should pass validation", () => {
+    it("Given: all manual movement types When: validating Then: should pass validation", () => {
       // Arrange
-      const baseData = {
-        productId: "123e4567-e89b-12d3-a456-426614174000",
-        warehouseId: "456e7890-e89b-12d3-a456-426614174000",
-        quantity: 10,
-        reason: "Test reason",
-      };
+      const baseLine = [{ productId: "prod-1", quantity: 10 }];
+      const baseData = { warehouseId: "wh-1", lines: baseLine };
 
       // Act & Assert
       expect(
@@ -109,20 +98,24 @@ describe("Movement Schema", () => {
         createMovementSchema.safeParse({ ...baseData, type: "OUT" }).success,
       ).toBe(true);
       expect(
-        createMovementSchema.safeParse({ ...baseData, type: "ADJUSTMENT" })
+        createMovementSchema.safeParse({ ...baseData, type: "ADJUST_IN" })
+          .success,
+      ).toBe(true);
+      expect(
+        createMovementSchema.safeParse({ ...baseData, type: "ADJUST_OUT" })
           .success,
       ).toBe(true);
     });
 
-    it("Given: optional reference When: validating Then: should pass validation", () => {
+    it("Given: optional reference and note When: validating Then: should pass validation", () => {
       // Arrange
       const validData = {
-        productId: "123e4567-e89b-12d3-a456-426614174000",
-        warehouseId: "456e7890-e89b-12d3-a456-426614174000",
+        warehouseId: "wh-1",
         type: "IN" as const,
-        quantity: 50,
-        reason: "Stock replenishment",
         reference: "PO-2025-001",
+        reason: "Stock replenishment",
+        note: "Test note",
+        lines: [{ productId: "prod-1", quantity: 50 }],
       };
 
       // Act
@@ -137,52 +130,38 @@ describe("Movement Schema", () => {
     it("Given: form data When: converting to DTO Then: should map all fields correctly", () => {
       // Arrange
       const formData: CreateMovementFormData = {
-        productId: "123e4567-e89b-12d3-a456-426614174000",
-        warehouseId: "456e7890-e89b-12d3-a456-426614174000",
+        warehouseId: "wh-1",
         type: "IN",
-        quantity: 50,
-        reason: "Stock replenishment",
         reference: "PO-2025-001",
+        reason: "Stock replenishment",
+        note: "Test note",
+        lines: [{ productId: "prod-1", quantity: 50, unitCost: 10.5 }],
       };
 
       // Act
       const dto = toCreateMovementDto(formData);
 
       // Assert
-      expect(dto.productId).toBe(formData.productId);
       expect(dto.warehouseId).toBe(formData.warehouseId);
       expect(dto.type).toBe(formData.type);
-      expect(dto.quantity).toBe(formData.quantity);
-      expect(dto.reason).toBe(formData.reason);
       expect(dto.reference).toBe(formData.reference);
+      expect(dto.reason).toBe(formData.reason);
+      expect(dto.note).toBe(formData.note);
+      expect(dto.lines).toHaveLength(1);
+      expect(dto.lines[0].productId).toBe("prod-1");
+      expect(dto.lines[0].quantity).toBe(50);
+      expect(dto.lines[0].unitCost).toBe(10.5);
     });
 
-    it("Given: form data without reference When: converting to DTO Then: reference should be undefined", () => {
+    it("Given: form data with empty optional fields When: converting to DTO Then: should set them as undefined", () => {
       // Arrange
       const formData: CreateMovementFormData = {
-        productId: "123e4567-e89b-12d3-a456-426614174000",
-        warehouseId: "456e7890-e89b-12d3-a456-426614174000",
+        warehouseId: "wh-1",
         type: "OUT",
-        quantity: 25,
-        reason: "Customer order",
-      };
-
-      // Act
-      const dto = toCreateMovementDto(formData);
-
-      // Assert
-      expect(dto.reference).toBeUndefined();
-    });
-
-    it("Given: form data with empty reference When: converting to DTO Then: reference should be undefined", () => {
-      // Arrange
-      const formData: CreateMovementFormData = {
-        productId: "123e4567-e89b-12d3-a456-426614174000",
-        warehouseId: "456e7890-e89b-12d3-a456-426614174000",
-        type: "ADJUSTMENT",
-        quantity: 5,
-        reason: "Inventory count correction",
         reference: "",
+        reason: "",
+        note: "",
+        lines: [{ productId: "prod-1", quantity: 25 }],
       };
 
       // Act
@@ -190,6 +169,8 @@ describe("Movement Schema", () => {
 
       // Assert
       expect(dto.reference).toBeUndefined();
+      expect(dto.reason).toBeUndefined();
+      expect(dto.note).toBeUndefined();
     });
   });
 });
