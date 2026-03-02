@@ -8,21 +8,15 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/i18n/navigation", () => ({
-  Link: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => <a href={href}>{children}</a>,
+  Link: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
 }));
 
 vi.mock(
   "@/modules/inventory/presentation/components/warehouses/warehouse-filters",
   () => ({
-    WarehouseFiltersComponent: () => (
-      <div data-testid="warehouse-filters" />
-    ),
+    WarehouseFiltersComponent: () => <div data-testid="warehouse-filters" />,
   }),
 );
 

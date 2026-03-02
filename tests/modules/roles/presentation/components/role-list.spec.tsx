@@ -11,7 +11,9 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/shared/presentation/components/permission-gate", () => ({
-  PermissionGate: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  PermissionGate: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 vi.mock("@/modules/authentication/presentation/hooks/use-permissions", () => ({
@@ -48,19 +50,24 @@ vi.mock("@/modules/roles/presentation/components/role-form", () => ({
   RoleForm: () => <div data-testid="role-form" />,
 }));
 
-vi.mock("@/modules/roles/presentation/components/role-permissions-dialog", () => ({
-  RolePermissionsDialog: () => <div data-testid="role-permissions-dialog" />,
-}));
+vi.mock(
+  "@/modules/roles/presentation/components/role-permissions-dialog",
+  () => ({
+    RolePermissionsDialog: () => <div data-testid="role-permissions-dialog" />,
+  }),
+);
 
 // --- Helpers ---
 
-function makeRole(overrides: Partial<{
-  id: string;
-  name: string;
-  description: string | null;
-  isActive: boolean;
-  isSystem: boolean;
-}> = {}): Role {
+function makeRole(
+  overrides: Partial<{
+    id: string;
+    name: string;
+    description: string | null;
+    isActive: boolean;
+    isSystem: boolean;
+  }> = {},
+): Role {
   return new Role({
     id: overrides.id ?? "role-1",
     name: overrides.name ?? "ADMIN",
@@ -90,8 +97,16 @@ describe("RoleList", () => {
   });
 
   it("Given: roles exist When: rendering Then: should render name and description for each row", () => {
-    const r1 = makeRole({ id: "r1", name: "ADMIN", description: "Administrator role" });
-    const r2 = makeRole({ id: "r2", name: "VIEWER", description: "Read-only access" });
+    const r1 = makeRole({
+      id: "r1",
+      name: "ADMIN",
+      description: "Administrator role",
+    });
+    const r2 = makeRole({
+      id: "r2",
+      name: "VIEWER",
+      description: "Read-only access",
+    });
 
     mockRolesQueryState = { data: [r1, r2], isLoading: false, isError: false };
 
@@ -104,10 +119,22 @@ describe("RoleList", () => {
   });
 
   it("Given: roles exist When: rendering Then: should show active/inactive status badges", () => {
-    const activeRole = makeRole({ id: "r1", name: "ACTIVE_ROLE", isActive: true });
-    const inactiveRole = makeRole({ id: "r2", name: "INACTIVE_ROLE", isActive: false });
+    const activeRole = makeRole({
+      id: "r1",
+      name: "ACTIVE_ROLE",
+      isActive: true,
+    });
+    const inactiveRole = makeRole({
+      id: "r2",
+      name: "INACTIVE_ROLE",
+      isActive: false,
+    });
 
-    mockRolesQueryState = { data: [activeRole, inactiveRole], isLoading: false, isError: false };
+    mockRolesQueryState = {
+      data: [activeRole, inactiveRole],
+      isLoading: false,
+      isError: false,
+    };
 
     render(<RoleList />);
 

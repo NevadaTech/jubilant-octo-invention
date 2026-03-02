@@ -11,7 +11,9 @@ vi.mock("@/shared/presentation/hooks", () => ({
 }));
 
 vi.mock("@/modules/inventory/presentation/hooks", () => ({
-  useCategories: () => ({ data: { data: [{ id: "cat-1", name: "Electronics" }] } }),
+  useCategories: () => ({
+    data: { data: [{ id: "cat-1", name: "Electronics" }] },
+  }),
 }));
 
 describe("ProductFilters", () => {
@@ -23,34 +25,71 @@ describe("ProductFilters", () => {
   });
 
   it("Given: default filters When: rendering Then: should render search input", () => {
-    render(<ProductFilters filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <ProductFilters
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.getByPlaceholderText("search.placeholder")).toBeDefined();
   });
 
   it("Given: default filters When: rendering Then: should render filter button", () => {
-    render(<ProductFilters filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <ProductFilters
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.getByText("filter")).toBeDefined();
   });
 
   it("Given: filters with search When: rendering Then: should show clear button", () => {
-    render(<ProductFilters filters={{ ...defaultFilters, search: "widget" }} onFiltersChange={mockOnChange} />);
+    render(
+      <ProductFilters
+        filters={{ ...defaultFilters, search: "widget" }}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.getByText("clear")).toBeDefined();
   });
 
   it("Given: default filters When: no active filters Then: should not show clear button", () => {
-    render(<ProductFilters filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <ProductFilters
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.queryByText("clear")).toBeNull();
   });
 
   it("Given: rendered component When: clicking filter button Then: should show status and category filters", () => {
-    render(<ProductFilters filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <ProductFilters
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     fireEvent.click(screen.getByText("filter"));
     expect(screen.getByText("filters.category")).toBeDefined();
   });
 
   it("Given: active search filter When: clearing Then: should reset filters", () => {
-    render(<ProductFilters filters={{ ...defaultFilters, search: "widget", statuses: ["ACTIVE"] }} onFiltersChange={mockOnChange} />);
+    render(
+      <ProductFilters
+        filters={{ ...defaultFilters, search: "widget", statuses: ["ACTIVE"] }}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     fireEvent.click(screen.getByText("clear"));
-    expect(mockOnChange).toHaveBeenCalledWith(expect.objectContaining({ page: 1, search: undefined, statuses: undefined, categoryIds: undefined }));
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        page: 1,
+        search: undefined,
+        statuses: undefined,
+        categoryIds: undefined,
+      }),
+    );
   });
 });

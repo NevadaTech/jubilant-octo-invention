@@ -7,16 +7,33 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/modules/inventory/presentation/hooks/use-products", () => ({
-  useCreateProduct: () => ({ isPending: false, isError: false, error: null, mutateAsync: vi.fn() }),
-  useUpdateProduct: () => ({ isPending: false, isError: false, error: null, mutateAsync: vi.fn() }),
+  useCreateProduct: () => ({
+    isPending: false,
+    isError: false,
+    error: null,
+    mutateAsync: vi.fn(),
+  }),
+  useUpdateProduct: () => ({
+    isPending: false,
+    isError: false,
+    error: null,
+    mutateAsync: vi.fn(),
+  }),
   useProduct: () => ({ data: null, isLoading: false }),
 }));
 
-vi.mock("@/modules/inventory/presentation/components/categories/category-multi-selector", () => ({
-  CategoryMultiSelector: ({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) => (
-    <div data-testid="category-selector">{value.length} selected</div>
-  ),
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/categories/category-multi-selector",
+  () => ({
+    CategoryMultiSelector: ({
+      value,
+      onChange,
+    }: {
+      value: string[];
+      onChange: (v: string[]) => void;
+    }) => <div data-testid="category-selector">{value.length} selected</div>,
+  }),
+);
 
 let mockIsOpen = true;
 let mockEditingId: string | null = null;

@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  Sale,
-  SaleLine,
-} from "@/modules/sales/domain/entities/sale.entity";
+import { Sale, SaleLine } from "@/modules/sales/domain/entities/sale.entity";
 
 describe("SaleLine", () => {
   it("Given: valid sale line props When: creating a SaleLine Then: returns instance with correct values", () => {
@@ -34,7 +31,9 @@ describe("SaleLine", () => {
 });
 
 describe("Sale", () => {
-  const makeLine = (overrides: Partial<{ id: string; quantity: number }> = {}) =>
+  const makeLine = (
+    overrides: Partial<{ id: string; quantity: number }> = {},
+  ) =>
     SaleLine.create({
       id: overrides.id ?? "sl-1",
       productId: "prod-1",
@@ -51,7 +50,7 @@ describe("Sale", () => {
       status: string;
       lines: ReturnType<typeof makeLine>[];
       pickingEnabled: boolean;
-    }> = {}
+    }> = {},
   ) => {
     const lines = overrides.lines ?? [makeLine()];
     return Sale.create({

@@ -73,7 +73,10 @@ describe("StockApiAdapter", () => {
         headers: {},
       });
 
-      await adapter.findAll({ warehouseIds: ["wh-001", "wh-002"], search: "widget" });
+      await adapter.findAll({
+        warehouseIds: ["wh-001", "wh-002"],
+        search: "widget",
+      });
 
       expect(apiClient.get).toHaveBeenCalledWith("/inventory/stock", {
         params: { warehouseId: "wh-001,wh-002", search: "widget" },
@@ -87,7 +90,12 @@ describe("StockApiAdapter", () => {
         headers: {},
       });
 
-      await adapter.findAll({ productId: "prod-001", lowStock: true, page: 1, limit: 10 });
+      await adapter.findAll({
+        productId: "prod-001",
+        lowStock: true,
+        page: 1,
+        limit: 10,
+      });
 
       expect(apiClient.get).toHaveBeenCalledWith("/inventory/stock", {
         params: { productId: "prod-001", lowStock: true, page: 1, limit: 10 },
@@ -138,7 +146,10 @@ describe("StockApiAdapter", () => {
         headers: {},
       });
 
-      const result = await adapter.findByProductAndWarehouse("prod-001", "wh-001");
+      const result = await adapter.findByProductAndWarehouse(
+        "prod-001",
+        "wh-001",
+      );
 
       expect(apiClient.get).toHaveBeenCalledWith(
         "/inventory/stock/product/prod-001/warehouse/wh-001",
@@ -151,7 +162,10 @@ describe("StockApiAdapter", () => {
         response: { status: 404 },
       });
 
-      const result = await adapter.findByProductAndWarehouse("prod-999", "wh-999");
+      const result = await adapter.findByProductAndWarehouse(
+        "prod-999",
+        "wh-999",
+      );
 
       expect(result).toBeNull();
     });

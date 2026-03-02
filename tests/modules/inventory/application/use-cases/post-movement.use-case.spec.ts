@@ -82,7 +82,11 @@ describe("PostMovementUseCase", () => {
 
   it("Given: a movement that cannot be posted When: execute is called Then: should throw ValidationError", async () => {
     // Arrange
-    const postedMovement = { ...mockMovement, canPost: false, status: "POSTED" };
+    const postedMovement = {
+      ...mockMovement,
+      canPost: false,
+      status: "POSTED",
+    };
     mockMovementRepository.findById.mockResolvedValue(postedMovement);
 
     // Act & Assert

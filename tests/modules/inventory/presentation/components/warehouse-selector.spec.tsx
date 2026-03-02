@@ -13,7 +13,10 @@ const mockWarehouses = {
   ],
 };
 
-let mockQueryState: { data: typeof mockWarehouses | undefined; isLoading: boolean };
+let mockQueryState: {
+  data: typeof mockWarehouses | undefined;
+  isLoading: boolean;
+};
 let mockSelectedId: string | null;
 const mockSetSelected = vi.fn();
 
@@ -39,13 +42,17 @@ describe("WarehouseSelector", () => {
   it("Given: warehouses loaded and none selected When: rendering Then: should display 'all' label", () => {
     render(<WarehouseSelector />);
     // The button displays the "all" text when no warehouse is selected
-    expect(screen.getAllByText("selector.all").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("selector.all").length).toBeGreaterThanOrEqual(
+      1,
+    );
   });
 
   it("Given: a warehouse is selected When: rendering Then: should display the selected warehouse name", () => {
     mockSelectedId = "wh-1";
     render(<WarehouseSelector />);
-    expect(screen.getAllByText("Main Warehouse").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Main Warehouse").length).toBeGreaterThanOrEqual(
+      1,
+    );
   });
 
   it("Given: warehouses loaded When: rendering Then: should have a native select with all warehouse options", () => {

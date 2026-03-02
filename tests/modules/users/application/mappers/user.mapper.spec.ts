@@ -58,7 +58,7 @@ describe("UserMapper", () => {
       // Assert
       expect(entity.lastLoginAt).toBeInstanceOf(Date);
       expect(entity.lastLoginAt!.toISOString()).toBe(
-        "2025-02-28T08:00:00.000Z"
+        "2025-02-28T08:00:00.000Z",
       );
     });
 

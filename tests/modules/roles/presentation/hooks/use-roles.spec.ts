@@ -149,10 +149,9 @@ describe("use-roles hooks", () => {
     it("Given enabled=false, When the hook renders, Then it does not fetch", () => {
       const { Wrapper } = createQueryWrapper();
 
-      const { result } = renderHook(
-        () => useRolePermissions("role-1", false),
-        { wrapper: Wrapper },
-      );
+      const { result } = renderHook(() => useRolePermissions("role-1", false), {
+        wrapper: Wrapper,
+      });
 
       expect(result.current.fetchStatus).toBe("idle");
       expect(mockGetRolePermissions).not.toHaveBeenCalled();

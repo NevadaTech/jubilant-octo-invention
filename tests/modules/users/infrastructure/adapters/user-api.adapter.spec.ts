@@ -135,7 +135,9 @@ describe("UserApiAdapter", () => {
       const serverError = new Error("Server Error");
       vi.mocked(apiClient.get).mockRejectedValue(serverError);
 
-      await expect(adapter.findById("user-001")).rejects.toThrow("Server Error");
+      await expect(adapter.findById("user-001")).rejects.toThrow(
+        "Server Error",
+      );
     });
   });
 
@@ -207,7 +209,10 @@ describe("UserApiAdapter", () => {
       };
       const result = await adapter.changeStatus("user-001", statusDto);
 
-      expect(apiClient.patch).toHaveBeenCalledWith("/users/user-001/status", statusDto);
+      expect(apiClient.patch).toHaveBeenCalledWith(
+        "/users/user-001/status",
+        statusDto,
+      );
       expect(result).toBeTruthy();
     });
   });
@@ -223,7 +228,10 @@ describe("UserApiAdapter", () => {
       const assignDto = { roleId: "role-001" };
       await adapter.assignRole("user-001", assignDto);
 
-      expect(apiClient.post).toHaveBeenCalledWith("/users/user-001/roles", assignDto);
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/users/user-001/roles",
+        assignDto,
+      );
     });
   });
 
@@ -237,7 +245,9 @@ describe("UserApiAdapter", () => {
 
       await adapter.removeRole("user-001", "role-001");
 
-      expect(apiClient.delete).toHaveBeenCalledWith("/users/user-001/roles/role-001");
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        "/users/user-001/roles/role-001",
+      );
     });
   });
 });

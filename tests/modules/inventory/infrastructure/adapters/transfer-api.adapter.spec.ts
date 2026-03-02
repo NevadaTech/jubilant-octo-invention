@@ -202,7 +202,10 @@ describe("TransferApiAdapter", () => {
       };
       const result = await adapter.create(createDto);
 
-      expect(apiClient.post).toHaveBeenCalledWith("/inventory/transfers", createDto);
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/transfers",
+        createDto,
+      );
       expect(result).toBeTruthy();
     });
   });
@@ -217,7 +220,9 @@ describe("TransferApiAdapter", () => {
 
       const result = await adapter.updateStatus("tr-001", "IN_TRANSIT");
 
-      expect(apiClient.post).toHaveBeenCalledWith("/inventory/transfers/tr-001/confirm");
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/transfers/tr-001/confirm",
+      );
       expect(result).toBeTruthy();
     });
 
@@ -230,7 +235,9 @@ describe("TransferApiAdapter", () => {
 
       await adapter.updateStatus("tr-001", "REJECTED");
 
-      expect(apiClient.post).toHaveBeenCalledWith("/inventory/transfers/tr-001/reject");
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/transfers/tr-001/reject",
+      );
     });
 
     it("Given: CANCELED status When: updateStatus is called Then: should POST to /cancel endpoint", async () => {
@@ -242,7 +249,9 @@ describe("TransferApiAdapter", () => {
 
       await adapter.updateStatus("tr-001", "CANCELED");
 
-      expect(apiClient.post).toHaveBeenCalledWith("/inventory/transfers/tr-001/cancel");
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/transfers/tr-001/cancel",
+      );
     });
 
     it("Given: an unmapped status When: updateStatus is called Then: should throw an error", async () => {

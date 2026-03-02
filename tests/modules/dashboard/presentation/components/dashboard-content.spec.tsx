@@ -27,15 +27,21 @@ vi.mock("@/modules/dashboard/presentation/hooks/use-dashboard-metrics", () => ({
   useDashboardMetrics: () => mockHookState,
 }));
 
-vi.mock("@/modules/dashboard/presentation/components/dashboard-metrics-grid", () => ({
-  DashboardMetricsGrid: ({ metrics }: { metrics: unknown }) => (
-    <div data-testid="metrics-grid">{JSON.stringify(metrics)}</div>
-  ),
-}));
+vi.mock(
+  "@/modules/dashboard/presentation/components/dashboard-metrics-grid",
+  () => ({
+    DashboardMetricsGrid: ({ metrics }: { metrics: unknown }) => (
+      <div data-testid="metrics-grid">{JSON.stringify(metrics)}</div>
+    ),
+  }),
+);
 
-vi.mock("@/modules/dashboard/presentation/components/stat-card-skeleton", () => ({
-  StatCardSkeleton: () => <div data-testid="stat-card-skeleton" />,
-}));
+vi.mock(
+  "@/modules/dashboard/presentation/components/stat-card-skeleton",
+  () => ({
+    StatCardSkeleton: () => <div data-testid="stat-card-skeleton" />,
+  }),
+);
 
 vi.mock("@/modules/dashboard/presentation/components/chart-skeleton", () => ({
   ChartSkeleton: () => <div data-testid="chart-skeleton" />,
@@ -45,14 +51,30 @@ vi.mock("@/ui/components/card", () => ({
   Card: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="card">{children}</div>
   ),
-  CardContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card-content" className={className}>{children}</div>
+  CardContent: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <div data-testid="card-content" className={className}>
+      {children}
+    </div>
   ),
   CardHeader: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="card-header">{children}</div>
   ),
-  CardTitle: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <h3 data-testid="card-title" className={className}>{children}</h3>
+  CardTitle: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <h3 data-testid="card-title" className={className}>
+      {children}
+    </h3>
   ),
 }));
 

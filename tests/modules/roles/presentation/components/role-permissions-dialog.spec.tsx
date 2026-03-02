@@ -39,13 +39,8 @@ vi.mock("@/ui/components/skeleton", () => ({
 }));
 
 vi.mock("@/ui/components/dialog", () => ({
-  Dialog: ({
-    children,
-    open,
-  }: {
-    children: React.ReactNode;
-    open: boolean;
-  }) => (open ? <div data-testid="dialog">{children}</div> : null),
+  Dialog: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
+    open ? <div data-testid="dialog">{children}</div> : null,
   DialogContent: ({
     children,
     className,
@@ -90,24 +85,28 @@ vi.mock("@/ui/components/dialog", () => ({
 const mockMutateAsync = vi.fn().mockResolvedValue({});
 
 let mockAllPermissions: {
-  data: Array<{
-    id: string;
-    name: string;
-    description: string | null;
-    module: string;
-    action: string;
-  }> | undefined;
+  data:
+    | Array<{
+        id: string;
+        name: string;
+        description: string | null;
+        module: string;
+        action: string;
+      }>
+    | undefined;
   isLoading: boolean;
 } = { data: undefined, isLoading: false };
 
 let mockRolePermissions: {
-  data: Array<{
-    id: string;
-    name: string;
-    description: string | null;
-    module: string;
-    action: string;
-  }> | undefined;
+  data:
+    | Array<{
+        id: string;
+        name: string;
+        description: string | null;
+        module: string;
+        action: string;
+      }>
+    | undefined;
   isLoading: boolean;
 } = { data: undefined, isLoading: false };
 
@@ -201,9 +200,7 @@ describe("RolePermissionsDialog", () => {
       />,
     );
 
-    expect(screen.getByTestId("dialog-title").textContent).toContain(
-      "MANAGER",
-    );
+    expect(screen.getByTestId("dialog-title").textContent).toContain("MANAGER");
     expect(screen.getByTestId("dialog-title").textContent).toContain(
       "permissions.title",
     );

@@ -7,8 +7,16 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/modules/inventory/presentation/hooks/use-warehouses", () => ({
-  useCreateWarehouse: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
-  useUpdateWarehouse: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
+  useCreateWarehouse: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
+  useUpdateWarehouse: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
   useWarehouse: () => ({ data: null, isLoading: false }),
 }));
 

@@ -36,7 +36,9 @@ describe("ReturnLine", () => {
 });
 
 describe("Return", () => {
-  const makeLine = (overrides: Partial<{ id: string; quantity: number }> = {}) =>
+  const makeLine = (
+    overrides: Partial<{ id: string; quantity: number }> = {},
+  ) =>
     ReturnLine.create({
       id: overrides.id ?? "rl-1",
       productId: "prod-1",
@@ -54,7 +56,7 @@ describe("Return", () => {
       status: string;
       type: string;
       lines: ReturnType<typeof makeLine>[];
-    }> = {}
+    }> = {},
   ) => {
     const lines = overrides.lines ?? [makeLine()];
     return Return.create({

@@ -154,7 +154,9 @@ describe("CategoryApiAdapter", () => {
 
       const result = await adapter.findById("cat-001");
 
-      expect(apiClient.get).toHaveBeenCalledWith("/inventory/categories/cat-001");
+      expect(apiClient.get).toHaveBeenCalledWith(
+        "/inventory/categories/cat-001",
+      );
       expect(result).toBeTruthy();
     });
 
@@ -172,7 +174,9 @@ describe("CategoryApiAdapter", () => {
       const serverError = new Error("Internal Server Error");
       vi.mocked(apiClient.get).mockRejectedValue(serverError);
 
-      await expect(adapter.findById("cat-001")).rejects.toThrow("Internal Server Error");
+      await expect(adapter.findById("cat-001")).rejects.toThrow(
+        "Internal Server Error",
+      );
     });
   });
 
@@ -184,10 +188,16 @@ describe("CategoryApiAdapter", () => {
         headers: {},
       });
 
-      const createDto = { name: "Electronics", description: "Electronic products" };
+      const createDto = {
+        name: "Electronics",
+        description: "Electronic products",
+      };
       const result = await adapter.create(createDto);
 
-      expect(apiClient.post).toHaveBeenCalledWith("/inventory/categories", createDto);
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/categories",
+        createDto,
+      );
       expect(result).toBeTruthy();
     });
   });
@@ -203,7 +213,10 @@ describe("CategoryApiAdapter", () => {
       const updateDto = { name: "Updated Electronics" };
       const result = await adapter.update("cat-001", updateDto);
 
-      expect(apiClient.put).toHaveBeenCalledWith("/inventory/categories/cat-001", updateDto);
+      expect(apiClient.put).toHaveBeenCalledWith(
+        "/inventory/categories/cat-001",
+        updateDto,
+      );
       expect(result).toBeTruthy();
     });
   });
@@ -218,7 +231,9 @@ describe("CategoryApiAdapter", () => {
 
       await adapter.delete("cat-001");
 
-      expect(apiClient.delete).toHaveBeenCalledWith("/inventory/categories/cat-001");
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        "/inventory/categories/cat-001",
+      );
     });
   });
 });

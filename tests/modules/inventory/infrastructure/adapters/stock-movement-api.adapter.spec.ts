@@ -10,11 +10,14 @@ vi.mock("@/shared/infrastructure/http", () => ({
   },
 }));
 
-vi.mock("@/modules/inventory/application/mappers/stock-movement.mapper", () => ({
-  StockMovementMapper: {
-    toDomain: vi.fn((dto: unknown) => dto),
-  },
-}));
+vi.mock(
+  "@/modules/inventory/application/mappers/stock-movement.mapper",
+  () => ({
+    StockMovementMapper: {
+      toDomain: vi.fn((dto: unknown) => dto),
+    },
+  }),
+);
 
 import { apiClient } from "@/shared/infrastructure/http";
 import { StockMovementApiAdapter } from "@/modules/inventory/infrastructure/adapters/stock-movement-api.adapter";
@@ -132,7 +135,9 @@ describe("StockMovementApiAdapter", () => {
 
       const result = await adapter.findById("mov-001");
 
-      expect(apiClient.get).toHaveBeenCalledWith("/inventory/movements/mov-001");
+      expect(apiClient.get).toHaveBeenCalledWith(
+        "/inventory/movements/mov-001",
+      );
       expect(result).toBeTruthy();
     });
 
@@ -170,7 +175,10 @@ describe("StockMovementApiAdapter", () => {
       };
       const result = await adapter.create(createDto);
 
-      expect(apiClient.post).toHaveBeenCalledWith("/inventory/movements", createDto);
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/movements",
+        createDto,
+      );
       expect(result).toBeTruthy();
     });
   });
@@ -186,7 +194,10 @@ describe("StockMovementApiAdapter", () => {
       const updateDto = { note: "Updated note" };
       const result = await adapter.update("mov-001", updateDto);
 
-      expect(apiClient.patch).toHaveBeenCalledWith("/inventory/movements/mov-001", updateDto);
+      expect(apiClient.patch).toHaveBeenCalledWith(
+        "/inventory/movements/mov-001",
+        updateDto,
+      );
       expect(result).toBeTruthy();
     });
   });
@@ -201,7 +212,9 @@ describe("StockMovementApiAdapter", () => {
 
       await adapter.delete("mov-001");
 
-      expect(apiClient.delete).toHaveBeenCalledWith("/inventory/movements/mov-001");
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        "/inventory/movements/mov-001",
+      );
     });
   });
 
@@ -215,7 +228,9 @@ describe("StockMovementApiAdapter", () => {
 
       await adapter.post("mov-001");
 
-      expect(apiClient.post).toHaveBeenCalledWith("/inventory/movements/mov-001/post");
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/movements/mov-001/post",
+      );
     });
   });
 
@@ -229,7 +244,9 @@ describe("StockMovementApiAdapter", () => {
 
       await adapter.void("mov-001");
 
-      expect(apiClient.post).toHaveBeenCalledWith("/inventory/movements/mov-001/void");
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/movements/mov-001/void",
+      );
     });
   });
 });

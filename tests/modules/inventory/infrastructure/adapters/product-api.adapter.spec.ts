@@ -145,7 +145,9 @@ describe("ProductApiAdapter", () => {
 
       const result = await adapter.findById("prod-001");
 
-      expect(apiClient.get).toHaveBeenCalledWith("/inventory/products/prod-001");
+      expect(apiClient.get).toHaveBeenCalledWith(
+        "/inventory/products/prod-001",
+      );
       expect(result).toBeTruthy();
     });
 
@@ -163,7 +165,9 @@ describe("ProductApiAdapter", () => {
       const serverError = new Error("Server Error");
       vi.mocked(apiClient.get).mockRejectedValue(serverError);
 
-      await expect(adapter.findById("prod-001")).rejects.toThrow("Server Error");
+      await expect(adapter.findById("prod-001")).rejects.toThrow(
+        "Server Error",
+      );
     });
   });
 
@@ -245,12 +249,15 @@ describe("ProductApiAdapter", () => {
       };
       const result = await adapter.update("prod-001", updateDto);
 
-      expect(apiClient.put).toHaveBeenCalledWith("/inventory/products/prod-001", {
-        name: "Updated Widget",
-        status: "INACTIVE",
-        unit: { code: "KILOGRAM", name: "Kilogram", precision: 0 },
-        price: 35.0,
-      });
+      expect(apiClient.put).toHaveBeenCalledWith(
+        "/inventory/products/prod-001",
+        {
+          name: "Updated Widget",
+          status: "INACTIVE",
+          unit: { code: "KILOGRAM", name: "Kilogram", precision: 0 },
+          price: 35.0,
+        },
+      );
       expect(result).toBeTruthy();
     });
   });

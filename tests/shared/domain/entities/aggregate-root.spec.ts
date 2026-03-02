@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { AggregateRoot, type DomainEvent } from "@/shared/domain/entities/aggregate-root";
+import {
+  AggregateRoot,
+  type DomainEvent,
+} from "@/shared/domain/entities/aggregate-root";
 
 class TestAggregate extends AggregateRoot<string> {
   constructor(id: string) {

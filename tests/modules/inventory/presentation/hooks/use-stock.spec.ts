@@ -103,10 +103,9 @@ describe("use-stock hooks", () => {
       mockFindByProductAndWarehouse.mockResolvedValueOnce(mockStock);
       const { Wrapper } = createQueryWrapper();
 
-      const { result } = renderHook(
-        () => useStockByLocation("p-1", "w-1"),
-        { wrapper: Wrapper },
-      );
+      const { result } = renderHook(() => useStockByLocation("p-1", "w-1"), {
+        wrapper: Wrapper,
+      });
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
       expect(mockFindByProductAndWarehouse).toHaveBeenCalledWith("p-1", "w-1");
@@ -116,10 +115,9 @@ describe("use-stock hooks", () => {
     it("Given an empty productId, When the hook renders, Then it does not fetch", () => {
       const { Wrapper } = createQueryWrapper();
 
-      const { result } = renderHook(
-        () => useStockByLocation("", "w-1"),
-        { wrapper: Wrapper },
-      );
+      const { result } = renderHook(() => useStockByLocation("", "w-1"), {
+        wrapper: Wrapper,
+      });
 
       expect(result.current.fetchStatus).toBe("idle");
       expect(mockFindByProductAndWarehouse).not.toHaveBeenCalled();
@@ -128,10 +126,9 @@ describe("use-stock hooks", () => {
     it("Given an empty warehouseId, When the hook renders, Then it does not fetch", () => {
       const { Wrapper } = createQueryWrapper();
 
-      const { result } = renderHook(
-        () => useStockByLocation("p-1", ""),
-        { wrapper: Wrapper },
-      );
+      const { result } = renderHook(() => useStockByLocation("p-1", ""), {
+        wrapper: Wrapper,
+      });
 
       expect(result.current.fetchStatus).toBe("idle");
       expect(mockFindByProductAndWarehouse).not.toHaveBeenCalled();

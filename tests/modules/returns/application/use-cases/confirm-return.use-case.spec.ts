@@ -71,9 +71,7 @@ describe("ConfirmReturnUseCase", () => {
     const publishedEvent = vi.mocked(eventBus.publish).mock.calls[0][0];
     expect(publishedEvent).toBeInstanceOf(ReturnConfirmedEvent);
     expect(publishedEvent.aggregateId).toBe("ret-1");
-    expect((publishedEvent as ReturnConfirmedEvent).returnNumber).toBe(
-      "R-001",
-    );
+    expect((publishedEvent as ReturnConfirmedEvent).returnNumber).toBe("R-001");
     expect((publishedEvent as ReturnConfirmedEvent).type).toBe(
       "RETURN_CUSTOMER",
     );

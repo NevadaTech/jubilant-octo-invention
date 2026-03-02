@@ -143,7 +143,9 @@ describe("SettingsApiAdapter", () => {
 
       await adapter.updateProfile(updateDto);
 
-      expect(mockedPut).toHaveBeenCalledWith("/users/me", { jobTitle: "Senior Manager" });
+      expect(mockedPut).toHaveBeenCalledWith("/users/me", {
+        jobTitle: "Senior Manager",
+      });
     });
   });
 

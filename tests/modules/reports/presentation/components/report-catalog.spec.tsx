@@ -173,8 +173,14 @@ describe("ReportCatalog", () => {
 
     // Assert
     // Category names appear in both tabs and badges
-    expect(screen.getAllByText("categories.inventory").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("categories.sales").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("categories.returns").length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText("categories.inventory").length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText("categories.sales").length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText("categories.returns").length,
+    ).toBeGreaterThanOrEqual(1);
   });
 });

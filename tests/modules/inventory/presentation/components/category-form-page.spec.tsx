@@ -17,12 +17,28 @@ vi.mock("@/i18n/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
-let mockCategoryData: { data: { id: string; name: string; description: string | null; parentId: string | null } | null; isLoading: boolean };
+let mockCategoryData: {
+  data: {
+    id: string;
+    name: string;
+    description: string | null;
+    parentId: string | null;
+  } | null;
+  isLoading: boolean;
+};
 let mockCategoriesData: { data: { data: { id: string; name: string }[] } };
 
 vi.mock("@/modules/inventory/presentation/hooks/use-categories", () => ({
-  useCreateCategory: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
-  useUpdateCategory: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
+  useCreateCategory: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
+  useUpdateCategory: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
   useCategory: () => mockCategoryData,
   useCategories: () => mockCategoriesData,
 }));
@@ -43,7 +59,9 @@ describe("CategoryFormPage", () => {
   beforeEach(() => {
     mockPush.mockClear();
     mockCategoryData = { data: null, isLoading: false };
-    mockCategoriesData = { data: { data: [{ id: "cat-1", name: "Electronics" }] } };
+    mockCategoriesData = {
+      data: { data: [{ id: "cat-1", name: "Electronics" }] },
+    };
   });
 
   it("Given: no categoryId When: rendering Then: should show create title", () => {
@@ -85,7 +103,12 @@ describe("CategoryFormPage", () => {
 
   it("Given: categoryId with loaded data When: rendering Then: should show edit title", () => {
     mockCategoryData = {
-      data: { id: "cat-1", name: "Electronics", description: "Electronic devices", parentId: null },
+      data: {
+        id: "cat-1",
+        name: "Electronics",
+        description: "Electronic devices",
+        parentId: null,
+      },
       isLoading: false,
     };
 
@@ -97,7 +120,12 @@ describe("CategoryFormPage", () => {
 
   it("Given: categoryId with loaded data When: rendering Then: should show save button instead of create", () => {
     mockCategoryData = {
-      data: { id: "cat-1", name: "Electronics", description: null, parentId: null },
+      data: {
+        id: "cat-1",
+        name: "Electronics",
+        description: null,
+        parentId: null,
+      },
       isLoading: false,
     };
 
@@ -111,7 +139,9 @@ describe("CategoryFormPage", () => {
     render(<CategoryFormPage />);
 
     const links = screen.getAllByRole("link");
-    const backLink = links.find((link) => link.getAttribute("href") === "/dashboard/inventory/categories");
+    const backLink = links.find(
+      (link) => link.getAttribute("href") === "/dashboard/inventory/categories",
+    );
     expect(backLink).toBeDefined();
   });
 });

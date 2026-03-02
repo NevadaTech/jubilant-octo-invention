@@ -50,14 +50,11 @@ vi.mock(
   }),
 );
 
-vi.mock(
-  "@/modules/returns/presentation/components/return-type-badge",
-  () => ({
-    ReturnTypeBadge: ({ type }: { type: string }) => (
-      <span data-testid="return-type-badge">{type}</span>
-    ),
-  }),
-);
+vi.mock("@/modules/returns/presentation/components/return-type-badge", () => ({
+  ReturnTypeBadge: ({ type }: { type: string }) => (
+    <span data-testid="return-type-badge">{type}</span>
+  ),
+}));
 
 vi.mock("@/ui/components/button", () => ({
   Button: ({
@@ -318,8 +315,12 @@ describe("ReturnDetail", () => {
     render(<ReturnDetail returnId="ret-1" />);
 
     // Assert - confirm text may appear in both button and dialog trigger
-    expect(screen.getAllByText("actions.confirm").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("actions.cancelReturn").length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText("actions.confirm").length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText("actions.cancelReturn").length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
   it("Given: return with lines When: rendering Then: should display product names, SKUs, quantities, and total in the lines table", () => {

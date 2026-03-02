@@ -31,16 +31,29 @@ let mockProductData: {
 };
 
 vi.mock("@/modules/inventory/presentation/hooks/use-products", () => ({
-  useCreateProduct: () => ({ isPending: false, isError: false, error: null, mutateAsync: vi.fn() }),
-  useUpdateProduct: () => ({ isPending: false, isError: false, error: null, mutateAsync: vi.fn() }),
+  useCreateProduct: () => ({
+    isPending: false,
+    isError: false,
+    error: null,
+    mutateAsync: vi.fn(),
+  }),
+  useUpdateProduct: () => ({
+    isPending: false,
+    isError: false,
+    error: null,
+    mutateAsync: vi.fn(),
+  }),
   useProduct: () => mockProductData,
 }));
 
-vi.mock("@/modules/inventory/presentation/components/categories/category-multi-selector", () => ({
-  CategoryMultiSelector: ({ value }: { value: string[] }) => (
-    <div data-testid="category-multi-selector">{value.length} selected</div>
-  ),
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/categories/category-multi-selector",
+  () => ({
+    CategoryMultiSelector: ({ value }: { value: string[] }) => (
+      <div data-testid="category-multi-selector">{value.length} selected</div>
+    ),
+  }),
+);
 
 vi.mock("@/modules/inventory/presentation/schemas/product.schema", () => ({
   createProductSchema: { parse: vi.fn() },
@@ -53,8 +66,19 @@ vi.mock("@hookform/resolvers/zod", () => ({
 }));
 
 vi.mock("@/ui/components/currency-input", () => ({
-  CurrencyInput: ({ id, value }: { id?: string; value?: number; onChange?: (v: number) => void }) => (
-    <input data-testid={id || "currency-input"} type="number" defaultValue={value} />
+  CurrencyInput: ({
+    id,
+    value,
+  }: {
+    id?: string;
+    value?: number;
+    onChange?: (v: number) => void;
+  }) => (
+    <input
+      data-testid={id || "currency-input"}
+      type="number"
+      defaultValue={value}
+    />
   ),
 }));
 
@@ -156,7 +180,9 @@ describe("ProductFormPage", () => {
     render(<ProductFormPage />);
 
     const links = screen.getAllByRole("link");
-    const backLink = links.find((link) => link.getAttribute("href") === "/dashboard/inventory/products");
+    const backLink = links.find(
+      (link) => link.getAttribute("href") === "/dashboard/inventory/products",
+    );
     expect(backLink).toBeDefined();
   });
 });

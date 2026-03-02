@@ -139,7 +139,9 @@ describe("ReportExportButton", () => {
 
     // Act
     const items = screen.getAllByTestId("dropdown-item");
-    const excelItem = items.find((el) => el.textContent?.includes("exportExcel"));
+    const excelItem = items.find((el) =>
+      el.textContent?.includes("exportExcel"),
+    );
     fireEvent.click(excelItem!);
 
     // Assert

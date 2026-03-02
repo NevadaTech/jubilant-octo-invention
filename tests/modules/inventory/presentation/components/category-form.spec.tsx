@@ -7,8 +7,16 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/modules/inventory/presentation/hooks/use-categories", () => ({
-  useCreateCategory: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
-  useUpdateCategory: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
+  useCreateCategory: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
+  useUpdateCategory: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
   useCategory: () => ({ data: null, isLoading: false }),
   useCategories: () => ({ data: { data: [] } }),
 }));

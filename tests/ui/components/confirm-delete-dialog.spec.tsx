@@ -84,9 +84,7 @@ describe("ConfirmDeleteDialog", () => {
       />,
     );
 
-    expect(
-      container.querySelector("[data-testid='alert-dialog']"),
-    ).toBeNull();
+    expect(container.querySelector("[data-testid='alert-dialog']")).toBeNull();
   });
 
   it("Given: open is true and no custom title When: rendering Then: should show default title from i18n", () => {

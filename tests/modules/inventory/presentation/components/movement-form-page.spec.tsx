@@ -38,8 +38,16 @@ let mockMovementData: {
 };
 
 vi.mock("@/modules/inventory/presentation/hooks/use-movements", () => ({
-  useCreateMovement: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
-  useUpdateMovement: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
+  useCreateMovement: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
+  useUpdateMovement: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
   useMovement: () => mockMovementData,
 }));
 
@@ -75,7 +83,12 @@ vi.mock("@hookform/resolvers/zod", () => ({
 }));
 
 vi.mock("@/ui/components/currency-input", () => ({
-  CurrencyInput: ({ value }: { value?: number; onChange?: (v: number) => void }) => (
+  CurrencyInput: ({
+    value,
+  }: {
+    value?: number;
+    onChange?: (v: number) => void;
+  }) => (
     <input data-testid="currency-input" type="number" defaultValue={value} />
   ),
 }));
@@ -105,8 +118,16 @@ describe("MovementFormPage", () => {
   it("Given: no movementId When: rendering Then: should show type, warehouse, reference, reason, and note fields", () => {
     render(<MovementFormPage />);
 
-    expect(screen.getByText((content) => content.startsWith("fields.type"))).toBeInTheDocument();
-    expect(screen.getByText((content) => content.startsWith("fields.warehouse") && !content.includes("Placeholder"))).toBeInTheDocument();
+    expect(
+      screen.getByText((content) => content.startsWith("fields.type")),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (content) =>
+          content.startsWith("fields.warehouse") &&
+          !content.includes("Placeholder"),
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByText("fields.reference")).toBeInTheDocument();
     expect(screen.getByText("fields.reason")).toBeInTheDocument();
     expect(screen.getByText("fields.note")).toBeInTheDocument();
@@ -128,8 +149,16 @@ describe("MovementFormPage", () => {
   it("Given: no movementId When: rendering Then: should render one product line by default with product, quantity, and unit cost fields", () => {
     render(<MovementFormPage />);
 
-    expect(screen.getByText((content) => content.startsWith("fields.product") && !content.includes("Placeholder"))).toBeInTheDocument();
-    expect(screen.getByText((content) => content.startsWith("fields.quantity"))).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (content) =>
+          content.startsWith("fields.product") &&
+          !content.includes("Placeholder"),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((content) => content.startsWith("fields.quantity")),
+    ).toBeInTheDocument();
     expect(screen.getByText("fields.unitCost")).toBeInTheDocument();
   });
 
@@ -139,7 +168,9 @@ describe("MovementFormPage", () => {
     const { container } = render(<MovementFormPage movementId="mov-1" />);
 
     // Skeleton component renders divs with animate-pulse class
-    const skeletons = container.querySelectorAll("[class*='h-10'], [class*='h-64'], [class*='h-48']");
+    const skeletons = container.querySelectorAll(
+      "[class*='h-10'], [class*='h-64'], [class*='h-48']",
+    );
     expect(skeletons.length).toBeGreaterThan(0);
     // Should NOT render the form title when loading
     expect(screen.queryByText("form.movementInfo")).not.toBeInTheDocument();

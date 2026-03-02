@@ -18,7 +18,11 @@ vi.mock("@/i18n/navigation", () => ({
 }));
 
 vi.mock("@/modules/inventory/presentation/hooks/use-transfers", () => ({
-  useCreateTransfer: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
+  useCreateTransfer: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
 }));
 
 vi.mock("@/modules/inventory/presentation/hooks/use-products", () => ({
@@ -71,8 +75,18 @@ describe("TransferFormPage", () => {
   it("Given: component renders When: rendering Then: should show from and to warehouse fields", () => {
     render(<TransferFormPage />);
 
-    expect(screen.getByText((content) => content.startsWith("fields.from") && !content.includes("Placeholder"))).toBeInTheDocument();
-    expect(screen.getByText((content) => content.startsWith("fields.to") && !content.includes("Placeholder"))).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (content) =>
+          content.startsWith("fields.from") && !content.includes("Placeholder"),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (content) =>
+          content.startsWith("fields.to") && !content.includes("Placeholder"),
+      ),
+    ).toBeInTheDocument();
   });
 
   it("Given: component renders When: rendering Then: should show products label and add product button", () => {
@@ -99,7 +113,9 @@ describe("TransferFormPage", () => {
     render(<TransferFormPage />);
 
     const links = screen.getAllByRole("link");
-    const backLink = links.find((link) => link.getAttribute("href") === "/dashboard/inventory/transfers");
+    const backLink = links.find(
+      (link) => link.getAttribute("href") === "/dashboard/inventory/transfers",
+    );
     expect(backLink).toBeDefined();
   });
 

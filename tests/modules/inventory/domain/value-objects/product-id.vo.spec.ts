@@ -5,7 +5,9 @@ describe("ProductId Value Object", () => {
   describe("create", () => {
     it("Given: valid id string When: creating Then: should create with correct value", () => {
       // Act
-      const productId = ProductId.create("123e4567-e89b-12d3-a456-426614174000");
+      const productId = ProductId.create(
+        "123e4567-e89b-12d3-a456-426614174000",
+      );
 
       // Assert
       expect(productId.value).toBe("123e4567-e89b-12d3-a456-426614174000");

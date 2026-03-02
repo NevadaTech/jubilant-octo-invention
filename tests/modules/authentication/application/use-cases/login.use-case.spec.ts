@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { LoginUseCase } from "@/modules/authentication/application/use-cases/login.use-case";
-import type { AuthRepositoryPort, LoginCredentials } from "@/modules/authentication/domain/ports/auth-repository.port";
+import type {
+  AuthRepositoryPort,
+  LoginCredentials,
+} from "@/modules/authentication/domain/ports/auth-repository.port";
 import { User } from "@/modules/authentication/domain/entities/user";
 import { Tokens } from "@/modules/authentication/domain/value-objects/tokens";
 

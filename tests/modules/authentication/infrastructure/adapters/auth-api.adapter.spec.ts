@@ -27,8 +27,7 @@ vi.mock(
       setUser: (...args: unknown[]) => mockSetUser(...args),
       setOrganizationSlug: (...args: unknown[]) =>
         mockSetOrganizationSlug(...args),
-      setOrganizationId: (...args: unknown[]) =>
-        mockSetOrganizationId(...args),
+      setOrganizationId: (...args: unknown[]) => mockSetOrganizationId(...args),
       extractOrgIdFromToken: () => mockExtractOrgIdFromToken(),
       getAccessToken: () => mockGetAccessToken(),
       getOrganizationSlug: () => mockGetOrganizationSlug(),
@@ -39,18 +38,15 @@ vi.mock(
   }),
 );
 
-vi.mock(
-  "@/modules/authentication/infrastructure/mappers/user.mapper",
-  () => ({
-    UserMapper: {
-      toDomain: (dto: Record<string, unknown>) => ({
-        id: dto.id,
-        email: dto.email,
-        username: dto.username,
-      }),
-    },
-  }),
-);
+vi.mock("@/modules/authentication/infrastructure/mappers/user.mapper", () => ({
+  UserMapper: {
+    toDomain: (dto: Record<string, unknown>) => ({
+      id: dto.id,
+      email: dto.email,
+      username: dto.username,
+    }),
+  },
+}));
 
 // --- Helpers ---
 
@@ -218,7 +214,9 @@ describe("AuthApiAdapter", () => {
       mockGetOrganizationSlug.mockReturnValue("acme");
       vi.stubGlobal(
         "fetch",
-        vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) }),
+        vi
+          .fn()
+          .mockResolvedValue({ ok: true, json: () => Promise.resolve({}) }),
       );
 
       await adapter.logout();

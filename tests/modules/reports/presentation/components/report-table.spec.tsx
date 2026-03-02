@@ -9,7 +9,8 @@ vi.mock("next-intl", () => ({
   useTranslations: () => {
     const t = (key: string, params?: Record<string, unknown>) =>
       params ? `${key}:${JSON.stringify(params)}` : key;
-    t.has = (key: string) => key.startsWith("columnHeaders.") || key.startsWith("badgeLabels.");
+    t.has = (key: string) =>
+      key.startsWith("columnHeaders.") || key.startsWith("badgeLabels.");
     return t;
   },
 }));
@@ -133,11 +134,7 @@ describe("ReportTable", () => {
 
   it("Given: rows with data When: rendering Then: should render data cells for each row", () => {
     render(
-      <ReportTable
-        columns={makeColumns()}
-        rows={makeRows()}
-        locale="en-US"
-      />,
+      <ReportTable columns={makeColumns()} rows={makeRows()} locale="en-US" />,
     );
 
     expect(screen.getByText("Widget A")).toBeDefined();
@@ -156,7 +153,9 @@ describe("ReportTable", () => {
 
     const badges = screen.getAllByTestId("badge");
     // labelFor runs t("badgeLabels.ACTIVE") which returns "badgeLabels.ACTIVE"
-    const statusBadge = badges.find((b) => b.textContent === "badgeLabels.ACTIVE");
+    const statusBadge = badges.find(
+      (b) => b.textContent === "badgeLabels.ACTIVE",
+    );
     expect(statusBadge).toBeDefined();
     expect(statusBadge?.getAttribute("data-variant")).toBe("success");
   });

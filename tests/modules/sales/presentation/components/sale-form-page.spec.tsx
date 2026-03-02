@@ -18,7 +18,11 @@ vi.mock("@/i18n/navigation", () => ({
 }));
 
 vi.mock("@/modules/sales/presentation/hooks/use-sales", () => ({
-  useCreateSale: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
+  useCreateSale: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
 }));
 
 vi.mock("@/modules/inventory/presentation/hooks/use-products", () => ({
@@ -53,7 +57,12 @@ vi.mock("@hookform/resolvers/zod", () => ({
 }));
 
 vi.mock("@/ui/components/currency-input", () => ({
-  CurrencyInput: ({ value }: { value?: number; onChange?: (v: number) => void }) => (
+  CurrencyInput: ({
+    value,
+  }: {
+    value?: number;
+    onChange?: (v: number) => void;
+  }) => (
     <input data-testid="currency-input" type="number" defaultValue={value} />
   ),
 }));
@@ -78,7 +87,13 @@ describe("SaleFormPage", () => {
   it("Given: component renders When: rendering Then: should show warehouse, customer, external reference, and note fields", () => {
     render(<SaleFormPage />);
 
-    expect(screen.getByText((content) => content.startsWith("fields.warehouse") && !content.includes("Placeholder"))).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (content) =>
+          content.startsWith("fields.warehouse") &&
+          !content.includes("Placeholder"),
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByText("fields.customer")).toBeInTheDocument();
     expect(screen.getByText("fields.externalReference")).toBeInTheDocument();
     expect(screen.getByText("fields.note")).toBeInTheDocument();
@@ -100,16 +115,28 @@ describe("SaleFormPage", () => {
   it("Given: component renders When: rendering Then: should render one product line by default with product, quantity, and salePrice fields", () => {
     render(<SaleFormPage />);
 
-    expect(screen.getByText((content) => content.startsWith("fields.product") && !content.includes("Placeholder"))).toBeInTheDocument();
-    expect(screen.getByText((content) => content.startsWith("fields.quantity"))).toBeInTheDocument();
-    expect(screen.getByText((content) => content.startsWith("fields.salePrice"))).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (content) =>
+          content.startsWith("fields.product") &&
+          !content.includes("Placeholder"),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((content) => content.startsWith("fields.quantity")),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((content) => content.startsWith("fields.salePrice")),
+    ).toBeInTheDocument();
   });
 
   it("Given: component renders When: rendering Then: should render back link to sales list", () => {
     render(<SaleFormPage />);
 
     const links = screen.getAllByRole("link");
-    const backLink = links.find((link) => link.getAttribute("href") === "/dashboard/sales");
+    const backLink = links.find(
+      (link) => link.getAttribute("href") === "/dashboard/sales",
+    );
     expect(backLink).toBeDefined();
   });
 

@@ -23,7 +23,9 @@ const mockedPost = vi.mocked(apiClient.post);
 const mockedPatch = vi.mocked(apiClient.patch);
 const mockedDelete = vi.mocked(apiClient.delete);
 
-function buildSaleRawDto(overrides: Partial<SaleApiRawDto> = {}): SaleApiRawDto {
+function buildSaleRawDto(
+  overrides: Partial<SaleApiRawDto> = {},
+): SaleApiRawDto {
   return {
     id: "sale-1",
     saleNumber: "SL-0001",
@@ -94,7 +96,12 @@ describe("SaleApiAdapter", () => {
       const raw1 = buildSaleRawDto({ id: "s1", saleNumber: "SL-0001" });
       const raw2 = buildSaleRawDto({ id: "s2", saleNumber: "SL-0002" });
       mockedGet.mockResolvedValue(
-        wrapListResponse([raw1, raw2], { page: 1, limit: 20, total: 2, totalPages: 1 }),
+        wrapListResponse([raw1, raw2], {
+          page: 1,
+          limit: 20,
+          total: 2,
+          totalPages: 1,
+        }),
       );
 
       const result = await adapter.findAll();
@@ -164,7 +171,10 @@ describe("SaleApiAdapter", () => {
   describe("create", () => {
     it("Given valid sale data, When create is called, Then it posts and returns the created Sale", async () => {
       const createDto = { warehouseId: "wh-1", note: "Test sale" };
-      const responseDto = buildSaleResponseDto({ id: "sale-new", note: "Test sale" });
+      const responseDto = buildSaleResponseDto({
+        id: "sale-new",
+        note: "Test sale",
+      });
       mockedPost.mockResolvedValue(wrapDetailResponse(responseDto));
 
       const result = await adapter.create(createDto);
@@ -178,7 +188,10 @@ describe("SaleApiAdapter", () => {
   describe("update", () => {
     it("Given a sale exists, When update is called, Then it patches and returns the updated Sale", async () => {
       const updateDto = { note: "Updated note" };
-      const responseDto = buildSaleResponseDto({ id: "sale-1", note: "Updated note" });
+      const responseDto = buildSaleResponseDto({
+        id: "sale-1",
+        note: "Updated note",
+      });
       mockedPatch.mockResolvedValue(wrapDetailResponse(responseDto));
 
       const result = await adapter.update("sale-1", updateDto);
@@ -202,7 +215,10 @@ describe("SaleApiAdapter", () => {
 
   describe("cancel", () => {
     it("Given a sale, When cancel is called, Then it posts to /sales/:id/cancel", async () => {
-      const dto = buildSaleResponseDto({ id: "sale-1", status: "CANCELLED" as never });
+      const dto = buildSaleResponseDto({
+        id: "sale-1",
+        status: "CANCELLED" as never,
+      });
       mockedPost.mockResolvedValue(wrapDetailResponse(dto));
 
       const result = await adapter.cancel("sale-1");

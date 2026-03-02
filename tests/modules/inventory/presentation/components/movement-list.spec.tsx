@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MovementList } from "@/modules/inventory/presentation/components/movements/movement-list";
-import { StockMovement, MovementLine } from "@/modules/inventory/domain/entities/stock-movement.entity";
+import {
+  StockMovement,
+  MovementLine,
+} from "@/modules/inventory/domain/entities/stock-movement.entity";
 
 // --- Mocks ---
 
@@ -17,7 +20,17 @@ vi.mock("@/i18n/navigation", () => ({
 }));
 
 let mockQueryState: {
-  data: { data: StockMovement[]; pagination: { page: number; totalPages: number; total: number; limit: number } } | undefined;
+  data:
+    | {
+        data: StockMovement[];
+        pagination: {
+          page: number;
+          totalPages: number;
+          total: number;
+          limit: number;
+        };
+      }
+    | undefined;
   isLoading: boolean;
   isError: boolean;
 } = { data: undefined, isLoading: false, isError: false };
@@ -29,21 +42,37 @@ vi.mock("@/modules/inventory/presentation/hooks/use-movements", () => ({
   useDeleteMovement: () => ({ isPending: false, mutateAsync: vi.fn() }),
 }));
 
-vi.mock("@/modules/inventory/presentation/components/movements/movement-type-badge", () => ({
-  MovementTypeBadge: ({ type }: { type: string }) => <span data-testid="type-badge">{type}</span>,
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/movements/movement-type-badge",
+  () => ({
+    MovementTypeBadge: ({ type }: { type: string }) => (
+      <span data-testid="type-badge">{type}</span>
+    ),
+  }),
+);
 
-vi.mock("@/modules/inventory/presentation/components/movements/movement-status-badge", () => ({
-  MovementStatusBadge: ({ status }: { status: string }) => <span data-testid="status-badge">{status}</span>,
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/movements/movement-status-badge",
+  () => ({
+    MovementStatusBadge: ({ status }: { status: string }) => (
+      <span data-testid="status-badge">{status}</span>
+    ),
+  }),
+);
 
-vi.mock("@/modules/inventory/presentation/components/movements/movement-filters", () => ({
-  MovementFilters: () => <div data-testid="movement-filters" />,
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/movements/movement-filters",
+  () => ({
+    MovementFilters: () => <div data-testid="movement-filters" />,
+  }),
+);
 
-vi.mock("@/modules/inventory/presentation/components/movements/movement-form", () => ({
-  MovementForm: () => <div data-testid="movement-form" />,
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/movements/movement-form",
+  () => ({
+    MovementForm: () => <div data-testid="movement-form" />,
+  }),
+);
 
 vi.mock("@/ui/components/table-pagination", () => ({
   TablePagination: () => <div data-testid="table-pagination" />,
@@ -55,13 +84,15 @@ vi.mock("@/ui/components/sortable-header", () => ({
 
 // --- Helpers ---
 
-function makeMovement(overrides: Partial<{
-  id: string;
-  type: "IN" | "OUT";
-  status: "DRAFT" | "POSTED";
-  warehouseName: string;
-  reference: string | null;
-}> = {}): StockMovement {
+function makeMovement(
+  overrides: Partial<{
+    id: string;
+    type: "IN" | "OUT";
+    status: "DRAFT" | "POSTED";
+    warehouseName: string;
+    reference: string | null;
+  }> = {},
+): StockMovement {
   const line = MovementLine.create({
     id: "line-1",
     productId: "p1",
@@ -105,7 +136,10 @@ describe("MovementList", () => {
   it("Given: data loaded When: rendering Then: should display the list title", () => {
     const mov = makeMovement();
     mockQueryState = {
-      data: { data: [mov], pagination: { page: 1, totalPages: 1, total: 1, limit: 10 } },
+      data: {
+        data: [mov],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -116,11 +150,22 @@ describe("MovementList", () => {
   });
 
   it("Given: movements exist When: rendering Then: should render warehouse name and reference for each row", () => {
-    const mov1 = makeMovement({ id: "mov-1", warehouseName: "Main Warehouse", reference: "REF-001" });
-    const mov2 = makeMovement({ id: "mov-2", warehouseName: "Secondary Warehouse", reference: "REF-002" });
+    const mov1 = makeMovement({
+      id: "mov-1",
+      warehouseName: "Main Warehouse",
+      reference: "REF-001",
+    });
+    const mov2 = makeMovement({
+      id: "mov-2",
+      warehouseName: "Secondary Warehouse",
+      reference: "REF-002",
+    });
 
     mockQueryState = {
-      data: { data: [mov1, mov2], pagination: { page: 1, totalPages: 1, total: 2, limit: 10 } },
+      data: {
+        data: [mov1, mov2],
+        pagination: { page: 1, totalPages: 1, total: 2, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -136,7 +181,10 @@ describe("MovementList", () => {
   it("Given: movements exist When: rendering Then: should render type and status badges for each row", () => {
     const mov = makeMovement({ type: "IN", status: "DRAFT" });
     mockQueryState = {
-      data: { data: [mov], pagination: { page: 1, totalPages: 1, total: 1, limit: 10 } },
+      data: {
+        data: [mov],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -149,7 +197,10 @@ describe("MovementList", () => {
 
   it("Given: no movements When: rendering Then: should show empty state", () => {
     mockQueryState = {
-      data: { data: [], pagination: { page: 1, totalPages: 0, total: 0, limit: 10 } },
+      data: {
+        data: [],
+        pagination: { page: 1, totalPages: 0, total: 0, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };

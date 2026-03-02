@@ -139,8 +139,8 @@ describe("Transfer Schema", () => {
       // Assert
       expect(result.success).toBe(false);
       if (!result.success) {
-        const refinementIssue = result.error.issues.find(
-          (i) => i.path.includes("toWarehouseId"),
+        const refinementIssue = result.error.issues.find((i) =>
+          i.path.includes("toWarehouseId"),
         );
         expect(refinementIssue?.message).toBe(
           "Source and destination warehouses must be different",

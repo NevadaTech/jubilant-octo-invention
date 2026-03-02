@@ -54,11 +54,7 @@ describe("use-products hooks", () => {
 
     it("Given filters, When calling list(filters), Then it appends filters", () => {
       const filters = { status: "ACTIVE" as const };
-      expect(productKeys.list(filters)).toEqual([
-        "products",
-        "list",
-        filters,
-      ]);
+      expect(productKeys.list(filters)).toEqual(["products", "list", filters]);
     });
 
     it("Given an id, When calling detail(id), Then it returns the detail key", () => {

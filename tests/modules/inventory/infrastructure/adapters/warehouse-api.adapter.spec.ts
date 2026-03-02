@@ -116,7 +116,9 @@ describe("WarehouseApiAdapter", () => {
 
       const result = await adapter.findById("wh-001");
 
-      expect(apiClient.get).toHaveBeenCalledWith("/inventory/warehouses/wh-001");
+      expect(apiClient.get).toHaveBeenCalledWith(
+        "/inventory/warehouses/wh-001",
+      );
       expect(result).toBeTruthy();
     });
 
@@ -146,10 +148,17 @@ describe("WarehouseApiAdapter", () => {
         headers: {},
       });
 
-      const createDto = { code: "WH-MAIN", name: "Main Warehouse", address: "123 Main St" };
+      const createDto = {
+        code: "WH-MAIN",
+        name: "Main Warehouse",
+        address: "123 Main St",
+      };
       const result = await adapter.create(createDto);
 
-      expect(apiClient.post).toHaveBeenCalledWith("/inventory/warehouses", createDto);
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/warehouses",
+        createDto,
+      );
       expect(result).toBeTruthy();
     });
   });
@@ -165,7 +174,10 @@ describe("WarehouseApiAdapter", () => {
       const updateDto = { name: "Updated Warehouse" };
       const result = await adapter.update("wh-001", updateDto);
 
-      expect(apiClient.put).toHaveBeenCalledWith("/inventory/warehouses/wh-001", updateDto);
+      expect(apiClient.put).toHaveBeenCalledWith(
+        "/inventory/warehouses/wh-001",
+        updateDto,
+      );
       expect(result).toBeTruthy();
     });
   });

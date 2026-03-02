@@ -63,10 +63,7 @@ describe("SearchableSelect", () => {
 
   it("Given: the dropdown is closed When: clicking the trigger Then: should open the dropdown and show all options", async () => {
     render(
-      <SearchableSelect
-        options={options}
-        onValueChange={mockOnValueChange}
-      />,
+      <SearchableSelect options={options} onValueChange={mockOnValueChange} />,
     );
 
     const trigger = screen.getByRole("combobox");
@@ -83,10 +80,7 @@ describe("SearchableSelect", () => {
 
   it("Given: the dropdown is open When: clicking an option Then: should call onValueChange and close the dropdown", () => {
     render(
-      <SearchableSelect
-        options={options}
-        onValueChange={mockOnValueChange}
-      />,
+      <SearchableSelect options={options} onValueChange={mockOnValueChange} />,
     );
 
     fireEvent.click(screen.getByRole("combobox"));
@@ -140,10 +134,7 @@ describe("SearchableSelect", () => {
 
   it("Given: the dropdown is open When: pressing Escape Then: should close the dropdown", () => {
     render(
-      <SearchableSelect
-        options={options}
-        onValueChange={mockOnValueChange}
-      />,
+      <SearchableSelect options={options} onValueChange={mockOnValueChange} />,
     );
 
     fireEvent.click(screen.getByRole("combobox"));

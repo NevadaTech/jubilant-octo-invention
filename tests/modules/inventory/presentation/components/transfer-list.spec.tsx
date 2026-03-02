@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { TransferList } from "@/modules/inventory/presentation/components/transfers/transfer-list";
-import { Transfer, TransferLine } from "@/modules/inventory/domain/entities/transfer.entity";
+import {
+  Transfer,
+  TransferLine,
+} from "@/modules/inventory/domain/entities/transfer.entity";
 
 // --- Mocks ---
 
@@ -17,7 +20,17 @@ vi.mock("@/i18n/navigation", () => ({
 }));
 
 let mockQueryState: {
-  data: { data: Transfer[]; pagination: { page: number; totalPages: number; total: number; limit: number } } | undefined;
+  data:
+    | {
+        data: Transfer[];
+        pagination: {
+          page: number;
+          totalPages: number;
+          total: number;
+          limit: number;
+        };
+      }
+    | undefined;
   isLoading: boolean;
   isError: boolean;
 } = { data: undefined, isLoading: false, isError: false };
@@ -27,17 +40,28 @@ vi.mock("@/modules/inventory/presentation/hooks/use-transfers", () => ({
   useUpdateTransferStatus: () => ({ isPending: false, mutateAsync: vi.fn() }),
 }));
 
-vi.mock("@/modules/inventory/presentation/components/transfers/transfer-status-badge", () => ({
-  TransferStatusBadge: ({ status }: { status: string }) => <span data-testid="status-badge">{status}</span>,
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/transfers/transfer-status-badge",
+  () => ({
+    TransferStatusBadge: ({ status }: { status: string }) => (
+      <span data-testid="status-badge">{status}</span>
+    ),
+  }),
+);
 
-vi.mock("@/modules/inventory/presentation/components/transfers/transfer-filters", () => ({
-  TransferFiltersComponent: () => <div data-testid="transfer-filters" />,
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/transfers/transfer-filters",
+  () => ({
+    TransferFiltersComponent: () => <div data-testid="transfer-filters" />,
+  }),
+);
 
-vi.mock("@/modules/inventory/presentation/components/transfers/transfer-form", () => ({
-  TransferForm: () => <div data-testid="transfer-form" />,
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/transfers/transfer-form",
+  () => ({
+    TransferForm: () => <div data-testid="transfer-form" />,
+  }),
+);
 
 vi.mock("@/ui/components/table-pagination", () => ({
   TablePagination: () => <div data-testid="table-pagination" />,
@@ -49,12 +73,14 @@ vi.mock("@/ui/components/sortable-header", () => ({
 
 // --- Helpers ---
 
-function makeTransfer(overrides: Partial<{
-  id: string;
-  fromWarehouseName: string;
-  toWarehouseName: string;
-  status: "DRAFT" | "IN_TRANSIT" | "RECEIVED";
-}> = {}): Transfer {
+function makeTransfer(
+  overrides: Partial<{
+    id: string;
+    fromWarehouseName: string;
+    toWarehouseName: string;
+    status: "DRAFT" | "IN_TRANSIT" | "RECEIVED";
+  }> = {},
+): Transfer {
   const line = TransferLine.create({
     id: "line-1",
     productId: "p1",
@@ -92,7 +118,10 @@ describe("TransferList", () => {
   it("Given: data loaded When: rendering Then: should display the list title", () => {
     const tf = makeTransfer();
     mockQueryState = {
-      data: { data: [tf], pagination: { page: 1, totalPages: 1, total: 1, limit: 10 } },
+      data: {
+        data: [tf],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -103,11 +132,22 @@ describe("TransferList", () => {
   });
 
   it("Given: transfers exist When: rendering Then: should render warehouse names and quantity for each row", () => {
-    const tf1 = makeTransfer({ id: "tf-1", fromWarehouseName: "Warehouse Alpha", toWarehouseName: "Warehouse Beta" });
-    const tf2 = makeTransfer({ id: "tf-2", fromWarehouseName: "Warehouse Gamma", toWarehouseName: "Warehouse Delta" });
+    const tf1 = makeTransfer({
+      id: "tf-1",
+      fromWarehouseName: "Warehouse Alpha",
+      toWarehouseName: "Warehouse Beta",
+    });
+    const tf2 = makeTransfer({
+      id: "tf-2",
+      fromWarehouseName: "Warehouse Gamma",
+      toWarehouseName: "Warehouse Delta",
+    });
 
     mockQueryState = {
-      data: { data: [tf1, tf2], pagination: { page: 1, totalPages: 1, total: 2, limit: 10 } },
+      data: {
+        data: [tf1, tf2],
+        pagination: { page: 1, totalPages: 1, total: 2, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -123,7 +163,10 @@ describe("TransferList", () => {
   it("Given: transfers exist When: rendering Then: should render status badge and product name", () => {
     const tf = makeTransfer({ status: "DRAFT" });
     mockQueryState = {
-      data: { data: [tf], pagination: { page: 1, totalPages: 1, total: 1, limit: 10 } },
+      data: {
+        data: [tf],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -136,7 +179,10 @@ describe("TransferList", () => {
 
   it("Given: no transfers When: rendering Then: should show empty state", () => {
     mockQueryState = {
-      data: { data: [], pagination: { page: 1, totalPages: 0, total: 0, limit: 10 } },
+      data: {
+        data: [],
+        pagination: { page: 1, totalPages: 0, total: 0, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };

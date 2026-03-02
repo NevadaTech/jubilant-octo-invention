@@ -32,7 +32,9 @@ describe("MovementLine", () => {
 });
 
 describe("StockMovement", () => {
-  const makeLine = (overrides: Partial<{ id: string; quantity: number }> = {}) =>
+  const makeLine = (
+    overrides: Partial<{ id: string; quantity: number }> = {},
+  ) =>
     MovementLine.create({
       id: overrides.id ?? "line-1",
       productId: "prod-1",
@@ -48,7 +50,7 @@ describe("StockMovement", () => {
       type: string;
       status: string;
       lines: ReturnType<typeof makeLine>[];
-    }> = {}
+    }> = {},
   ) =>
     StockMovement.create({
       id: "mov-1",

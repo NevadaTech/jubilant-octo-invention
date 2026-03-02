@@ -2,7 +2,14 @@ import { describe, it, expect } from "vitest";
 import { Role } from "@/modules/roles/domain/entities/role.entity";
 
 describe("Role", () => {
-  const makePermission = (overrides: Partial<{ id: string; name: string; module: string; action: string }> = {}) => ({
+  const makePermission = (
+    overrides: Partial<{
+      id: string;
+      name: string;
+      module: string;
+      action: string;
+    }> = {},
+  ) => ({
     id: overrides.id ?? "perm-1",
     name: overrides.name ?? "USERS:READ",
     description: null,
@@ -15,7 +22,7 @@ describe("Role", () => {
       isSystem: boolean;
       isActive: boolean;
       permissions: ReturnType<typeof makePermission>[];
-    }> = {}
+    }> = {},
   ) =>
     new Role({
       id: "role-1",
@@ -46,9 +53,24 @@ describe("Role", () => {
   it("Given: role with 3 permissions When: accessing permissionCount Then: returns 3", () => {
     // Arrange
     const permissions = [
-      makePermission({ id: "p-1", name: "USERS:READ", module: "USERS", action: "READ" }),
-      makePermission({ id: "p-2", name: "USERS:CREATE", module: "USERS", action: "CREATE" }),
-      makePermission({ id: "p-3", name: "SALES:READ", module: "SALES", action: "READ" }),
+      makePermission({
+        id: "p-1",
+        name: "USERS:READ",
+        module: "USERS",
+        action: "READ",
+      }),
+      makePermission({
+        id: "p-2",
+        name: "USERS:CREATE",
+        module: "USERS",
+        action: "CREATE",
+      }),
+      makePermission({
+        id: "p-3",
+        name: "SALES:READ",
+        module: "SALES",
+        action: "READ",
+      }),
     ];
 
     // Act

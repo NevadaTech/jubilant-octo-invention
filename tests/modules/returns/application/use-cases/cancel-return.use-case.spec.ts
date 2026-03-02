@@ -70,9 +70,7 @@ describe("CancelReturnUseCase", () => {
     const publishedEvent = vi.mocked(eventBus.publish).mock.calls[0][0];
     expect(publishedEvent).toBeInstanceOf(ReturnCancelledEvent);
     expect(publishedEvent.aggregateId).toBe("ret-1");
-    expect((publishedEvent as ReturnCancelledEvent).returnNumber).toBe(
-      "R-001",
-    );
+    expect((publishedEvent as ReturnCancelledEvent).returnNumber).toBe("R-001");
   });
 
   it("Given: a non-existent return When: execute is called Then: should throw NotFoundError", async () => {

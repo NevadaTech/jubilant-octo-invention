@@ -11,7 +11,9 @@ vi.mock("@/modules/inventory/presentation/hooks/use-warehouses", () => ({
 }));
 
 vi.mock("@/modules/inventory/presentation/hooks/use-categories", () => ({
-  useCategories: () => ({ data: { data: [{ id: "cat-1", name: "Electronics" }] } }),
+  useCategories: () => ({
+    data: { data: [{ id: "cat-1", name: "Electronics" }] },
+  }),
 }));
 
 describe("ReportFiltersForm", () => {
@@ -37,7 +39,12 @@ describe("ReportFiltersForm", () => {
   });
 
   it("Given: AVAILABLE_INVENTORY report type When: rendering Then: should call onGenerate on mount", () => {
-    render(<ReportFiltersForm type="AVAILABLE_INVENTORY" onGenerate={mockOnGenerate} />);
+    render(
+      <ReportFiltersForm
+        type="AVAILABLE_INVENTORY"
+        onGenerate={mockOnGenerate}
+      />,
+    );
     expect(mockOnGenerate).toHaveBeenCalledTimes(1);
   });
 

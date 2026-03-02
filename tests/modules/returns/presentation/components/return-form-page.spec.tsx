@@ -173,15 +173,21 @@ describe("ReturnFormPage", () => {
 
     expect(screen.getByText("form.returnInfo")).toBeInTheDocument();
     // Label and placeholder both match, so use getAllByText
-    expect(screen.getAllByText(/fields\.type/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/fields\.warehouse/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/fields\.type/).length).toBeGreaterThanOrEqual(
+      1,
+    );
+    expect(
+      screen.getAllByText(/fields\.warehouse/).length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
   it("Given: default return type is RETURN_CUSTOMER When: rendering Then: should show sale reference field", () => {
     render(<ReturnFormPage />);
 
     // Default type is RETURN_CUSTOMER which shows the saleReference field
-    expect(screen.getAllByText(/fields\.saleReference/).length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText(/fields\.saleReference/).length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
   it("Given: data is loaded When: rendering Then: should show reason and note fields", () => {

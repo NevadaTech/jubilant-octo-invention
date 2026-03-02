@@ -54,19 +54,27 @@ describe("useDebounce", () => {
     );
 
     rerender({ value: "ab", delay: 500 });
-    act(() => { vi.advanceTimersByTime(200); });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
 
     rerender({ value: "abc", delay: 500 });
-    act(() => { vi.advanceTimersByTime(200); });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
 
     rerender({ value: "abcd", delay: 500 });
 
     // Not enough total time for the last change
-    act(() => { vi.advanceTimersByTime(200); });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     expect(result.current).toBe("a");
 
     // Now enough time passes after the final value
-    act(() => { vi.advanceTimersByTime(300); });
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
     expect(result.current).toBe("abcd");
   });
 

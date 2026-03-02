@@ -14,7 +14,10 @@ const mockCategories = {
   ],
 };
 
-let mockQueryState: { data: typeof mockCategories | undefined; isLoading: boolean };
+let mockQueryState: {
+  data: typeof mockCategories | undefined;
+  isLoading: boolean;
+};
 
 vi.mock("@/modules/inventory/presentation/hooks/use-categories", () => ({
   useCategories: () => mockQueryState,
@@ -34,18 +37,28 @@ describe("CategoryMultiSelector", () => {
   });
 
   it("Given: categories selected When: rendering Then: should show badges for selected categories", () => {
-    render(<CategoryMultiSelector value={["cat-1", "cat-3"]} onChange={mockOnChange} />);
+    render(
+      <CategoryMultiSelector
+        value={["cat-1", "cat-3"]}
+        onChange={mockOnChange}
+      />,
+    );
     expect(screen.getByText("Electronics")).toBeInTheDocument();
     expect(screen.getByText("Food")).toBeInTheDocument();
     expect(screen.queryByText("Clothing")).not.toBeInTheDocument();
   });
 
   it("Given: a category is selected When: clicking its remove button Then: should call onChange without that category", () => {
-    render(<CategoryMultiSelector value={["cat-1", "cat-2"]} onChange={mockOnChange} />);
-    // Each badge has an X button — get the first remove button (for Electronics)
-    const removeButtons = screen.getAllByRole("button", { hidden: true }).filter(
-      (btn) => btn.querySelector("svg")
+    render(
+      <CategoryMultiSelector
+        value={["cat-1", "cat-2"]}
+        onChange={mockOnChange}
+      />,
     );
+    // Each badge has an X button — get the first remove button (for Electronics)
+    const removeButtons = screen
+      .getAllByRole("button", { hidden: true })
+      .filter((btn) => btn.querySelector("svg"));
     fireEvent.click(removeButtons[0]);
     expect(mockOnChange).toHaveBeenCalledWith(["cat-2"]);
   });
@@ -65,7 +78,13 @@ describe("CategoryMultiSelector", () => {
   });
 
   it("Given: disabled prop When: rendering with selected categories Then: should not show remove buttons or add button", () => {
-    render(<CategoryMultiSelector value={["cat-1"]} onChange={mockOnChange} disabled />);
+    render(
+      <CategoryMultiSelector
+        value={["cat-1"]}
+        onChange={mockOnChange}
+        disabled
+      />,
+    );
     expect(screen.getByText("Electronics")).toBeInTheDocument();
     // No add button should be rendered when disabled
     expect(screen.queryByText("selector.add")).not.toBeInTheDocument();

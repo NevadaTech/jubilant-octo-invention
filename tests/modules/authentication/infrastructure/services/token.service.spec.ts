@@ -83,7 +83,8 @@ describe("TokenService", () => {
   });
 
   const sampleTokens = {
-    accessToken: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0Iiwib3JnX2lkIjoib3JnLTk5In0.sig",
+    accessToken:
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0Iiwib3JnX2lkIjoib3JnLTk5In0.sig",
     refreshToken: "refresh-token-abc-123",
     expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
   };
@@ -328,7 +329,9 @@ describe("TokenService", () => {
       // Assert
       expect(localStorage.removeItem).toHaveBeenCalledWith(TOKEN_KEY);
       expect(localStorage.removeItem).toHaveBeenCalledWith(REFRESH_TOKEN_KEY);
-      expect(localStorage.removeItem).toHaveBeenCalledWith(`${TOKEN_KEY}_expires`);
+      expect(localStorage.removeItem).toHaveBeenCalledWith(
+        `${TOKEN_KEY}_expires`,
+      );
       expect(localStorage.removeItem).toHaveBeenCalledWith(ORG_SLUG_KEY);
       expect(localStorage.removeItem).toHaveBeenCalledWith(ORG_ID_KEY);
       expect(localStorage.removeItem).toHaveBeenCalledWith(USER_KEY);
@@ -424,7 +427,9 @@ describe("TokenService", () => {
     it("Given: valid non-expired token When: calling hasValidToken Then: should return true", () => {
       // Arrange
       store[TOKEN_KEY] = "valid-token";
-      store[`${TOKEN_KEY}_expires`] = new Date(Date.now() + 3600000).toISOString();
+      store[`${TOKEN_KEY}_expires`] = new Date(
+        Date.now() + 3600000,
+      ).toISOString();
 
       // Act
       const result = TokenService.hasValidToken();
@@ -446,7 +451,9 @@ describe("TokenService", () => {
     it("Given: token that is expired When: calling hasValidToken Then: should return false", () => {
       // Arrange
       store[TOKEN_KEY] = "expired-token";
-      store[`${TOKEN_KEY}_expires`] = new Date(Date.now() - 60000).toISOString();
+      store[`${TOKEN_KEY}_expires`] = new Date(
+        Date.now() - 60000,
+      ).toISOString();
 
       // Act
       const result = TokenService.hasValidToken();

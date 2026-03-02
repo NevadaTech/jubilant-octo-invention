@@ -194,7 +194,13 @@ function makeMovementLine(
 function makeMovement(
   overrides: Partial<{
     id: string;
-    type: "IN" | "OUT" | "ADJUST_IN" | "ADJUST_OUT" | "TRANSFER_IN" | "TRANSFER_OUT";
+    type:
+      | "IN"
+      | "OUT"
+      | "ADJUST_IN"
+      | "ADJUST_OUT"
+      | "TRANSFER_IN"
+      | "TRANSFER_OUT";
     status: "DRAFT" | "POSTED" | "VOID" | "RETURNED";
     warehouseName: string;
     warehouseCode: string | null;
@@ -309,8 +315,12 @@ describe("MovementDetail", () => {
     // Assert
     expect(screen.getByText("North Depot")).toBeDefined();
     expect(screen.getByText("ND-01")).toBeDefined();
-    expect(screen.getAllByTestId("movement-type-badge").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByTestId("movement-status-badge").length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByTestId("movement-type-badge").length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByTestId("movement-status-badge").length,
+    ).toBeGreaterThanOrEqual(1);
     // DRAFT shows edit + post buttons
     expect(screen.getByText("actions.edit")).toBeDefined();
     expect(screen.getByText("actions.post")).toBeDefined();

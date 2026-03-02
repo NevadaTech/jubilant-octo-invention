@@ -138,7 +138,14 @@ describe("Date Utils", () => {
 
     it("Given: same day different time When: checking isToday Then: should return true", () => {
       const now = new Date();
-      const sameDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+      const sameDay = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        23,
+        59,
+        59,
+      );
       expect(isToday(sameDay)).toBe(true);
     });
   });

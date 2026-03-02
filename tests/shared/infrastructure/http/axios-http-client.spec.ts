@@ -62,7 +62,9 @@ function axiosResponse<T>(data: T, status = 200) {
  * Captures the request interceptor fulfilled callback registered via
  * `instance.interceptors.request.use(onFulfilled, onRejected)`.
  */
-function getRequestInterceptor(): (config: Record<string, unknown>) => Record<string, unknown> {
+function getRequestInterceptor(): (
+  config: Record<string, unknown>,
+) => Record<string, unknown> {
   const calls = mockAxiosInstance.interceptors.request.use.mock.calls;
   return calls[calls.length - 1][0];
 }
@@ -458,9 +460,9 @@ describe("AxiosHttpClient", () => {
       const serverError = new Error("Internal Server Error");
       mockAxiosInstance.post.mockRejectedValueOnce(serverError);
 
-      await expect(
-        client.post("/products", { name: "x" }),
-      ).rejects.toThrow("Internal Server Error");
+      await expect(client.post("/products", { name: "x" })).rejects.toThrow(
+        "Internal Server Error",
+      );
     });
   });
 });

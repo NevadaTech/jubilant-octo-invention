@@ -23,27 +23,52 @@ describe("TransferFiltersComponent", () => {
   });
 
   it("Given: default filters When: rendering Then: should render search input", () => {
-    render(<TransferFiltersComponent filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <TransferFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.getByPlaceholderText("search.placeholder")).toBeDefined();
   });
 
   it("Given: default filters When: rendering Then: should render filter button", () => {
-    render(<TransferFiltersComponent filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <TransferFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.getByText("filter")).toBeDefined();
   });
 
   it("Given: filters with status When: rendering Then: should show clear button", () => {
-    render(<TransferFiltersComponent filters={{ ...defaultFilters, status: ["DRAFT"] }} onFiltersChange={mockOnChange} />);
+    render(
+      <TransferFiltersComponent
+        filters={{ ...defaultFilters, status: ["DRAFT"] }}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.getByText("clearFilters")).toBeDefined();
   });
 
   it("Given: no active filters When: rendering Then: should not show clear button", () => {
-    render(<TransferFiltersComponent filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <TransferFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.queryByText("clearFilters")).toBeNull();
   });
 
   it("Given: rendered component When: clicking filter button Then: should show status, fromWarehouse, toWarehouse and date filters", () => {
-    render(<TransferFiltersComponent filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <TransferFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     fireEvent.click(screen.getByText("filter"));
     expect(screen.getByText("filters.status")).toBeDefined();
     expect(screen.getByText("filters.fromWarehouse")).toBeDefined();
@@ -53,16 +78,23 @@ describe("TransferFiltersComponent", () => {
   });
 
   it("Given: active filters When: clicking clear Then: should reset all filters", () => {
-    render(<TransferFiltersComponent filters={{ ...defaultFilters, status: ["DRAFT"], search: "x" }} onFiltersChange={mockOnChange} />);
+    render(
+      <TransferFiltersComponent
+        filters={{ ...defaultFilters, status: ["DRAFT"], search: "x" }}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     fireEvent.click(screen.getByText("clearFilters"));
-    expect(mockOnChange).toHaveBeenCalledWith(expect.objectContaining({
-      page: 1,
-      status: undefined,
-      fromWarehouseIds: undefined,
-      toWarehouseIds: undefined,
-      startDate: undefined,
-      endDate: undefined,
-      search: undefined,
-    }));
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        page: 1,
+        status: undefined,
+        fromWarehouseIds: undefined,
+        toWarehouseIds: undefined,
+        startDate: undefined,
+        endDate: undefined,
+        search: undefined,
+      }),
+    );
   });
 });

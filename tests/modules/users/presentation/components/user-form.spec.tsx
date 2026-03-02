@@ -7,14 +7,20 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/modules/users/presentation/hooks/use-users", () => ({
-  useCreateUser: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
+  useCreateUser: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
 }));
 
 describe("UserForm", () => {
   const mockOnOpenChange = vi.fn();
 
   it("Given: open false When: rendering Then: should return null", () => {
-    const { container } = render(<UserForm open={false} onOpenChange={mockOnOpenChange} />);
+    const { container } = render(
+      <UserForm open={false} onOpenChange={mockOnOpenChange} />,
+    );
     expect(container.innerHTML).toBe("");
   });
 

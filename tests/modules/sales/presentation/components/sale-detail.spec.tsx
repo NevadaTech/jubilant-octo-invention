@@ -30,12 +30,14 @@ let mockSaleHook: {
 };
 
 let mockSaleReturnsHook: {
-  data: Array<{
-    id: string;
-    returnNumber: string;
-    type: string;
-    status: string;
-  }> | undefined;
+  data:
+    | Array<{
+        id: string;
+        returnNumber: string;
+        type: string;
+        status: string;
+      }>
+    | undefined;
 };
 
 vi.mock("@/modules/sales/presentation/hooks/use-sales", () => ({
@@ -258,7 +260,14 @@ function makeSale(
   overrides: Partial<{
     id: string;
     saleNumber: string;
-    status: "DRAFT" | "CONFIRMED" | "PICKING" | "SHIPPED" | "COMPLETED" | "CANCELLED" | "RETURNED";
+    status:
+      | "DRAFT"
+      | "CONFIRMED"
+      | "PICKING"
+      | "SHIPPED"
+      | "COMPLETED"
+      | "CANCELLED"
+      | "RETURNED";
     warehouseName: string;
     customerReference: string | null;
     totalAmount: number;
@@ -415,8 +424,12 @@ describe("SaleDetail", () => {
 
     // Assert - canConfirm and canCancel should be true for DRAFT
     // confirm text may appear in both button and AlertDialog trigger
-    expect(screen.getAllByText("actions.confirm").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("actions.cancelSale").length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText("actions.confirm").length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText("actions.cancelSale").length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
   it("Given: sale with shipping details When: rendering Then: should display tracking number, carrier, and notes", () => {

@@ -95,15 +95,13 @@ describe("use-reports hooks", () => {
         .mockRejectedValueOnce(new Error("Server error"));
       const { Wrapper } = createQueryWrapper();
 
-      const { result } = renderHook(
-        () => useReportView("VALUATION" as any),
-        { wrapper: Wrapper },
-      );
+      const { result } = renderHook(() => useReportView("VALUATION" as any), {
+        wrapper: Wrapper,
+      });
 
-      await waitFor(
-        () => expect(result.current.isError).toBe(true),
-        { timeout: 10000 },
-      );
+      await waitFor(() => expect(result.current.isError).toBe(true), {
+        timeout: 10000,
+      });
       expect(result.current.error).toBeInstanceOf(Error);
     });
   });
@@ -128,20 +126,31 @@ describe("use-reports hooks", () => {
       global.URL.createObjectURL = mockCreateObjectURL;
       global.URL.revokeObjectURL = mockRevokeObjectURL;
 
-      const createElementSpy = vi.spyOn(document, "createElement").mockImplementation((tag: string) => {
-        if (tag === "a") {
-          return { href: "", download: "", click: mockClick, style: {} } as any;
-        }
-        return originalCreateElement(tag);
-      });
-      const appendChildSpy = vi.spyOn(document.body, "appendChild").mockImplementation((node: any) => {
-        if (node?.click === mockClick) return node;
-        return originalAppendChild(node);
-      });
-      const removeChildSpy = vi.spyOn(document.body, "removeChild").mockImplementation((node: any) => {
-        if (node?.click === mockClick) return node;
-        return originalRemoveChild(node);
-      });
+      const createElementSpy = vi
+        .spyOn(document, "createElement")
+        .mockImplementation((tag: string) => {
+          if (tag === "a") {
+            return {
+              href: "",
+              download: "",
+              click: mockClick,
+              style: {},
+            } as any;
+          }
+          return originalCreateElement(tag);
+        });
+      const appendChildSpy = vi
+        .spyOn(document.body, "appendChild")
+        .mockImplementation((node: any) => {
+          if (node?.click === mockClick) return node;
+          return originalAppendChild(node);
+        });
+      const removeChildSpy = vi
+        .spyOn(document.body, "removeChild")
+        .mockImplementation((node: any) => {
+          if (node?.click === mockClick) return node;
+          return originalRemoveChild(node);
+        });
 
       const { Wrapper } = createQueryWrapper();
 

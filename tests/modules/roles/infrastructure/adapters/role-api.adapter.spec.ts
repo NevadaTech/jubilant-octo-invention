@@ -23,7 +23,9 @@ const mockedPost = vi.mocked(apiClient.post);
 const mockedPatch = vi.mocked(apiClient.patch);
 const mockedDelete = vi.mocked(apiClient.delete);
 
-function buildRoleDto(overrides: Partial<RoleResponseDto> = {}): RoleResponseDto {
+function buildRoleDto(
+  overrides: Partial<RoleResponseDto> = {},
+): RoleResponseDto {
   return {
     id: "role-1",
     name: "Admin",
@@ -74,7 +76,11 @@ describe("RoleApiAdapter", () => {
   describe("findAll", () => {
     it("Given roles exist in the API, When findAll is called, Then it returns mapped Role domain entities", async () => {
       const dto1 = buildRoleDto({ id: "role-1", name: "Admin" });
-      const dto2 = buildRoleDto({ id: "role-2", name: "Viewer", isSystem: true });
+      const dto2 = buildRoleDto({
+        id: "role-2",
+        name: "Viewer",
+        isSystem: true,
+      });
       mockedGet.mockResolvedValue(wrapApiResponse([dto1, dto2]));
 
       const result = await adapter.findAll();
@@ -148,7 +154,11 @@ describe("RoleApiAdapter", () => {
 
   describe("delete", () => {
     it("Given a role id, When delete is called, Then it sends a DELETE request to /roles/:id", async () => {
-      mockedDelete.mockResolvedValue({ data: undefined, status: 204, headers: {} });
+      mockedDelete.mockResolvedValue({
+        data: undefined,
+        status: 204,
+        headers: {},
+      });
 
       await adapter.delete("role-99");
 
@@ -159,7 +169,11 @@ describe("RoleApiAdapter", () => {
   describe("assignPermissions", () => {
     it("Given a role id and permission ids, When assignPermissions is called, Then it posts to /roles/:id/permissions", async () => {
       const dto = { permissionIds: ["perm-1", "perm-2", "perm-3"] };
-      mockedPost.mockResolvedValue({ data: undefined, status: 200, headers: {} });
+      mockedPost.mockResolvedValue({
+        data: undefined,
+        status: 200,
+        headers: {},
+      });
 
       await adapter.assignPermissions("role-5", dto);
 

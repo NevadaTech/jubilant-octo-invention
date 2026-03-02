@@ -8,13 +8,9 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/i18n/navigation", () => ({
-  Link: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => <a href={href}>{children}</a>,
+  Link: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
 }));
 
 vi.mock(
@@ -26,14 +22,11 @@ vi.mock(
   }),
 );
 
-vi.mock(
-  "@/modules/returns/presentation/components/return-type-badge",
-  () => ({
-    ReturnTypeBadge: ({ type }: { type: string }) => (
-      <span data-testid="return-type">{type}</span>
-    ),
-  }),
-);
+vi.mock("@/modules/returns/presentation/components/return-type-badge", () => ({
+  ReturnTypeBadge: ({ type }: { type: string }) => (
+    <span data-testid="return-type">{type}</span>
+  ),
+}));
 
 vi.mock("@/modules/returns/presentation/components/return-filters", () => ({
   ReturnFiltersComponent: () => <div data-testid="return-filters" />,
@@ -45,12 +38,9 @@ vi.mock("@/shared/presentation/components/permission-gate", () => ({
   ),
 }));
 
-vi.mock(
-  "@/modules/authentication/presentation/hooks/use-permissions",
-  () => ({
-    usePermissions: () => ({ hasPermission: () => true }),
-  }),
-);
+vi.mock("@/modules/authentication/presentation/hooks/use-permissions", () => ({
+  usePermissions: () => ({ hasPermission: () => true }),
+}));
 
 vi.mock("@/shared/domain/permissions", () => ({
   PERMISSIONS: {

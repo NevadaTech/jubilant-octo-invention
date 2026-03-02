@@ -48,8 +48,8 @@ describe("useMediaQuery", () => {
   });
 
   it("Given: a media query that matches When: hook mounts Then: should return true", () => {
-    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(
-      () => createMockMediaQueryList(true),
+    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(() =>
+      createMockMediaQueryList(true),
     );
 
     const { result } = renderHook(() => useMediaQuery("(min-width: 1024px)"));
@@ -57,8 +57,8 @@ describe("useMediaQuery", () => {
   });
 
   it("Given: a media query that does not match When: hook mounts Then: should return false", () => {
-    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(
-      () => createMockMediaQueryList(false),
+    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(() =>
+      createMockMediaQueryList(false),
     );
 
     const { result } = renderHook(() => useMediaQuery("(min-width: 1024px)"));
@@ -67,7 +67,9 @@ describe("useMediaQuery", () => {
 
   it("Given: a mounted hook When: media query changes to match Then: should update to true", () => {
     const mql = createMockMediaQueryList(false);
-    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(() => mql);
+    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(
+      () => mql,
+    );
 
     const { result } = renderHook(() => useMediaQuery("(min-width: 768px)"));
     expect(result.current).toBe(false);
@@ -81,7 +83,9 @@ describe("useMediaQuery", () => {
 
   it("Given: a mounted hook When: unmounting Then: should remove the event listener", () => {
     const mql = createMockMediaQueryList(false);
-    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(() => mql);
+    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(
+      () => mql,
+    );
 
     const { unmount } = renderHook(() => useMediaQuery("(max-width: 767px)"));
     unmount();
@@ -94,7 +98,9 @@ describe("useMediaQuery", () => {
 
   it("Given: useIsMobile When: called Then: should query max-width 767px", () => {
     const mql = createMockMediaQueryList(true);
-    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(() => mql);
+    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(
+      () => mql,
+    );
 
     const { result } = renderHook(() => useIsMobile());
     expect(window.matchMedia).toHaveBeenCalledWith("(max-width: 767px)");
@@ -103,7 +109,9 @@ describe("useMediaQuery", () => {
 
   it("Given: useIsTablet When: called Then: should query tablet range", () => {
     const mql = createMockMediaQueryList(false);
-    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(() => mql);
+    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(
+      () => mql,
+    );
 
     renderHook(() => useIsTablet());
     expect(window.matchMedia).toHaveBeenCalledWith(
@@ -113,7 +121,9 @@ describe("useMediaQuery", () => {
 
   it("Given: useIsDesktop When: called Then: should query min-width 1024px", () => {
     const mql = createMockMediaQueryList(true);
-    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(() => mql);
+    (window.matchMedia as ReturnType<typeof vi.fn>).mockImplementation(
+      () => mql,
+    );
 
     renderHook(() => useIsDesktop());
     expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 1024px)");

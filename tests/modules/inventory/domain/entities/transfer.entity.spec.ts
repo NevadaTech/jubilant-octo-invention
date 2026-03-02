@@ -30,7 +30,9 @@ describe("TransferLine", () => {
 });
 
 describe("Transfer", () => {
-  const makeLine = (overrides: Partial<{ id: string; quantity: number }> = {}) =>
+  const makeLine = (
+    overrides: Partial<{ id: string; quantity: number }> = {},
+  ) =>
     TransferLine.create({
       id: overrides.id ?? "tl-1",
       productId: "prod-1",
@@ -46,7 +48,7 @@ describe("Transfer", () => {
       lines: ReturnType<typeof makeLine>[];
       linesCount: number;
       totalQuantity: number;
-    }> = {}
+    }> = {},
   ) => {
     const lines = overrides.lines ?? [makeLine()];
     return Transfer.create({

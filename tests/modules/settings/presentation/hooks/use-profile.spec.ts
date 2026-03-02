@@ -29,14 +29,11 @@ vi.mock(
   }),
 );
 
-vi.mock(
-  "@/modules/authentication/infrastructure/mappers/user.mapper",
-  () => ({
-    UserMapper: {
-      toDomain: (data: any) => data,
-    },
-  }),
-);
+vi.mock("@/modules/authentication/infrastructure/mappers/user.mapper", () => ({
+  UserMapper: {
+    toDomain: (data: any) => data,
+  },
+}));
 
 vi.mock("@/modules/authentication/presentation/store/auth.store", () => {
   const fn = (selector: (state: any) => any) => {

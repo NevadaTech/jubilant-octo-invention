@@ -9,33 +9,29 @@ describe("useLocalStorage", () => {
   });
 
   it("Given: no stored value When: hook initializes Then: should return the initial value", () => {
-    const { result } = renderHook(() =>
-      useLocalStorage("test-key", "default"),
-    );
+    const { result } = renderHook(() => useLocalStorage("test-key", "default"));
     expect(result.current[0]).toBe("default");
   });
 
   it("Given: a previously stored value When: hook initializes Then: should read it from localStorage on mount", () => {
     window.localStorage.setItem("test-key", JSON.stringify("persisted-value"));
 
-    const { result } = renderHook(() =>
-      useLocalStorage("test-key", "default"),
-    );
+    const { result } = renderHook(() => useLocalStorage("test-key", "default"));
 
     expect(result.current[0]).toBe("persisted-value");
   });
 
   it("Given: a hook instance When: setValue is called with a direct value Then: should update state and localStorage", () => {
-    const { result } = renderHook(() =>
-      useLocalStorage("test-key", "default"),
-    );
+    const { result } = renderHook(() => useLocalStorage("test-key", "default"));
 
     act(() => {
       result.current[1]("new-value");
     });
 
     expect(result.current[0]).toBe("new-value");
-    expect(JSON.parse(window.localStorage.getItem("test-key")!)).toBe("new-value");
+    expect(JSON.parse(window.localStorage.getItem("test-key")!)).toBe(
+      "new-value",
+    );
   });
 
   it("Given: a hook instance When: setValue is called with a function updater Then: should use the previous value", () => {
@@ -70,6 +66,9 @@ describe("useLocalStorage", () => {
     });
 
     expect(result.current[0]).toEqual(["a", "b"]);
-    expect(JSON.parse(window.localStorage.getItem("arr-key")!)).toEqual(["a", "b"]);
+    expect(JSON.parse(window.localStorage.getItem("arr-key")!)).toEqual([
+      "a",
+      "b",
+    ]);
   });
 });

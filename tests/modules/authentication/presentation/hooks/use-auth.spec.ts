@@ -73,7 +73,11 @@ describe("useAuth", () => {
   });
 
   it("Given: an error exists When: calling clearError Then: should invoke the store clearError action", () => {
-    mockStoreState = { ...mockStoreState, error: "Some error", clearError: mockClearError };
+    mockStoreState = {
+      ...mockStoreState,
+      error: "Some error",
+      clearError: mockClearError,
+    };
     const { result } = renderHook(() => useAuth());
     result.current.clearError();
     expect(mockClearError).toHaveBeenCalledOnce();

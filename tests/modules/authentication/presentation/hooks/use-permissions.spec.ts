@@ -46,15 +46,35 @@ describe("usePermissions", () => {
   it("Given: an authenticated user When: calling hasAnyPermission Then: should return true if at least one permission matches", () => {
     mockUser = createUser(["PRODUCTS:READ"]);
     const { result } = renderHook(() => usePermissions());
-    expect(result.current.hasAnyPermission(["PRODUCTS:READ", "SALES:CREATE"] as any[])).toBe(true);
-    expect(result.current.hasAnyPermission(["USERS:DELETE", "ROLES:CREATE"] as any[])).toBe(false);
+    expect(
+      result.current.hasAnyPermission([
+        "PRODUCTS:READ",
+        "SALES:CREATE",
+      ] as any[]),
+    ).toBe(true);
+    expect(
+      result.current.hasAnyPermission([
+        "USERS:DELETE",
+        "ROLES:CREATE",
+      ] as any[]),
+    ).toBe(false);
   });
 
   it("Given: an authenticated user When: calling hasAllPermissions Then: should return true only if all permissions match", () => {
     mockUser = createUser(["PRODUCTS:READ", "SALES:CREATE", "USERS:READ"]);
     const { result } = renderHook(() => usePermissions());
-    expect(result.current.hasAllPermissions(["PRODUCTS:READ", "SALES:CREATE"] as any[])).toBe(true);
-    expect(result.current.hasAllPermissions(["PRODUCTS:READ", "ROLES:DELETE"] as any[])).toBe(false);
+    expect(
+      result.current.hasAllPermissions([
+        "PRODUCTS:READ",
+        "SALES:CREATE",
+      ] as any[]),
+    ).toBe(true);
+    expect(
+      result.current.hasAllPermissions([
+        "PRODUCTS:READ",
+        "ROLES:DELETE",
+      ] as any[]),
+    ).toBe(false);
   });
 
   it("Given: an authenticated user with roles When: calling hasRole Then: should return true for assigned roles", () => {
@@ -68,8 +88,12 @@ describe("usePermissions", () => {
     mockUser = null;
     const { result } = renderHook(() => usePermissions());
     expect(result.current.hasPermission("PRODUCTS:READ" as any)).toBe(false);
-    expect(result.current.hasAnyPermission(["PRODUCTS:READ"] as any[])).toBe(false);
-    expect(result.current.hasAllPermissions(["PRODUCTS:READ"] as any[])).toBe(false);
+    expect(result.current.hasAnyPermission(["PRODUCTS:READ"] as any[])).toBe(
+      false,
+    );
+    expect(result.current.hasAllPermissions(["PRODUCTS:READ"] as any[])).toBe(
+      false,
+    );
     expect(result.current.hasRole("ADMIN")).toBe(false);
   });
 });

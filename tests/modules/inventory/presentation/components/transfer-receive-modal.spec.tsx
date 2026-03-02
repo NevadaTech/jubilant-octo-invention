@@ -19,13 +19,8 @@ vi.mock("@/modules/inventory/presentation/hooks/use-transfers", () => ({
 }));
 
 vi.mock("@/ui/components/dialog", () => ({
-  Dialog: ({
-    children,
-    open,
-  }: {
-    children: React.ReactNode;
-    open: boolean;
-  }) => (open ? <div data-testid="dialog">{children}</div> : null),
+  Dialog: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
+    open ? <div data-testid="dialog">{children}</div> : null,
   DialogContent: ({
     children,
   }: {

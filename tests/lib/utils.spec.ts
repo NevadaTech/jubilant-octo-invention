@@ -1,5 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
-import { cn, isDefined, capitalize, truncate, sleep, generateId } from "@/lib/utils";
+import {
+  cn,
+  isDefined,
+  capitalize,
+  truncate,
+  sleep,
+  generateId,
+} from "@/lib/utils";
 
 describe("Utils", () => {
   describe("cn", () => {

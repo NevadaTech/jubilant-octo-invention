@@ -24,9 +24,12 @@ vi.mock("@/modules/inventory/presentation/hooks", () => ({
   useWarehouses: () => ({ data: { data: [] } }),
 }));
 
-vi.mock("@/modules/inventory/presentation/components/stock/reorder-rule-dialog", () => ({
-  ReorderRuleDialog: () => <div data-testid="reorder-rule-dialog" />,
-}));
+vi.mock(
+  "@/modules/inventory/presentation/components/stock/reorder-rule-dialog",
+  () => ({
+    ReorderRuleDialog: () => <div data-testid="reorder-rule-dialog" />,
+  }),
+);
 
 vi.mock("@/ui/components/sortable-header", () => ({
   SortableHeader: ({ label }: { label: string }) => <th>{label}</th>,
@@ -38,15 +41,17 @@ vi.mock("@/ui/components/multi-select", () => ({
 
 // --- Helpers ---
 
-function makeStock(overrides: Partial<{
-  id: string;
-  productName: string;
-  productSku: string;
-  warehouseName: string;
-  quantity: number;
-  averageCost: number;
-  totalValue: number;
-}> = {}): Stock {
+function makeStock(
+  overrides: Partial<{
+    id: string;
+    productName: string;
+    productSku: string;
+    warehouseName: string;
+    quantity: number;
+    averageCost: number;
+    totalValue: number;
+  }> = {},
+): Stock {
   return Stock.create({
     id: overrides.id ?? "stock-1",
     productId: "p1",
@@ -68,7 +73,12 @@ function makeStock(overrides: Partial<{
 
 describe("StockTable", () => {
   beforeEach(() => {
-    mockQueryState = { data: undefined, isLoading: false, isError: false, error: null };
+    mockQueryState = {
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
   });
 
   it("Given: data loaded When: rendering Then: should display the stock title", () => {
@@ -86,8 +96,18 @@ describe("StockTable", () => {
   });
 
   it("Given: stock items exist When: rendering Then: should render product name, SKU, and warehouse for each row", () => {
-    const s1 = makeStock({ id: "s1", productName: "Widget A", productSku: "WA-001", warehouseName: "Main Warehouse" });
-    const s2 = makeStock({ id: "s2", productName: "Gadget B", productSku: "GB-002", warehouseName: "East Warehouse" });
+    const s1 = makeStock({
+      id: "s1",
+      productName: "Widget A",
+      productSku: "WA-001",
+      warehouseName: "Main Warehouse",
+    });
+    const s2 = makeStock({
+      id: "s2",
+      productName: "Gadget B",
+      productSku: "GB-002",
+      warehouseName: "East Warehouse",
+    });
 
     mockQueryState = {
       data: { data: [s1, s2] },
@@ -139,7 +159,12 @@ describe("StockTable", () => {
   });
 
   it("Given: loading state When: rendering Then: should show skeleton placeholders", () => {
-    mockQueryState = { data: undefined, isLoading: true, isError: false, error: null };
+    mockQueryState = {
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: null,
+    };
 
     const { container } = render(<StockTable />);
 

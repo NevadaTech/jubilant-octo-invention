@@ -31,7 +31,17 @@ vi.mock("@/config/di/container", () => ({
 }));
 
 let mockQueryState: {
-  data: { data: AuditLog[]; pagination: { page: number; totalPages: number; total: number; limit: number } } | undefined;
+  data:
+    | {
+        data: AuditLog[];
+        pagination: {
+          page: number;
+          totalPages: number;
+          total: number;
+          limit: number;
+        };
+      }
+    | undefined;
   isLoading: boolean;
   isError: boolean;
 } = { data: undefined, isLoading: false, isError: false };
@@ -48,12 +58,17 @@ vi.mock("@/modules/audit/presentation/components/audit-log-filters", () => ({
   AuditLogFiltersBar: () => <div data-testid="audit-log-filters" />,
 }));
 
-vi.mock("@/modules/audit/presentation/components/audit-log-detail-dialog", () => ({
-  AuditLogDetailDialog: () => <div data-testid="audit-log-detail-dialog" />,
-}));
+vi.mock(
+  "@/modules/audit/presentation/components/audit-log-detail-dialog",
+  () => ({
+    AuditLogDetailDialog: () => <div data-testid="audit-log-detail-dialog" />,
+  }),
+);
 
 vi.mock("@/modules/audit/presentation/components/audit-action-badge", () => ({
-  AuditActionBadge: ({ action }: { action: string }) => <span data-testid="action-badge">{action}</span>,
+  AuditActionBadge: ({ action }: { action: string }) => (
+    <span data-testid="action-badge">{action}</span>
+  ),
 }));
 
 vi.mock("@/modules/audit/presentation/components/audit-method-badge", () => ({
@@ -62,11 +77,14 @@ vi.mock("@/modules/audit/presentation/components/audit-method-badge", () => ({
   ),
 }));
 
-vi.mock("@/modules/audit/presentation/components/audit-status-indicator", () => ({
-  AuditStatusIndicator: ({ statusCode }: { statusCode: number | null }) => (
-    <span data-testid="status-indicator">{statusCode ?? "-"}</span>
-  ),
-}));
+vi.mock(
+  "@/modules/audit/presentation/components/audit-status-indicator",
+  () => ({
+    AuditStatusIndicator: ({ statusCode }: { statusCode: number | null }) => (
+      <span data-testid="status-indicator">{statusCode ?? "-"}</span>
+    ),
+  }),
+);
 
 vi.mock("@/ui/components/table-pagination", () => ({
   TablePagination: () => <div data-testid="table-pagination" />,
@@ -78,14 +96,16 @@ vi.mock("@/ui/components/sortable-header", () => ({
 
 // --- Helpers ---
 
-function makeAuditLog(overrides: Partial<{
-  id: string;
-  entityType: string;
-  action: string;
-  httpMethod: string | null;
-  httpStatusCode: number | null;
-  duration: number | null;
-}> = {}): AuditLog {
+function makeAuditLog(
+  overrides: Partial<{
+    id: string;
+    entityType: string;
+    action: string;
+    httpMethod: string | null;
+    httpStatusCode: number | null;
+    duration: number | null;
+  }> = {},
+): AuditLog {
   return AuditLog.create({
     id: overrides.id ?? "log-1",
     orgId: "org-1",
@@ -114,7 +134,10 @@ describe("AuditLogList", () => {
   it("Given: data loaded When: rendering Then: should display the list title", () => {
     const log = makeAuditLog();
     mockQueryState = {
-      data: { data: [log], pagination: { page: 1, totalPages: 1, total: 1, limit: 20 } },
+      data: {
+        data: [log],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 20 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -125,11 +148,24 @@ describe("AuditLogList", () => {
   });
 
   it("Given: audit logs exist When: rendering Then: should render entity type, action badge, and duration for each row", () => {
-    const log1 = makeAuditLog({ id: "log-1", entityType: "Product", action: "CREATE", duration: 45 });
-    const log2 = makeAuditLog({ id: "log-2", entityType: "Sale", action: "UPDATE", duration: 120 });
+    const log1 = makeAuditLog({
+      id: "log-1",
+      entityType: "Product",
+      action: "CREATE",
+      duration: 45,
+    });
+    const log2 = makeAuditLog({
+      id: "log-2",
+      entityType: "Sale",
+      action: "UPDATE",
+      duration: 120,
+    });
 
     mockQueryState = {
-      data: { data: [log1, log2], pagination: { page: 1, totalPages: 1, total: 2, limit: 20 } },
+      data: {
+        data: [log1, log2],
+        pagination: { page: 1, totalPages: 1, total: 2, limit: 20 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -147,7 +183,10 @@ describe("AuditLogList", () => {
   it("Given: audit logs exist When: rendering Then: should render method and status badges", () => {
     const log = makeAuditLog({ httpMethod: "POST", httpStatusCode: 201 });
     mockQueryState = {
-      data: { data: [log], pagination: { page: 1, totalPages: 1, total: 1, limit: 20 } },
+      data: {
+        data: [log],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 20 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -160,7 +199,10 @@ describe("AuditLogList", () => {
 
   it("Given: no audit logs When: rendering Then: should show empty state", () => {
     mockQueryState = {
-      data: { data: [], pagination: { page: 1, totalPages: 0, total: 0, limit: 20 } },
+      data: {
+        data: [],
+        pagination: { page: 1, totalPages: 0, total: 0, limit: 20 },
+      },
       isLoading: false,
       isError: false,
     };

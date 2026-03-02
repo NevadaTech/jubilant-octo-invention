@@ -57,13 +57,21 @@ describe("useInventoryStore", () => {
   describe("setProductFilters", () => {
     it("Given: default product filters When: setting a search term Then: should merge with existing filters", () => {
       getState().setProductFilters({ search: "widget" });
-      expect(getState().productFilters).toEqual({ page: 1, limit: 10, search: "widget" });
+      expect(getState().productFilters).toEqual({
+        page: 1,
+        limit: 10,
+        search: "widget",
+      });
     });
 
     it("Given: existing product filters When: setting page Then: should only update page", () => {
       getState().setProductFilters({ search: "widget" });
       getState().setProductFilters({ page: 2 });
-      expect(getState().productFilters).toEqual({ page: 2, limit: 10, search: "widget" });
+      expect(getState().productFilters).toEqual({
+        page: 2,
+        limit: 10,
+        search: "widget",
+      });
     });
   });
 

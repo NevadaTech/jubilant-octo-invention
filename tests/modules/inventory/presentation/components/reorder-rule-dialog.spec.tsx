@@ -11,13 +11,8 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/ui/components/dialog", () => ({
-  Dialog: ({
-    children,
-    open,
-  }: {
-    children: React.ReactNode;
-    open: boolean;
-  }) => (open ? <div data-testid="dialog">{children}</div> : null),
+  Dialog: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
+    open ? <div data-testid="dialog">{children}</div> : null,
   DialogContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="dialog-content">{children}</div>
   ),
@@ -190,9 +185,7 @@ describe("ReorderRuleDialog", () => {
   });
 
   it("Given: existing rule matches product and warehouse When: dialog is open Then: should display edit title", () => {
-    mockRulesData = [
-      makeRule({ productId: "prod-1", warehouseId: "wh-1" }),
-    ];
+    mockRulesData = [makeRule({ productId: "prod-1", warehouseId: "wh-1" })];
 
     render(<ReorderRuleDialog {...defaultProps} />);
 
@@ -224,9 +217,7 @@ describe("ReorderRuleDialog", () => {
   });
 
   it("Given: existing rule When: rendering Then: should show delete button", () => {
-    mockRulesData = [
-      makeRule({ productId: "prod-1", warehouseId: "wh-1" }),
-    ];
+    mockRulesData = [makeRule({ productId: "prod-1", warehouseId: "wh-1" })];
 
     render(<ReorderRuleDialog {...defaultProps} />);
 

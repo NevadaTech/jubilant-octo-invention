@@ -7,7 +7,11 @@ import {
 describe("AuthApiError", () => {
   describe("constructor", () => {
     it("Given message, code, and statusCode, When constructed, Then sets all properties correctly", () => {
-      const error = new AuthApiError("Invalid credentials", "unauthorized", 401);
+      const error = new AuthApiError(
+        "Invalid credentials",
+        "unauthorized",
+        401,
+      );
 
       expect(error.message).toBe("Invalid credentials");
       expect(error.code).toBe("unauthorized");

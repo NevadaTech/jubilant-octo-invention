@@ -244,7 +244,10 @@ describe("ReturnApiAdapter", () => {
         originalSalePrice: 25.0,
         currency: "USD",
       };
-      const responseDto = buildReturnResponseDto({ id: "ret-1", totalAmount: 75 });
+      const responseDto = buildReturnResponseDto({
+        id: "ret-1",
+        totalAmount: 75,
+      });
       mockedPost.mockResolvedValue(wrapDetailResponse(responseDto));
 
       const result = await adapter.addLine("ret-1", lineDto);

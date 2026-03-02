@@ -7,7 +7,9 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/ui/components/user-avatar", () => ({
-  UserAvatar: ({ name }: { name: string }) => <div data-testid="user-avatar">{name}</div>,
+  UserAvatar: ({ name }: { name: string }) => (
+    <div data-testid="user-avatar">{name}</div>
+  ),
 }));
 
 const mockProfile = {
@@ -56,7 +58,9 @@ describe("ProfileForm", () => {
 
   it("Given: profile loaded When: rendering Then: should show user email", () => {
     render(<ProfileForm />);
-    expect(screen.getAllByText("john@test.com").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("john@test.com").length).toBeGreaterThanOrEqual(
+      1,
+    );
   });
 
   it("Given: profile loaded When: rendering Then: should show username", () => {

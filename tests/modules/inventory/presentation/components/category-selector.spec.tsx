@@ -14,7 +14,10 @@ const mockCategories = {
   ],
 };
 
-let mockQueryState: { data: typeof mockCategories | undefined; isLoading: boolean };
+let mockQueryState: {
+  data: typeof mockCategories | undefined;
+  isLoading: boolean;
+};
 
 vi.mock("@/modules/inventory/presentation/hooks/use-categories", () => ({
   useCategories: () => mockQueryState,
@@ -48,13 +51,21 @@ describe("CategorySelector", () => {
   });
 
   it("Given: disabled prop When: rendering Then: should disable the trigger", () => {
-    render(<CategorySelector value="" onValueChange={mockOnValueChange} disabled />);
+    render(
+      <CategorySelector value="" onValueChange={mockOnValueChange} disabled />,
+    );
     const trigger = screen.getByRole("combobox");
     expect(trigger).toBeDisabled();
   });
 
   it("Given: categories loaded When: opening dropdown Then: should show all category options and 'all' option", () => {
-    render(<CategorySelector value="" onValueChange={mockOnValueChange} includeAll />);
+    render(
+      <CategorySelector
+        value=""
+        onValueChange={mockOnValueChange}
+        includeAll
+      />,
+    );
     fireEvent.click(screen.getByRole("combobox"));
     expect(screen.getByText("selector.all")).toBeInTheDocument();
     expect(screen.getByText("Electronics")).toBeInTheDocument();
@@ -63,7 +74,13 @@ describe("CategorySelector", () => {
   });
 
   it("Given: includeAll is false When: opening dropdown Then: should not show the 'all' option", () => {
-    render(<CategorySelector value="" onValueChange={mockOnValueChange} includeAll={false} />);
+    render(
+      <CategorySelector
+        value=""
+        onValueChange={mockOnValueChange}
+        includeAll={false}
+      />,
+    );
     fireEvent.click(screen.getByRole("combobox"));
     expect(screen.queryByText("selector.all")).not.toBeInTheDocument();
     expect(screen.getByText("Electronics")).toBeInTheDocument();

@@ -38,7 +38,11 @@ describe("Warehouse Entity", () => {
   describe("displayName", () => {
     it("Given: a warehouse When: accessing displayName Then: should return code - name format", () => {
       // Arrange
-      const entity = Warehouse.create({ ...validProps, code: "WH01", name: "Main Warehouse" });
+      const entity = Warehouse.create({
+        ...validProps,
+        code: "WH01",
+        name: "Main Warehouse",
+      });
 
       // Act
       const result = entity.displayName;
@@ -49,7 +53,11 @@ describe("Warehouse Entity", () => {
 
     it("Given: different code and name When: accessing displayName Then: should format correctly", () => {
       // Arrange
-      const entity = Warehouse.create({ ...validProps, code: "SEC02", name: "Secondary Depot" });
+      const entity = Warehouse.create({
+        ...validProps,
+        code: "SEC02",
+        name: "Secondary Depot",
+      });
 
       // Act
       const result = entity.displayName;

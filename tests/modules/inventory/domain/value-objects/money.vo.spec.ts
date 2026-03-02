@@ -82,7 +82,9 @@ describe("Money Value Object", () => {
       const b = Money.create(5, "EUR");
 
       // Act & Assert
-      expect(() => a.add(b)).toThrow("Cannot add money with different currencies");
+      expect(() => a.add(b)).toThrow(
+        "Cannot add money with different currencies",
+      );
     });
   });
 

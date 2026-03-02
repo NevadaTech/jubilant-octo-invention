@@ -182,11 +182,7 @@ vi.mock("@/ui/components/alert-dialog", () => ({
     onClick?: () => void;
     disabled?: boolean;
   }) => (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      data-testid="alert-action"
-    >
+    <button onClick={onClick} disabled={disabled} data-testid="alert-action">
       {children}
     </button>
   ),
@@ -243,9 +239,7 @@ function makeProduct(
     sku: overrides.sku ?? "SKU-001",
     name: overrides.name ?? "Test Widget",
     description: overrides.description ?? "A test product",
-    categories: overrides.categories ?? [
-      { id: "cat-1", name: "Electronics" },
-    ],
+    categories: overrides.categories ?? [{ id: "cat-1", name: "Electronics" }],
     unitOfMeasure: overrides.unitOfMeasure ?? "UNIT",
     cost: 50,
     price: overrides.price ?? 100,
@@ -424,8 +418,7 @@ describe("ProductDetail", () => {
     // Assert
     const badges = screen.getAllByTestId("badge");
     const categoryBadges = badges.filter(
-      (b) =>
-        b.textContent === "Hardware" || b.textContent === "Networking",
+      (b) => b.textContent === "Hardware" || b.textContent === "Networking",
     );
     expect(categoryBadges.length).toBe(2);
   });
@@ -492,11 +485,7 @@ describe("ProductDetail", () => {
     expect(screen.getByText("detail.rotation")).toBeDefined();
     expect(screen.getByText("detail.totalIn30d")).toBeDefined();
     expect(screen.getByText("detail.totalOut30d")).toBeDefined();
-    expect(
-      screen.getByText('detail.daysUnit:{"days":42}'),
-    ).toBeDefined();
-    expect(
-      screen.getByText('detail.timesPerYear:{"rate":8.5}'),
-    ).toBeDefined();
+    expect(screen.getByText('detail.daysUnit:{"days":42}')).toBeDefined();
+    expect(screen.getByText('detail.timesPerYear:{"rate":8.5}')).toBeDefined();
   });
 });

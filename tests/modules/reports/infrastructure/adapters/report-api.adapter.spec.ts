@@ -205,7 +205,12 @@ describe("ReportApiAdapter", () => {
       };
       const options = { includeHeader: true, title: "Sales Export" };
 
-      const result = await adapter.exportReport("SALES", "EXCEL", params, options);
+      const result = await adapter.exportReport(
+        "SALES",
+        "EXCEL",
+        params,
+        options,
+      );
 
       expect(mockedPost).toHaveBeenCalledWith(
         "/reports/sales/export",

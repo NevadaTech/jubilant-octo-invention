@@ -43,7 +43,9 @@ describe("ReorderRuleApiAdapter", () => {
 
       const result = await reorderRuleApiAdapter.findAll();
 
-      expect(apiClient.get).toHaveBeenCalledWith("/inventory/stock/reorder-rules");
+      expect(apiClient.get).toHaveBeenCalledWith(
+        "/inventory/stock/reorder-rules",
+      );
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(mockRuleDto);
     });
@@ -181,7 +183,9 @@ describe("ReorderRuleApiAdapter", () => {
         headers: {},
       });
 
-      await expect(reorderRuleApiAdapter.delete("rule-001")).resolves.toBeUndefined();
+      await expect(
+        reorderRuleApiAdapter.delete("rule-001"),
+      ).resolves.toBeUndefined();
     });
   });
 });

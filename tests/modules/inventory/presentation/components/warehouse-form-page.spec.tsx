@@ -28,8 +28,16 @@ let mockWarehouseData: {
 };
 
 vi.mock("@/modules/inventory/presentation/hooks/use-warehouses", () => ({
-  useCreateWarehouse: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
-  useUpdateWarehouse: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
+  useCreateWarehouse: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
+  useUpdateWarehouse: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
   useWarehouse: () => mockWarehouseData,
 }));
 
@@ -90,7 +98,12 @@ describe("WarehouseFormPage", () => {
 
   it("Given: warehouseId with loaded data When: rendering Then: should show edit title", () => {
     mockWarehouseData = {
-      data: { id: "wh-1", code: "WH-01", name: "Main Warehouse", address: "123 Main St" },
+      data: {
+        id: "wh-1",
+        code: "WH-01",
+        name: "Main Warehouse",
+        address: "123 Main St",
+      },
       isLoading: false,
     };
 
@@ -102,7 +115,12 @@ describe("WarehouseFormPage", () => {
 
   it("Given: warehouseId with loaded data When: rendering Then: should show save button instead of create", () => {
     mockWarehouseData = {
-      data: { id: "wh-1", code: "WH-01", name: "Main Warehouse", address: null },
+      data: {
+        id: "wh-1",
+        code: "WH-01",
+        name: "Main Warehouse",
+        address: null,
+      },
       isLoading: false,
     };
 
@@ -116,7 +134,9 @@ describe("WarehouseFormPage", () => {
     render(<WarehouseFormPage />);
 
     const links = screen.getAllByRole("link");
-    const backLink = links.find((link) => link.getAttribute("href") === "/dashboard/inventory/warehouses");
+    const backLink = links.find(
+      (link) => link.getAttribute("href") === "/dashboard/inventory/warehouses",
+    );
     expect(backLink).toBeDefined();
   });
 });

@@ -103,10 +103,9 @@ describe("use-dashboard-metrics hook", () => {
         wrapper: Wrapper,
       });
 
-      await waitFor(
-        () => expect(result.current.isError).toBe(true),
-        { timeout: 10000 },
-      );
+      await waitFor(() => expect(result.current.isError).toBe(true), {
+        timeout: 10000,
+      });
 
       expect(result.current.error).toBeInstanceOf(Error);
       expect(result.current.metrics).toBeUndefined();

@@ -9,15 +9,20 @@ vi.mock("next-intl", () => ({
     params ? `${key}:${JSON.stringify(params)}` : key,
 }));
 
-vi.mock("@/modules/sales/presentation/components/sale-timeline.module.css", () => ({
-  default: {},
-}));
+vi.mock(
+  "@/modules/sales/presentation/components/sale-timeline.module.css",
+  () => ({
+    default: {},
+  }),
+);
 
 // --- Helpers ---
 
 const baseDate = new Date("2026-02-01T10:00:00Z");
 
-function makeProps(overrides: Partial<Parameters<typeof SaleTimeline>[0]> = {}) {
+function makeProps(
+  overrides: Partial<Parameters<typeof SaleTimeline>[0]> = {},
+) {
   return {
     status: "DRAFT" as const,
     pickingEnabled: true,

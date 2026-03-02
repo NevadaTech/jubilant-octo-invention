@@ -445,9 +445,7 @@ describe("WarehouseDetail", () => {
     // Assert
     expect(screen.getByTestId("alert-dialog")).toBeDefined();
     expect(screen.getByText("confirm.deactivate.title")).toBeDefined();
-    expect(
-      screen.getByText("confirm.deactivate.description"),
-    ).toBeDefined();
+    expect(screen.getByText("confirm.deactivate.description")).toBeDefined();
   });
 
   it("Given: warehouse with stock data When: rendering stats card Then: should display total products and total value", () => {

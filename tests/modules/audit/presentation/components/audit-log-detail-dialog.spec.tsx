@@ -36,11 +36,14 @@ vi.mock("@/modules/audit/presentation/components/audit-method-badge", () => ({
   ),
 }));
 
-vi.mock("@/modules/audit/presentation/components/audit-status-indicator", () => ({
-  AuditStatusIndicator: ({ statusCode }: { statusCode: number }) => (
-    <span data-testid="status-indicator">{statusCode}</span>
-  ),
-}));
+vi.mock(
+  "@/modules/audit/presentation/components/audit-status-indicator",
+  () => ({
+    AuditStatusIndicator: ({ statusCode }: { statusCode: number }) => (
+      <span data-testid="status-indicator">{statusCode}</span>
+    ),
+  }),
+);
 
 // --- Helpers ---
 

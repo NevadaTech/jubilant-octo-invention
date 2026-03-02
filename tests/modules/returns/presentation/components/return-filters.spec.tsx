@@ -23,27 +23,52 @@ describe("ReturnFiltersComponent", () => {
   });
 
   it("Given: default filters When: rendering Then: should render search input", () => {
-    render(<ReturnFiltersComponent filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <ReturnFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.getByPlaceholderText("search.placeholder")).toBeDefined();
   });
 
   it("Given: default filters When: rendering Then: should render filter button", () => {
-    render(<ReturnFiltersComponent filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <ReturnFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.getByText("filter")).toBeDefined();
   });
 
   it("Given: filters with types When: rendering Then: should show clear button", () => {
-    render(<ReturnFiltersComponent filters={{ ...defaultFilters, types: ["RETURN_CUSTOMER"] }} onFiltersChange={mockOnChange} />);
+    render(
+      <ReturnFiltersComponent
+        filters={{ ...defaultFilters, types: ["RETURN_CUSTOMER"] }}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.getByText("clearFilters")).toBeDefined();
   });
 
   it("Given: no active filters When: rendering Then: should not show clear button", () => {
-    render(<ReturnFiltersComponent filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <ReturnFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     expect(screen.queryByText("clearFilters")).toBeNull();
   });
 
   it("Given: rendered component When: clicking filter button Then: should show type, status, warehouse and date filters", () => {
-    render(<ReturnFiltersComponent filters={defaultFilters} onFiltersChange={mockOnChange} />);
+    render(
+      <ReturnFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     fireEvent.click(screen.getByText("filter"));
     expect(screen.getByText("filters.type")).toBeDefined();
     expect(screen.getByText("filters.status")).toBeDefined();
@@ -53,16 +78,27 @@ describe("ReturnFiltersComponent", () => {
   });
 
   it("Given: active filters When: clicking clear Then: should reset all filters", () => {
-    render(<ReturnFiltersComponent filters={{ ...defaultFilters, types: ["RETURN_CUSTOMER"], search: "ret" }} onFiltersChange={mockOnChange} />);
+    render(
+      <ReturnFiltersComponent
+        filters={{
+          ...defaultFilters,
+          types: ["RETURN_CUSTOMER"],
+          search: "ret",
+        }}
+        onFiltersChange={mockOnChange}
+      />,
+    );
     fireEvent.click(screen.getByText("clearFilters"));
-    expect(mockOnChange).toHaveBeenCalledWith(expect.objectContaining({
-      page: 1,
-      types: undefined,
-      status: undefined,
-      warehouseIds: undefined,
-      startDate: undefined,
-      endDate: undefined,
-      search: undefined,
-    }));
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        page: 1,
+        types: undefined,
+        status: undefined,
+        warehouseIds: undefined,
+        startDate: undefined,
+        endDate: undefined,
+        search: undefined,
+      }),
+    );
   });
 });

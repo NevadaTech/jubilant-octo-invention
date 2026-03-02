@@ -7,14 +7,20 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/modules/roles/presentation/hooks/use-roles", () => ({
-  useCreateRole: () => ({ isPending: false, isError: false, mutateAsync: vi.fn() }),
+  useCreateRole: () => ({
+    isPending: false,
+    isError: false,
+    mutateAsync: vi.fn(),
+  }),
 }));
 
 describe("RoleForm", () => {
   const mockOnOpenChange = vi.fn();
 
   it("Given: open false When: rendering Then: should return null", () => {
-    const { container } = render(<RoleForm open={false} onOpenChange={mockOnOpenChange} />);
+    const { container } = render(
+      <RoleForm open={false} onOpenChange={mockOnOpenChange} />,
+    );
     expect(container.innerHTML).toBe("");
   });
 
@@ -26,7 +32,9 @@ describe("RoleForm", () => {
   it("Given: open true When: rendering Then: should show name and description fields", () => {
     render(<RoleForm open={true} onOpenChange={mockOnOpenChange} />);
     expect(screen.getByPlaceholderText("fields.namePlaceholder")).toBeDefined();
-    expect(screen.getByPlaceholderText("fields.descriptionPlaceholder")).toBeDefined();
+    expect(
+      screen.getByPlaceholderText("fields.descriptionPlaceholder"),
+    ).toBeDefined();
   });
 
   it("Given: open true When: rendering Then: should show cancel and create buttons", () => {

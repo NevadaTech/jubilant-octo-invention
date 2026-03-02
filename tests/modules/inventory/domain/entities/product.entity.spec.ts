@@ -173,7 +173,11 @@ describe("Product Entity", () => {
 
     it("Given: null daysOfStock and lastMovementDate When: creating Then: should preserve null values", () => {
       // Arrange
-      const props = { ...validProps, daysOfStock: null, lastMovementDate: null };
+      const props = {
+        ...validProps,
+        daysOfStock: null,
+        lastMovementDate: null,
+      };
 
       // Act
       const entity = Product.create(props);

@@ -173,7 +173,13 @@ function makeTransferLine(
 function makeTransfer(
   overrides: Partial<{
     id: string;
-    status: "DRAFT" | "IN_TRANSIT" | "PARTIAL" | "RECEIVED" | "REJECTED" | "CANCELED";
+    status:
+      | "DRAFT"
+      | "IN_TRANSIT"
+      | "PARTIAL"
+      | "RECEIVED"
+      | "REJECTED"
+      | "CANCELED";
     fromWarehouseName: string;
     toWarehouseName: string;
     notes: string | null;
@@ -186,11 +192,9 @@ function makeTransfer(
   return Transfer.create({
     id: overrides.id ?? "tf-1234abcd-xxxx",
     fromWarehouseId: "wh-from",
-    fromWarehouseName:
-      overrides.fromWarehouseName ?? "Origin Warehouse",
+    fromWarehouseName: overrides.fromWarehouseName ?? "Origin Warehouse",
     toWarehouseId: "wh-to",
-    toWarehouseName:
-      overrides.toWarehouseName ?? "Destination Warehouse",
+    toWarehouseName: overrides.toWarehouseName ?? "Destination Warehouse",
     status: overrides.status ?? "DRAFT",
     notes: overrides.notes ?? null,
     lines: overrides.lines ?? [makeTransferLine()],

@@ -11,7 +11,9 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/shared/presentation/components/permission-gate", () => ({
-  PermissionGate: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  PermissionGate: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 vi.mock("@/modules/authentication/presentation/hooks/use-permissions", () => ({
@@ -27,7 +29,17 @@ vi.mock("@/shared/domain/permissions", () => ({
 }));
 
 let mockQueryState: {
-  data: { data: User[]; pagination: { page: number; totalPages: number; total: number; limit: number } } | undefined;
+  data:
+    | {
+        data: User[];
+        pagination: {
+          page: number;
+          totalPages: number;
+          total: number;
+          limit: number;
+        };
+      }
+    | undefined;
   isLoading: boolean;
   isError: boolean;
 } = { data: undefined, isLoading: false, isError: false };
@@ -38,7 +50,9 @@ vi.mock("@/modules/users/presentation/hooks/use-users", () => ({
 }));
 
 vi.mock("@/modules/users/presentation/components/user-status-badge", () => ({
-  UserStatusBadge: ({ status }: { status: string }) => <span data-testid="status-badge">{status}</span>,
+  UserStatusBadge: ({ status }: { status: string }) => (
+    <span data-testid="status-badge">{status}</span>
+  ),
 }));
 
 vi.mock("@/modules/users/presentation/components/user-filters", () => ({
@@ -63,14 +77,16 @@ vi.mock("@/ui/components/sortable-header", () => ({
 
 // --- Helpers ---
 
-function makeUser(overrides: Partial<{
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  username: string;
-  status: "ACTIVE" | "INACTIVE" | "LOCKED";
-}> = {}): User {
+function makeUser(
+  overrides: Partial<{
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    username: string;
+    status: "ACTIVE" | "INACTIVE" | "LOCKED";
+  }> = {},
+): User {
   return User.create({
     id: overrides.id ?? "user-1",
     email: overrides.email ?? "john@example.com",
@@ -95,7 +111,10 @@ describe("UserList", () => {
   it("Given: data loaded When: rendering Then: should display the list title", () => {
     const user = makeUser();
     mockQueryState = {
-      data: { data: [user], pagination: { page: 1, totalPages: 1, total: 1, limit: 10 } },
+      data: {
+        data: [user],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -106,11 +125,26 @@ describe("UserList", () => {
   });
 
   it("Given: users exist When: rendering Then: should render full name, email, and username for each row", () => {
-    const u1 = makeUser({ id: "u1", firstName: "Alice", lastName: "Smith", email: "alice@test.com", username: "asmith" });
-    const u2 = makeUser({ id: "u2", firstName: "Bob", lastName: "Jones", email: "bob@test.com", username: "bjones" });
+    const u1 = makeUser({
+      id: "u1",
+      firstName: "Alice",
+      lastName: "Smith",
+      email: "alice@test.com",
+      username: "asmith",
+    });
+    const u2 = makeUser({
+      id: "u2",
+      firstName: "Bob",
+      lastName: "Jones",
+      email: "bob@test.com",
+      username: "bjones",
+    });
 
     mockQueryState = {
-      data: { data: [u1, u2], pagination: { page: 1, totalPages: 1, total: 2, limit: 10 } },
+      data: {
+        data: [u1, u2],
+        pagination: { page: 1, totalPages: 1, total: 2, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -128,7 +162,10 @@ describe("UserList", () => {
   it("Given: users exist When: rendering Then: should render status badge for each row", () => {
     const user = makeUser({ status: "ACTIVE" });
     mockQueryState = {
-      data: { data: [user], pagination: { page: 1, totalPages: 1, total: 1, limit: 10 } },
+      data: {
+        data: [user],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };
@@ -140,7 +177,10 @@ describe("UserList", () => {
 
   it("Given: no users When: rendering Then: should show empty state", () => {
     mockQueryState = {
-      data: { data: [], pagination: { page: 1, totalPages: 0, total: 0, limit: 10 } },
+      data: {
+        data: [],
+        pagination: { page: 1, totalPages: 0, total: 0, limit: 10 },
+      },
       isLoading: false,
       isError: false,
     };

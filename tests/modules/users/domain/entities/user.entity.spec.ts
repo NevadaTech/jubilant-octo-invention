@@ -109,7 +109,10 @@ describe("User Entity", () => {
   describe("roles", () => {
     it("Given a User with multiple roles, When roles is accessed, Then it returns the full roles array", () => {
       // Arrange
-      const user = User.create({ ...validProps, roles: ["admin", "manager", "viewer"] });
+      const user = User.create({
+        ...validProps,
+        roles: ["admin", "manager", "viewer"],
+      });
 
       // Act & Assert
       expect(user.roles).toEqual(["admin", "manager", "viewer"]);

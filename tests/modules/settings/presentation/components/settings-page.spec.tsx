@@ -10,9 +10,14 @@ vi.mock("@/modules/settings/presentation/components/profile-form", () => ({
   ProfileForm: () => <div data-testid="profile-form">ProfileForm</div>,
 }));
 
-vi.mock("@/modules/settings/presentation/components/alert-configuration-form", () => ({
-  AlertConfigurationForm: () => <div data-testid="alert-config-form">AlertConfigurationForm</div>,
-}));
+vi.mock(
+  "@/modules/settings/presentation/components/alert-configuration-form",
+  () => ({
+    AlertConfigurationForm: () => (
+      <div data-testid="alert-config-form">AlertConfigurationForm</div>
+    ),
+  }),
+);
 
 let mockHasPermission = true;
 

@@ -126,12 +126,9 @@ vi.mock("@/modules/reports/presentation/components/report-table", () => ({
   ReportTable: () => <div data-testid="report-table" />,
 }));
 
-vi.mock(
-  "@/modules/reports/presentation/components/report-summary-bar",
-  () => ({
-    ReportSummaryBar: () => <div data-testid="report-summary-bar" />,
-  }),
-);
+vi.mock("@/modules/reports/presentation/components/report-summary-bar", () => ({
+  ReportSummaryBar: () => <div data-testid="report-summary-bar" />,
+}));
 
 vi.mock(
   "@/modules/reports/presentation/components/report-export-button",
@@ -142,12 +139,9 @@ vi.mock(
   }),
 );
 
-vi.mock(
-  "@/modules/reports/presentation/utils/report-utils",
-  () => ({
-    getCategoryForReportType: () => "inventory",
-  }),
-);
+vi.mock("@/modules/reports/presentation/utils/report-utils", () => ({
+  getCategoryForReportType: () => "inventory",
+}));
 
 let mockReportQueryState: {
   data: ReportResult | undefined;
@@ -169,9 +163,7 @@ vi.mock("@/modules/reports/presentation/hooks/use-reports", () => ({
 
 // --- Helpers ---
 
-function makeReportResult(
-  overrides: Partial<ReportResult> = {},
-): ReportResult {
+function makeReportResult(overrides: Partial<ReportResult> = {}): ReportResult {
   return {
     columns: overrides.columns ?? [
       { key: "name", header: "Name", type: "string" },

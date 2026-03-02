@@ -204,7 +204,12 @@ describe("Sale Schema", () => {
         note: "Important sale",
         lines: [
           { productId: "prod-1", quantity: 3, salePrice: 25.0 },
-          { productId: "prod-2", quantity: 1, salePrice: 50.0, currency: "USD" },
+          {
+            productId: "prod-2",
+            quantity: 1,
+            salePrice: 50.0,
+            currency: "USD",
+          },
         ],
       };
 

@@ -96,7 +96,7 @@ describe("StockMapper", () => {
       // Assert
       expect(entity.lastMovementAt).toBeInstanceOf(Date);
       expect(entity.lastMovementAt!.toISOString()).toBe(
-        "2025-03-01T12:00:00.000Z"
+        "2025-03-01T12:00:00.000Z",
       );
     });
 
