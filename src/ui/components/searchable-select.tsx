@@ -8,7 +8,6 @@ import {
   useLayoutEffect,
   useRef,
   useMemo,
-  type HTMLAttributes,
 } from "react";
 import { createPortal } from "react-dom";
 import { Check, ChevronDown, Search } from "lucide-react";
@@ -100,7 +99,8 @@ const SearchableSelect = forwardRef<HTMLButtonElement, SearchableSelectProps>(
 
     useEffect(() => {
       if (open) {
-        setTimeout(() => inputRef.current?.focus(), 0);
+        const timerId = setTimeout(() => inputRef.current?.focus(), 0);
+        return () => clearTimeout(timerId);
       } else {
         setSearch("");
       }

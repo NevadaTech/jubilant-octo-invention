@@ -121,6 +121,7 @@ function StockRow({
 function StockTableSkeleton() {
   return (
     <div className="space-y-4">
+      {/* eslint-disable @eslint-react/no-array-index-key */}
       {[...Array(5)].map((_, i) => (
         <div
           key={i}
@@ -134,6 +135,7 @@ function StockTableSkeleton() {
           <div className="h-4 w-16 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700" />
         </div>
       ))}
+      {/* eslint-enable @eslint-react/no-array-index-key */}
     </div>
   );
 }

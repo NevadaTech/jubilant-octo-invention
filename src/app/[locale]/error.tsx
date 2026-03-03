@@ -13,7 +13,7 @@ export default function Error({ error, reset }: ErrorProps) {
   const t = useTranslations("errors");
 
   useEffect(() => {
-    console.error(error);
+    console.error(error); // eslint-disable-line no-console
   }, [error]);
 
   return (

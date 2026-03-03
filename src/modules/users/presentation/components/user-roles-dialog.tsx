@@ -102,6 +102,7 @@ export function UserRolesDialog({
             {loadingRoles ? (
               <div className="space-y-2">
                 {[...Array(2)].map((_, i) => (
+                  // eslint-disable-next-line @eslint-react/no-array-index-key
                   <Skeleton key={i} className="h-10 w-full" />
                 ))}
               </div>

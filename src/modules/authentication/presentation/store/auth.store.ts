@@ -28,7 +28,7 @@ const authRepository = getContainer().authRepository;
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       // State
       user: null,
       isAuthenticated: false,

@@ -14,7 +14,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/ui/lib/utils";
 
 interface SelectContextValue {
@@ -388,40 +388,6 @@ const SelectSeparator = forwardRef<
   />
 ));
 SelectSeparator.displayName = "SelectSeparator";
-
-function SelectScrollUpButton({
-  className,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn(
-        "flex cursor-default items-center justify-center py-1",
-        className,
-      )}
-      {...props}
-    >
-      <ChevronUp className="h-4 w-4" />
-    </div>
-  );
-}
-
-function SelectScrollDownButton({
-  className,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn(
-        "flex cursor-default items-center justify-center py-1",
-        className,
-      )}
-      {...props}
-    >
-      <ChevronDown className="h-4 w-4" />
-    </div>
-  );
-}
 
 export {
   Select,

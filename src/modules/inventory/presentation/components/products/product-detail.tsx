@@ -111,6 +111,7 @@ function ProductDetailSkeleton() {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {[...Array(6)].map((_, i) => (
+          // eslint-disable-next-line @eslint-react/no-array-index-key
           <div key={i} className="flex items-start gap-3">
             <div className="h-10 w-10 animate-pulse rounded-lg bg-neutral-200 dark:bg-neutral-700" />
             <div className="space-y-2">
@@ -542,12 +543,14 @@ function ProductReorderRules({
         <CardContent>
           {rulesLoading ? (
             <div className="space-y-3">
+              {/* eslint-disable @eslint-react/no-array-index-key */}
               {[...Array(2)].map((_, i) => (
                 <div
                   key={i}
                   className="h-12 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700"
                 />
               ))}
+              {/* eslint-enable @eslint-react/no-array-index-key */}
             </div>
           ) : productRules.length === 0 ? (
             <p className="text-sm text-neutral-500 dark:text-neutral-400">

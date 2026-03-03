@@ -35,7 +35,7 @@ export function RolePermissionsDialog({
 }: RolePermissionsDialogProps) {
   const t = useTranslations("roles");
   const tCommon = useTranslations("common");
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
   const { data: allPermissions, isLoading: loadingPermissions } =
     usePermissions();
@@ -133,6 +133,7 @@ export function RolePermissionsDialog({
           {isLoading ? (
             <div className="space-y-3">
               {[...Array(4)].map((_, i) => (
+                // eslint-disable-next-line @eslint-react/no-array-index-key
                 <Skeleton key={i} className="h-20 w-full" />
               ))}
             </div>

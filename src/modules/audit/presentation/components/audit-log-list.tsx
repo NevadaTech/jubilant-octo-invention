@@ -151,6 +151,7 @@ export function AuditLogList() {
           {isLoading ? (
             <div className="space-y-3">
               {[...Array(8)].map((_, i) => (
+                // eslint-disable-next-line @eslint-react/no-array-index-key
                 <Skeleton key={i} className="h-12 w-full" />
               ))}
             </div>

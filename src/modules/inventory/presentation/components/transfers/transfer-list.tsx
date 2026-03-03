@@ -99,6 +99,7 @@ export function TransferList() {
           {isLoading ? (
             <div className="space-y-3">
               {[...Array(5)].map((_, i) => (
+                // eslint-disable-next-line @eslint-react/no-array-index-key
                 <Skeleton key={i} className="h-16 w-full" />
               ))}
             </div>

@@ -87,6 +87,7 @@ function ProductRow({ product }: { product: Product }) {
 function ProductListSkeleton() {
   return (
     <div className="space-y-4">
+      {/* eslint-disable @eslint-react/no-array-index-key */}
       {[...Array(5)].map((_, i) => (
         <div
           key={i}
@@ -99,6 +100,7 @@ function ProductListSkeleton() {
           </div>
         </div>
       ))}
+      {/* eslint-enable @eslint-react/no-array-index-key */}
     </div>
   );
 }

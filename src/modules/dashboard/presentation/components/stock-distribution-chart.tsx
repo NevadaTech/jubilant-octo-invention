@@ -66,6 +66,7 @@ export function StockDistributionChart({
                   strokeWidth={2}
                 >
                   {data.map((_, idx) => (
+                    // eslint-disable-next-line @eslint-react/no-array-index-key
                     <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
                   ))}
                 </Pie>

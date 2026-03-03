@@ -115,6 +115,7 @@ export function TopProductsChart({ data, currency }: TopProductsChartProps) {
               />
               <Bar dataKey="revenue" radius={[0, 4, 4, 0]} barSize={24}>
                 {data.map((_, idx) => (
+                  // eslint-disable-next-line @eslint-react/no-array-index-key
                   <Cell key={idx} fill={BAR_COLORS[idx % BAR_COLORS.length]} />
                 ))}
               </Bar>

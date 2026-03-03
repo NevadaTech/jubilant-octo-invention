@@ -126,6 +126,7 @@ export function ProfileForm() {
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {Array.from({ length: 6 }).map((_, i) => (
+              // eslint-disable-next-line @eslint-react/no-array-index-key
               <Skeleton key={i} className="h-10 w-full" />
             ))}
           </div>

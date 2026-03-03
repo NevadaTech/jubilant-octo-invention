@@ -393,6 +393,7 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
         <CardContent>
           {isLoadingStock ? (
             <div className="space-y-4">
+              {/* eslint-disable @eslint-react/no-array-index-key */}
               {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
@@ -405,6 +406,7 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
                   </div>
                 </div>
               ))}
+              {/* eslint-enable @eslint-react/no-array-index-key */}
             </div>
           ) : !stockData?.data.length ? (
             <div className="py-8 text-center">

@@ -84,6 +84,7 @@ export function RecentActivityFeed({ data }: RecentActivityFeedProps) {
             {data.map((item, idx) => {
               const Icon = typeIcons[item.type] || PackageCheck;
               return (
+                // eslint-disable-next-line @eslint-react/no-array-index-key
                 <div key={idx} className="flex items-start gap-3">
                   <div className="mt-0.5 rounded-full bg-muted p-2">
                     <Icon className="h-4 w-4 text-muted-foreground" />

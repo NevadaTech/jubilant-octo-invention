@@ -51,7 +51,7 @@ export class TokenService {
       // Sync with cookie for middleware auth check
       document.cookie = `${TOKEN_KEY}=${tokens.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${secureCookieFlag()}`;
     } catch (error) {
-      console.error("Failed to store tokens:", error);
+      console.error("Failed to store tokens:", error); // eslint-disable-line no-console
     }
   }
 
@@ -144,7 +144,7 @@ export class TokenService {
       // Clear auth cookie
       document.cookie = `${TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax${secureCookieFlag()}`;
     } catch (error) {
-      console.error("Failed to clear tokens:", error);
+      console.error("Failed to clear tokens:", error); // eslint-disable-line no-console
     }
   }
 
@@ -154,7 +154,7 @@ export class TokenService {
     try {
       localStorage.setItem(USER_KEY, JSON.stringify(user));
     } catch (error) {
-      console.error("Failed to store user:", error);
+      console.error("Failed to store user:", error); // eslint-disable-line no-console
     }
   }
 
@@ -175,7 +175,7 @@ export class TokenService {
     try {
       localStorage.setItem(ORG_SLUG_KEY, slug);
     } catch (error) {
-      console.error("Failed to store organization slug:", error);
+      console.error("Failed to store organization slug:", error); // eslint-disable-line no-console
     }
   }
 
@@ -195,7 +195,7 @@ export class TokenService {
     try {
       localStorage.setItem(ORG_ID_KEY, orgId);
     } catch (error) {
-      console.error("Failed to store organization id:", error);
+      console.error("Failed to store organization id:", error); // eslint-disable-line no-console
     }
   }
 

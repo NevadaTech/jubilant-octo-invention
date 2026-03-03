@@ -5,7 +5,6 @@ import type {
   PaginatedResult,
 } from "@/modules/users/application/ports/user.repository.port";
 import type {
-  UserListResponseDto,
   UserResponseDto,
   CreateUserDto,
   UpdateUserDto,

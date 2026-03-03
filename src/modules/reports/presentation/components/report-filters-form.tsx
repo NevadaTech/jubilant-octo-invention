@@ -85,7 +85,7 @@ export function ReportFiltersForm({
   const defaultParams = useMemo(() => getDefaultParams(type), [type]);
   const [params, setParams] = useState<ReportParameters>(defaultParams);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isFirstRender = useRef(true);
+  const isFirstRenderRef = useRef(true);
 
   const { data: warehouseData } = useWarehouses(
     config.warehouseIds ? {} : undefined,
@@ -100,13 +100,12 @@ export function ReportFiltersForm({
   // Auto-generate on mount with defaults
   useEffect(() => {
     onGenerate(defaultParams);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-generate when params change (debounced for text inputs)
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
       return;
     }
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -116,8 +115,7 @@ export function ReportFiltersForm({
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params]);
+  }, [params, onGenerate]);
 
   const set = (key: keyof ReportParameters, value: unknown) => {
     setParams((prev) => ({

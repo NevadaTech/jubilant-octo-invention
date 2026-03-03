@@ -21,7 +21,7 @@ function AuthHydration({ children }: { children: ReactNode }) {
   const isHydrated = useAuthStore((state) => state.isHydrated);
   const router = useRouter();
   const t = useTranslations("auth");
-  const isHandlingExpiry = useRef(false);
+  const isHandlingExpiryRef = useRef(false);
 
   useEffect(() => {
     hydrate();
@@ -30,8 +30,8 @@ function AuthHydration({ children }: { children: ReactNode }) {
   // Handle session expiration events from the HTTP interceptor
   const handleSessionExpired = useCallback(() => {
     // Prevent multiple toasts/redirects from concurrent 401s
-    if (isHandlingExpiry.current) return;
-    isHandlingExpiry.current = true;
+    if (isHandlingExpiryRef.current) return;
+    isHandlingExpiryRef.current = true;
 
     forceLogout();
     toast.error(t("sessionExpired"));
@@ -39,7 +39,7 @@ function AuthHydration({ children }: { children: ReactNode }) {
 
     // Reset after a short delay to allow future expiration events
     setTimeout(() => {
-      isHandlingExpiry.current = false;
+      isHandlingExpiryRef.current = false;
     }, 3000);
   }, [forceLogout, router, t]);
 

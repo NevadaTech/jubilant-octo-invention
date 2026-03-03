@@ -107,6 +107,7 @@ export function TablePagination({
             {pageNumbers.map((p, i) =>
               p === "..." ? (
                 <span
+                  // eslint-disable-next-line @eslint-react/no-array-index-key
                   key={`ellipsis-${i}`}
                   className="px-1 text-sm text-muted-foreground"
                 >
