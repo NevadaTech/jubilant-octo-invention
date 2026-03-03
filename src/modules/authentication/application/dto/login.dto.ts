@@ -29,6 +29,7 @@ export interface LoginResponseDto {
       language?: string;
       jobTitle?: string;
       department?: string;
+      mustChangePassword?: boolean;
       roles: string[];
       permissions: string[];
     };

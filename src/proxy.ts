@@ -10,6 +10,7 @@ const publicRoutes = [
   "/register",
   "/forgot-password",
   "/reset-password",
+  "/change-password",
 ];
 
 function isPublicRoute(pathname: string): boolean {
@@ -52,6 +53,20 @@ export function proxy(request: NextRequest) {
     // Store the original URL to redirect back after login
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Force password change guard: redirect to /change-password if flag is set
+  const mustChangePwd = request.cookies.get("nevada_must_change_pwd");
+  if (mustChangePwd?.value === "1") {
+    const pathWithoutLocale = pathname.replace(/^\/(en|es)/, "") || "/";
+    if (!pathWithoutLocale.startsWith("/change-password")) {
+      const locale = pathname.match(/^\/(en|es)/)?.[1] || routing.defaultLocale;
+      const changePasswordUrl = new URL(
+        `/${locale}/change-password`,
+        request.url,
+      );
+      return NextResponse.redirect(changePasswordUrl);
+    }
   }
 
   return i18nResponse;

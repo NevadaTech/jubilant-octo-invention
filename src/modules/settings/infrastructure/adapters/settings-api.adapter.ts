@@ -6,6 +6,10 @@ import type {
   UpdateAlertConfigurationDto,
   AlertConfigurationResponseDto,
 } from "../../application/dto";
+import type {
+  ChangePasswordDto,
+  ChangePasswordResponseDto,
+} from "../../application/dto/change-password.dto";
 
 export class SettingsApiAdapter implements SettingsRepositoryPort {
   async getProfile(): Promise<ProfileResponseDto> {
@@ -29,6 +33,16 @@ export class SettingsApiAdapter implements SettingsRepositoryPort {
   ): Promise<AlertConfigurationResponseDto> {
     const response = await apiClient.put<AlertConfigurationResponseDto>(
       "/settings/alerts",
+      data,
+    );
+    return response.data;
+  }
+
+  async changePassword(
+    data: ChangePasswordDto,
+  ): Promise<ChangePasswordResponseDto> {
+    const response = await apiClient.put<ChangePasswordResponseDto>(
+      "/users/me/password",
       data,
     );
     return response.data;

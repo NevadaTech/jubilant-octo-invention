@@ -3,7 +3,9 @@
 import { useTranslations } from "next-intl";
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/ui/components/tabs";
 import { ProfileForm } from "./profile-form";
+import { ChangePasswordForm } from "./change-password-form";
 import { AlertConfigurationForm } from "./alert-configuration-form";
 
 export function SettingsPage() {
@@ -20,11 +22,25 @@ export function SettingsPage() {
         </p>
       </div>
 
-      <ProfileForm />
+      <Tabs defaultValue="account">
+        <TabsList>
+          <TabsTrigger value="account">{t("tabs.account")}</TabsTrigger>
+          <TabsTrigger value="notifications">
+            {t("tabs.notifications")}
+          </TabsTrigger>
+        </TabsList>
 
-      <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
-        <AlertConfigurationForm />
-      </PermissionGate>
+        <TabsContent value="account" className="space-y-6 mt-6">
+          <ProfileForm />
+          <ChangePasswordForm />
+        </TabsContent>
+
+        <TabsContent value="notifications" className="space-y-6 mt-6">
+          <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
+            <AlertConfigurationForm />
+          </PermissionGate>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

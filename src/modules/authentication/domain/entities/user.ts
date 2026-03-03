@@ -11,6 +11,7 @@ export interface UserProps {
   language?: string;
   jobTitle?: string;
   department?: string;
+  mustChangePassword?: boolean;
   roles: string[];
   permissions: string[];
 }
@@ -34,6 +35,7 @@ export class User extends Entity<string> {
       language: props.language,
       jobTitle: props.jobTitle,
       department: props.department,
+      mustChangePassword: props.mustChangePassword,
       roles: props.roles,
       permissions: props.permissions,
     });
@@ -77,6 +79,10 @@ export class User extends Entity<string> {
 
   get department(): string | undefined {
     return this.props.department;
+  }
+
+  get mustChangePassword(): boolean {
+    return this.props.mustChangePassword ?? false;
   }
 
   get roles(): string[] {

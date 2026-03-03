@@ -23,6 +23,7 @@ export interface StoredUser {
   language?: string;
   jobTitle?: string;
   department?: string;
+  mustChangePassword?: boolean;
   roles: string[];
   permissions: string[];
 }
@@ -143,6 +144,7 @@ export class TokenService {
 
       // Clear auth cookie
       document.cookie = `${TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax${secureCookieFlag()}`;
+      document.cookie = `nevada_must_change_pwd=; path=/; max-age=0; SameSite=Lax${secureCookieFlag()}`;
     } catch (error) {
       console.error("Failed to clear tokens:", error); // eslint-disable-line no-console
     }
@@ -153,6 +155,13 @@ export class TokenService {
 
     try {
       localStorage.setItem(USER_KEY, JSON.stringify(user));
+
+      // Sync mustChangePassword flag as cookie for proxy (server-side) access
+      if (user.mustChangePassword) {
+        document.cookie = `nevada_must_change_pwd=1; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${secureCookieFlag()}`;
+      } else {
+        document.cookie = `nevada_must_change_pwd=; path=/; max-age=0; SameSite=Lax${secureCookieFlag()}`;
+      }
     } catch (error) {
       console.error("Failed to store user:", error); // eslint-disable-line no-console
     }

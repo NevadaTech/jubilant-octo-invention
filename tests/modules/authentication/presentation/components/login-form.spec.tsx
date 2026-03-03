@@ -6,6 +6,29 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({
+    children,
+    href,
+    ...props
+  }: {
+    children: React.ReactNode;
+    href: string;
+    [key: string]: unknown;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+  }),
+  usePathname: () => "/login",
+  redirect: vi.fn(),
+}));
+
 vi.mock("@/modules/authentication/presentation/hooks/use-login", () => ({
   useLogin: () => ({ login: vi.fn(), isLoading: false, error: null }),
 }));

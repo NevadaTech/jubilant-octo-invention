@@ -4,8 +4,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
+import { PasswordInput } from "@/ui/components/password-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import {
@@ -88,14 +90,22 @@ export function LoginForm() {
 
       <FormField error={errors.password?.message}>
         <Label htmlFor="password">{t("password")}</Label>
-        <Input
+        <PasswordInput
           id="password"
-          type="password"
           placeholder={t("passwordPlaceholder")}
           autoComplete="current-password"
           {...register("password")}
         />
       </FormField>
+
+      <div className="flex items-center justify-end">
+        <Link
+          href="/forgot-password"
+          className="text-sm text-muted-foreground hover:text-primary"
+        >
+          {t("forgotPassword")}
+        </Link>
+      </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

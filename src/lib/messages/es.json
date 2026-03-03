@@ -50,7 +50,39 @@
       "signUp": "Registrarse"
     },
     "logout": "Cerrar sesión",
-    "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo."
+    "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
+    "forgotPassword": {
+      "title": "Restablecer Contraseña",
+      "description": "Ingresa tu organización y correo para recibir un código de verificación",
+      "organization": "Organización",
+      "organizationPlaceholder": "tu-organizacion",
+      "enterEmail": "Correo electrónico",
+      "sendCode": "Enviar Código de Verificación",
+      "sending": "Enviando...",
+      "checkEmail": "Revisa tu Correo",
+      "checkEmailDescription": "Enviamos un código de 6 dígitos a tu correo. Ingrésalo a continuación.",
+      "enterOtp": "Código de Verificación",
+      "otpPlaceholder": "000000",
+      "verifyCode": "Verificar Código",
+      "verifying": "Verificando...",
+      "invalidCode": "Código inválido o expirado",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "resetPassword": "Restablecer Contraseña",
+      "resetting": "Restableciendo...",
+      "success": "Contraseña Restablecida",
+      "successDescription": "Tu contraseña ha sido actualizada. Ya puedes iniciar sesión con tu nueva contraseña.",
+      "backToLogin": "Volver a Iniciar Sesión",
+      "requestNew": "Solicitar nuevo código",
+      "resendIn": "Reenviar código en {minutes}:{seconds}"
+    },
+    "forceChangePassword": {
+      "title": "Cambia tu Contraseña",
+      "description": "Debes cambiar tu contraseña temporal antes de continuar",
+      "warning": "Tu administrador te asignó una contraseña temporal. Por seguridad, debes establecer una nueva contraseña antes de acceder al sistema.",
+      "submit": "Establecer Nueva Contraseña",
+      "submitting": "Actualizando contraseña..."
+    }
   },
   "dashboard": {
     "title": "Panel de control",
@@ -1559,6 +1591,10 @@
   "settings": {
     "title": "Configuración",
     "description": "Administra tu perfil y configuración del sistema",
+    "tabs": {
+      "account": "Cuenta",
+      "notifications": "Notificaciones"
+    },
     "profile": {
       "title": "Perfil",
       "description": "Actualiza tu información personal",
@@ -1575,6 +1611,17 @@
       "role": "Rol",
       "saved": "Perfil actualizado exitosamente",
       "errorSaving": "Error al actualizar el perfil"
+    },
+    "password": {
+      "title": "Cambiar Contraseña",
+      "description": "Actualiza la contraseña de tu cuenta",
+      "currentPassword": "Contraseña Actual",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Nueva Contraseña",
+      "changePassword": "Cambiar Contraseña",
+      "changed": "Contraseña cambiada exitosamente",
+      "errorChanging": "Error al cambiar la contraseña",
+      "requirements": "Mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial requeridos"
     },
     "alerts": {
       "title": "Configuración de alertas de stock",

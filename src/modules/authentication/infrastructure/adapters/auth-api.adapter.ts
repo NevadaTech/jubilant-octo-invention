@@ -2,6 +2,14 @@ import type {
   AuthRepositoryPort,
   LoginCredentials,
 } from "@/modules/authentication/domain/ports/auth-repository.port";
+import type {
+  RequestPasswordResetDto,
+  RequestPasswordResetResponseDto,
+  VerifyOtpDto,
+  VerifyOtpResponseDto,
+  ResetPasswordDto,
+  ResetPasswordResponseDto,
+} from "@/modules/authentication/application/dto/password-reset.dto";
 import type { User } from "@/modules/authentication/domain/entities/user";
 import { Tokens } from "@/modules/authentication/domain/value-objects/tokens";
 import { UserMapper } from "@/modules/authentication/infrastructure/mappers/user.mapper";
@@ -138,5 +146,77 @@ export class AuthApiAdapter implements AuthRepositoryPort {
     });
 
     return Tokens.create(data.accessToken, data.refreshToken, expiresAt);
+  }
+
+  async requestPasswordReset(
+    data: RequestPasswordResetDto,
+  ): Promise<RequestPasswordResetResponseDto> {
+    const response = await fetch(`${this.baseUrl}/password-reset/request`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Organization-Slug": data.organizationSlug,
+      },
+      body: JSON.stringify({ email: data.email }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        (errorData as { message?: string }).message ||
+          "Failed to request password reset",
+      );
+    }
+
+    return response.json();
+  }
+
+  async verifyOtp(data: VerifyOtpDto): Promise<VerifyOtpResponseDto> {
+    const response = await fetch(`${this.baseUrl}/password-reset/verify-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Organization-Slug": data.organizationSlug,
+      },
+      body: JSON.stringify({ email: data.email, otpCode: data.otpCode }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        (errorData as { message?: string }).message ||
+          "Invalid or expired code",
+      );
+    }
+
+    return response.json();
+  }
+
+  async resetPassword(
+    data: ResetPasswordDto,
+  ): Promise<ResetPasswordResponseDto> {
+    const response = await fetch(`${this.baseUrl}/password-reset/reset`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Organization-Slug": data.organizationSlug,
+      },
+      body: JSON.stringify({
+        email: data.email,
+        otpCode: data.otpCode,
+        newPassword: data.newPassword,
+        confirmPassword: data.confirmPassword,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        (errorData as { message?: string }).message ||
+          "Failed to reset password",
+      );
+    }
+
+    return response.json();
   }
 }

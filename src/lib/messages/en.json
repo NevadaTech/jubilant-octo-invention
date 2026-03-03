@@ -50,7 +50,39 @@
       "signUp": "Sign up"
     },
     "logout": "Log out",
-    "sessionExpired": "Your session has expired. Please sign in again."
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "forgotPassword": {
+      "title": "Reset Password",
+      "description": "Enter your organization and email to receive a verification code",
+      "organization": "Organization",
+      "organizationPlaceholder": "your-organization",
+      "enterEmail": "Email",
+      "sendCode": "Send Verification Code",
+      "sending": "Sending...",
+      "checkEmail": "Check Your Email",
+      "checkEmailDescription": "We sent a 6-digit code to your email. Enter it below.",
+      "enterOtp": "Verification Code",
+      "otpPlaceholder": "000000",
+      "verifyCode": "Verify Code",
+      "verifying": "Verifying...",
+      "invalidCode": "Invalid or expired code",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "resetPassword": "Reset Password",
+      "resetting": "Resetting...",
+      "success": "Password Reset Successfully",
+      "successDescription": "Your password has been updated. You can now sign in with your new password.",
+      "backToLogin": "Back to Sign In",
+      "requestNew": "Request a new code",
+      "resendIn": "Resend code in {minutes}:{seconds}"
+    },
+    "forceChangePassword": {
+      "title": "Change Your Password",
+      "description": "You must change your temporary password before continuing",
+      "warning": "Your administrator assigned you a temporary password. For security reasons, you must set a new password before accessing the system.",
+      "submit": "Set New Password",
+      "submitting": "Updating password..."
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -1559,6 +1591,10 @@
   "settings": {
     "title": "Settings",
     "description": "Manage your profile and system configuration",
+    "tabs": {
+      "account": "Account",
+      "notifications": "Notifications"
+    },
     "profile": {
       "title": "Profile",
       "description": "Update your personal information",
@@ -1575,6 +1611,17 @@
       "role": "Role",
       "saved": "Profile updated successfully",
       "errorSaving": "Failed to update profile"
+    },
+    "password": {
+      "title": "Change Password",
+      "description": "Update your account password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "changePassword": "Change Password",
+      "changed": "Password changed successfully",
+      "errorChanging": "Failed to change password",
+      "requirements": "Min 8 characters, uppercase, lowercase, number, and special character required"
     },
     "alerts": {
       "title": "Stock Alert Configuration",

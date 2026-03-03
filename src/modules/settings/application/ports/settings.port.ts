@@ -4,6 +4,10 @@ import type {
   UpdateAlertConfigurationDto,
   AlertConfigurationResponseDto,
 } from "../dto";
+import type {
+  ChangePasswordDto,
+  ChangePasswordResponseDto,
+} from "../dto/change-password.dto";
 
 export interface SettingsRepositoryPort {
   getProfile(): Promise<ProfileResponseDto>;
@@ -12,4 +16,5 @@ export interface SettingsRepositoryPort {
   updateAlertConfiguration(
     data: UpdateAlertConfigurationDto,
   ): Promise<AlertConfigurationResponseDto>;
+  changePassword(data: ChangePasswordDto): Promise<ChangePasswordResponseDto>;
 }

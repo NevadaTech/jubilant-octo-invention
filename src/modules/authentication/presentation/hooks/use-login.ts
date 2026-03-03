@@ -3,6 +3,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
 import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
+import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
 import type { LoginDto } from "@/modules/authentication/application/dto/login.dto";
 
 export function useLogin() {
@@ -16,7 +17,12 @@ export function useLogin() {
       await login(credentials);
     },
     onSuccess: () => {
-      router.push("/dashboard");
+      const user = TokenService.getUser();
+      if (user?.mustChangePassword) {
+        router.push("/change-password");
+      } else {
+        router.push("/dashboard");
+      }
     },
   });
 

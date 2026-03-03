@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
+import { PasswordInput } from "@/ui/components/password-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -104,9 +105,9 @@ export function UserForm({ open, onOpenChange }: UserFormProps) {
 
             <FormField error={errors.password?.message}>
               <Label>{t("fields.password")} *</Label>
-              <Input
-                type="password"
+              <PasswordInput
                 placeholder="********"
+                autoComplete="new-password"
                 {...register("password")}
               />
             </FormField>

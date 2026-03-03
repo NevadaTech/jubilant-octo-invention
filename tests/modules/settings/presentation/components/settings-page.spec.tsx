@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { SettingsPage } from "@/modules/settings/presentation/components/settings-page";
 
 vi.mock("next-intl", () => ({
@@ -15,6 +15,15 @@ vi.mock(
   () => ({
     AlertConfigurationForm: () => (
       <div data-testid="alert-config-form">AlertConfigurationForm</div>
+    ),
+  }),
+);
+
+vi.mock(
+  "@/modules/settings/presentation/components/change-password-form",
+  () => ({
+    ChangePasswordForm: () => (
+      <div data-testid="change-password-form">ChangePasswordForm</div>
     ),
   }),
 );
@@ -48,12 +57,16 @@ describe("SettingsPage", () => {
   it("Given: user has SETTINGS_MANAGE permission When: rendering Then: should render the AlertConfigurationForm", () => {
     mockHasPermission = true;
     render(<SettingsPage />);
+    const notificationsTab = screen.getByRole("tab", { name: "tabs.notifications" });
+    fireEvent.click(notificationsTab);
     expect(screen.getByTestId("alert-config-form")).toBeInTheDocument();
   });
 
   it("Given: user lacks SETTINGS_MANAGE permission When: rendering Then: should not render the AlertConfigurationForm", () => {
     mockHasPermission = false;
     render(<SettingsPage />);
+    const notificationsTab = screen.getByRole("tab", { name: "tabs.notifications" });
+    fireEvent.click(notificationsTab);
     expect(screen.queryByTestId("alert-config-form")).not.toBeInTheDocument();
   });
 

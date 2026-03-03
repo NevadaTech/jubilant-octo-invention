@@ -16,6 +16,7 @@ export class UserMapper {
       language: dto.language,
       jobTitle: dto.jobTitle,
       department: dto.department,
+      mustChangePassword: dto.mustChangePassword,
       roles: dto.roles,
       permissions: dto.permissions,
     });
