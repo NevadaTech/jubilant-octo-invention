@@ -17,7 +17,8 @@
     "quality": "npm run type-check && npm run lint && npm run format:check",
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
-    "test:e2e:headed": "npx playwright test --headed"
+    "test:e2e:headed": "npx playwright test --headed",
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -59,6 +60,7 @@
     "@vitejs/plugin-react": "^5.1.4",
     "@vitest/coverage-v8": "4.0.18",
     "eslint": "^10.0.2",
+    "husky": "^9.1.7",
     "jsdom": "^28.1.0",
     "postcss": "^8.5.6",
     "prettier": "^3.8.1",
