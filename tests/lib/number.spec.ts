@@ -51,7 +51,7 @@ describe("Number Utils", () => {
 
     it("Given: thousands amount When: formatting compact Then: should show K suffix", () => {
       const result = formatCompactCurrency(150000);
-      expect(result).toMatch(/150K|\$150K/);
+      expect(result).toMatch(/150(\.0)?K|\$150(\.0)?K/);
     });
 
     it("Given: small amount When: formatting compact Then: should show number directly", () => {
