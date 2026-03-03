@@ -45,7 +45,7 @@ function ProductRow({ product }: { product: Product }) {
           </div>
         </Link>
       </td>
-      <td className="px-4 py-3 text-sm text-foreground">
+      <td className="hidden px-4 py-3 text-sm text-foreground md:table-cell">
         {product.categories.length > 0 ? (
           <div className="flex flex-wrap gap-1">
             {product.categories.map((c) => (
@@ -171,7 +171,7 @@ export function ProductList() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle className="text-xl">{t("list.title")}</CardTitle>
         <Button asChild>
           <Link href="/dashboard/inventory/products/new">
@@ -208,7 +208,9 @@ export function ProductList() {
                       onSort={handleSort}
                       className="px-4 py-3"
                     />
-                    <th className="px-4 py-3">{t("fields.category")}</th>
+                    <th className="hidden px-4 py-3 md:table-cell">
+                      {t("fields.category")}
+                    </th>
                     <SortableHeader
                       label={t("fields.price")}
                       field="price"

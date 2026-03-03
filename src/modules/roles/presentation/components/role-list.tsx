@@ -151,10 +151,14 @@ export function RoleList() {
                 <thead>
                   <tr className="border-b text-left text-sm font-medium text-muted-foreground">
                     <th className="pb-3 pr-4">{t("fields.name")}</th>
-                    <th className="pb-3 pr-4">{t("fields.description")}</th>
+                    <th className="hidden pb-3 pr-4 md:table-cell">
+                      {t("fields.description")}
+                    </th>
                     <th className="pb-3 pr-4">{t("fields.system")}</th>
                     <th className="pb-3 pr-4">{t("fields.status")}</th>
-                    <th className="pb-3 pr-4">{t("fields.createdAt")}</th>
+                    <th className="hidden pb-3 pr-4 lg:table-cell">
+                      {t("fields.createdAt")}
+                    </th>
                     <th className="pb-3 pr-4 text-right">
                       {tCommon("actions")}
                     </th>
@@ -166,7 +170,7 @@ export function RoleList() {
                       <td className="py-4 pr-4">
                         <p className="font-mono font-medium">{role.name}</p>
                       </td>
-                      <td className="py-4 pr-4 text-sm text-muted-foreground">
+                      <td className="hidden py-4 pr-4 text-sm text-muted-foreground md:table-cell">
                         {role.description || "-"}
                       </td>
                       <td className="py-4 pr-4">
@@ -181,7 +185,7 @@ export function RoleList() {
                             : t("status.inactive")}
                         </Badge>
                       </td>
-                      <td className="py-4 pr-4 text-sm text-muted-foreground">
+                      <td className="hidden py-4 pr-4 text-sm text-muted-foreground lg:table-cell">
                         {formatDate(role.createdAt)}
                       </td>
                       <td className="py-4 text-right">

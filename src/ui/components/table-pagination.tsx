@@ -104,27 +104,33 @@ export function TablePagination({
               <ChevronLeft className="h-4 w-4" />
             </Button>
 
-            {pageNumbers.map((p, i) =>
-              p === "..." ? (
-                <span
-                  // eslint-disable-next-line @eslint-react/no-array-index-key
-                  key={`ellipsis-${i}`}
-                  className="px-1 text-sm text-muted-foreground"
-                >
-                  ...
-                </span>
-              ) : (
-                <Button
-                  key={p}
-                  variant={p === page ? "default" : "outline"}
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => onPageChange(p)}
-                >
-                  {p}
-                </Button>
-              ),
-            )}
+            <span className="px-2 text-sm text-muted-foreground sm:hidden">
+              {page}/{totalPages}
+            </span>
+
+            <span className="hidden items-center gap-1 sm:flex">
+              {pageNumbers.map((p, i) =>
+                p === "..." ? (
+                  <span
+                    // eslint-disable-next-line @eslint-react/no-array-index-key
+                    key={`ellipsis-${i}`}
+                    className="px-1 text-sm text-muted-foreground"
+                  >
+                    ...
+                  </span>
+                ) : (
+                  <Button
+                    key={p}
+                    variant={p === page ? "default" : "outline"}
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => onPageChange(p)}
+                  >
+                    {p}
+                  </Button>
+                ),
+              )}
+            </span>
 
             <Button
               variant="outline"

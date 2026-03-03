@@ -1,5 +1,21 @@
 import "@testing-library/jest-dom/vitest";
 
+// jsdom does not implement window.matchMedia — provide a minimal stub.
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  configurable: true,
+  value: (query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+  }),
+});
+
 // jsdom 28 + Node.js 22+ has a broken localStorage (object exists but methods are undefined).
 // Provide a proper in-memory implementation.
 if (

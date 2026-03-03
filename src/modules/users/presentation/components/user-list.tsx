@@ -141,6 +141,7 @@ export function UserList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden md:table-cell"
                       />
                       <SortableHeader
                         label={t("fields.username")}
@@ -148,6 +149,7 @@ export function UserList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden lg:table-cell"
                       />
                       <SortableHeader
                         label={t("fields.status")}
@@ -162,6 +164,7 @@ export function UserList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden lg:table-cell"
                       />
                       <SortableHeader
                         label={t("fields.createdAt")}
@@ -169,6 +172,7 @@ export function UserList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden md:table-cell"
                       />
                       <th className="pb-3 pr-4 text-right">
                         {tCommon("actions")}
@@ -181,19 +185,21 @@ export function UserList() {
                         <td className="py-4 pr-4">
                           <p className="font-medium">{user.fullName}</p>
                         </td>
-                        <td className="py-4 pr-4 text-sm">{user.email}</td>
-                        <td className="py-4 pr-4 font-mono text-sm">
+                        <td className="hidden py-4 pr-4 text-sm md:table-cell">
+                          {user.email}
+                        </td>
+                        <td className="hidden py-4 pr-4 font-mono text-sm lg:table-cell">
                           {user.username}
                         </td>
                         <td className="py-4 pr-4">
                           <UserStatusBadge status={user.status} />
                         </td>
-                        <td className="py-4 pr-4 text-sm text-muted-foreground">
+                        <td className="hidden py-4 pr-4 text-sm text-muted-foreground lg:table-cell">
                           {user.lastLoginAt
                             ? formatDate(user.lastLoginAt)
                             : "-"}
                         </td>
-                        <td className="py-4 pr-4 text-sm text-muted-foreground">
+                        <td className="hidden py-4 pr-4 text-sm text-muted-foreground md:table-cell">
                           {formatDate(user.createdAt)}
                         </td>
                         <td className="py-4 text-right">

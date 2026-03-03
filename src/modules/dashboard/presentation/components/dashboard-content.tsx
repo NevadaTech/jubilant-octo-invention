@@ -41,19 +41,19 @@ export function DashboardContent() {
           <StatCardSkeleton />
           <StatCardSkeleton />
         </div>
-        <div className="grid gap-4 md:grid-cols-7">
-          <div className="md:col-span-4">
+        <div className="grid gap-4 lg:grid-cols-7">
+          <div className="lg:col-span-4">
             <ChartSkeleton />
           </div>
-          <div className="md:col-span-3">
+          <div className="lg:col-span-3">
             <ChartSkeleton />
           </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-7">
-          <div className="md:col-span-3">
+        <div className="grid gap-4 lg:grid-cols-7">
+          <div className="lg:col-span-3">
             <ChartSkeleton />
           </div>
-          <div className="md:col-span-4">
+          <div className="lg:col-span-4">
             <ChartSkeleton />
           </div>
         </div>
@@ -100,31 +100,31 @@ export function DashboardContent() {
       {/* Stat Cards Row */}
       <DashboardMetricsGrid metrics={metrics} />
 
-      {/* Charts Row 1: Sales Trend + Top Products */}
-      <div className="grid gap-4 md:grid-cols-7">
-        <div className="md:col-span-4">
+      {/* Charts Row 1: Sales Trend + Stock Distribution */}
+      <div className="grid gap-4 lg:grid-cols-7">
+        <div className="lg:col-span-4">
           <SalesTrendChart
             data={metrics.salesTrend}
             currency={metrics.sales.currency}
           />
         </div>
-        <div className="md:col-span-3">
-          <TopProductsChart
-            data={metrics.topProducts}
-            currency={metrics.sales.currency}
-          />
-        </div>
-      </div>
-
-      {/* Charts Row 2: Stock Distribution + Recent Activity */}
-      <div className="grid gap-4 md:grid-cols-7">
-        <div className="md:col-span-3">
+        <div className="lg:col-span-3">
           <StockDistributionChart
             data={metrics.stockByWarehouse}
             currency={metrics.inventory.currency}
           />
         </div>
-        <div className="md:col-span-4">
+      </div>
+
+      {/* Charts Row 2: Top Products + Recent Activity */}
+      <div className="grid gap-4 lg:grid-cols-7">
+        <div className="lg:col-span-3">
+          <TopProductsChart
+            data={metrics.topProducts}
+            currency={metrics.sales.currency}
+          />
+        </div>
+        <div className="lg:col-span-4">
           <RecentActivityFeed data={metrics.recentActivity} />
         </div>
       </div>

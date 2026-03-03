@@ -117,7 +117,7 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="icon">
             <Link href="/dashboard/inventory/transfers">
@@ -138,7 +138,7 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {transfer.canStartTransit && (
             <Button
               onClick={handleStartTransit}

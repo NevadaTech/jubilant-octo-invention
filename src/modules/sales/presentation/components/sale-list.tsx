@@ -196,6 +196,7 @@ export function SaleList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden md:table-cell"
                       />
                       <SortableHeader
                         label={t("fields.items")}
@@ -203,6 +204,7 @@ export function SaleList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden lg:table-cell"
                       />
                       <SortableHeader
                         label={t("fields.total")}
@@ -217,6 +219,7 @@ export function SaleList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden lg:table-cell"
                       />
                       <th className="pb-3 pr-4 text-right">
                         {tCommon("actions")}
@@ -238,18 +241,18 @@ export function SaleList() {
                           <SaleStatusBadge status={sale.status} />
                         </td>
                         <td className="py-4 pr-4">{sale.warehouseName}</td>
-                        <td className="py-4 pr-4">
+                        <td className="hidden py-4 pr-4 md:table-cell">
                           {sale.customerReference || (
                             <span className="text-muted-foreground">-</span>
                           )}
                         </td>
-                        <td className="py-4 pr-4">
+                        <td className="hidden py-4 pr-4 lg:table-cell">
                           <span className="font-medium">{sale.totalItems}</span>
                         </td>
                         <td className="py-4 pr-4 font-medium">
                           {formatCurrency(sale.totalAmount, sale.currency)}
                         </td>
-                        <td className="py-4 pr-4 text-sm text-muted-foreground">
+                        <td className="hidden py-4 pr-4 text-sm text-muted-foreground lg:table-cell">
                           {formatDate(sale.createdAt)}
                         </td>
                         <td className="py-4 text-right">

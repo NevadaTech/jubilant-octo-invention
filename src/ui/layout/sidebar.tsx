@@ -341,7 +341,7 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "hidden w-64 flex-col border-r border-neutral-200 bg-white lg:flex dark:border-neutral-800 dark:bg-neutral-900",
+          "hidden h-full w-64 flex-col border-r border-neutral-200 bg-white lg:flex dark:border-neutral-800 dark:bg-neutral-900",
           className,
         )}
       >

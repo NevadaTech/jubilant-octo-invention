@@ -127,7 +127,7 @@ export function AuditLogList() {
     <>
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>{t("list.title")}</CardTitle>
             {hasPermission(PERMISSIONS.AUDIT_EXPORT) && (
               <Button
@@ -196,6 +196,7 @@ export function AuditLogList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden md:table-cell"
                       />
                       <SortableHeader
                         label={t("columns.status")}
@@ -203,8 +204,11 @@ export function AuditLogList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden md:table-cell"
                       />
-                      <th className="pb-3 pr-4">{t("columns.duration")}</th>
+                      <th className="hidden pb-3 pr-4 lg:table-cell">
+                        {t("columns.duration")}
+                      </th>
                       <th className="pb-3 pr-4 text-right">
                         {tCommon("actions")}
                       </th>
@@ -226,15 +230,15 @@ export function AuditLogList() {
                         <td className="py-3 pr-4 text-sm font-medium">
                           {log.entityType}
                         </td>
-                        <td className="py-3 pr-4">
+                        <td className="hidden py-3 pr-4 md:table-cell">
                           <AuditMethodBadge method={log.httpMethod} />
                         </td>
-                        <td className="py-3 pr-4">
+                        <td className="hidden py-3 pr-4 md:table-cell">
                           <AuditStatusIndicator
                             statusCode={log.httpStatusCode}
                           />
                         </td>
-                        <td className="py-3 pr-4 text-sm text-muted-foreground">
+                        <td className="hidden py-3 pr-4 text-sm text-muted-foreground lg:table-cell">
                           {log.duration !== null ? `${log.duration}ms` : "-"}
                         </td>
                         <td className="py-3 text-right">

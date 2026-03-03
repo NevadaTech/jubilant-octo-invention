@@ -197,6 +197,7 @@ export function ReturnList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden md:table-cell"
                       />
                       <SortableHeader
                         label={t("fields.items")}
@@ -204,6 +205,7 @@ export function ReturnList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden lg:table-cell"
                       />
                       <SortableHeader
                         label={t("fields.total")}
@@ -218,6 +220,7 @@ export function ReturnList() {
                         currentSortBy={filters.sortBy}
                         currentSortOrder={filters.sortOrder}
                         onSort={handleSort}
+                        className="hidden lg:table-cell"
                       />
                       <th className="pb-3 pr-4 text-right">
                         {tCommon("actions")}
@@ -241,14 +244,16 @@ export function ReturnList() {
                         <td className="py-4 pr-4">
                           <ReturnStatusBadge status={ret.status} />
                         </td>
-                        <td className="py-4 pr-4">{ret.warehouseName}</td>
-                        <td className="py-4 pr-4">
+                        <td className="hidden py-4 pr-4 md:table-cell">
+                          {ret.warehouseName}
+                        </td>
+                        <td className="hidden py-4 pr-4 lg:table-cell">
                           <span className="font-medium">{ret.totalItems}</span>
                         </td>
                         <td className="py-4 pr-4 font-medium">
                           {formatCurrency(ret.totalAmount, ret.currency)}
                         </td>
-                        <td className="py-4 pr-4 text-sm text-muted-foreground">
+                        <td className="hidden py-4 pr-4 text-sm text-muted-foreground lg:table-cell">
                           {formatDate(ret.createdAt)}
                         </td>
                         <td className="py-4 text-right">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
+import { useIsMobile } from "@/hooks/use-media-query";
 import {
   Bar,
   BarChart,
@@ -41,6 +42,7 @@ const BAR_COLORS = [
 export function TopProductsChart({ data, currency }: TopProductsChartProps) {
   const t = useTranslations("dashboard.charts");
   const locale = useLocale();
+  const isMobile = useIsMobile();
 
   return (
     <Card>
@@ -76,7 +78,7 @@ export function TopProductsChart({ data, currency }: TopProductsChartProps) {
               <YAxis
                 type="category"
                 dataKey="name"
-                width={150}
+                width={isMobile ? 80 : 150}
                 tick={{ fontSize: 11 }}
                 className="text-muted-foreground"
               />
