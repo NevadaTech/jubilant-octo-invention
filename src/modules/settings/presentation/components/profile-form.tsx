@@ -57,6 +57,7 @@ const TIMEZONES = [
 
 export function ProfileForm() {
   const t = useTranslations("settings.profile");
+  const tRoles = useTranslations("roles");
   const { data: profile, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
 
@@ -160,7 +161,9 @@ export function ProfileForm() {
                   </span>
                   {profile.roles.map((role) => (
                     <Badge key={role} variant="secondary" className="text-xs">
-                      {role}
+                      {tRoles.has(`names.${role}`)
+                        ? tRoles(`names.${role}`)
+                        : role}
                     </Badge>
                   ))}
                 </div>

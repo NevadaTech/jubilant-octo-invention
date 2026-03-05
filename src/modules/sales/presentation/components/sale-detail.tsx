@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   ArrowLeft,
+  ArrowLeftRight,
   CheckCircle,
   XCircle,
   Package,
@@ -49,14 +50,20 @@ import {
   useShipSale,
   useCompleteSale,
 } from "@/modules/sales/presentation/hooks/use-sales";
+import { PermissionGate } from "@/shared/presentation/components/permission-gate";
+import { PERMISSIONS } from "@/shared/domain/permissions";
 import { SaleStatusBadge } from "./sale-status-badge";
 import { SaleTimeline } from "./sale-timeline";
+import { SaleSwapDialog } from "./sale-swap-dialog";
+import { SaleSwapHistory } from "./sale-swap-history";
+import type { SaleLine } from "@/modules/sales/domain/entities/sale.entity";
 
 interface SaleDetailProps {
   saleId: string;
 }
 
 export function SaleDetail({ saleId }: SaleDetailProps) {
+  const locale = useLocale();
   const t = useTranslations("sales");
   const tCommon = useTranslations("common");
   const tReturns = useTranslations("returns");
@@ -68,20 +75,21 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
   const shipSale = useShipSale();
   const completeSale = useCompleteSale();
 
+  const [swapLine, setSwapLine] = useState<SaleLine | null>(null);
   const [shipDialogOpen, setShipDialogOpen] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState("");
   const [shippingCarrier, setShippingCarrier] = useState("");
   const [shippingNotes, setShippingNotes] = useState("");
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
+    return new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
       timeStyle: "short",
     }).format(date);
   };
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currency || "COP",
       minimumFractionDigits: 0,
@@ -580,6 +588,17 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
         </Card>
       )}
 
+      {/* Swap Dialog */}
+      {swapLine && (
+        <SaleSwapDialog
+          saleId={sale.id}
+          line={swapLine}
+          saleCurrency={sale.currency}
+          open={!!swapLine}
+          onOpenChange={(open) => !open && setSwapLine(null)}
+        />
+      )}
+
       {/* Lines Card */}
       <Card>
         <CardHeader>
@@ -604,6 +623,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                     <th className="pb-3 pr-4 text-right">
                       {t("fields.lineTotal")}
                     </th>
+                    {sale.canSwapLine && (
+                      <th className="pb-3 pl-4 text-right" />
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -622,12 +644,29 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                       <td className="py-3 pr-4 text-right font-medium">
                         {formatCurrency(line.totalPrice, line.currency)}
                       </td>
+                      {sale.canSwapLine && (
+                        <td className="py-3 pl-4 text-right">
+                          <PermissionGate permission={PERMISSIONS.SALES_SWAP}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setSwapLine(line)}
+                            >
+                              <ArrowLeftRight className="mr-1 h-4 w-4" />
+                              {t("actions.swapLine")}
+                            </Button>
+                          </PermissionGate>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2">
-                    <td colSpan={3} className="py-3 pr-4 text-right font-bold">
+                    <td
+                      colSpan={sale.canSwapLine ? 4 : 3}
+                      className="py-3 pr-4 text-right font-bold"
+                    >
                       {t("fields.total")}
                     </td>
                     <td className="py-3 text-right text-lg font-bold">
@@ -640,6 +679,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Swap History */}
+      <SaleSwapHistory saleId={sale.id} />
     </div>
   );
 }

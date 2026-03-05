@@ -4,6 +4,9 @@ import type {
   CreateSaleDto,
   CreateSaleLineDto,
   ShipSaleDto,
+  SwapSaleLineDto,
+  SwapSaleLineResponseData,
+  SwapHistoryItem,
   UpdateSaleDto,
   SaleFilters,
 } from "@/modules/sales/application/dto/sale.dto";
@@ -33,4 +36,9 @@ export interface SaleRepositoryPort {
   addLine(saleId: string, line: CreateSaleLineDto): Promise<Sale>;
   removeLine(saleId: string, lineId: string): Promise<Sale>;
   getReturns(saleId: string): Promise<SaleReturnSummary[]>;
+  swapLine(
+    saleId: string,
+    data: SwapSaleLineDto,
+  ): Promise<SwapSaleLineResponseData>;
+  getSwapHistory(saleId: string): Promise<SwapHistoryItem[]>;
 }

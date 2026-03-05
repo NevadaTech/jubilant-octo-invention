@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Shield, X, Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
@@ -38,7 +38,14 @@ export function UserRolesDialog({
   onOpenChange,
 }: UserRolesDialogProps) {
   const t = useTranslations("users");
+  const tRoles = useTranslations("roles");
   const tCommon = useTranslations("common");
+
+  const displayRoleName = useCallback(
+    (name: string) =>
+      tRoles.has(`names.${name}`) ? tRoles(`names.${name}`) : name,
+    [tRoles],
+  );
   const [selectKey, setSelectKey] = useState(0);
   const [removingRoleId, setRemovingRoleId] = useState<string | null>(null);
 
@@ -117,7 +124,9 @@ export function UserRolesDialog({
                       key={role.id}
                       className={`flex items-center justify-between rounded-md border px-3 py-2 transition-opacity ${isRemoving ? "opacity-50" : ""}`}
                     >
-                      <span className="text-sm font-medium">{role.name}</span>
+                      <span className="text-sm font-medium">
+                        {displayRoleName(role.name)}
+                      </span>
                       {canRemove && (
                         <Button
                           variant="ghost"
@@ -168,7 +177,7 @@ export function UserRolesDialog({
                 <SelectContent>
                   {availableRoles.map((role) => (
                     <SelectItem key={role.id} value={role.id}>
-                      {role.name}
+                      {displayRoleName(role.name)}
                     </SelectItem>
                   ))}
                 </SelectContent>

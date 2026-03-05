@@ -6,8 +6,13 @@ import { Sale, SaleLine } from "@/modules/sales/domain/entities/sale.entity";
 // --- Mocks ---
 
 vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string, params?: Record<string, unknown>) =>
-    params ? `${key}:${JSON.stringify(params)}` : key,
+  useTranslations: () => {
+    const t = (key: string, params?: Record<string, unknown>) =>
+      params ? `${key}:${JSON.stringify(params)}` : key;
+    t.has = () => false;
+    return t;
+  },
+  useLocale: () => "en",
 }));
 
 vi.mock("@/i18n/navigation", () => ({
@@ -43,6 +48,7 @@ let mockSaleReturnsHook: {
 vi.mock("@/modules/sales/presentation/hooks/use-sales", () => ({
   useSale: () => mockSaleHook,
   useSaleReturns: () => mockSaleReturnsHook,
+  useSaleSwapHistory: () => ({ data: undefined, isLoading: false }),
   useConfirmSale: () => ({
     mutateAsync: mockConfirmMutateAsync,
     isPending: false,
@@ -75,6 +81,24 @@ vi.mock("@/modules/sales/presentation/components/sale-timeline", () => ({
   SaleTimeline: ({ status }: { status: string }) => (
     <div data-testid="sale-timeline">{status}</div>
   ),
+}));
+
+vi.mock("@/modules/sales/presentation/components/sale-swap-dialog", () => ({
+  SaleSwapDialog: () => <div data-testid="sale-swap-dialog" />,
+}));
+
+vi.mock("@/modules/sales/presentation/components/sale-swap-history", () => ({
+  SaleSwapHistory: () => null,
+}));
+
+vi.mock("@/shared/presentation/components/permission-gate", () => ({
+  PermissionGate: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
+vi.mock("@/shared/domain/permissions", () => ({
+  PERMISSIONS: { SALES_SWAP: "SALES:SWAP" },
 }));
 
 vi.mock("@/ui/components/button", () => ({

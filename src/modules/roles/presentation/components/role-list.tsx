@@ -168,7 +168,11 @@ export function RoleList() {
                   {filteredRoles.map((role) => (
                     <tr key={role.id} className="border-b">
                       <td className="py-4 pr-4">
-                        <p className="font-mono font-medium">{role.name}</p>
+                        <p className="font-medium">
+                          {t.has(`names.${role.name}`)
+                            ? t(`names.${role.name}`)
+                            : role.name}
+                        </p>
                       </td>
                       <td className="hidden py-4 pr-4 text-sm text-muted-foreground md:table-cell">
                         {role.description || "-"}

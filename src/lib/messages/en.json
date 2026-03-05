@@ -797,7 +797,8 @@
       "shipSale": "Ship",
       "completeSale": "Mark as Completed",
       "addLine": "Add Product",
-      "removeLine": "Remove"
+      "removeLine": "Remove",
+      "swapLine": "Swap Product"
     },
     "list": {
       "title": "Sales"
@@ -878,6 +879,43 @@
       "title": "Cancel Sale",
       "description": "Are you sure you want to cancel this sale? If confirmed, stock will be returned to the warehouse."
     },
+    "swapLine": {
+      "title": "Swap Product",
+      "description": "Replace a product in this sale line with a different product. Stock will be adjusted automatically.",
+      "replacementProduct": "Replacement Product",
+      "replacementProductPlaceholder": "Search for a product...",
+      "swapQuantity": "Quantity to Swap",
+      "sourceWarehouse": "Source Warehouse",
+      "sourceWarehousePlaceholder": "Select warehouse",
+      "pricingStrategy": "Pricing Strategy",
+      "keepOriginal": "Keep Original Price",
+      "newPrice": "New Price",
+      "newSalePrice": "New Sale Price",
+      "reason": "Reason",
+      "reasonPlaceholder": "e.g., Customer requested different size",
+      "submit": "Confirm Swap",
+      "noProducts": "No products available",
+      "noWarehouses": "No warehouses available",
+      "validationProductRequired": "Please select a replacement product",
+      "validationQuantityMin": "Quantity must be greater than 0",
+      "validationQuantityMax": "Quantity cannot exceed {max}",
+      "validationWarehouseRequired": "Please select a source warehouse",
+      "validationPriceRequired": "New price is required when using New Price strategy"
+    },
+    "swapHistory": {
+      "title": "Swap History",
+      "originalProduct": "Original",
+      "replacementProduct": "Replacement",
+      "quantity": "Qty",
+      "price": "Price",
+      "strategy": "Strategy",
+      "keepOriginal": "Keep Original",
+      "newPrice": "New Price",
+      "reason": "Reason",
+      "by": "By",
+      "crossWarehouse": "Cross-warehouse",
+      "partial": "Partial"
+    },
     "messages": {
       "created": "Sale created successfully",
       "confirmed": "Sale confirmed successfully",
@@ -887,7 +925,8 @@
       "cancelled": "Sale cancelled successfully",
       "updated": "Sale updated successfully",
       "lineAdded": "Product added to sale",
-      "lineRemoved": "Product removed from sale"
+      "lineRemoved": "Product removed from sale",
+      "lineSwapped": "Product swapped successfully"
     },
     "toast": {
       "error": "An error occurred. Please try again."
@@ -1097,6 +1136,15 @@
       "permissionCount": "Permissions",
       "createdAt": "Created"
     },
+    "names": {
+      "SYSTEM_ADMIN": "System Administrator",
+      "ADMIN": "Administrator",
+      "SUPERVISOR": "Supervisor",
+      "WAREHOUSE_OPERATOR": "Warehouse Operator",
+      "CONSULTANT": "Consultant",
+      "IMPORT_OPERATOR": "Import Operator",
+      "SALES_PERSON": "Sales Person"
+    },
     "status": {
       "active": "Active",
       "inactive": "Inactive"
@@ -1148,11 +1196,45 @@
         "returns": "Returns",
         "reports": "Reports",
         "audit": "Audit",
+        "settings": "Settings",
         "organizations": "Organizations",
         "organization": "Organization",
         "imports": "Imports",
         "movements": "Movements",
         "stock": "Stock"
+      },
+      "actions": {
+        "CREATE": "Create",
+        "READ": "View",
+        "UPDATE": "Update",
+        "DELETE": "Delete",
+        "MANAGE_ROLES": "Manage Roles",
+        "IMPORT": "Import",
+        "ENTRY": "Entry",
+        "EXIT": "Exit",
+        "TRANSFER": "Transfer",
+        "ADJUST": "Adjust",
+        "CONFIRM": "Confirm",
+        "CANCEL": "Cancel",
+        "PICK": "Pick",
+        "SHIP": "Ship",
+        "COMPLETE": "Complete",
+        "RETURN": "Return",
+        "SWAP": "Swap",
+        "READ_SENSITIVE": "View Sensitive",
+        "EXPORT": "Export",
+        "MANAGE": "Manage",
+        "VIEW_BALANCE": "View Balance",
+        "VIEW_LOW_STOCK": "View Low Stock",
+        "ADJUST_STOCK": "Adjust Stock",
+        "CREATE_PRODUCTS": "Create Products",
+        "VALIDATE": "Validate",
+        "APPLY": "Apply",
+        "VIEW_SETTINGS": "View Settings",
+        "UPDATE_SETTINGS": "Update Settings",
+        "MANAGE_BRANDING": "Manage Branding",
+        "POST": "Post",
+        "VOID": "Void"
       }
     },
     "delete": {

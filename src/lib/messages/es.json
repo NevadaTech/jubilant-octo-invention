@@ -797,7 +797,8 @@
       "shipSale": "Enviar",
       "completeSale": "Marcar como Completada",
       "addLine": "Agregar Producto",
-      "removeLine": "Eliminar"
+      "removeLine": "Eliminar",
+      "swapLine": "Cambiar Producto"
     },
     "list": {
       "title": "Ventas"
@@ -878,6 +879,43 @@
       "title": "Cancelar Venta",
       "description": "¿Estás seguro de que deseas cancelar esta venta? Si fue confirmada, el stock se devolverá al almacén."
     },
+    "swapLine": {
+      "title": "Cambiar Producto",
+      "description": "Reemplaza un producto en esta línea de venta por otro producto diferente. El inventario se ajustará automáticamente.",
+      "replacementProduct": "Producto de Reemplazo",
+      "replacementProductPlaceholder": "Buscar producto...",
+      "swapQuantity": "Cantidad a Cambiar",
+      "sourceWarehouse": "Almacén de Origen",
+      "sourceWarehousePlaceholder": "Seleccionar almacén",
+      "pricingStrategy": "Estrategia de Precio",
+      "keepOriginal": "Mantener Precio Original",
+      "newPrice": "Nuevo Precio",
+      "newSalePrice": "Precio de Venta Nuevo",
+      "reason": "Razón",
+      "reasonPlaceholder": "Ej: El cliente solicitó una talla diferente",
+      "submit": "Confirmar Cambio",
+      "noProducts": "No hay productos disponibles",
+      "noWarehouses": "No hay almacenes disponibles",
+      "validationProductRequired": "Selecciona un producto de reemplazo",
+      "validationQuantityMin": "La cantidad debe ser mayor a 0",
+      "validationQuantityMax": "La cantidad no puede exceder {max}",
+      "validationWarehouseRequired": "Selecciona un almacén de origen",
+      "validationPriceRequired": "El precio es requerido cuando se usa la estrategia Nuevo Precio"
+    },
+    "swapHistory": {
+      "title": "Historial de Cambios",
+      "originalProduct": "Original",
+      "replacementProduct": "Reemplazo",
+      "quantity": "Cant",
+      "price": "Precio",
+      "strategy": "Estrategia",
+      "keepOriginal": "Precio Original",
+      "newPrice": "Precio Nuevo",
+      "reason": "Raz\u00f3n",
+      "by": "Por",
+      "crossWarehouse": "Entre bodegas",
+      "partial": "Parcial"
+    },
     "messages": {
       "created": "Venta creada exitosamente",
       "confirmed": "Venta confirmada exitosamente",
@@ -887,7 +925,8 @@
       "cancelled": "Venta cancelada exitosamente",
       "updated": "Venta actualizada exitosamente",
       "lineAdded": "Producto agregado a la venta",
-      "lineRemoved": "Producto eliminado de la venta"
+      "lineRemoved": "Producto eliminado de la venta",
+      "lineSwapped": "Producto cambiado exitosamente"
     },
     "toast": {
       "error": "Ocurrió un error. Inténtalo de nuevo."
@@ -1097,6 +1136,15 @@
       "permissionCount": "Permisos",
       "createdAt": "Creado"
     },
+    "names": {
+      "SYSTEM_ADMIN": "Administrador del Sistema",
+      "ADMIN": "Administrador",
+      "SUPERVISOR": "Supervisor",
+      "WAREHOUSE_OPERATOR": "Operador de Bodega",
+      "CONSULTANT": "Consultor",
+      "IMPORT_OPERATOR": "Operador de Importaciones",
+      "SALES_PERSON": "Vendedor"
+    },
     "status": {
       "active": "Activo",
       "inactive": "Inactivo"
@@ -1148,11 +1196,45 @@
         "returns": "Devoluciones",
         "reports": "Reportes",
         "audit": "Auditoría",
+        "settings": "Configuración",
         "organizations": "Organizaciones",
         "organization": "Organización",
         "imports": "Importaciones",
         "movements": "Movimientos",
         "stock": "Stock"
+      },
+      "actions": {
+        "CREATE": "Crear",
+        "READ": "Ver",
+        "UPDATE": "Actualizar",
+        "DELETE": "Eliminar",
+        "MANAGE_ROLES": "Gestionar Roles",
+        "IMPORT": "Importar",
+        "ENTRY": "Entrada",
+        "EXIT": "Salida",
+        "TRANSFER": "Transferir",
+        "ADJUST": "Ajustar",
+        "CONFIRM": "Confirmar",
+        "CANCEL": "Cancelar",
+        "PICK": "Picking",
+        "SHIP": "Enviar",
+        "COMPLETE": "Completar",
+        "RETURN": "Devolver",
+        "SWAP": "Cambiar",
+        "READ_SENSITIVE": "Ver Sensible",
+        "EXPORT": "Exportar",
+        "MANAGE": "Gestionar",
+        "VIEW_BALANCE": "Ver Saldos",
+        "VIEW_LOW_STOCK": "Ver Stock Bajo",
+        "ADJUST_STOCK": "Ajustar Stock",
+        "CREATE_PRODUCTS": "Crear Productos",
+        "VALIDATE": "Validar",
+        "APPLY": "Aplicar",
+        "VIEW_SETTINGS": "Ver Configuración",
+        "UPDATE_SETTINGS": "Actualizar Configuración",
+        "MANAGE_BRANDING": "Gestionar Marca",
+        "POST": "Confirmar",
+        "VOID": "Anular"
       }
     },
     "delete": {

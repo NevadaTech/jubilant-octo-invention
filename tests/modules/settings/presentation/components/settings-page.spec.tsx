@@ -57,7 +57,9 @@ describe("SettingsPage", () => {
   it("Given: user has SETTINGS_MANAGE permission When: rendering Then: should render the AlertConfigurationForm", () => {
     mockHasPermission = true;
     render(<SettingsPage />);
-    const notificationsTab = screen.getByRole("tab", { name: "tabs.notifications" });
+    const notificationsTab = screen.getByRole("tab", {
+      name: "tabs.notifications",
+    });
     fireEvent.click(notificationsTab);
     expect(screen.getByTestId("alert-config-form")).toBeInTheDocument();
   });
@@ -65,7 +67,9 @@ describe("SettingsPage", () => {
   it("Given: user lacks SETTINGS_MANAGE permission When: rendering Then: should not render the AlertConfigurationForm", () => {
     mockHasPermission = false;
     render(<SettingsPage />);
-    const notificationsTab = screen.getByRole("tab", { name: "tabs.notifications" });
+    const notificationsTab = screen.getByRole("tab", {
+      name: "tabs.notifications",
+    });
     fireEvent.click(notificationsTab);
     expect(screen.queryByTestId("alert-config-form")).not.toBeInTheDocument();
   });

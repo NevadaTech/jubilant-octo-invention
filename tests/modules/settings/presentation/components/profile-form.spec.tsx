@@ -3,7 +3,11 @@ import { render, screen } from "@testing-library/react";
 import { ProfileForm } from "@/modules/settings/presentation/components/profile-form";
 
 vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => {
+    const t = (key: string) => key;
+    t.has = () => false;
+    return t;
+  },
 }));
 
 vi.mock("@/ui/components/user-avatar", () => ({

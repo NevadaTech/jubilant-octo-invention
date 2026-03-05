@@ -110,7 +110,6 @@ export function RolePermissionsDialog({
 
   const moduleLabel = (module: string): string => {
     const key = module.toLowerCase();
-    // Try to get translation, fallback to module name
     try {
       return t(`permissions.modules.${key}`);
     } catch {
@@ -118,13 +117,27 @@ export function RolePermissionsDialog({
     }
   };
 
+  const actionLabel = (action: string): string => {
+    try {
+      return t(`permissions.actions.${action}`);
+    } catch {
+      return action;
+    }
+  };
+
+  const roleName = role
+    ? t.has(`names.${role.name}`)
+      ? t(`names.${role.name}`)
+      : role.name
+    : "";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            {t("permissions.title")} — {role?.name}
+            {t("permissions.title")} — {roleName}
           </DialogTitle>
           <DialogDescription>{t("permissions.description")}</DialogDescription>
         </DialogHeader>
@@ -207,7 +220,7 @@ export function RolePermissionsDialog({
                             if (!readOnly) togglePermission(perm.id);
                           }}
                         >
-                          {perm.action}
+                          {actionLabel(perm.action)}
                         </span>
                       </label>
                     ))}

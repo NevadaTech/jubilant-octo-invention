@@ -10,6 +10,9 @@ import type {
   CreateSaleDto,
   CreateSaleLineDto,
   ShipSaleDto,
+  SwapSaleLineDto,
+  SwapSaleLineResponseData,
+  SwapHistoryItem,
   UpdateSaleDto,
   SaleFilters,
 } from "@/modules/sales/application/dto/sale.dto";
@@ -150,6 +153,25 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       currency: r.currency,
       createdAt: new Date(r.createdAt),
     }));
+  }
+
+  async swapLine(
+    saleId: string,
+    data: SwapSaleLineDto,
+  ): Promise<SwapSaleLineResponseData> {
+    const raw = await apiClient.post<{
+      success: boolean;
+      data: SwapSaleLineResponseData;
+    }>(`${this.basePath}/${saleId}/swap`, data);
+    return raw.data.data;
+  }
+
+  async getSwapHistory(saleId: string): Promise<SwapHistoryItem[]> {
+    const raw = await apiClient.get<{
+      success: boolean;
+      data: SwapHistoryItem[];
+    }>(`${this.basePath}/${saleId}/swaps`);
+    return raw.data.data;
   }
 
   private buildQueryParams(filters?: SaleFilters): Record<string, unknown> {

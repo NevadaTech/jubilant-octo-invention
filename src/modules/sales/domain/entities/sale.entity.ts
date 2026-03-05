@@ -373,4 +373,8 @@ export class Sale extends AggregateRoot<string> {
   get canAddLines(): boolean {
     return this.props.status === "DRAFT";
   }
+
+  get canSwapLine(): boolean {
+    return this.props.status === "CONFIRMED" || this.props.status === "PICKING";
+  }
 }

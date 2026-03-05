@@ -241,10 +241,10 @@ describe("RolePermissionsDialog", () => {
       />,
     );
 
-    // READ appears in both INVENTORY and SALES modules
-    const readElements = screen.getAllByText("READ");
+    // READ appears in both INVENTORY and SALES modules (translated via actionLabel)
+    const readElements = screen.getAllByText("permissions.actions.READ");
     expect(readElements.length).toBe(2);
-    expect(screen.getByText("CREATE")).toBeDefined();
+    expect(screen.getByText("permissions.actions.CREATE")).toBeDefined();
   });
 
   it("Given: readOnly is true When: rendering Then: should show close button instead of cancel and save", () => {

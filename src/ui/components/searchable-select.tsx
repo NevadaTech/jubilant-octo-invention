@@ -86,16 +86,20 @@ const SearchableSelect = forwardRef<HTMLButtonElement, SearchableSelectProps>(
       [options, value],
     );
 
-    useLayoutEffect(() => {
-      if (open && triggerRef.current) {
+    const updateCoords = useCallback(() => {
+      if (triggerRef.current) {
         const rect = triggerRef.current.getBoundingClientRect();
         setCoords({
-          top: rect.bottom + window.scrollY + 4,
-          left: rect.left + window.scrollX,
+          top: rect.bottom + 4,
+          left: rect.left,
           width: rect.width,
         });
       }
-    }, [open]);
+    }, []);
+
+    useLayoutEffect(() => {
+      if (open) updateCoords();
+    }, [open, updateCoords]);
 
     useEffect(() => {
       if (open) {
@@ -119,14 +123,18 @@ const SearchableSelect = forwardRef<HTMLButtonElement, SearchableSelectProps>(
         if (e.key === "Escape") setOpen(false);
       };
 
+      const handleScroll = () => updateCoords();
+
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleEscape);
+      window.addEventListener("scroll", handleScroll, true);
 
       return () => {
         document.removeEventListener("mousedown", handleClickOutside);
         document.removeEventListener("keydown", handleEscape);
+        window.removeEventListener("scroll", handleScroll, true);
       };
-    }, [open]);
+    }, [open, updateCoords]);
 
     return (
       <>
@@ -155,7 +163,7 @@ const SearchableSelect = forwardRef<HTMLButtonElement, SearchableSelectProps>(
               ref={contentRef}
               className="z-50 rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
               style={{
-                position: "absolute",
+                position: "fixed",
                 top: coords.top,
                 left: coords.left,
                 width: Math.max(coords.width, 280),

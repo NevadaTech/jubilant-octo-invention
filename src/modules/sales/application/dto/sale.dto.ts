@@ -134,6 +134,58 @@ export interface UpdateSaleDto {
   note?: string;
 }
 
+export interface SwapSaleLineDto {
+  lineId: string;
+  replacementProductId: string;
+  swapQuantity: number;
+  sourceWarehouseId: string;
+  pricingStrategy: "KEEP_ORIGINAL" | "NEW_PRICE";
+  newSalePrice?: number;
+  currency?: string;
+  reason?: string;
+}
+
+export interface SwapSaleLineResponseData {
+  swapId: string;
+  saleId: string;
+  originalProductId: string;
+  replacementProductId: string;
+  swapQuantity: number;
+  originalSalePrice: number;
+  replacementSalePrice: number;
+  pricingStrategy: string;
+  isCrossWarehouse: boolean;
+  returnMovementId: string;
+  deductMovementId: string;
+  newLineId?: string;
+  isPartial: boolean;
+}
+
+export interface SwapHistoryItem {
+  id: string;
+  saleId: string;
+  originalLineId: string;
+  newLineId: string | null;
+  originalProductId: string;
+  originalProductName: string;
+  originalProductSku: string;
+  replacementProductId: string;
+  replacementProductName: string;
+  replacementProductSku: string;
+  originalQuantity: number;
+  replacementQuantity: number;
+  originalSalePrice: number;
+  replacementSalePrice: number;
+  originalCurrency: string;
+  replacementCurrency: string;
+  pricingStrategy: string;
+  isCrossWarehouse: boolean;
+  reason: string | null;
+  performedBy: string;
+  performedByName: string;
+  createdAt: string;
+}
+
 export interface SaleFilters {
   warehouseIds?: string[];
   status?: SaleStatus[];

@@ -9,6 +9,7 @@ import type {
   CreateSaleDto,
   CreateSaleLineDto,
   ShipSaleDto,
+  SwapSaleLineDto,
   UpdateSaleDto,
 } from "@/modules/sales/application/dto/sale.dto";
 
@@ -19,6 +20,7 @@ const saleKeys = {
   details: () => [...saleKeys.all, "detail"] as const,
   detail: (id: string) => [...saleKeys.details(), id] as const,
   returns: (id: string) => [...saleKeys.all, "returns", id] as const,
+  swaps: (id: string) => [...saleKeys.all, "swaps", id] as const,
 };
 
 export function useSales(filters?: SaleFilters) {
@@ -40,6 +42,14 @@ export function useSaleReturns(saleId: string, enabled = true) {
   return useQuery({
     queryKey: saleKeys.returns(saleId),
     queryFn: () => getContainer().saleRepository.getReturns(saleId),
+    enabled: !!saleId && enabled,
+  });
+}
+
+export function useSaleSwapHistory(saleId: string, enabled = true) {
+  return useQuery({
+    queryKey: saleKeys.swaps(saleId),
+    queryFn: () => getContainer().saleRepository.getSwapHistory(saleId),
     enabled: !!saleId && enabled,
   });
 }
@@ -199,6 +209,25 @@ export function useRemoveSaleLine() {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(saleId) });
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       toast.success(t("messages.lineRemoved"));
+    },
+    onError: () => {
+      toast.error(t("toast.error"));
+    },
+  });
+}
+
+export function useSwapSaleLine() {
+  const queryClient = useQueryClient();
+  const t = useTranslations("sales");
+
+  return useMutation({
+    mutationFn: ({ saleId, data }: { saleId: string; data: SwapSaleLineDto }) =>
+      getContainer().saleRepository.swapLine(saleId, data),
+    onSuccess: (_, { saleId }) => {
+      queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: saleKeys.detail(saleId) });
+      queryClient.invalidateQueries({ queryKey: saleKeys.swaps(saleId) });
+      toast.success(t("messages.lineSwapped"));
     },
     onError: () => {
       toast.error(t("toast.error"));
