@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   CreateRoleDto,
   UpdateRoleDto,
@@ -50,6 +51,7 @@ export function useRolePermissions(roleId: string, enabled = true) {
 export function useCreateRole() {
   const queryClient = useQueryClient();
   const t = useTranslations("roles");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateRoleDto) =>
@@ -58,8 +60,8 @@ export function useCreateRole() {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -67,6 +69,7 @@ export function useCreateRole() {
 export function useUpdateRole() {
   const queryClient = useQueryClient();
   const t = useTranslations("roles");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateRoleDto }) =>
@@ -75,8 +78,8 @@ export function useUpdateRole() {
       queryClient.invalidateQueries({ queryKey: roleKeys.all });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -84,6 +87,7 @@ export function useUpdateRole() {
 export function useDeleteRole() {
   const queryClient = useQueryClient();
   const t = useTranslations("roles");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().roleRepository.delete(id),
@@ -91,8 +95,8 @@ export function useDeleteRole() {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
       toast.success(t("messages.deleted"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -100,6 +104,7 @@ export function useDeleteRole() {
 export function useAssignPermissions() {
   const queryClient = useQueryClient();
   const t = useTranslations("roles");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: AssignPermissionsDto }) =>
@@ -108,8 +113,8 @@ export function useAssignPermissions() {
       queryClient.invalidateQueries({ queryKey: roleKeys.all });
       toast.success(t("messages.permissionsUpdated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

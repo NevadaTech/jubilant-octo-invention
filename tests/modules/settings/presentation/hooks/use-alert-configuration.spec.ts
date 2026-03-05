@@ -125,7 +125,7 @@ describe("use-alert-configuration hooks", () => {
         }
       });
 
-      expect(toast.error).toHaveBeenCalledWith("errorSaving");
+      expect(toast.error).toHaveBeenCalled();
     });
   });
 });

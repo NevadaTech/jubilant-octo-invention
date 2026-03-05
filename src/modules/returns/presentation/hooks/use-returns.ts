@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   ReturnFilters,
   CreateReturnDto,
@@ -37,6 +38,7 @@ export function useReturn(id: string) {
 export function useCreateReturn() {
   const queryClient = useQueryClient();
   const t = useTranslations("returns");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateReturnDto) =>
@@ -45,8 +47,8 @@ export function useCreateReturn() {
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -54,6 +56,7 @@ export function useCreateReturn() {
 export function useUpdateReturn() {
   const queryClient = useQueryClient();
   const t = useTranslations("returns");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateReturnDto }) =>
@@ -63,8 +66,8 @@ export function useUpdateReturn() {
       queryClient.invalidateQueries({ queryKey: returnKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -72,6 +75,7 @@ export function useUpdateReturn() {
 export function useConfirmReturn() {
   const queryClient = useQueryClient();
   const t = useTranslations("returns");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().returnRepository.confirm(id),
@@ -80,8 +84,8 @@ export function useConfirmReturn() {
       queryClient.invalidateQueries({ queryKey: returnKeys.detail(id) });
       toast.success(t("messages.confirmed"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -89,6 +93,7 @@ export function useConfirmReturn() {
 export function useCancelReturn() {
   const queryClient = useQueryClient();
   const t = useTranslations("returns");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().returnRepository.cancel(id),
@@ -97,8 +102,8 @@ export function useCancelReturn() {
       queryClient.invalidateQueries({ queryKey: returnKeys.detail(id) });
       toast.success(t("messages.cancelled"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -106,6 +111,7 @@ export function useCancelReturn() {
 export function useAddReturnLine() {
   const queryClient = useQueryClient();
   const t = useTranslations("returns");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({
@@ -120,8 +126,8 @@ export function useAddReturnLine() {
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });
       toast.success(t("messages.lineAdded"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -129,6 +135,7 @@ export function useAddReturnLine() {
 export function useRemoveReturnLine() {
   const queryClient = useQueryClient();
   const t = useTranslations("returns");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ returnId, lineId }: { returnId: string; lineId: string }) =>
@@ -138,8 +145,8 @@ export function useRemoveReturnLine() {
       queryClient.invalidateQueries({ queryKey: returnKeys.lists() });
       toast.success(t("messages.lineRemoved"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

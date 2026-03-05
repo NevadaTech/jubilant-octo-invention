@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
 import { UserMapper } from "@/modules/authentication/infrastructure/mappers/user.mapper";
 import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
@@ -27,6 +28,7 @@ export function useProfile() {
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
   const t = useTranslations("settings.profile");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: UpdateProfileDto) =>
@@ -56,8 +58,8 @@ export function useUpdateProfile() {
 
       toast.success(t("saved"));
     },
-    onError: () => {
-      toast.error(t("errorSaving"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

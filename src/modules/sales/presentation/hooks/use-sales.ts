@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   SaleFilters,
   CreateSaleDto,
@@ -57,6 +58,7 @@ export function useSaleSwapHistory(saleId: string, enabled = true) {
 export function useCreateSale() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateSaleDto) =>
@@ -65,8 +67,8 @@ export function useCreateSale() {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -74,6 +76,7 @@ export function useCreateSale() {
 export function useUpdateSale() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateSaleDto }) =>
@@ -83,8 +86,8 @@ export function useUpdateSale() {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -92,6 +95,7 @@ export function useUpdateSale() {
 export function useConfirmSale() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().saleRepository.confirm(id),
@@ -100,8 +104,8 @@ export function useConfirmSale() {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
       toast.success(t("messages.confirmed"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -109,6 +113,7 @@ export function useConfirmSale() {
 export function useCancelSale() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().saleRepository.cancel(id),
@@ -117,8 +122,8 @@ export function useCancelSale() {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
       toast.success(t("messages.cancelled"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -126,6 +131,7 @@ export function useCancelSale() {
 export function useStartPicking() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().saleRepository.startPicking(id),
@@ -134,8 +140,8 @@ export function useStartPicking() {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
       toast.success(t("messages.pickingStarted"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -143,6 +149,7 @@ export function useStartPicking() {
 export function useShipSale() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: ShipSaleDto }) =>
@@ -152,8 +159,8 @@ export function useShipSale() {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
       toast.success(t("messages.shipped"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -161,6 +168,7 @@ export function useShipSale() {
 export function useCompleteSale() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().saleRepository.complete(id),
@@ -169,8 +177,8 @@ export function useCompleteSale() {
       queryClient.invalidateQueries({ queryKey: saleKeys.detail(id) });
       toast.success(t("messages.completed"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -178,6 +186,7 @@ export function useCompleteSale() {
 export function useAddSaleLine() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({
@@ -192,8 +201,8 @@ export function useAddSaleLine() {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       toast.success(t("messages.lineAdded"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -201,6 +210,7 @@ export function useAddSaleLine() {
 export function useRemoveSaleLine() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ saleId, lineId }: { saleId: string; lineId: string }) =>
@@ -210,8 +220,8 @@ export function useRemoveSaleLine() {
       queryClient.invalidateQueries({ queryKey: saleKeys.lists() });
       toast.success(t("messages.lineRemoved"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -219,6 +229,7 @@ export function useRemoveSaleLine() {
 export function useSwapSaleLine() {
   const queryClient = useQueryClient();
   const t = useTranslations("sales");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ saleId, data }: { saleId: string; data: SwapSaleLineDto }) =>
@@ -229,8 +240,8 @@ export function useSwapSaleLine() {
       queryClient.invalidateQueries({ queryKey: saleKeys.swaps(saleId) });
       toast.success(t("messages.lineSwapped"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

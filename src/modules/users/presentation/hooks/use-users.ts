@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   UserFilters,
   CreateUserDto,
@@ -38,6 +39,7 @@ export function useUser(id: string) {
 export function useCreateUser() {
   const queryClient = useQueryClient();
   const t = useTranslations("users");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateUserDto) =>
@@ -46,8 +48,8 @@ export function useCreateUser() {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -55,6 +57,7 @@ export function useCreateUser() {
 export function useUpdateUser() {
   const queryClient = useQueryClient();
   const t = useTranslations("users");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateUserDto }) =>
@@ -64,8 +67,8 @@ export function useUpdateUser() {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -73,6 +76,7 @@ export function useUpdateUser() {
 export function useChangeUserStatus() {
   const queryClient = useQueryClient();
   const t = useTranslations("users");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: ChangeUserStatusDto }) =>
@@ -82,8 +86,8 @@ export function useChangeUserStatus() {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
       toast.success(t("messages.statusChanged"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -91,6 +95,7 @@ export function useChangeUserStatus() {
 export function useAssignRole() {
   const queryClient = useQueryClient();
   const t = useTranslations("users");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ userId, data }: { userId: string; data: AssignRoleDto }) =>
@@ -102,8 +107,8 @@ export function useAssignRole() {
       ]);
       toast.success(t("roles.assignSuccess"));
     },
-    onError: () => {
-      toast.error(t("roles.assignError"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -111,6 +116,7 @@ export function useAssignRole() {
 export function useRemoveRole() {
   const queryClient = useQueryClient();
   const t = useTranslations("users");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ userId, roleId }: { userId: string; roleId: string }) =>
@@ -122,8 +128,8 @@ export function useRemoveRole() {
       ]);
       toast.success(t("roles.removeSuccess"));
     },
-    onError: () => {
-      toast.error(t("roles.removeError"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

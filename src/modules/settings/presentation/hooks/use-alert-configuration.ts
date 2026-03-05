@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type { UpdateAlertConfigurationDto } from "../../application/dto";
 
 const settingsRepository = getContainer().settingsRepository;
@@ -24,6 +25,7 @@ export function useAlertConfiguration() {
 export function useUpdateAlertConfiguration() {
   const queryClient = useQueryClient();
   const t = useTranslations("settings.alerts");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: UpdateAlertConfigurationDto) =>
@@ -32,8 +34,8 @@ export function useUpdateAlertConfiguration() {
       queryClient.invalidateQueries({ queryKey: alertKeys.all });
       toast.success(t("saved"));
     },
-    onError: () => {
-      toast.error(t("errorSaving"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

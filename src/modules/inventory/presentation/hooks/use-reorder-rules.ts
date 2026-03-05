@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { reorderRuleApiAdapter } from "@/modules/inventory/infrastructure/adapters/reorder-rule-api.adapter";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import { stockKeys } from "./use-stock";
 import type {
   CreateReorderRuleDto,
@@ -26,6 +27,7 @@ export function useReorderRules() {
 export function useCreateReorderRule() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.stock.reorderRule");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (dto: CreateReorderRuleDto) =>
@@ -35,8 +37,8 @@ export function useCreateReorderRule() {
       queryClient.invalidateQueries({ queryKey: stockKeys.all });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -44,6 +46,7 @@ export function useCreateReorderRule() {
 export function useUpdateReorderRule() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.stock.reorderRule");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, dto }: { id: string; dto: UpdateReorderRuleDto }) =>
@@ -53,8 +56,8 @@ export function useUpdateReorderRule() {
       queryClient.invalidateQueries({ queryKey: stockKeys.all });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -62,6 +65,7 @@ export function useUpdateReorderRule() {
 export function useDeleteReorderRule() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.stock.reorderRule");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => reorderRuleApiAdapter.delete(id),
@@ -70,8 +74,8 @@ export function useDeleteReorderRule() {
       queryClient.invalidateQueries({ queryKey: stockKeys.all });
       toast.success(t("messages.deleted"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

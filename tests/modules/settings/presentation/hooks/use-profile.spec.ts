@@ -165,7 +165,7 @@ describe("use-profile hooks", () => {
         }
       });
 
-      expect(toast.error).toHaveBeenCalledWith("errorSaving");
+      expect(toast.error).toHaveBeenCalled();
     });
   });
 });

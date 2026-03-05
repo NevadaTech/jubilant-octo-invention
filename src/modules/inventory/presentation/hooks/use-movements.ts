@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   StockMovementFilters,
   CreateStockMovementDto,
@@ -42,6 +43,7 @@ export function useMovement(id: string) {
 export function useCreateMovement() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.movements");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateStockMovementDto) =>
@@ -50,8 +52,8 @@ export function useCreateMovement() {
       queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -59,6 +61,7 @@ export function useCreateMovement() {
 export function useUpdateMovement() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.movements");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateStockMovementDto }) =>
@@ -68,8 +71,8 @@ export function useUpdateMovement() {
       queryClient.invalidateQueries({ queryKey: movementKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -77,6 +80,7 @@ export function useUpdateMovement() {
 export function useDeleteMovement() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.movements");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().movementRepository.delete(id),
@@ -84,8 +88,8 @@ export function useDeleteMovement() {
       queryClient.invalidateQueries({ queryKey: movementKeys.lists() });
       toast.success(t("messages.deleted"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -93,6 +97,7 @@ export function useDeleteMovement() {
 export function usePostMovement() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.movements");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().movementRepository.post(id),
@@ -103,8 +108,8 @@ export function usePostMovement() {
       queryClient.invalidateQueries({ queryKey: stockKeys.lists() });
       toast.success(t("messages.posted"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -112,6 +117,7 @@ export function usePostMovement() {
 export function useVoidMovement() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.movements");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().movementRepository.void(id),
@@ -122,8 +128,8 @@ export function useVoidMovement() {
       queryClient.invalidateQueries({ queryKey: stockKeys.lists() });
       toast.success(t("messages.voided"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

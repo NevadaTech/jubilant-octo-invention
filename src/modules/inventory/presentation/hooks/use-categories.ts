@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   CategoryFilters,
   CreateCategoryDto,
@@ -41,6 +42,7 @@ export function useCategory(id: string) {
 export function useCreateCategory() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.categories");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateCategoryDto) =>
@@ -49,8 +51,8 @@ export function useCreateCategory() {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -58,6 +60,7 @@ export function useCreateCategory() {
 export function useUpdateCategory() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.categories");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateCategoryDto }) =>
@@ -67,8 +70,8 @@ export function useUpdateCategory() {
       queryClient.invalidateQueries({ queryKey: categoryKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -76,6 +79,7 @@ export function useUpdateCategory() {
 export function useDeleteCategory() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.categories");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().categoryRepository.delete(id),
@@ -83,8 +87,8 @@ export function useDeleteCategory() {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
       toast.success(t("messages.deleted"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

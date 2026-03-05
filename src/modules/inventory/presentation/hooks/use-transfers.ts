@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   TransferFilters,
   CreateTransferDto,
@@ -43,6 +44,7 @@ export function useTransfer(id: string) {
 export function useCreateTransfer() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.transfers");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateTransferDto) =>
@@ -52,8 +54,8 @@ export function useCreateTransfer() {
       queryClient.invalidateQueries({ queryKey: stockKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -61,6 +63,7 @@ export function useCreateTransfer() {
 export function useUpdateTransferStatus() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.transfers");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: TransferStatus }) =>
@@ -71,8 +74,8 @@ export function useUpdateTransferStatus() {
       queryClient.invalidateQueries({ queryKey: stockKeys.lists() });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -80,6 +83,7 @@ export function useUpdateTransferStatus() {
 export function useReceiveTransfer() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.transfers");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: ReceiveTransferDto }) =>
@@ -90,8 +94,8 @@ export function useReceiveTransfer() {
       queryClient.invalidateQueries({ queryKey: stockKeys.lists() });
       toast.success(t("messages.received"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

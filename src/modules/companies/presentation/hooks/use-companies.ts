@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   CompanyFilters,
   CreateCompanyDto,
@@ -41,6 +42,7 @@ export function useCompany(id: string) {
 export function useCreateCompany() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.companies");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateCompanyDto) =>
@@ -49,8 +51,8 @@ export function useCreateCompany() {
       queryClient.invalidateQueries({ queryKey: companyKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -58,6 +60,7 @@ export function useCreateCompany() {
 export function useUpdateCompany() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.companies");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateCompanyDto }) =>
@@ -67,8 +70,8 @@ export function useUpdateCompany() {
       queryClient.invalidateQueries({ queryKey: companyKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -76,6 +79,7 @@ export function useUpdateCompany() {
 export function useDeleteCompany() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.companies");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (id: string) => getContainer().companyRepository.delete(id),
@@ -83,14 +87,8 @@ export function useDeleteCompany() {
       queryClient.invalidateQueries({ queryKey: companyKeys.lists() });
       toast.success(t("messages.deleted"));
     },
-    onError: (error: unknown) => {
-      const resp =
-        error && typeof error === "object" && "response" in error
-          ? (error as { response?: { data?: { message?: string } } }).response
-          : undefined;
-      const msg =
-        typeof resp?.data?.message === "string" ? resp.data.message : undefined;
-      toast.error(msg || t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

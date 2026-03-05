@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   WarehouseFilters,
   CreateWarehouseDto,
@@ -41,6 +42,7 @@ export function useWarehouse(id: string) {
 export function useCreateWarehouse() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.warehouses");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateWarehouseDto) =>
@@ -49,8 +51,8 @@ export function useCreateWarehouse() {
       queryClient.invalidateQueries({ queryKey: warehouseKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -58,6 +60,7 @@ export function useCreateWarehouse() {
 export function useUpdateWarehouse() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.warehouses");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateWarehouseDto }) =>
@@ -67,8 +70,8 @@ export function useUpdateWarehouse() {
       queryClient.invalidateQueries({ queryKey: warehouseKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -76,6 +79,7 @@ export function useUpdateWarehouse() {
 export function useToggleWarehouseStatus() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.warehouses");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
@@ -85,8 +89,8 @@ export function useToggleWarehouseStatus() {
       queryClient.invalidateQueries({ queryKey: warehouseKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }

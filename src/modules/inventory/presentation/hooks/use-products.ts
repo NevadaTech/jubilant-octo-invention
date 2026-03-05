@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
+import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type {
   ProductFilters,
   CreateProductDto,
@@ -41,6 +42,7 @@ export function useProduct(id: string) {
 export function useCreateProduct() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.products");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: (data: CreateProductDto) =>
@@ -49,8 +51,8 @@ export function useCreateProduct() {
       queryClient.invalidateQueries({ queryKey: productKeys.lists() });
       toast.success(t("messages.created"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -58,6 +60,7 @@ export function useCreateProduct() {
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.products");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateProductDto }) =>
@@ -67,8 +70,8 @@ export function useUpdateProduct() {
       queryClient.invalidateQueries({ queryKey: productKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
@@ -76,6 +79,7 @@ export function useUpdateProduct() {
 export function useToggleProductStatus() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.products");
+  const tErrors = useTranslations("apiErrors");
 
   return useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
@@ -85,8 +89,8 @@ export function useToggleProductStatus() {
       queryClient.invalidateQueries({ queryKey: productKeys.detail(id) });
       toast.success(t("messages.updated"));
     },
-    onError: () => {
-      toast.error(t("toast.error"));
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
     },
   });
 }
