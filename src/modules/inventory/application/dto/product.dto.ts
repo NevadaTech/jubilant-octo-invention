@@ -50,6 +50,8 @@ export interface ProductApiRawDto {
   updatedAt: string;
   statusChangedBy?: string | null;
   statusChangedAt?: string | null;
+  companyId?: string | null;
+  companyName?: string | null;
 }
 
 export interface ProductResponseDto {
@@ -82,6 +84,8 @@ export interface ProductResponseDto {
   lastMovementDate: string | null;
   statusChangedBy?: string | null;
   statusChangedAt?: string | null;
+  companyId?: string | null;
+  companyName?: string | null;
 }
 
 export interface ProductListResponseDto {
@@ -108,6 +112,7 @@ export interface CreateProductApiDto {
   currency?: string;
   status?: string;
   costMethod?: string;
+  companyId?: string;
 }
 
 /** What the backend actually accepts for UPDATE */
@@ -123,6 +128,7 @@ export interface UpdateProductApiDto {
   costMethod?: string;
   price?: number;
   currency?: string;
+  companyId?: string;
 }
 
 /** Legacy DTOs kept for form compatibility */
@@ -137,6 +143,7 @@ export interface CreateProductDto {
   minStock: number;
   maxStock: number;
   imageUrl?: string;
+  companyId?: string;
 }
 
 export interface UpdateProductDto {
@@ -151,11 +158,13 @@ export interface UpdateProductDto {
   maxStock?: number;
   isActive?: boolean;
   imageUrl?: string;
+  companyId?: string;
 }
 
 export interface ProductFilters {
   search?: string;
   categoryIds?: string[];
+  companyId?: string;
   statuses?: string[];
   sortBy?: "name" | "sku" | "price" | "status" | "createdAt" | "updatedAt";
   sortOrder?: "asc" | "desc";

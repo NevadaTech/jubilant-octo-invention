@@ -9,6 +9,7 @@ import { useLogout } from "@/modules/authentication/presentation/hooks/use-logou
 import { LocaleSwitcher } from "./locale-switcher";
 import { Button } from "@/ui/components/button";
 import { UserAvatar } from "@/ui/components/user-avatar";
+import { GlobalCompanySelector } from "@/modules/companies/presentation/components";
 import { cn } from "@/ui/lib/utils";
 
 interface DashboardHeaderProps {
@@ -52,6 +53,8 @@ export function DashboardHeader({ className }: DashboardHeaderProps) {
         </Button>
 
         <LocaleSwitcher />
+
+        <GlobalCompanySelector />
 
         {user && (
           <div className="flex items-center gap-3">

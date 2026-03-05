@@ -107,6 +107,7 @@ export class ReturnApiAdapter implements ReturnRepositoryPort {
 
     if (filters.warehouseIds?.length)
       params.warehouseId = filters.warehouseIds.join(",");
+    if (filters.companyId) params.companyId = filters.companyId;
     if (filters.status?.length) params.status = filters.status.join(",");
     if (filters.types?.length) params.type = filters.types.join(",");
     if (filters.startDate) params.startDate = filters.startDate;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import {
   Plus,
@@ -46,6 +46,7 @@ import { ReturnTypeBadge } from "./return-type-badge";
 import { ReturnFiltersComponent } from "./return-filters";
 import type { ReturnFilters } from "@/modules/returns/application/dto/return.dto";
 import type { Return } from "@/modules/returns/domain/entities/return.entity";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 export function ReturnList() {
   const t = useTranslations("returns");
@@ -57,7 +58,15 @@ export function ReturnList() {
   const [confirmDialog, setConfirmDialog] = useState<Return | null>(null);
   const [cancelDialog, setCancelDialog] = useState<Return | null>(null);
 
-  const { data, isLoading, isError } = useReturns(filters);
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
+  const filtersWithCompany = useMemo(
+    () =>
+      selectedCompanyId
+        ? { ...filters, companyId: selectedCompanyId }
+        : filters,
+    [filters, selectedCompanyId],
+  );
+  const { data, isLoading, isError } = useReturns(filtersWithCompany);
   const confirmReturn = useConfirmReturn();
   const cancelReturn = useCancelReturn();
   const { hasPermission } = usePermissions();

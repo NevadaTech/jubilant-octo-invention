@@ -8,14 +8,14 @@ import { useAuthStore } from "@/modules/authentication/presentation/store/auth.s
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 const REFETCH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-export function useDashboardMetrics() {
+export function useDashboardMetrics(companyId?: string | null) {
   const isHydrated = useAuthStore((s) => s.isHydrated);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const canFetch = isHydrated && isAuthenticated;
 
   const query = useQuery<DashboardMetricsDto, Error>({
-    queryKey: ["dashboard", "metrics"],
-    queryFn: () => dashboardApiService.getMetrics(),
+    queryKey: ["dashboard", "metrics", companyId ?? "all"],
+    queryFn: () => dashboardApiService.getMetrics(companyId),
     enabled: canFetch,
     staleTime: STALE_TIME,
     refetchInterval: canFetch ? REFETCH_INTERVAL : false,

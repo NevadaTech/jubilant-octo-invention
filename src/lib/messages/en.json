@@ -165,7 +165,8 @@
         "price": "Price",
         "minStock": "Minimum Stock",
         "maxStock": "Maximum Stock",
-        "status": "Status"
+        "status": "Status",
+        "company": "Company"
       },
       "status": {
         "active": "Active",
@@ -732,6 +733,72 @@
       "receive": {
         "title": "Confirm Receipt",
         "description": "Enter the actual quantities received per product."
+      }
+    },
+    "companies": {
+      "title": "Companies",
+      "description": "Manage your business lines and companies",
+      "list": {
+        "title": "Companies"
+      },
+      "filters": {
+        "search": "Search companies..."
+      },
+      "fields": {
+        "name": "Name",
+        "code": "Code",
+        "description": "Description",
+        "status": "Status",
+        "products": "Products"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "new": "New Company",
+        "edit": "Edit",
+        "delete": "Delete",
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "search": {
+        "placeholder": "Search companies..."
+      },
+      "pagination": {
+        "showing": "Showing {from} to {to} of {total} companies"
+      },
+      "empty": {
+        "title": "No companies yet",
+        "description": "Get started by adding your first company."
+      },
+      "error": {
+        "loading": "Failed to load companies"
+      },
+      "form": {
+        "createTitle": "Create Company",
+        "editTitle": "Edit Company",
+        "namePlaceholder": "Enter company name",
+        "codePlaceholder": "Enter company code (e.g., GYM)",
+        "descriptionPlaceholder": "Enter company description (optional)"
+      },
+      "delete": {
+        "title": "Delete Company",
+        "description": "Are you sure you want to delete this company? This action cannot be undone."
+      },
+      "selector": {
+        "label": "Select company",
+        "placeholder": "Select a company",
+        "all": "All Companies",
+        "loading": "Loading..."
+      },
+      "messages": {
+        "created": "Company created successfully",
+        "updated": "Company updated successfully",
+        "deleted": "Company deleted successfully"
+      },
+      "toast": {
+        "error": "An error occurred. Please try again."
       }
     },
     "common": {
@@ -1327,7 +1394,9 @@
       "movementType": "Movement Type",
       "allMovementTypes": "All Types",
       "includeInactive": "Include Inactive Products",
-      "deadStockDays": "Days Without Sale"
+      "deadStockDays": "Days Without Sale",
+      "company": "Company",
+      "allCompanies": "All Companies"
     },
     "period": {
       "MONTHLY": "Monthly",
@@ -1543,6 +1612,7 @@
     "movements": "Movements",
     "transfers": "Transfers",
     "stock": "Stock",
+    "companies": "Companies",
     "sales": "Sales",
     "returns": "Returns",
     "reports": "Reports",
@@ -1675,7 +1745,8 @@
     "description": "Manage your profile and system configuration",
     "tabs": {
       "account": "Account",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "organization": "Organization"
     },
     "profile": {
       "title": "Profile",
@@ -1727,6 +1798,12 @@
       "saved": "Alert settings updated successfully",
       "errorSaving": "Failed to update alert settings",
       "lastRun": "Last run"
+    },
+    "multiCompany": {
+      "title": "Multi-Company / Business Lines",
+      "description": "Enable this feature to manage multiple companies or business lines within your organization. Each product can be assigned to a company, and you can filter inventory, sales, and reports by company.",
+      "enabled": "Multi-company is enabled",
+      "disabled": "Multi-company is disabled"
     }
   }
 }

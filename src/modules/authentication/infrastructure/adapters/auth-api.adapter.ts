@@ -145,6 +145,14 @@ export class AuthApiAdapter implements AuthRepositoryPort {
       expiresAt: data.accessTokenExpiresAt,
     });
 
+    // Update stored user with latest data (including orgSettings)
+    if (data.user) {
+      const currentUser = TokenService.getUser();
+      if (currentUser) {
+        TokenService.setUser({ ...currentUser, ...data.user });
+      }
+    }
+
     return Tokens.create(data.accessToken, data.refreshToken, expiresAt);
   }
 

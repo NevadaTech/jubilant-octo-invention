@@ -71,6 +71,12 @@ export const PERMISSIONS = {
   AUDIT_READ: "AUDIT:READ",
   AUDIT_EXPORT: "AUDIT:EXPORT",
 
+  // Companies (Business Lines)
+  COMPANIES_CREATE: "COMPANIES:CREATE",
+  COMPANIES_READ: "COMPANIES:READ",
+  COMPANIES_UPDATE: "COMPANIES:UPDATE",
+  COMPANIES_DELETE: "COMPANIES:DELETE",
+
   // Settings
   SETTINGS_MANAGE: "SETTINGS:MANAGE",
 } as const;
@@ -93,5 +99,6 @@ export const ROUTE_PERMISSIONS: Record<string, Permission[]> = {
   "/dashboard/users": [PERMISSIONS.USERS_READ],
   "/dashboard/roles": [PERMISSIONS.ROLES_READ],
   "/dashboard/audit": [PERMISSIONS.AUDIT_READ],
+  "/dashboard/inventory/companies": [PERMISSIONS.COMPANIES_READ],
   "/dashboard/settings": [], // Always accessible
 };

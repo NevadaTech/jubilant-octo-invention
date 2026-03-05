@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import { useTranslations } from "next-intl";
 import {
   Package,
@@ -227,7 +228,15 @@ export function StockTable() {
   const tCommon = useTranslations("common");
   const filters = useStockFilters();
   const setFilters = useSetStockFilters();
-  const { data, isLoading, isError, error } = useStock(filters);
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
+  const filtersWithCompany = useMemo(
+    () =>
+      selectedCompanyId
+        ? { ...filters, companyId: selectedCompanyId }
+        : filters,
+    [filters, selectedCompanyId],
+  );
+  const { data, isLoading, isError, error } = useStock(filtersWithCompany);
 
   const [ruleDialogOpen, setRuleDialogOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);

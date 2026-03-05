@@ -32,6 +32,10 @@ export interface LoginResponseDto {
       mustChangePassword?: boolean;
       roles: string[];
       permissions: string[];
+      orgSettings?: {
+        multiCompanyEnabled?: boolean;
+        [key: string]: unknown;
+      };
     };
     accessToken: string;
     refreshToken: string;

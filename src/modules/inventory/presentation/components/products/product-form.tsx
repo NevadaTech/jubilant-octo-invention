@@ -11,6 +11,8 @@ import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { CategoryMultiSelector } from "@/modules/inventory/presentation/components/categories/category-multi-selector";
+import { CompanySelector } from "@/modules/companies/presentation/components/company-selector";
+import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 import {
   createProductSchema,
   toCreateProductDto,
@@ -27,6 +29,7 @@ import { useProductFormState } from "@/modules/inventory/presentation/hooks/use-
 export function ProductForm() {
   const t = useTranslations("inventory.products");
   const tCommon = useTranslations("common");
+  const { multiCompanyEnabled } = useOrgSettings();
   const { isOpen, editingId, close } = useProductFormState();
   const { data: existingProduct, isLoading: isLoadingProduct } = useProduct(
     editingId || "",
@@ -54,6 +57,7 @@ export function ProductForm() {
       categoryIds: [],
       unitOfMeasure: "unit",
       price: 0,
+      companyId: undefined,
     },
   });
 
@@ -69,6 +73,7 @@ export function ProductForm() {
         categoryIds: existingProduct.categories.map((c) => c.id),
         unitOfMeasure: existingProduct.unitOfMeasure,
         price: existingProduct.price,
+        companyId: existingProduct.companyId || undefined,
       });
     } else if (!isEditing) {
       reset({
@@ -78,6 +83,7 @@ export function ProductForm() {
         categoryIds: [],
         unitOfMeasure: "unit",
         price: 0,
+        companyId: undefined,
       });
     }
   }, [isEditing, existingProduct, reset]);
@@ -170,6 +176,17 @@ export function ProductForm() {
                   onChange={(ids) => setValue("categoryIds", ids)}
                 />
               </FormField>
+
+              {multiCompanyEnabled && (
+                <FormField>
+                  <Label>{t("fields.company")}</Label>
+                  <CompanySelector
+                    value={watch("companyId")}
+                    onChange={(v) => setValue("companyId", v)}
+                    allowClear
+                  />
+                </FormField>
+              )}
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <FormField error={errors.unitOfMeasure?.message}>

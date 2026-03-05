@@ -111,6 +111,7 @@ export interface UpdateReturnDto {
 
 export interface ReturnFilters {
   warehouseIds?: string[];
+  companyId?: string;
   status?: ReturnStatus[];
   types?: ReturnType[];
   startDate?: string;

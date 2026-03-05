@@ -1,4 +1,4 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { Card, CardContent } from "@/ui/components/card";
 import { ForgotPasswordForm } from "@/modules/authentication/presentation/components/forgot-password-form";
 

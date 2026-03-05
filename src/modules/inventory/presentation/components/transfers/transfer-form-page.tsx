@@ -26,15 +26,18 @@ import {
 import { useCreateTransfer } from "@/modules/inventory/presentation/hooks/use-transfers";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 export function TransferFormPage() {
   const t = useTranslations("inventory.transfers");
   const tCommon = useTranslations("common");
   const router = useRouter();
   const createTransfer = useCreateTransfer();
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
   const { data: productsData } = useProducts({
     limit: 100,
     statuses: ["ACTIVE"],
+    ...(selectedCompanyId && { companyId: selectedCompanyId }),
   });
   const { data: warehousesData } = useWarehouses({
     limit: 100,

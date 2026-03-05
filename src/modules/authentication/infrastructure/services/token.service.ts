@@ -26,6 +26,10 @@ export interface StoredUser {
   mustChangePassword?: boolean;
   roles: string[];
   permissions: string[];
+  orgSettings?: {
+    multiCompanyEnabled?: boolean;
+    [key: string]: unknown;
+  };
 }
 
 function isClient(): boolean {

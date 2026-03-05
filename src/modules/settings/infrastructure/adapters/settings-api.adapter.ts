@@ -47,4 +47,14 @@ export class SettingsApiAdapter implements SettingsRepositoryPort {
     );
     return response.data;
   }
+
+  async toggleMultiCompany(enabled: boolean): Promise<void> {
+    const orgId = (
+      await import("@/modules/authentication/infrastructure/services/token.service")
+    ).TokenService.getOrganizationId();
+    if (!orgId) throw new Error("Organization ID not found");
+    await apiClient.patch(`/organizations/${orgId}/settings/multi-company`, {
+      enabled,
+    });
+  }
 }

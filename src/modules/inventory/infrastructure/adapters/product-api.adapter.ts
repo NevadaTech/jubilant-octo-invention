@@ -59,6 +59,8 @@ function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
     lastMovementDate: raw.lastMovementDate ?? null,
     statusChangedBy: raw.statusChangedBy ?? null,
     statusChangedAt: raw.statusChangedAt ?? null,
+    companyId: raw.companyId ?? null,
+    companyName: raw.companyName ?? null,
   };
 }
 
@@ -75,6 +77,7 @@ function toCreateApiDto(data: CreateProductDto): CreateProductApiDto {
     description: data.description || undefined,
     categoryIds: data.categoryIds,
     price: data.price || undefined,
+    companyId: data.companyId || undefined,
   };
 }
 
@@ -97,6 +100,7 @@ function toUpdateApiDto(data: UpdateProductDto): UpdateProductApiDto {
   if (data.isActive !== undefined) {
     dto.status = data.isActive ? "ACTIVE" : "INACTIVE";
   }
+  if (data.companyId !== undefined) dto.companyId = data.companyId || undefined;
 
   return dto;
 }
@@ -166,6 +170,9 @@ export class ProductApiAdapter implements ProductRepositoryPort {
     }
     if (filters.categoryIds?.length) {
       params.categoryIds = filters.categoryIds.join(",");
+    }
+    if (filters.companyId) {
+      params.companyId = filters.companyId;
     }
     if (filters.statuses?.length === 1) {
       params.status = filters.statuses[0];

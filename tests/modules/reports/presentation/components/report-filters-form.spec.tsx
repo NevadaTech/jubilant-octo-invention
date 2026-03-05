@@ -16,6 +16,18 @@ vi.mock("@/modules/inventory/presentation/hooks/use-categories", () => ({
   }),
 }));
 
+vi.mock("@/modules/companies/presentation/hooks/use-companies", () => ({
+  useCompanies: () => ({ data: { data: [] } }),
+}));
+
+vi.mock("@/modules/companies/infrastructure/store/company.store", () => ({
+  useCompanyStore: () => null,
+}));
+
+vi.mock("@/shared/presentation/hooks/use-org-settings", () => ({
+  useOrgSettings: () => ({ multiCompanyEnabled: false }),
+}));
+
 describe("ReportFiltersForm", () => {
   const mockOnGenerate = vi.fn();
 

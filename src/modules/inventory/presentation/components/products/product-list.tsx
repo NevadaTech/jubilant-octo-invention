@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Package, Plus, Edit, Eye } from "lucide-react";
@@ -17,6 +17,7 @@ import {
 import { ProductFilters } from "./product-filters";
 import type { Product } from "@/modules/inventory/domain/entities/product.entity";
 import type { ProductFilters as ProductFiltersType } from "@/modules/inventory/application/dto/product.dto";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 function formatCurrency(amount: number | null | undefined): string {
   if (amount == null || amount === 0) return "N/A";
@@ -132,7 +133,15 @@ export function ProductList() {
   const tCommon = useTranslations("common");
   const filters = useProductFilters();
   const setFilters = useSetProductFilters();
-  const { data, isLoading, isError, error } = useProducts(filters);
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
+  const filtersWithCompany = useMemo(
+    () =>
+      selectedCompanyId
+        ? { ...filters, companyId: selectedCompanyId }
+        : filters,
+    [filters, selectedCompanyId],
+  );
+  const { data, isLoading, isError, error } = useProducts(filtersWithCompany);
 
   const handleFiltersChange = useCallback(
     (newFilters: ProductFiltersType) => {

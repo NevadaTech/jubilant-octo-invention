@@ -25,6 +25,8 @@ import {
   useProduct,
 } from "@/modules/inventory/presentation/hooks/use-products";
 import { CategoryMultiSelector } from "@/modules/inventory/presentation/components/categories/category-multi-selector";
+import { CompanySelector } from "@/modules/companies/presentation/components/company-selector";
+import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 
 interface ProductFormPageProps {
   productId?: string;
@@ -34,6 +36,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
   const t = useTranslations("inventory.products");
   const tCommon = useTranslations("common");
   const router = useRouter();
+  const { multiCompanyEnabled } = useOrgSettings();
   const isEditing = Boolean(productId);
 
   const { data: existingProduct, isLoading: isLoadingProduct } = useProduct(
@@ -61,6 +64,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
       unitOfMeasure: "unit",
       price: 0,
       categoryIds: [],
+      companyId: undefined,
     },
   });
 
@@ -76,6 +80,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
         unitOfMeasure: existingProduct.unitOfMeasure,
         price: existingProduct.price,
         categoryIds: existingProduct.categories.map((c) => c.id),
+        companyId: existingProduct.companyId || undefined,
       });
     }
   }, [isEditing, existingProduct, reset]);
@@ -184,6 +189,17 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
                 onChange={(ids) => setValue("categoryIds", ids)}
               />
             </FormField>
+
+            {multiCompanyEnabled && (
+              <FormField>
+                <Label>{t("fields.company")}</Label>
+                <CompanySelector
+                  value={watch("companyId")}
+                  onChange={(v) => setValue("companyId", v)}
+                  allowClear
+                />
+              </FormField>
+            )}
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField error={errors.unitOfMeasure?.message}>

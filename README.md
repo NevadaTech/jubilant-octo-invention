@@ -91,12 +91,19 @@ Frontend del **Nevada Inventory System**, un sistema de gestion de inventarios m
 - Distribucion de stock por bodega con PieChart
 - Feed de actividad reciente
 
+### Multi-Company
+
+- Gestion de empresas/lineas de negocio por organizacion
+- Selector global en header (filtra productos, stock, ventas, devoluciones, movimientos, reportes, dashboard)
+- Toggle de habilitacion en configuracion (admin-only)
+- Product swap entre empresas (ADJUST_IN/ADJUST_OUT)
+
 ### Administracion
 
 - **Usuarios**: CRUD con estados (ACTIVE/INACTIVE/LOCKED)
-- **Roles**: Sistema y personalizados, gestion de permisos
-- **Audit Log**: Historial de actividad con filtros y exportacion Excel
-- **Configuracion**: Perfil de usuario y alertas de stock
+- **Roles**: Sistema y personalizados, gestion de permisos (80+ permisos granulares)
+- **Audit Log**: Historial de actividad con filtros avanzados y exportacion Excel
+- **Configuracion**: Perfil de usuario y alertas de stock configurables
 
 ---
 
@@ -184,7 +191,7 @@ src/
 │   └── [locale]/
 │       ├── (auth)/login/         # Pagina de login
 │       └── (dashboard)/dashboard/
-│           ├── inventory/        # Productos, Categorias, Bodegas, Stock, Movimientos, Transferencias
+│           ├── inventory/        # Productos, Categorias, Bodegas, Stock, Movimientos, Transferencias, Empresas
 │           ├── sales/            # Ventas CRUD + workflow
 │           ├── returns/          # Devoluciones CRUD + workflow
 │           ├── reports/          # Catalogo + visor de reportes
@@ -203,6 +210,7 @@ src/
 │   ├── users/                    # Administracion de usuarios
 │   ├── roles/                    # Roles y permisos
 │   ├── audit/                    # Auditoria
+│   ├── companies/                # Empresas (multi-company)
 │   └── settings/                 # Perfil y alertas
 │
 ├── shared/                       # Codigo compartido
@@ -248,18 +256,19 @@ modules/{nombre}/
 
 ## Modulos
 
-| Modulo             | Descripcion                                                        | Ruta                     |
-| ------------------ | ------------------------------------------------------------------ | ------------------------ |
-| **Authentication** | Login, tokens, sesion, permisos                                    | `/login`                 |
-| **Dashboard**      | Metricas, graficos, actividad reciente                             | `/dashboard`             |
-| **Inventory**      | Productos, categorias, bodegas, stock, movimientos, transferencias | `/dashboard/inventory/*` |
-| **Sales**          | Ventas con workflow completo (5 estados)                           | `/dashboard/sales/*`     |
-| **Returns**        | Devoluciones de clientes y a proveedores                           | `/dashboard/returns/*`   |
-| **Reports**        | 17 tipos de reportes con filtros y exportacion                     | `/dashboard/reports/*`   |
-| **Users**          | CRUD de usuarios con gestion de estados                            | `/dashboard/users/*`     |
-| **Roles**          | Roles del sistema y personalizados, permisos                       | `/dashboard/roles/*`     |
-| **Audit**          | Log de auditoria con filtros y exportacion                         | `/dashboard/audit`       |
-| **Settings**       | Perfil de usuario y configuracion de alertas                       | `/dashboard/settings`    |
+| Modulo             | Descripcion                                                        | Ruta                             |
+| ------------------ | ------------------------------------------------------------------ | -------------------------------- |
+| **Authentication** | Login, tokens, sesion, permisos                                    | `/login`                         |
+| **Dashboard**      | Metricas, graficos, actividad reciente                             | `/dashboard`                     |
+| **Inventory**      | Productos, categorias, bodegas, stock, movimientos, transferencias | `/dashboard/inventory/*`         |
+| **Sales**          | Ventas con workflow completo (5 estados)                           | `/dashboard/sales/*`             |
+| **Returns**        | Devoluciones de clientes y a proveedores                           | `/dashboard/returns/*`           |
+| **Reports**        | 17 tipos de reportes con filtros y exportacion                     | `/dashboard/reports/*`           |
+| **Users**          | CRUD de usuarios con gestion de estados                            | `/dashboard/users/*`             |
+| **Roles**          | Roles del sistema y personalizados, permisos                       | `/dashboard/roles/*`             |
+| **Audit**          | Log de auditoria con filtros y exportacion                         | `/dashboard/audit`               |
+| **Companies**      | Empresas/lineas de negocio (multi-company)                         | `/dashboard/inventory/companies` |
+| **Settings**       | Perfil de usuario y configuracion de alertas                       | `/dashboard/settings`            |
 
 > Para documentacion detallada de cada modulo, ver [docs/modules.md](docs/modules.md)
 
@@ -282,7 +291,7 @@ npm run type-check       # TypeScript check
 npm run quality          # type-check + lint + format:check
 
 # Testing
-npm run test             # Vitest (unit tests)
+npm run test             # Vitest (unit tests) — 208 suites, 1,799 tests
 npm run test:run         # Vitest single run
 npm run test:coverage    # Vitest con cobertura
 npm run test:e2e         # Playwright E2E
@@ -324,7 +333,7 @@ SENTRY_AUTH_TOKEN=
 | Documento                                        | Descripcion                                         |
 | ------------------------------------------------ | --------------------------------------------------- |
 | [Arquitectura](docs/architecture.md)             | Clean/Hexagonal Architecture, estado, auth flow, DI |
-| [Modulos](docs/modules.md)                       | Guia detallada de los 10 modulos de negocio         |
+| [Modulos](docs/modules.md)                       | Guia detallada de los 11 modulos de negocio         |
 | [Plan de Trabajo](docs/front-end_work-plan.md)   | Roadmap original del frontend                       |
 | [Coleccion Postman](docs/postman/)               | Documentacion de API y colecciones                  |
 | [Estructura de Tests](docs/testing-structure.md) | Convencion de testing                               |

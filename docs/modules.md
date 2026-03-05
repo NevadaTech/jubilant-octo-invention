@@ -1,6 +1,6 @@
 # Guia de Modulos
 
-Documentacion detallada de los 10 modulos de negocio del frontend.
+Documentacion detallada de los 11 modulos de negocio del frontend.
 
 ---
 
@@ -15,6 +15,7 @@ Documentacion detallada de los 10 modulos de negocio del frontend.
 - [Users](#users)
 - [Roles](#roles)
 - [Audit](#audit)
+- [Companies](#companies)
 - [Settings](#settings)
 
 ---
@@ -524,6 +525,84 @@ Visualizar el historial de actividad del sistema con filtros avanzados y exporta
 ### Exportacion
 
 Excel export via SheetJS, trae hasta 10,000 registros del backend.
+
+---
+
+## Companies
+
+**Ruta**: `src/modules/companies/`
+**Pagina**: `/dashboard/inventory/companies`
+
+### Proposito
+
+Gestion de empresas/lineas de negocio dentro de una organizacion (multi-company). Permite segmentar productos, ventas, stock, movimientos, devoluciones, reportes y dashboard por empresa.
+
+### Habilitacion
+
+Feature gated por `Organization.settings.multiCompanyEnabled`. Se activa desde la pagina de Settings (admin-only) con un toggle que llama a `PATCH /organizations/:id/settings/multi-company`.
+
+### Estructura
+
+```
+companies/
+├── domain/
+│   ├── entities/
+│   │   └── company.entity.ts          # Company con id, name, code, description, isActive
+│   └── ports/
+│       └── company-repository.port.ts  # CRUD + list
+├── application/
+│   ├── dto/                           # CompanyDto, CompanyFilters
+│   └── mappers/                       # CompanyMapper
+├── infrastructure/
+│   ├── adapters/
+│   │   └── company-api.adapter.ts     # /inventory/companies endpoints
+│   └── store/
+│       └── company.store.ts           # Zustand: selectedCompanyId (persisted to localStorage)
+└── presentation/
+    ├── hooks/
+    │   └── use-companies.ts           # useCompanies(), useCreateCompany(), etc.
+    ├── schemas/
+    │   └── company.schema.ts          # Zod validation
+    └── components/
+        ├── company-list.tsx           # CRUD list with search, pagination, dialog form
+        ├── company-form.tsx           # Create/edit form dialog
+        ├── company-selector.tsx       # Select for forms (e.g., product form)
+        └── global-company-selector.tsx # Header selector, filters all modules
+```
+
+### Global Selector
+
+En el DashboardHeader, aparece un selector (Building2 icon) cuando `multiCompanyEnabled` es true. Usa Zustand store para persistir `selectedCompanyId` en localStorage. Todos los modulos leen este valor para filtrar datos.
+
+### Filtrado por companyId
+
+| Modulo    | Donde se aplica                                                         |
+| --------- | ----------------------------------------------------------------------- |
+| Products  | ProductFilters, lista, formulario (CompanySelector en form)             |
+| Stock     | StockFilters, tabla                                                     |
+| Movements | StockMovementFilters, lista, formulario                                 |
+| Sales     | SaleFilters, lista, formulario (filtra productos disponibles)           |
+| Returns   | ReturnFilters, lista, formulario                                        |
+| Transfers | Formulario (filtra productos disponibles)                               |
+| Reports   | ReportParameters, todos los filtros de reportes, pre-selecciona empresa |
+| Dashboard | useDashboardMetrics(companyId) — pasa al backend                        |
+
+### API Endpoints
+
+| Metodo | Endpoint                                    | Descripcion          |
+| ------ | ------------------------------------------- | -------------------- |
+| GET    | `/inventory/companies`                      | Listar empresas      |
+| POST   | `/inventory/companies`                      | Crear empresa        |
+| GET    | `/inventory/companies/:id`                  | Detalle de empresa   |
+| PUT    | `/inventory/companies/:id`                  | Actualizar empresa   |
+| DELETE | `/inventory/companies/:id`                  | Eliminar empresa     |
+| PATCH  | `/organizations/:id/settings/multi-company` | Toggle multi-company |
+
+### Notas
+
+- Cuando hay una empresa seleccionada en el selector global, los productos sin `companyId` se ocultan de la lista. El usuario debe seleccionar "Todas las empresas" para ver/editar productos sin asignar.
+- El formulario de producto muestra el CompanySelector solo cuando `multiCompanyEnabled` esta activo.
+- Los permisos son: `COMPANIES:CREATE`, `COMPANIES:READ`, `COMPANIES:UPDATE`, `COMPANIES:DELETE`.
 
 ---
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
@@ -48,6 +48,7 @@ import { MovementFilters } from "./movement-filters";
 import { MovementForm } from "./movement-form";
 import type { StockMovementFilters } from "@/modules/inventory/application/dto/stock-movement.dto";
 import type { StockMovement } from "@/modules/inventory/domain/entities/stock-movement.entity";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 export function MovementList() {
   const t = useTranslations("inventory.movements");
@@ -63,7 +64,15 @@ export function MovementList() {
     null,
   );
 
-  const { data, isLoading, isError } = useMovements(filters);
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
+  const filtersWithCompany = useMemo(
+    () =>
+      selectedCompanyId
+        ? { ...filters, companyId: selectedCompanyId }
+        : filters,
+    [filters, selectedCompanyId],
+  );
+  const { data, isLoading, isError } = useMovements(filtersWithCompany);
   const postMovement = usePostMovement();
   const voidMovement = useVoidMovement();
   const deleteMovement = useDeleteMovement();

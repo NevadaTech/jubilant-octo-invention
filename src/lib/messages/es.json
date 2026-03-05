@@ -165,7 +165,8 @@
         "price": "Precio",
         "minStock": "Stock Mínimo",
         "maxStock": "Stock Máximo",
-        "status": "Estado"
+        "status": "Estado",
+        "company": "Empresa"
       },
       "status": {
         "active": "Activo",
@@ -732,6 +733,72 @@
       "receive": {
         "title": "Confirmar Recepción",
         "description": "Ingresa las cantidades realmente recibidas por producto."
+      }
+    },
+    "companies": {
+      "title": "Empresas",
+      "description": "Gestiona tus líneas de negocio y empresas",
+      "list": {
+        "title": "Empresas"
+      },
+      "filters": {
+        "search": "Buscar empresas..."
+      },
+      "fields": {
+        "name": "Nombre",
+        "code": "Código",
+        "description": "Descripción",
+        "status": "Estado",
+        "products": "Productos"
+      },
+      "status": {
+        "active": "Activa",
+        "inactive": "Inactiva"
+      },
+      "actions": {
+        "new": "Nueva Empresa",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "activate": "Activar",
+        "deactivate": "Desactivar"
+      },
+      "search": {
+        "placeholder": "Buscar empresas..."
+      },
+      "pagination": {
+        "showing": "Mostrando {from} a {to} de {total} empresas"
+      },
+      "empty": {
+        "title": "Sin empresas aún",
+        "description": "Comienza añadiendo tu primera empresa."
+      },
+      "error": {
+        "loading": "Error al cargar empresas"
+      },
+      "form": {
+        "createTitle": "Crear Empresa",
+        "editTitle": "Editar Empresa",
+        "namePlaceholder": "Ingresa el nombre de la empresa",
+        "codePlaceholder": "Ingresa el código (ej: GYM)",
+        "descriptionPlaceholder": "Ingresa la descripción (opcional)"
+      },
+      "delete": {
+        "title": "Eliminar Empresa",
+        "description": "¿Estás seguro de que deseas eliminar esta empresa? Esta acción no se puede deshacer."
+      },
+      "selector": {
+        "label": "Seleccionar empresa",
+        "placeholder": "Selecciona una empresa",
+        "all": "Todas las Empresas",
+        "loading": "Cargando..."
+      },
+      "messages": {
+        "created": "Empresa creada exitosamente",
+        "updated": "Empresa actualizada exitosamente",
+        "deleted": "Empresa eliminada exitosamente"
+      },
+      "toast": {
+        "error": "Ocurrió un error. Inténtalo de nuevo."
       }
     },
     "common": {
@@ -1327,7 +1394,9 @@
       "movementType": "Tipo de Movimiento",
       "allMovementTypes": "Todos los Tipos",
       "includeInactive": "Incluir Productos Inactivos",
-      "deadStockDays": "Días Sin Venta"
+      "deadStockDays": "Días Sin Venta",
+      "company": "Empresa",
+      "allCompanies": "Todas las Empresas"
     },
     "period": {
       "MONTHLY": "Mensual",
@@ -1543,6 +1612,7 @@
     "movements": "Movimientos",
     "transfers": "Transferencias",
     "stock": "Stock",
+    "companies": "Empresas",
     "sales": "Ventas",
     "returns": "Devoluciones",
     "reports": "Reportes",
@@ -1675,7 +1745,8 @@
     "description": "Administra tu perfil y configuración del sistema",
     "tabs": {
       "account": "Cuenta",
-      "notifications": "Notificaciones"
+      "notifications": "Notificaciones",
+      "organization": "Organización"
     },
     "profile": {
       "title": "Perfil",
@@ -1727,6 +1798,12 @@
       "saved": "Configuración de alertas actualizada",
       "errorSaving": "Error al actualizar la configuración de alertas",
       "lastRun": "Última ejecución"
+    },
+    "multiCompany": {
+      "title": "Multi-Empresa / Líneas de Negocio",
+      "description": "Habilita esta funcionalidad para gestionar múltiples empresas o líneas de negocio dentro de tu organización. Cada producto puede asignarse a una empresa, y podrás filtrar inventario, ventas y reportes por empresa.",
+      "enabled": "Multi-empresa está habilitado",
+      "disabled": "Multi-empresa está deshabilitado"
     }
   }
 }

@@ -9,6 +9,7 @@ import { StatCardSkeleton } from "./stat-card-skeleton";
 import { ChartSkeleton } from "./chart-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Button } from "@/ui/components/button";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 const SalesTrendChart = dynamic(
   () => import("./sales-trend-chart").then((m) => m.SalesTrendChart),
@@ -30,7 +31,9 @@ const RecentActivityFeed = dynamic(
 
 export function DashboardContent() {
   const t = useTranslations("dashboard.metrics");
-  const { metrics, isLoading, isError, refetch } = useDashboardMetrics();
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
+  const { metrics, isLoading, isError, refetch } =
+    useDashboardMetrics(selectedCompanyId);
 
   if (isLoading) {
     return (

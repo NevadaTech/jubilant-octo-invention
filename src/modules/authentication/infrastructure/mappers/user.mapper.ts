@@ -19,6 +19,7 @@ export class UserMapper {
       mustChangePassword: dto.mustChangePassword,
       roles: dto.roles,
       permissions: dto.permissions,
+      orgSettings: dto.orgSettings,
     });
   }
 }

@@ -44,6 +44,7 @@ export class ReportApiAdapter implements ReportRepositoryPort {
       params.severity = parameters.severities.join(",");
     if (parameters.deadStockDays)
       params.deadStockDays = parameters.deadStockDays;
+    if (parameters.companyId) params.companyId = parameters.companyId;
 
     return params;
   }

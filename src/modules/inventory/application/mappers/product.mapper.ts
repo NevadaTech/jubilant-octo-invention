@@ -31,6 +31,8 @@ export class ProductMapper {
       lastMovementDate: dto.lastMovementDate ?? null,
       statusChangedBy: dto.statusChangedBy ?? null,
       statusChangedAt: dto.statusChangedAt ?? null,
+      companyId: dto.companyId ?? null,
+      companyName: dto.companyName ?? null,
     });
   }
 
@@ -63,6 +65,8 @@ export class ProductMapper {
       lastMovementDate: entity.lastMovementDate,
       statusChangedBy: entity.statusChangedBy ?? null,
       statusChangedAt: entity.statusChangedAt ?? null,
+      companyId: entity.companyId ?? null,
+      companyName: entity.companyName ?? null,
     };
   }
 }

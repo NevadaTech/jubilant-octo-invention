@@ -89,6 +89,9 @@ export class StockMovementApiAdapter implements StockMovementRepositoryPort {
     if (filters.warehouseIds?.length) {
       params.warehouseId = filters.warehouseIds.join(",");
     }
+    if (filters.companyId) {
+      params.companyId = filters.companyId;
+    }
     if (filters.types?.length) {
       params.type = filters.types.join(",");
     }

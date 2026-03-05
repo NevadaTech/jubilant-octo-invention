@@ -30,6 +30,8 @@ export interface ProductProps {
   lastMovementDate: string | null;
   statusChangedBy?: string | null;
   statusChangedAt?: string | null;
+  companyId?: string | null;
+  companyName?: string | null;
 }
 
 export class Product extends Entity<string> {
@@ -68,6 +70,8 @@ export class Product extends Entity<string> {
       lastMovementDate: props.lastMovementDate,
       statusChangedBy: props.statusChangedBy,
       statusChangedAt: props.statusChangedAt,
+      companyId: props.companyId,
+      companyName: props.companyName,
     });
   }
 
@@ -173,6 +177,14 @@ export class Product extends Entity<string> {
 
   get statusChangedAt(): string | null | undefined {
     return this.props.statusChangedAt;
+  }
+
+  get companyId(): string | null | undefined {
+    return this.props.companyId;
+  }
+
+  get companyName(): string | null | undefined {
+    return this.props.companyName;
   }
 
   isLowStock(currentQuantity: number): boolean {

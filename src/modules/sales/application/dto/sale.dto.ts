@@ -188,6 +188,7 @@ export interface SwapHistoryItem {
 
 export interface SaleFilters {
   warehouseIds?: string[];
+  companyId?: string;
   status?: SaleStatus[];
   startDate?: string;
   endDate?: string;

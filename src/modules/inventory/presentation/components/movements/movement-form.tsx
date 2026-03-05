@@ -26,6 +26,7 @@ import {
 import { useCreateMovement } from "@/modules/inventory/presentation/hooks/use-movements";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 interface MovementFormProps {
   open: boolean;
@@ -36,9 +37,11 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
   const t = useTranslations("inventory.movements");
   const tCommon = useTranslations("common");
   const createMovement = useCreateMovement();
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
   const { data: productsData } = useProducts({
     limit: 100,
     statuses: ["ACTIVE"],
+    ...(selectedCompanyId && { companyId: selectedCompanyId }),
   });
   const { data: warehousesData } = useWarehouses({
     limit: 100,

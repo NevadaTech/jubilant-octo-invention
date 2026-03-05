@@ -30,6 +30,7 @@ import { SearchableSelect } from "@/ui/components/searchable-select";
 import { useCreateReturn } from "@/modules/returns/presentation/hooks/use-returns";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import {
   useSales,
   useSale,
@@ -44,9 +45,11 @@ export function ReturnFormPage() {
   const tCommon = useTranslations("common");
   const router = useRouter();
   const createReturn = useCreateReturn();
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
   const { data: productsData, isLoading: productsLoading } = useProducts({
     limit: 100,
     statuses: ["ACTIVE"],
+    ...(selectedCompanyId && { companyId: selectedCompanyId }),
   });
   const { data: warehousesData, isLoading: warehousesLoading } = useWarehouses({
     limit: 100,

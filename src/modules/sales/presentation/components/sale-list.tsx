@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import {
   Plus,
@@ -45,6 +45,7 @@ import { SaleStatusBadge } from "./sale-status-badge";
 import { SaleFiltersComponent } from "./sale-filters";
 import type { SaleFilters } from "@/modules/sales/application/dto/sale.dto";
 import type { Sale } from "@/modules/sales/domain/entities/sale.entity";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 export function SaleList() {
   const t = useTranslations("sales");
@@ -56,7 +57,15 @@ export function SaleList() {
   const [confirmDialog, setConfirmDialog] = useState<Sale | null>(null);
   const [cancelDialog, setCancelDialog] = useState<Sale | null>(null);
 
-  const { data, isLoading, isError } = useSales(filters);
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
+  const filtersWithCompany = useMemo(
+    () =>
+      selectedCompanyId
+        ? { ...filters, companyId: selectedCompanyId }
+        : filters,
+    [filters, selectedCompanyId],
+  );
+  const { data, isLoading, isError } = useSales(filtersWithCompany);
   const confirmSale = useConfirmSale();
   const cancelSale = useCancelSale();
   const { hasPermission } = usePermissions();

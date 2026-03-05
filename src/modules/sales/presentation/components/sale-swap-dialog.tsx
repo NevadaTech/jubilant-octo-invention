@@ -26,6 +26,7 @@ import { CurrencyInput } from "@/ui/components/currency-input";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useSwapSaleLine } from "@/modules/sales/presentation/hooks/use-sales";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import type { SaleLine } from "@/modules/sales/domain/entities/sale.entity";
 
 interface SaleSwapDialogProps {
@@ -55,9 +56,11 @@ export function SaleSwapDialog({
   const [newSalePrice, setNewSalePrice] = useState<number>(0);
   const [reason, setReason] = useState("");
 
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
   const { data: productsData } = useProducts({
     limit: 100,
     statuses: ["ACTIVE"],
+    ...(selectedCompanyId && { companyId: selectedCompanyId }),
   });
   const { data: warehousesData } = useWarehouses({
     statuses: ["ACTIVE"],

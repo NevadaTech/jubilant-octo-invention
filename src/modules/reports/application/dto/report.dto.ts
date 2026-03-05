@@ -57,6 +57,7 @@ export interface ReportParameters {
   locationId?: string;
   severities?: SeverityValue[];
   deadStockDays?: number;
+  companyId?: string;
 }
 
 export interface ReportColumn {
@@ -126,6 +127,7 @@ export interface ReportTypeConfig {
     movementTypes?: boolean;
     includeInactive?: boolean;
     deadStockDays?: boolean;
+    companyId?: boolean;
   };
 }
 
@@ -166,63 +168,89 @@ export const REPORT_FILTER_CONFIG: Record<
 > = {
   AVAILABLE_INVENTORY: {
     warehouseIds: true,
+    companyId: true,
     includeInactive: true,
   },
   MOVEMENT_HISTORY: {
     dateRange: true,
     warehouseIds: true,
+    companyId: true,
     movementTypes: true,
   },
-  VALUATION: { warehouseIds: true, categoryIds: true },
-  LOW_STOCK: { warehouseIds: true, severities: true },
+  VALUATION: { warehouseIds: true, categoryIds: true, companyId: true },
+  LOW_STOCK: { warehouseIds: true, severities: true, companyId: true },
   MOVEMENTS: {
     dateRange: true,
     warehouseIds: true,
+    companyId: true,
     movementTypes: true,
   },
   FINANCIAL: {
     dateRange: true,
     warehouseIds: true,
+    companyId: true,
     categoryIds: true,
   },
   TURNOVER: {
     dateRange: true,
     warehouseIds: true,
+    companyId: true,
     categoryIds: true,
   },
   SALES: {
     dateRange: true,
     warehouseIds: true,
+    companyId: true,
     status: true,
   },
   SALES_BY_PRODUCT: {
     dateRange: true,
     warehouseIds: true,
+    companyId: true,
     categoryIds: true,
   },
-  SALES_BY_WAREHOUSE: { dateRange: true, warehouseIds: true },
+  SALES_BY_WAREHOUSE: { dateRange: true, warehouseIds: true, companyId: true },
   RETURNS: {
     dateRange: true,
     warehouseIds: true,
+    companyId: true,
     status: true,
     returnTypes: true,
   },
-  RETURNS_BY_TYPE: { dateRange: true, warehouseIds: true, returnTypes: true },
+  RETURNS_BY_TYPE: {
+    dateRange: true,
+    warehouseIds: true,
+    companyId: true,
+    returnTypes: true,
+  },
   RETURNS_BY_PRODUCT: {
     dateRange: true,
     warehouseIds: true,
+    companyId: true,
     categoryIds: true,
     returnTypes: true,
   },
-  RETURNS_CUSTOMER: { dateRange: true, warehouseIds: true, status: true },
-  RETURNS_SUPPLIER: { dateRange: true, warehouseIds: true, status: true },
+  RETURNS_CUSTOMER: {
+    dateRange: true,
+    warehouseIds: true,
+    companyId: true,
+    status: true,
+  },
+  RETURNS_SUPPLIER: {
+    dateRange: true,
+    warehouseIds: true,
+    companyId: true,
+    status: true,
+  },
   ABC_ANALYSIS: {
     dateRange: true,
     warehouseIds: true,
+    companyId: true,
     categoryIds: true,
   },
   DEAD_STOCK: {
     warehouseIds: true,
+    companyId: true,
     categoryIds: true,
     deadStockDays: true,
     includeInactive: true,

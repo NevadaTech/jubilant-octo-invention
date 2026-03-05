@@ -98,7 +98,9 @@ describe("DashboardApiService", () => {
 
       const result = await service.getMetrics();
 
-      expect(mockedGet).toHaveBeenCalledWith("/dashboard/metrics");
+      expect(mockedGet).toHaveBeenCalledWith("/dashboard/metrics", {
+        params: {},
+      });
       expect(result.inventory.totalProducts).toBe(150);
       expect(result.inventory.totalStockQuantity).toBe(5000);
       expect(result.inventory.totalInventoryValue).toBe(250000);

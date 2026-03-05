@@ -14,6 +14,10 @@ export interface UserProps {
   mustChangePassword?: boolean;
   roles: string[];
   permissions: string[];
+  orgSettings?: {
+    multiCompanyEnabled?: boolean;
+    [key: string]: unknown;
+  };
 }
 
 export class User extends Entity<string> {
@@ -38,6 +42,7 @@ export class User extends Entity<string> {
       mustChangePassword: props.mustChangePassword,
       roles: props.roles,
       permissions: props.permissions,
+      orgSettings: props.orgSettings,
     });
   }
 
@@ -91,6 +96,10 @@ export class User extends Entity<string> {
 
   get permissions(): string[] {
     return [...this.props.permissions];
+  }
+
+  get orgSettings(): UserProps["orgSettings"] {
+    return this.props.orgSettings;
   }
 
   hasPermission(permission: string): boolean {

@@ -35,6 +35,7 @@ import {
 } from "@/modules/inventory/presentation/hooks/use-movements";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import type { UpdateStockMovementDto } from "@/modules/inventory/application/dto/stock-movement.dto";
 
 interface MovementFormPageProps {
@@ -55,9 +56,11 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
   const { data: existingMovement, isLoading: isLoadingMovement } = useMovement(
     movementId ?? "",
   );
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
   const { data: productsData } = useProducts({
     limit: 100,
     statuses: ["ACTIVE"],
+    ...(selectedCompanyId && { companyId: selectedCompanyId }),
   });
   const { data: warehousesData } = useWarehouses({
     limit: 100,

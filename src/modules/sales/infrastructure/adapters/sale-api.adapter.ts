@@ -181,6 +181,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
 
     if (filters.warehouseIds?.length)
       params.warehouseId = filters.warehouseIds.join(",");
+    if (filters.companyId) params.companyId = filters.companyId;
     if (filters.status?.length) params.status = filters.status.join(",");
     if (filters.startDate) params.startDate = filters.startDate;
     if (filters.endDate) params.endDate = filters.endDate;

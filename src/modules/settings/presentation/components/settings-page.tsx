@@ -7,9 +7,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/ui/components/tabs";
 import { ProfileForm } from "./profile-form";
 import { ChangePasswordForm } from "./change-password-form";
 import { AlertConfigurationForm } from "./alert-configuration-form";
+import { MultiCompanyToggle } from "./multi-company-toggle";
+import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 
 export function SettingsPage() {
   const t = useTranslations("settings");
+  const { multiCompanyEnabled } = useOrgSettings();
 
   return (
     <div className="space-y-6">
@@ -28,6 +31,11 @@ export function SettingsPage() {
           <TabsTrigger value="notifications">
             {t("tabs.notifications")}
           </TabsTrigger>
+          {multiCompanyEnabled && (
+            <TabsTrigger value="organization">
+              {t("tabs.organization")}
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="account" className="space-y-6 mt-6">
@@ -40,6 +48,14 @@ export function SettingsPage() {
             <AlertConfigurationForm />
           </PermissionGate>
         </TabsContent>
+
+        {multiCompanyEnabled && (
+          <TabsContent value="organization" className="space-y-6 mt-6">
+            <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
+              <MultiCompanyToggle />
+            </PermissionGate>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

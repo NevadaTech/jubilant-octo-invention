@@ -33,6 +33,8 @@ describe("ProductMapper", () => {
     lastMovementDate: null,
     statusChangedBy: null,
     statusChangedAt: null,
+    companyId: null,
+    companyName: null,
   };
 
   describe("toDomain", () => {

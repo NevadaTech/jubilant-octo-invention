@@ -27,15 +27,18 @@ import {
 import { useCreateSale } from "@/modules/sales/presentation/hooks/use-sales";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 export function SaleFormPage() {
   const t = useTranslations("sales");
   const tCommon = useTranslations("common");
   const router = useRouter();
   const createSale = useCreateSale();
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
   const { data: productsData } = useProducts({
     limit: 100,
     statuses: ["ACTIVE"],
+    ...(selectedCompanyId && { companyId: selectedCompanyId }),
   });
   const { data: warehousesData } = useWarehouses({
     limit: 100,

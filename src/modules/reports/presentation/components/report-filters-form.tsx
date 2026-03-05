@@ -17,6 +17,9 @@ import { MultiSelect } from "@/ui/components/multi-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useCategories } from "@/modules/inventory/presentation/hooks/use-categories";
+import { useCompanies } from "@/modules/companies/presentation/hooks/use-companies";
+import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import type {
   ReportTypeValue,
   ReportParameters,
@@ -82,7 +85,14 @@ export function ReportFiltersForm({
   const config = REPORT_FILTER_CONFIG[type];
   const t = useTranslations("reports");
   const tCommon = useTranslations("common");
-  const defaultParams = useMemo(() => getDefaultParams(type), [type]);
+  const globalCompanyId = useCompanyStore((s) => s.selectedCompanyId);
+  const defaultParams = useMemo(
+    () => ({
+      ...getDefaultParams(type),
+      ...(globalCompanyId && { companyId: globalCompanyId }),
+    }),
+    [type, globalCompanyId],
+  );
   const [params, setParams] = useState<ReportParameters>(defaultParams);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRenderRef = useRef(true);
@@ -96,6 +106,14 @@ export function ReportFiltersForm({
     config.categoryIds ? { statuses: ["ACTIVE"], limit: 100 } : undefined,
   );
   const categories = categoryData?.data ?? [];
+
+  const { multiCompanyEnabled } = useOrgSettings();
+  const { data: companyData } = useCompanies(
+    config.companyId && multiCompanyEnabled
+      ? { isActive: true, limit: 100 }
+      : undefined,
+  );
+  const companies = companyData?.data ?? [];
 
   // Auto-generate on mount with defaults
   useEffect(() => {
@@ -275,6 +293,30 @@ export function ReportFiltersForm({
                 selectedLabel={t("filters.warehouse")}
                 className="text-sm"
               />
+            </div>
+          )}
+
+          {config.companyId && multiCompanyEnabled && companies.length > 0 && (
+            <div className="space-y-1.5">
+              <Label className="text-xs">{t("filters.company")}</Label>
+              <Select
+                value={params.companyId ?? "all"}
+                onValueChange={(v) => set("companyId", v)}
+              >
+                <SelectTrigger className="text-sm">
+                  <SelectValue placeholder={t("filters.allCompanies")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    {t("filters.allCompanies")}
+                  </SelectItem>
+                  {companies.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
 

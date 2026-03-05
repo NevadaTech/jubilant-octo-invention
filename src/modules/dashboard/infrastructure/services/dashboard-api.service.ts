@@ -9,9 +9,16 @@ import type {
  * Single call to dedicated endpoint instead of 3 separate report calls
  */
 export class DashboardApiService {
-  async getMetrics(): Promise<DashboardMetricsDto> {
-    const response =
-      await apiClient.get<DashboardMetricsApiResponse>("/dashboard/metrics");
+  async getMetrics(companyId?: string | null): Promise<DashboardMetricsDto> {
+    const params: Record<string, unknown> = {};
+    if (companyId) params.companyId = companyId;
+
+    const response = await apiClient.get<DashboardMetricsApiResponse>(
+      "/dashboard/metrics",
+      {
+        params,
+      },
+    );
     return response.data.data;
   }
 }
