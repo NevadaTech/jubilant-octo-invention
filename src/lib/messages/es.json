@@ -51,6 +51,12 @@
     },
     "logout": "Cerrar sesión",
     "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
+    "sessionTimeout": {
+      "title": "Sesión por expirar",
+      "description": "Tu sesión expirará en {time} por inactividad. ¿Deseas continuar?",
+      "extend": "Continuar sesión",
+      "logout": "Cerrar sesión"
+    },
     "forgotPassword": {
       "title": "Restablecer Contraseña",
       "description": "Ingresa tu organización y correo para recibir un código de verificación",
@@ -1601,6 +1607,8 @@
     "notFound": "Página no encontrada",
     "backHome": "Volver al inicio",
     "somethingWentWrong": "Algo salió mal",
+    "genericError": "Ocurrió un error inesperado. Inténtalo más tarde.",
+    "errorReference": "Referencia del error: {digest}",
     "tryAgain": "Intentar de nuevo"
   },
   "apiErrors": {

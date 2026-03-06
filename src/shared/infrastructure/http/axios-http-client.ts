@@ -14,17 +14,18 @@ import type {
 
 /**
  * Axios HTTP Client Adapter
- * Implements HttpClientPort with axios, including auth interceptors
+ * Auth tokens are sent as HttpOnly cookies via the BFF proxy.
+ * Organization headers are still injected from client-side storage.
  */
 export class AxiosHttpClient implements HttpClientPort {
   private readonly instance: AxiosInstance;
-  private refreshPromise: Promise<string | null> | null = null;
-  private lastRefreshTime = 0;
+  private refreshPromise: Promise<boolean> | null = null;
 
   constructor(config?: HttpClientConfig) {
     this.instance = axios.create({
       baseURL: config?.baseURL ?? env.NEXT_PUBLIC_API_URL,
       timeout: config?.timeout ?? env.NEXT_PUBLIC_API_TIMEOUT,
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
         ...config?.headers,
@@ -35,17 +36,12 @@ export class AxiosHttpClient implements HttpClientPort {
   }
 
   private setupInterceptors(): void {
-    // Request interceptor - Add auth headers
+    // Request interceptor — add org headers (no more token injection)
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        const accessToken = TokenService.getAccessToken();
         const organizationSlug = TokenService.getOrganizationSlug();
         const organizationId = TokenService.getOrganizationId();
         const user = TokenService.getUser();
-
-        if (accessToken) {
-          config.headers.Authorization = `Bearer ${accessToken}`;
-        }
 
         if (organizationSlug) {
           config.headers["X-Organization-Slug"] = organizationSlug;
@@ -64,7 +60,7 @@ export class AxiosHttpClient implements HttpClientPort {
       (error) => Promise.reject(error),
     );
 
-    // Response interceptor - Handle errors
+    // Response interceptor — handle 401 with BFF refresh
     this.instance.interceptors.response.use(
       (response) => response,
       async (error) => {
@@ -73,9 +69,8 @@ export class AxiosHttpClient implements HttpClientPort {
         };
 
         // Skip refresh logic for auth endpoints to avoid loops
-        const isAuthEndpoint = originalRequest.url?.includes("/auth/");
+        const isAuthEndpoint = originalRequest.url?.startsWith("/auth/");
 
-        // Handle 401 - Attempt token refresh before clearing session
         if (
           error.response?.status === 401 &&
           !originalRequest._retry &&
@@ -83,19 +78,13 @@ export class AxiosHttpClient implements HttpClientPort {
         ) {
           originalRequest._retry = true;
 
-          const newAccessToken = await this.performRefresh();
+          const refreshed = await this.performRefresh();
 
-          if (newAccessToken) {
-            // Retry the original request with new token
-            if (originalRequest.headers) {
-              (
-                originalRequest.headers as Record<string, string>
-              ).Authorization = `Bearer ${newAccessToken}`;
-            }
+          if (refreshed) {
+            // Retry — cookie is updated server-side, just replay the request
             return this.instance(originalRequest);
           }
 
-          // Refresh failed — redirect to login
           return Promise.reject(error);
         }
 
@@ -105,91 +94,60 @@ export class AxiosHttpClient implements HttpClientPort {
   }
 
   /**
-   * Performs token refresh with concurrency protection.
-   * Multiple 401s will share a single refresh request.
-   * The promise is kept alive for a grace period so late-arriving
-   * 401 responses reuse the result instead of triggering a new refresh.
-   * Returns the new access token or null if refresh failed.
+   * Performs token refresh via BFF with concurrency protection.
+   * Returns true if refresh succeeded, false otherwise.
    */
-  private async performRefresh(): Promise<string | null> {
-    // If there's an in-flight or recently completed refresh, reuse it.
-    // This handles both concurrent 401s AND late-arriving 401 responses
-    // that arrive after the first refresh has already completed.
+  private async performRefresh(): Promise<boolean> {
     if (this.refreshPromise) {
       return this.refreshPromise;
-    }
-
-    const refreshToken = TokenService.getRefreshToken();
-    if (!refreshToken) {
-      TokenService.clearTokens();
-
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("auth:session-expired"));
-      }
-
-      return null;
     }
 
     this.refreshPromise = (async () => {
       try {
         const organizationSlug = TokenService.getOrganizationSlug();
-        const organizationId = TokenService.getOrganizationId();
 
         const headers: Record<string, string> = {
           "Content-Type": "application/json",
         };
-
         if (organizationSlug) {
           headers["X-Organization-Slug"] = organizationSlug;
         }
-        if (organizationId) {
-          headers["X-Organization-ID"] = organizationId;
-        }
 
-        const refreshResponse = await axios.post(
-          `${env.NEXT_PUBLIC_API_URL}/auth/refresh`,
-          { refreshToken },
-          { headers },
+        const refreshResponse = await fetch(
+          `${env.NEXT_PUBLIC_APP_URL}/api/auth/refresh`,
+          {
+            method: "POST",
+            headers,
+            credentials: "include",
+          },
         );
 
-        const {
-          accessToken,
-          refreshToken: newRefresh,
-          expiresAt,
-        } = refreshResponse.data?.data ?? refreshResponse.data ?? {};
-
-        if (accessToken) {
-          TokenService.setTokens({
-            accessToken,
-            refreshToken: newRefresh ?? refreshToken,
-            expiresAt:
-              expiresAt ?? new Date(Date.now() + 3600000).toISOString(),
-          });
-          this.lastRefreshTime = Date.now();
-          return accessToken as string;
+        if (refreshResponse.ok) {
+          const result = await refreshResponse.json();
+          if (result.data?.accessTokenExpiresAt) {
+            TokenService.setExpiresAt(result.data.accessTokenExpiresAt);
+          }
+          return true;
         }
 
-        TokenService.clearTokens();
+        TokenService.clearSession();
 
         if (typeof window !== "undefined") {
           window.dispatchEvent(new CustomEvent("auth:session-expired"));
         }
 
-        return null;
+        return false;
       } catch {
-        TokenService.clearTokens();
+        TokenService.clearSession();
 
         if (typeof window !== "undefined") {
           window.dispatchEvent(new CustomEvent("auth:session-expired"));
         }
 
-        return null;
+        return false;
       }
     })();
 
-    // Keep the promise alive for 10 seconds after it settles.
-    // Late-arriving 401s during this window will reuse the result
-    // instead of triggering a second refresh with a stale token.
     this.refreshPromise.finally(() => {
       setTimeout(() => {
         this.refreshPromise = null;

@@ -1,13 +1,7 @@
-import { env } from "@/config/env";
+import { z } from "zod";
+import { logger } from "@/shared/infrastructure/logger";
 
-interface StoredTokens {
-  accessToken: string;
-  refreshToken: string;
-  expiresAt: string;
-}
-
-const TOKEN_KEY = env.NEXT_PUBLIC_AUTH_COOKIE_NAME;
-const REFRESH_TOKEN_KEY = env.NEXT_PUBLIC_REFRESH_COOKIE_NAME;
+const EXPIRES_KEY = "nevada_token_expires";
 const ORG_SLUG_KEY = "nevada_org_slug";
 const ORG_ID_KEY = "nevada_org_id";
 const USER_KEY = "nevada_user";
@@ -32,6 +26,23 @@ export interface StoredUser {
   };
 }
 
+const storedUserSchema = z.object({
+  id: z.string(),
+  email: z.string(),
+  username: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  phone: z.string().optional(),
+  timezone: z.string().optional(),
+  language: z.string().optional(),
+  jobTitle: z.string().optional(),
+  department: z.string().optional(),
+  mustChangePassword: z.boolean().optional(),
+  roles: z.array(z.string()),
+  permissions: z.array(z.string()),
+  orgSettings: z.record(z.string(), z.unknown()).optional(),
+});
+
 function isClient(): boolean {
   return typeof window !== "undefined";
 }
@@ -44,70 +55,18 @@ function secureCookieFlag(): string {
   return isSecureContext() ? "; Secure" : "";
 }
 
+/**
+ * TokenService — manages session metadata in localStorage.
+ * Actual auth tokens are stored in HttpOnly cookies via the BFF API routes.
+ * This service only stores: user data, org info, and token expiry timestamp.
+ */
 export class TokenService {
-  static setTokens(tokens: StoredTokens): void {
+  static setExpiresAt(expiresAt: string): void {
     if (!isClient()) return;
-
     try {
-      localStorage.setItem(TOKEN_KEY, tokens.accessToken);
-      localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
-      localStorage.setItem(`${TOKEN_KEY}_expires`, tokens.expiresAt);
-
-      // Sync with cookie for middleware auth check
-      document.cookie = `${TOKEN_KEY}=${tokens.accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${secureCookieFlag()}`;
+      localStorage.setItem(EXPIRES_KEY, expiresAt);
     } catch (error) {
-      console.error("Failed to store tokens:", error); // eslint-disable-line no-console
-    }
-  }
-
-  /**
-   * Reads access token from cookie (fallback when localStorage is not ready or empty).
-   * Used so requests after client navigation always have the token.
-   */
-  static getAccessTokenFromCookie(): string | null {
-    if (!isClient() || typeof document?.cookie !== "string") return null;
-    try {
-      const name = `${TOKEN_KEY}=`;
-      const decoded = decodeURIComponent(document.cookie);
-      const parts = decoded.split(";");
-      for (const part of parts) {
-        const trimmed = part.trim();
-        if (trimmed.startsWith(name)) {
-          const value = trimmed.slice(name.length).trim();
-          return value || null;
-        }
-      }
-      return null;
-    } catch {
-      return null;
-    }
-  }
-
-  static getAccessToken(): string | null {
-    if (!isClient()) return null;
-
-    try {
-      const fromStorage = localStorage.getItem(TOKEN_KEY);
-      if (fromStorage) return fromStorage;
-      // Fallback: use cookie (e.g. after login + route change before rehydration)
-      const fromCookie = this.getAccessTokenFromCookie();
-      if (fromCookie) {
-        localStorage.setItem(TOKEN_KEY, fromCookie);
-        return fromCookie;
-      }
-      return null;
-    } catch {
-      return this.getAccessTokenFromCookie();
-    }
-  }
-
-  static getRefreshToken(): string | null {
-    if (!isClient()) return null;
-
-    try {
-      return localStorage.getItem(REFRESH_TOKEN_KEY);
-    } catch {
-      return null;
+      logger.error("Failed to store expiry:", error);
     }
   }
 
@@ -115,7 +74,7 @@ export class TokenService {
     if (!isClient()) return null;
 
     try {
-      const expiresAt = localStorage.getItem(`${TOKEN_KEY}_expires`);
+      const expiresAt = localStorage.getItem(EXPIRES_KEY);
       return expiresAt ? new Date(expiresAt) : null;
     } catch {
       return null;
@@ -135,22 +94,27 @@ export class TokenService {
     return timeUntilExpiry <= thresholdMs;
   }
 
-  static clearTokens(): void {
+  static hasValidSession(): boolean {
+    return !this.isTokenExpired() && this.getUser() !== null;
+  }
+
+  /**
+   * Clears all client-side session data.
+   * HttpOnly cookies are cleared by calling the BFF logout route.
+   */
+  static clearSession(): void {
     if (!isClient()) return;
 
     try {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(REFRESH_TOKEN_KEY);
-      localStorage.removeItem(`${TOKEN_KEY}_expires`);
+      localStorage.removeItem(EXPIRES_KEY);
       localStorage.removeItem(ORG_SLUG_KEY);
       localStorage.removeItem(ORG_ID_KEY);
       localStorage.removeItem(USER_KEY);
 
-      // Clear auth cookie
-      document.cookie = `${TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax${secureCookieFlag()}`;
-      document.cookie = `nevada_must_change_pwd=; path=/; max-age=0; SameSite=Lax${secureCookieFlag()}`;
+      // Clear non-auth cookies
+      document.cookie = `nevada_must_change_pwd=; path=/; max-age=0; SameSite=Strict${secureCookieFlag()}`;
     } catch (error) {
-      console.error("Failed to clear tokens:", error); // eslint-disable-line no-console
+      logger.error("Failed to clear session:", error);
     }
   }
 
@@ -162,12 +126,12 @@ export class TokenService {
 
       // Sync mustChangePassword flag as cookie for proxy (server-side) access
       if (user.mustChangePassword) {
-        document.cookie = `nevada_must_change_pwd=1; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${secureCookieFlag()}`;
+        document.cookie = `nevada_must_change_pwd=1; path=/; max-age=${60 * 30}; SameSite=Strict${secureCookieFlag()}`;
       } else {
-        document.cookie = `nevada_must_change_pwd=; path=/; max-age=0; SameSite=Lax${secureCookieFlag()}`;
+        document.cookie = `nevada_must_change_pwd=; path=/; max-age=0; SameSite=Strict${secureCookieFlag()}`;
       }
     } catch (error) {
-      console.error("Failed to store user:", error); // eslint-disable-line no-console
+      logger.error("Failed to store user:", error);
     }
   }
 
@@ -176,7 +140,14 @@ export class TokenService {
 
     try {
       const userStr = localStorage.getItem(USER_KEY);
-      return userStr ? JSON.parse(userStr) : null;
+      if (!userStr) return null;
+      const parsed = storedUserSchema.safeParse(JSON.parse(userStr));
+      if (!parsed.success) {
+        logger.warn("Invalid stored user data, clearing");
+        localStorage.removeItem(USER_KEY);
+        return null;
+      }
+      return parsed.data as StoredUser;
     } catch {
       return null;
     }
@@ -188,7 +159,7 @@ export class TokenService {
     try {
       localStorage.setItem(ORG_SLUG_KEY, slug);
     } catch (error) {
-      console.error("Failed to store organization slug:", error); // eslint-disable-line no-console
+      logger.error("Failed to store organization slug:", error);
     }
   }
 
@@ -208,7 +179,7 @@ export class TokenService {
     try {
       localStorage.setItem(ORG_ID_KEY, orgId);
     } catch (error) {
-      console.error("Failed to store organization id:", error); // eslint-disable-line no-console
+      logger.error("Failed to store organization id:", error);
     }
   }
 
@@ -222,22 +193,36 @@ export class TokenService {
     }
   }
 
-  static extractOrgIdFromToken(): string | null {
-    const token = this.getAccessToken();
-    if (!token) return null;
+  // Legacy compatibility — kept for code that still references these
+  static getAccessToken(): string | null {
+    // Tokens are now in HttpOnly cookies; return null
+    return null;
+  }
 
-    try {
-      const payload = token.split(".")[1];
-      const decoded = JSON.parse(atob(payload));
-      return decoded.org_id || null;
-    } catch {
-      return null;
-    }
+  static getRefreshToken(): string | null {
+    // Tokens are now in HttpOnly cookies; return null
+    return null;
+  }
+
+  static setTokens(_tokens: {
+    accessToken: string;
+    refreshToken: string;
+    expiresAt: string;
+  }): void {
+    // Only store the expiry — tokens are in HttpOnly cookies
+    this.setExpiresAt(_tokens.expiresAt);
+  }
+
+  static clearTokens(): void {
+    this.clearSession();
   }
 
   static hasValidToken(): boolean {
-    const token = this.getAccessToken();
-    if (!token) return false;
-    return !this.isTokenExpired();
+    return this.hasValidSession();
+  }
+
+  static extractOrgIdFromToken(): string | null {
+    // No longer accessible from client — tokens are HttpOnly
+    return null;
   }
 }

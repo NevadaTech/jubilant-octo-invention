@@ -13,7 +13,6 @@ import type {
 import type { User } from "@/modules/authentication/domain/entities/user";
 import { Tokens } from "@/modules/authentication/domain/value-objects/tokens";
 import { UserMapper } from "@/modules/authentication/infrastructure/mappers/user.mapper";
-import type { LoginResponseDto } from "@/modules/authentication/application/dto/login.dto";
 import { env } from "@/config/env";
 import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
 import {
@@ -23,19 +22,21 @@ import {
 
 export class AuthApiAdapter implements AuthRepositoryPort {
   private readonly baseUrl = env.NEXT_PUBLIC_API_URL;
+  private readonly bffUrl = env.NEXT_PUBLIC_APP_URL;
 
   async login(
     credentials: LoginCredentials,
   ): Promise<{ user: User; tokens: Tokens }> {
     const { organizationSlug, email, password } = credentials;
 
-    const response = await fetch(`${this.baseUrl}/auth/login`, {
+    // Call BFF route — tokens are stored in HttpOnly cookies server-side
+    const response = await fetch(`${this.bffUrl}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Organization-Slug": organizationSlug,
       },
-      body: JSON.stringify({ email, password }),
+      credentials: "include",
+      body: JSON.stringify({ organizationSlug, email, password }),
     });
 
     if (!response.ok) {
@@ -53,30 +54,21 @@ export class AuthApiAdapter implements AuthRepositoryPort {
       );
     }
 
-    const result: LoginResponseDto = await response.json();
-    const { data } = result;
+    const rawResult = await response.json();
+    // BFF strips tokens from response, validate the user data
+    const data = rawResult.data;
+    if (!data?.user || !data?.accessTokenExpiresAt) {
+      throw new AuthApiError("Invalid login response from server", "UNKNOWN", 500);
+    }
 
     const expiresAt = new Date(data.accessTokenExpiresAt);
-    const tokens = Tokens.create(
-      data.accessToken,
-      data.refreshToken,
-      expiresAt,
-    );
+    // Tokens are in HttpOnly cookies, create placeholder Tokens VO
+    const tokens = Tokens.create("httponly", "httponly", expiresAt);
 
-    // Store tokens, user and organization slug
-    TokenService.setTokens({
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
-      expiresAt: data.accessTokenExpiresAt,
-    });
+    // Store user and organization data (no tokens in localStorage)
     TokenService.setUser(data.user);
     TokenService.setOrganizationSlug(organizationSlug);
-
-    // Extract and store org_id from JWT
-    const orgId = TokenService.extractOrgIdFromToken();
-    if (orgId) {
-      TokenService.setOrganizationId(orgId);
-    }
+    TokenService.setExpiresAt(data.accessTokenExpiresAt);
 
     return {
       user: UserMapper.toDomain(data.user),
@@ -85,31 +77,27 @@ export class AuthApiAdapter implements AuthRepositoryPort {
   }
 
   async logout(): Promise<void> {
-    const accessToken = TokenService.getAccessToken();
     const organizationSlug = TokenService.getOrganizationSlug();
 
     try {
-      await fetch(`${this.baseUrl}/auth/logout`, {
+      await fetch(`${this.bffUrl}/api/auth/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
           ...(organizationSlug && { "X-Organization-Slug": organizationSlug }),
         },
+        credentials: "include",
       });
     } finally {
-      TokenService.clearTokens();
+      TokenService.clearSession();
     }
   }
 
   async getCurrentUser(): Promise<User | null> {
-    const accessToken = TokenService.getAccessToken();
-
-    if (!accessToken || TokenService.isTokenExpired()) {
+    if (TokenService.isTokenExpired()) {
       return null;
     }
 
-    // Get user from local storage (saved during login)
     const storedUser = TokenService.getUser();
     if (!storedUser) {
       return null;
@@ -118,32 +106,34 @@ export class AuthApiAdapter implements AuthRepositoryPort {
     return UserMapper.toDomain(storedUser);
   }
 
-  async refreshToken(refreshTokenValue: string): Promise<Tokens> {
+  async refreshToken(): Promise<Tokens> {
     const organizationSlug = TokenService.getOrganizationSlug();
 
-    const response = await fetch(`${this.baseUrl}/auth/refresh`, {
+    // Call BFF refresh — it reads the HttpOnly refresh cookie
+    const response = await fetch(`${this.bffUrl}/api/auth/refresh`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         ...(organizationSlug && { "X-Organization-Slug": organizationSlug }),
       },
-      body: JSON.stringify({ refreshToken: refreshTokenValue }),
+      credentials: "include",
     });
 
     if (!response.ok) {
-      TokenService.clearTokens();
+      TokenService.clearSession();
       throw new Error("Token refresh failed");
     }
 
     const result = await response.json();
-    const data = result.data || result;
-    const expiresAt = new Date(data.accessTokenExpiresAt);
+    const data = result.data;
 
-    TokenService.setTokens({
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
-      expiresAt: data.accessTokenExpiresAt,
-    });
+    if (!data?.accessTokenExpiresAt) {
+      TokenService.clearSession();
+      throw new Error("Invalid refresh response from server");
+    }
+
+    const expiresAt = new Date(data.accessTokenExpiresAt);
+    TokenService.setExpiresAt(data.accessTokenExpiresAt);
 
     // Update stored user with latest data (including orgSettings)
     if (data.user) {
@@ -153,7 +143,7 @@ export class AuthApiAdapter implements AuthRepositoryPort {
       }
     }
 
-    return Tokens.create(data.accessToken, data.refreshToken, expiresAt);
+    return Tokens.create("httponly", "httponly", expiresAt);
   }
 
   async requestPasswordReset(

@@ -80,7 +80,7 @@ export const useAuthStore = create<AuthStore>()(
 
       forceLogout: () => {
         // Immediate cleanup without backend call (session already expired)
-        TokenService.clearTokens();
+        TokenService.clearSession();
         set({
           user: null,
           isAuthenticated: false,
@@ -90,9 +90,9 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       hydrate: async () => {
-        const hasToken = TokenService.hasValidToken();
+        const hasSession = TokenService.hasValidSession();
 
-        if (!hasToken) {
+        if (!hasSession) {
           set({ isHydrated: true, isAuthenticated: false, user: null });
           return;
         }
@@ -100,12 +100,9 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: true });
 
         try {
-          // Check if token is about to expire and refresh if needed
+          // Check if token is about to expire and refresh via BFF
           if (TokenService.isTokenAboutToExpire()) {
-            const refreshToken = TokenService.getRefreshToken();
-            if (refreshToken) {
-              await authRepository.refreshToken(refreshToken);
-            }
+            await authRepository.refreshToken();
           }
 
           const user = await authRepository.getCurrentUser();
@@ -118,7 +115,7 @@ export const useAuthStore = create<AuthStore>()(
               isHydrated: true,
             });
           } else {
-            TokenService.clearTokens();
+            TokenService.clearSession();
             set({
               user: null,
               isAuthenticated: false,
@@ -127,7 +124,7 @@ export const useAuthStore = create<AuthStore>()(
             });
           }
         } catch {
-          TokenService.clearTokens();
+          TokenService.clearSession();
           set({
             user: null,
             isAuthenticated: false,

@@ -51,6 +51,12 @@
     },
     "logout": "Log out",
     "sessionExpired": "Your session has expired. Please sign in again.",
+    "sessionTimeout": {
+      "title": "Session Expiring",
+      "description": "Your session will expire in {time} due to inactivity. Would you like to continue?",
+      "extend": "Continue Session",
+      "logout": "Log Out"
+    },
     "forgotPassword": {
       "title": "Reset Password",
       "description": "Enter your organization and email to receive a verification code",
@@ -1601,6 +1607,8 @@
     "notFound": "Page not found",
     "backHome": "Back to home",
     "somethingWentWrong": "Something went wrong",
+    "genericError": "An unexpected error occurred. Please try again later.",
+    "errorReference": "Error reference: {digest}",
     "tryAgain": "Try again"
   },
   "apiErrors": {

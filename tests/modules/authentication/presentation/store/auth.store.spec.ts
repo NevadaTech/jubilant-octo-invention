@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi, type Mock } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { User } from "@/modules/authentication/domain/entities/user";
 import { Tokens } from "@/modules/authentication/domain/value-objects/tokens";
 
@@ -11,13 +11,20 @@ const { mockAuthRepository, mockTokenService } = vi.hoisted(() => ({
     refreshToken: vi.fn(),
   },
   mockTokenService: {
+    hasValidSession: vi.fn(),
     hasValidToken: vi.fn(),
     isTokenAboutToExpire: vi.fn(),
-    getRefreshToken: vi.fn(),
+    clearSession: vi.fn(),
     clearTokens: vi.fn(),
-    setTokens: vi.fn(),
     setUser: vi.fn(),
-    getAccessToken: vi.fn(),
+    getUser: vi.fn(),
+    setExpiresAt: vi.fn(),
+    getOrganizationSlug: vi.fn(),
+    setOrganizationSlug: vi.fn(),
+    setOrganizationId: vi.fn(),
+    getAccessToken: vi.fn().mockReturnValue(null),
+    getRefreshToken: vi.fn().mockReturnValue(null),
+    setTokens: vi.fn(),
   },
 }));
 
@@ -61,8 +68,8 @@ function createTestUser(): User {
 
 function createTestTokens(): Tokens {
   return Tokens.create(
-    "access-token-xyz",
-    "refresh-token-xyz",
+    "httponly",
+    "httponly",
     new Date(Date.now() + 3600000),
   );
 }
@@ -185,7 +192,6 @@ describe("useAuthStore", () => {
       });
       mockAuthRepository.logout.mockRejectedValue(new Error("Network error"));
 
-      // logout re-throws via try/finally
       await expect(getState().logout()).rejects.toThrow("Network error");
 
       const state = getState();
@@ -196,7 +202,7 @@ describe("useAuthStore", () => {
   });
 
   describe("forceLogout", () => {
-    it("Given: authenticated user When: forceLogout called Then: should clear tokens and state without backend call", () => {
+    it("Given: authenticated user When: forceLogout called Then: should clear session and state without backend call", () => {
       setState({
         user: createTestUser(),
         isAuthenticated: true,
@@ -205,7 +211,7 @@ describe("useAuthStore", () => {
 
       getState().forceLogout();
 
-      expect(TokenService.clearTokens).toHaveBeenCalled();
+      expect(TokenService.clearSession).toHaveBeenCalled();
       expect(mockAuthRepository.logout).not.toHaveBeenCalled();
       const state = getState();
       expect(state.user).toBeNull();
@@ -216,8 +222,8 @@ describe("useAuthStore", () => {
   });
 
   describe("hydrate", () => {
-    it("Given: no valid token When: hydrating Then: should set isHydrated true without user", async () => {
-      mockTokenService.hasValidToken.mockReturnValue(false);
+    it("Given: no valid session When: hydrating Then: should set isHydrated true without user", async () => {
+      mockTokenService.hasValidSession.mockReturnValue(false);
 
       await getState().hydrate();
 
@@ -227,9 +233,9 @@ describe("useAuthStore", () => {
       expect(state.user).toBeNull();
     });
 
-    it("Given: valid non-expiring token When: hydrating Then: should set user from getCurrentUser", async () => {
+    it("Given: valid non-expiring session When: hydrating Then: should set user from getCurrentUser", async () => {
       const user = createTestUser();
-      mockTokenService.hasValidToken.mockReturnValue(true);
+      mockTokenService.hasValidSession.mockReturnValue(true);
       mockTokenService.isTokenAboutToExpire.mockReturnValue(false);
       mockAuthRepository.getCurrentUser.mockResolvedValue(user);
 
@@ -242,39 +248,36 @@ describe("useAuthStore", () => {
       expect(state.isLoading).toBe(false);
     });
 
-    it("Given: token about to expire with refresh token When: hydrating Then: should refresh before fetching user", async () => {
+    it("Given: session about to expire When: hydrating Then: should refresh via BFF before fetching user", async () => {
       const user = createTestUser();
-      mockTokenService.hasValidToken.mockReturnValue(true);
+      mockTokenService.hasValidSession.mockReturnValue(true);
       mockTokenService.isTokenAboutToExpire.mockReturnValue(true);
-      mockTokenService.getRefreshToken.mockReturnValue("refresh-token-abc");
       mockAuthRepository.refreshToken.mockResolvedValue(createTestTokens());
       mockAuthRepository.getCurrentUser.mockResolvedValue(user);
 
       await getState().hydrate();
 
-      expect(mockAuthRepository.refreshToken).toHaveBeenCalledWith(
-        "refresh-token-abc",
-      );
+      expect(mockAuthRepository.refreshToken).toHaveBeenCalledWith();
       expect(getState().user).toBe(user);
       expect(getState().isAuthenticated).toBe(true);
     });
 
-    it("Given: valid token but getCurrentUser returns null When: hydrating Then: should clear tokens", async () => {
-      mockTokenService.hasValidToken.mockReturnValue(true);
+    it("Given: valid session but getCurrentUser returns null When: hydrating Then: should clear session", async () => {
+      mockTokenService.hasValidSession.mockReturnValue(true);
       mockTokenService.isTokenAboutToExpire.mockReturnValue(false);
       mockAuthRepository.getCurrentUser.mockResolvedValue(null);
 
       await getState().hydrate();
 
-      expect(TokenService.clearTokens).toHaveBeenCalled();
+      expect(TokenService.clearSession).toHaveBeenCalled();
       const state = getState();
       expect(state.user).toBeNull();
       expect(state.isAuthenticated).toBe(false);
       expect(state.isHydrated).toBe(true);
     });
 
-    it("Given: valid token but getCurrentUser throws When: hydrating Then: should clear tokens", async () => {
-      mockTokenService.hasValidToken.mockReturnValue(true);
+    it("Given: valid session but getCurrentUser throws When: hydrating Then: should clear session", async () => {
+      mockTokenService.hasValidSession.mockReturnValue(true);
       mockTokenService.isTokenAboutToExpire.mockReturnValue(false);
       mockAuthRepository.getCurrentUser.mockRejectedValue(
         new Error("Network error"),
@@ -282,7 +285,7 @@ describe("useAuthStore", () => {
 
       await getState().hydrate();
 
-      expect(TokenService.clearTokens).toHaveBeenCalled();
+      expect(TokenService.clearSession).toHaveBeenCalled();
       const state = getState();
       expect(state.user).toBeNull();
       expect(state.isAuthenticated).toBe(false);

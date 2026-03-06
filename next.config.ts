@@ -9,7 +9,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
+  script-src 'self' 'strict-dynamic' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob:;
   font-src 'self' data:;
@@ -22,6 +22,7 @@ const cspHeader = `
 `.replace(/\n/g, "");
 
 const nextConfig: NextConfig = {
+  productionBrowserSourceMaps: false,
   typedRoutes: true,
   ...(process.env.STANDALONE === "true"
     ? { output: "standalone" as const }
@@ -42,6 +43,7 @@ const nextConfig: NextConfig = {
             key: "Strict-Transport-Security",
             value: "max-age=31536000; includeSubDomains",
           },
+          { key: "X-XSS-Protection", value: "1; mode=block" },
           { key: "Content-Security-Policy", value: cspHeader },
         ],
       },

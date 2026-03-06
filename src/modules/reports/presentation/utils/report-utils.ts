@@ -100,11 +100,24 @@ export function formatSummaryKey(key: string): string {
     .replace(/^\w/, (c) => c.toUpperCase());
 }
 
+export function sanitizeFilename(filename: string): string {
+  // Remove path separators, special filesystem chars, and control characters
+  const dangerousCharsPattern = /[/\\:*?"<>|]/g;
+  let safe = filename.replace(dangerousCharsPattern, "_");
+  // Strip control characters (U+0000 to U+001F)
+  safe = safe.replace(
+    /[\u0000-\u001f]/g, // eslint-disable-line no-control-regex
+    "",
+  );
+  return safe.replace(/\.{2,}/g, ".").slice(0, 200);
+}
+
 export function downloadBlob(blob: Blob, filename: string) {
+  const safeFilename = sanitizeFilename(filename);
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = filename;
+  a.download = safeFilename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

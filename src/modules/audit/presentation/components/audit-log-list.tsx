@@ -58,45 +58,64 @@ export function AuditLogList() {
   const handleExportExcel = useCallback(async () => {
     setIsExporting(true);
     try {
-      // Fetch all records (up to 10000) for export
       const exportFilters = { ...filters, page: 1, limit: 10000 };
       const allData =
         await getContainer().auditLogRepository.findAll(exportFilters);
 
-      const { utils, writeFile } = await import("xlsx");
+      const ExcelJS = await import("exceljs");
+      const { downloadBlob } = await import(
+        "@/modules/reports/presentation/utils/report-utils"
+      );
 
-      const rows = allData.data.map((log) => ({
-        [t("columns.timestamp")]: log.createdAt.toISOString(),
-        [t("columns.action")]: log.action,
-        [t("columns.entityType")]: log.entityType,
-        [t("columns.performedBy")]: log.performedBy
-          ? userNameMap.get(log.performedBy) || log.performedBy
-          : "-",
-        [t("columns.method")]: log.httpMethod || "-",
-        [t("columns.status")]: log.httpStatusCode?.toString() || "-",
-        [t("columns.duration")]:
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Audit Log");
+
+      const columns = [
+        t("columns.timestamp"),
+        t("columns.action"),
+        t("columns.entityType"),
+        t("columns.performedBy"),
+        t("columns.method"),
+        t("columns.status"),
+        t("columns.duration"),
+        "URL",
+        "IP",
+      ];
+
+      worksheet.addRow(columns);
+
+      for (const log of allData.data) {
+        worksheet.addRow([
+          log.createdAt.toISOString(),
+          log.action,
+          log.entityType,
+          log.performedBy
+            ? userNameMap.get(log.performedBy) || log.performedBy
+            : "-",
+          log.httpMethod || "-",
+          log.httpStatusCode?.toString() || "-",
           log.duration !== null ? `${log.duration}ms` : "-",
-        URL: log.httpUrl || "-",
-        IP: log.ipAddress || "-",
-      }));
-
-      const ws = utils.json_to_sheet(rows);
+          log.httpUrl || "-",
+          log.ipAddress || "-",
+        ]);
+      }
 
       // Auto-size columns
-      const colWidths = Object.keys(rows[0] || {}).map((key) => ({
-        wch: Math.max(
-          key.length,
-          ...rows.map((r) => String(r[key as keyof typeof r] ?? "").length),
-          10,
-        ),
-      }));
-      ws["!cols"] = colWidths;
+      worksheet.columns.forEach((column) => {
+        let maxLength = 10;
+        column.eachCell?.({ includeEmpty: true }, (cell) => {
+          const cellLength = String(cell.value ?? "").length;
+          if (cellLength > maxLength) maxLength = cellLength;
+        });
+        column.width = Math.min(maxLength + 2, 50);
+      });
 
-      const wb = utils.book_new();
-      utils.book_append_sheet(wb, ws, "Audit Log");
-
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
       const date = new Date().toISOString().split("T")[0];
-      writeFile(wb, `audit-log-${date}.xlsx`);
+      downloadBlob(blob, `audit-log-${date}.xlsx`);
 
       toast.success(t("export.success"));
     } catch {
@@ -104,7 +123,7 @@ export function AuditLogList() {
     } finally {
       setIsExporting(false);
     }
-  }, [filters, t]);
+  }, [filters, t, userNameMap]);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {

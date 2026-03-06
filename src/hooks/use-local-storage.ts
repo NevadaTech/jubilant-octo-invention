@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { logger } from "@/shared/infrastructure/logger";
 
 /**
  * Persist state in localStorage with SSR support
@@ -16,7 +17,7 @@ export function useLocalStorage<T>(
         setStoredValue(JSON.parse(item));
       }
     } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error); // eslint-disable-line no-console
+      logger.warn(`Error reading localStorage key "${key}":`, error);
     }
   }, [key]);
 
@@ -28,7 +29,7 @@ export function useLocalStorage<T>(
         setStoredValue(valueToStore);
         window.localStorage.setItem(key, JSON.stringify(valueToStore));
       } catch (error) {
-        console.warn(`Error setting localStorage key "${key}":`, error); // eslint-disable-line no-console
+        logger.warn(`Error setting localStorage key "${key}":`, error);
       }
     },
     [key, storedValue],

@@ -5,17 +5,17 @@ import { AuthApiError } from "@/modules/authentication/infrastructure/errors/aut
 // --- Mocks ---
 
 vi.mock("@/config/env", () => ({
-  env: { NEXT_PUBLIC_API_URL: "http://localhost:8080" },
+  env: {
+    NEXT_PUBLIC_API_URL: "http://localhost:8080",
+    NEXT_PUBLIC_APP_URL: "http://localhost:3000",
+  },
 }));
 
-const mockSetTokens = vi.fn();
 const mockSetUser = vi.fn();
 const mockSetOrganizationSlug = vi.fn();
-const mockSetOrganizationId = vi.fn();
-const mockExtractOrgIdFromToken = vi.fn().mockReturnValue("org-123");
-const mockGetAccessToken = vi.fn();
+const mockSetExpiresAt = vi.fn();
 const mockGetOrganizationSlug = vi.fn();
-const mockClearTokens = vi.fn();
+const mockClearSession = vi.fn();
 const mockIsTokenExpired = vi.fn();
 const mockGetUser = vi.fn();
 
@@ -23,17 +23,21 @@ vi.mock(
   "@/modules/authentication/infrastructure/services/token.service",
   () => ({
     TokenService: {
-      setTokens: (...args: unknown[]) => mockSetTokens(...args),
       setUser: (...args: unknown[]) => mockSetUser(...args),
       setOrganizationSlug: (...args: unknown[]) =>
         mockSetOrganizationSlug(...args),
-      setOrganizationId: (...args: unknown[]) => mockSetOrganizationId(...args),
-      extractOrgIdFromToken: () => mockExtractOrgIdFromToken(),
-      getAccessToken: () => mockGetAccessToken(),
+      setExpiresAt: (...args: unknown[]) => mockSetExpiresAt(...args),
       getOrganizationSlug: () => mockGetOrganizationSlug(),
-      clearTokens: () => mockClearTokens(),
+      clearSession: () => mockClearSession(),
       isTokenExpired: () => mockIsTokenExpired(),
       getUser: () => mockGetUser(),
+      // Legacy compatibility
+      setTokens: vi.fn(),
+      clearTokens: () => mockClearSession(),
+      getAccessToken: vi.fn().mockReturnValue(null),
+      getRefreshToken: vi.fn().mockReturnValue(null),
+      setOrganizationId: vi.fn(),
+      extractOrgIdFromToken: vi.fn().mockReturnValue(null),
     },
   }),
 );
@@ -50,7 +54,8 @@ vi.mock("@/modules/authentication/infrastructure/mappers/user.mapper", () => ({
 
 // --- Helpers ---
 
-const mockLoginResponse = {
+// BFF login response (tokens stripped)
+const mockBffLoginResponse = {
   success: true,
   message: "Login successful",
   data: {
@@ -63,8 +68,6 @@ const mockLoginResponse = {
       roles: ["ADMIN"],
       permissions: ["PRODUCTS:READ"],
     },
-    accessToken: "access-token-123",
-    refreshToken: "refresh-token-456",
     accessTokenExpiresAt: "2026-12-31T23:59:59.000Z",
     refreshTokenExpiresAt: "2027-01-31T23:59:59.000Z",
     sessionId: "session-1",
@@ -84,13 +87,13 @@ describe("AuthApiAdapter", () => {
       "fetch",
       vi.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve(mockLoginResponse),
+        json: () => Promise.resolve(mockBffLoginResponse),
       }),
     );
   });
 
   describe("login", () => {
-    it("Given: valid credentials When: login is called Then: should POST to /auth/login with correct headers and body", async () => {
+    it("Given: valid credentials When: login is called Then: should POST to BFF /api/auth/login", async () => {
       await adapter.login({
         organizationSlug: "acme",
         email: "test@example.com",
@@ -98,14 +101,12 @@ describe("AuthApiAdapter", () => {
       });
 
       expect(fetch).toHaveBeenCalledWith(
-        "http://localhost:8080/auth/login",
+        "http://localhost:3000/api/auth/login",
         expect.objectContaining({
           method: "POST",
-          headers: expect.objectContaining({
-            "Content-Type": "application/json",
-            "X-Organization-Slug": "acme",
-          }),
+          credentials: "include",
           body: JSON.stringify({
+            organizationSlug: "acme",
             email: "test@example.com",
             password: "password123",
           }),
@@ -113,47 +114,23 @@ describe("AuthApiAdapter", () => {
       );
     });
 
-    it("Given: successful login When: response is OK Then: should store tokens and user via TokenService", async () => {
+    it("Given: successful login When: response is OK Then: should store user and org slug via TokenService", async () => {
       await adapter.login({
         organizationSlug: "acme",
         email: "test@example.com",
         password: "password123",
       });
 
-      expect(mockSetTokens).toHaveBeenCalledWith({
-        accessToken: "access-token-123",
-        refreshToken: "refresh-token-456",
-        expiresAt: "2026-12-31T23:59:59.000Z",
-      });
-      expect(mockSetUser).toHaveBeenCalledWith(mockLoginResponse.data.user);
+      expect(mockSetUser).toHaveBeenCalledWith(
+        mockBffLoginResponse.data.user,
+      );
       expect(mockSetOrganizationSlug).toHaveBeenCalledWith("acme");
+      expect(mockSetExpiresAt).toHaveBeenCalledWith(
+        "2026-12-31T23:59:59.000Z",
+      );
     });
 
-    it("Given: successful login When: JWT contains org_id Then: should store organization id", async () => {
-      mockExtractOrgIdFromToken.mockReturnValue("org-456");
-
-      await adapter.login({
-        organizationSlug: "acme",
-        email: "test@example.com",
-        password: "password123",
-      });
-
-      expect(mockSetOrganizationId).toHaveBeenCalledWith("org-456");
-    });
-
-    it("Given: successful login When: JWT has no org_id Then: should not call setOrganizationId", async () => {
-      mockExtractOrgIdFromToken.mockReturnValue(null);
-
-      await adapter.login({
-        organizationSlug: "acme",
-        email: "test@example.com",
-        password: "password123",
-      });
-
-      expect(mockSetOrganizationId).not.toHaveBeenCalled();
-    });
-
-    it("Given: invalid credentials When: response is 401 Then: should throw AuthApiError with unauthorized code", async () => {
+    it("Given: invalid credentials When: response is 401 Then: should throw AuthApiError", async () => {
       vi.stubGlobal(
         "fetch",
         vi.fn().mockResolvedValue({
@@ -175,17 +152,6 @@ describe("AuthApiAdapter", () => {
           password: "wrong",
         }),
       ).rejects.toThrow(AuthApiError);
-
-      await expect(
-        adapter.login({
-          organizationSlug: "acme",
-          email: "bad@example.com",
-          password: "wrong",
-        }),
-      ).rejects.toMatchObject({
-        code: "unauthorized",
-        statusCode: 401,
-      });
     });
 
     it("Given: server error When: response fails to parse JSON Then: should throw AuthApiError with generic message", async () => {
@@ -209,8 +175,7 @@ describe("AuthApiAdapter", () => {
   });
 
   describe("logout", () => {
-    it("Given: a logged-in user When: logout is called Then: should POST to /auth/logout and clear tokens", async () => {
-      mockGetAccessToken.mockReturnValue("token-abc");
+    it("Given: a logged-in user When: logout is called Then: should POST to BFF and clear session", async () => {
       mockGetOrganizationSlug.mockReturnValue("acme");
       vi.stubGlobal(
         "fetch",
@@ -222,44 +187,30 @@ describe("AuthApiAdapter", () => {
       await adapter.logout();
 
       expect(fetch).toHaveBeenCalledWith(
-        "http://localhost:8080/auth/logout",
+        "http://localhost:3000/api/auth/logout",
         expect.objectContaining({
           method: "POST",
-          headers: expect.objectContaining({
-            Authorization: "Bearer token-abc",
-            "X-Organization-Slug": "acme",
-          }),
+          credentials: "include",
         }),
       );
-      expect(mockClearTokens).toHaveBeenCalled();
+      expect(mockClearSession).toHaveBeenCalled();
     });
 
-    it("Given: logout API fails When: fetch throws Then: should still clear tokens via finally", async () => {
-      mockGetAccessToken.mockReturnValue("token-abc");
+    it("Given: logout API fails When: fetch throws Then: should still clear session via finally", async () => {
       mockGetOrganizationSlug.mockReturnValue(null);
       vi.stubGlobal(
         "fetch",
         vi.fn().mockRejectedValue(new Error("Network error")),
       );
 
-      // logout re-throws after clearing tokens in finally block
       await expect(adapter.logout()).rejects.toThrow("Network error");
 
-      expect(mockClearTokens).toHaveBeenCalled();
+      expect(mockClearSession).toHaveBeenCalled();
     });
   });
 
   describe("getCurrentUser", () => {
-    it("Given: no access token When: getCurrentUser is called Then: should return null", async () => {
-      mockGetAccessToken.mockReturnValue(null);
-
-      const user = await adapter.getCurrentUser();
-
-      expect(user).toBeNull();
-    });
-
-    it("Given: expired token When: getCurrentUser is called Then: should return null", async () => {
-      mockGetAccessToken.mockReturnValue("expired-token");
+    it("Given: expired session When: getCurrentUser is called Then: should return null", async () => {
       mockIsTokenExpired.mockReturnValue(true);
 
       const user = await adapter.getCurrentUser();
@@ -267,8 +218,7 @@ describe("AuthApiAdapter", () => {
       expect(user).toBeNull();
     });
 
-    it("Given: valid token but no stored user When: getCurrentUser is called Then: should return null", async () => {
-      mockGetAccessToken.mockReturnValue("valid-token");
+    it("Given: valid session but no stored user When: getCurrentUser is called Then: should return null", async () => {
       mockIsTokenExpired.mockReturnValue(false);
       mockGetUser.mockReturnValue(null);
 
@@ -277,8 +227,7 @@ describe("AuthApiAdapter", () => {
       expect(user).toBeNull();
     });
 
-    it("Given: valid token and stored user When: getCurrentUser is called Then: should return mapped user", async () => {
-      mockGetAccessToken.mockReturnValue("valid-token");
+    it("Given: valid session and stored user When: getCurrentUser is called Then: should return mapped user", async () => {
       mockIsTokenExpired.mockReturnValue(false);
       mockGetUser.mockReturnValue({
         id: "user-1",
@@ -297,12 +246,11 @@ describe("AuthApiAdapter", () => {
   });
 
   describe("refreshToken", () => {
-    it("Given: valid refresh token When: refreshToken is called Then: should POST to /auth/refresh and update stored tokens", async () => {
+    it("Given: valid session When: refreshToken is called Then: should POST to BFF /api/auth/refresh", async () => {
       mockGetOrganizationSlug.mockReturnValue("acme");
       const refreshResponse = {
+        success: true,
         data: {
-          accessToken: "new-access",
-          refreshToken: "new-refresh",
           accessTokenExpiresAt: "2027-06-01T00:00:00.000Z",
         },
       };
@@ -314,28 +262,22 @@ describe("AuthApiAdapter", () => {
         }),
       );
 
-      const tokens = await adapter.refreshToken("old-refresh-token");
+      const tokens = await adapter.refreshToken();
 
       expect(fetch).toHaveBeenCalledWith(
-        "http://localhost:8080/auth/refresh",
+        "http://localhost:3000/api/auth/refresh",
         expect.objectContaining({
           method: "POST",
-          headers: expect.objectContaining({
-            "X-Organization-Slug": "acme",
-          }),
-          body: JSON.stringify({ refreshToken: "old-refresh-token" }),
+          credentials: "include",
         }),
       );
-      expect(mockSetTokens).toHaveBeenCalledWith({
-        accessToken: "new-access",
-        refreshToken: "new-refresh",
-        expiresAt: "2027-06-01T00:00:00.000Z",
-      });
-      expect(tokens.accessToken).toBe("new-access");
-      expect(tokens.refreshToken).toBe("new-refresh");
+      expect(mockSetExpiresAt).toHaveBeenCalledWith(
+        "2027-06-01T00:00:00.000Z",
+      );
+      expect(tokens.accessToken).toBe("httponly");
     });
 
-    it("Given: refresh fails When: response is not OK Then: should clear tokens and throw", async () => {
+    it("Given: refresh fails When: response is not OK Then: should clear session and throw", async () => {
       mockGetOrganizationSlug.mockReturnValue(null);
       vi.stubGlobal(
         "fetch",
@@ -346,10 +288,10 @@ describe("AuthApiAdapter", () => {
         }),
       );
 
-      await expect(adapter.refreshToken("bad-token")).rejects.toThrow(
+      await expect(adapter.refreshToken()).rejects.toThrow(
         "Token refresh failed",
       );
-      expect(mockClearTokens).toHaveBeenCalled();
+      expect(mockClearSession).toHaveBeenCalled();
     });
   });
 });

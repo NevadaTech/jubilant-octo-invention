@@ -20,8 +20,8 @@ function isPublicRoute(pathname: string): boolean {
 }
 
 function getTokenFromCookies(request: NextRequest): string | null {
-  // Check for token in cookies (set by client-side localStorage sync)
-  const tokenCookie = request.cookies.get("nevada_auth_token");
+  // Check for HttpOnly auth cookie (set by BFF API routes)
+  const tokenCookie = request.cookies.get("nevada_access_token");
   return tokenCookie?.value || null;
 }
 

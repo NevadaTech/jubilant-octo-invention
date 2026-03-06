@@ -19,7 +19,7 @@ export interface AuthRepositoryPort {
   login(credentials: LoginCredentials): Promise<{ user: User; tokens: Tokens }>;
   logout(): Promise<void>;
   getCurrentUser(): Promise<User | null>;
-  refreshToken(refreshToken: string): Promise<Tokens>;
+  refreshToken(refreshToken?: string): Promise<Tokens>;
   requestPasswordReset(
     data: RequestPasswordResetDto,
   ): Promise<RequestPasswordResetResponseDto>;

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { logger } from "@/shared/infrastructure/logger";
 
 const envSchema = z.object({
   // App
@@ -32,8 +33,7 @@ function getEnv(): Env {
   });
 
   if (!parsed.success) {
-    // eslint-disable-next-line no-console
-    console.error(
+    logger.error(
       "Invalid environment variables:",
       parsed.error.flatten().fieldErrors,
     );
