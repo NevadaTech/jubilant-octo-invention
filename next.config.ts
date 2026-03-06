@@ -9,7 +9,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'strict-dynamic' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
+  script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob:;
   font-src 'self' data:;
