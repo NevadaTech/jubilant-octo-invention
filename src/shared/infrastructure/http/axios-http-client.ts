@@ -36,12 +36,17 @@ export class AxiosHttpClient implements HttpClientPort {
   }
 
   private setupInterceptors(): void {
-    // Request interceptor — add org headers (no more token injection)
+    // Request interceptor — add auth + org headers
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
+        const accessToken = TokenService.getAccessToken();
         const organizationSlug = TokenService.getOrganizationSlug();
         const organizationId = TokenService.getOrganizationId();
         const user = TokenService.getUser();
+
+        if (accessToken) {
+          config.headers["Authorization"] = `Bearer ${accessToken}`;
+        }
 
         if (organizationSlug) {
           config.headers["X-Organization-Slug"] = organizationSlug;
@@ -124,6 +129,9 @@ export class AxiosHttpClient implements HttpClientPort {
 
         if (refreshResponse.ok) {
           const result = await refreshResponse.json();
+          if (result.data?.accessToken) {
+            TokenService.setAccessToken(result.data.accessToken);
+          }
           if (result.data?.accessTokenExpiresAt) {
             TokenService.setExpiresAt(result.data.accessTokenExpiresAt);
           }

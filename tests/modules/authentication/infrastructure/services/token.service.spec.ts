@@ -16,6 +16,7 @@ vi.mock("@/config/env", () => ({
 import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
 import type { StoredUser } from "@/modules/authentication/infrastructure/services/token.service";
 
+const ACCESS_TOKEN_KEY = "nevada_access_token";
 const EXPIRES_KEY = "nevada_token_expires";
 const ORG_SLUG_KEY = "nevada_org_slug";
 const ORG_ID_KEY = "nevada_org_id";
@@ -109,26 +110,37 @@ describe("TokenService", () => {
     });
   });
 
-  describe("setTokens (legacy)", () => {
-    it("Given: valid tokens When: calling setTokens Then: should store expiry", () => {
+  describe("setTokens", () => {
+    it("Given: valid tokens When: calling setTokens Then: should store accessToken and expiry", () => {
       const expiresAt = new Date(Date.now() + 3600000).toISOString();
       TokenService.setTokens({
         accessToken: "access-tok",
-        refreshToken: "refresh-tok",
         expiresAt,
       });
 
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        ACCESS_TOKEN_KEY,
+        "access-tok",
+      );
       expect(localStorage.setItem).toHaveBeenCalledWith(EXPIRES_KEY, expiresAt);
     });
   });
 
-  describe("getAccessToken / getRefreshToken (legacy)", () => {
-    it("Given: HttpOnly cookie setup When: calling getAccessToken Then: should return null (tokens in HttpOnly cookies)", () => {
+  describe("setAccessToken / getAccessToken", () => {
+    it("Given: an access token When: setting and getting Then: should round-trip correctly", () => {
+      TokenService.setAccessToken("my-access-token");
+      const result = TokenService.getAccessToken();
+      expect(result).toBe("my-access-token");
+    });
+
+    it("Given: no access token stored When: calling getAccessToken Then: should return null", () => {
       const result = TokenService.getAccessToken();
       expect(result).toBeNull();
     });
+  });
 
-    it("Given: HttpOnly cookie setup When: calling getRefreshToken Then: should return null (tokens in HttpOnly cookies)", () => {
+  describe("getRefreshToken", () => {
+    it("Given: HttpOnly cookie setup When: calling getRefreshToken Then: should return null (refresh token in HttpOnly cookie)", () => {
       const result = TokenService.getRefreshToken();
       expect(result).toBeNull();
     });
@@ -190,6 +202,7 @@ describe("TokenService", () => {
 
   describe("clearSession / clearTokens", () => {
     it("Given: session data stored When: calling clearSession Then: should remove all session keys from localStorage", () => {
+      store[ACCESS_TOKEN_KEY] = "some-token";
       store[EXPIRES_KEY] = "2026-12-31T00:00:00Z";
       store[ORG_SLUG_KEY] = "my-org";
       store[ORG_ID_KEY] = "org-1";
@@ -197,6 +210,7 @@ describe("TokenService", () => {
 
       TokenService.clearSession();
 
+      expect(localStorage.removeItem).toHaveBeenCalledWith(ACCESS_TOKEN_KEY);
       expect(localStorage.removeItem).toHaveBeenCalledWith(EXPIRES_KEY);
       expect(localStorage.removeItem).toHaveBeenCalledWith(ORG_SLUG_KEY);
       expect(localStorage.removeItem).toHaveBeenCalledWith(ORG_ID_KEY);

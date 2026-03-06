@@ -42,11 +42,12 @@ export async function POST(request: NextRequest) {
 
     const data = result.data || result;
 
-    // Update HttpOnly cookies
+    // Update HttpOnly cookies (refresh token stays server-side only)
     await setAuthCookies(data.accessToken, data.refreshToken);
 
-    // Return data without tokens
-    const { accessToken: _at, refreshToken: _rt, ...rest } = data;
+    // Return data WITHOUT refreshToken but WITH accessToken
+    // (browser needs accessToken for direct backend API calls)
+    const { refreshToken: _rt, ...rest } = data;
     return NextResponse.json({
       success: true,
       data: rest,

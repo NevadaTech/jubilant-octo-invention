@@ -62,7 +62,6 @@ export function Sidebar({ className }: SidebarProps) {
         PERMISSIONS.WAREHOUSES_READ,
         PERMISSIONS.INVENTORY_READ,
         PERMISSIONS.INVENTORY_TRANSFER,
-        PERMISSIONS.COMPANIES_READ,
       ],
       children: [
         {
@@ -94,11 +93,6 @@ export function Sidebar({ className }: SidebarProps) {
           label: t("navigation.stock"),
           href: "/dashboard/inventory/stock",
           requiredPermissions: [PERMISSIONS.INVENTORY_READ],
-        },
-        {
-          label: t("navigation.companies"),
-          href: "/dashboard/inventory/companies",
-          requiredPermissions: [PERMISSIONS.COMPANIES_READ],
         },
       ],
     },

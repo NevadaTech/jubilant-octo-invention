@@ -12,6 +12,7 @@ vi.mock("@/config/env", () => ({
 }));
 
 const mockSetUser = vi.fn();
+const mockSetAccessToken = vi.fn();
 const mockSetOrganizationSlug = vi.fn();
 const mockSetExpiresAt = vi.fn();
 const mockGetOrganizationSlug = vi.fn();
@@ -24,6 +25,7 @@ vi.mock(
   () => ({
     TokenService: {
       setUser: (...args: unknown[]) => mockSetUser(...args),
+      setAccessToken: (...args: unknown[]) => mockSetAccessToken(...args),
       setOrganizationSlug: (...args: unknown[]) =>
         mockSetOrganizationSlug(...args),
       setExpiresAt: (...args: unknown[]) => mockSetExpiresAt(...args),
@@ -31,7 +33,6 @@ vi.mock(
       clearSession: () => mockClearSession(),
       isTokenExpired: () => mockIsTokenExpired(),
       getUser: () => mockGetUser(),
-      // Legacy compatibility
       setTokens: vi.fn(),
       clearTokens: () => mockClearSession(),
       getAccessToken: vi.fn().mockReturnValue(null),
@@ -54,11 +55,12 @@ vi.mock("@/modules/authentication/infrastructure/mappers/user.mapper", () => ({
 
 // --- Helpers ---
 
-// BFF login response (tokens stripped)
+// BFF login response (refreshToken stripped, accessToken included for direct backend calls)
 const mockBffLoginResponse = {
   success: true,
   message: "Login successful",
   data: {
+    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock-access-token",
     user: {
       id: "user-1",
       email: "test@example.com",
@@ -114,20 +116,19 @@ describe("AuthApiAdapter", () => {
       );
     });
 
-    it("Given: successful login When: response is OK Then: should store user and org slug via TokenService", async () => {
+    it("Given: successful login When: response is OK Then: should store accessToken, user, and org slug via TokenService", async () => {
       await adapter.login({
         organizationSlug: "acme",
         email: "test@example.com",
         password: "password123",
       });
 
-      expect(mockSetUser).toHaveBeenCalledWith(
-        mockBffLoginResponse.data.user,
+      expect(mockSetAccessToken).toHaveBeenCalledWith(
+        mockBffLoginResponse.data.accessToken,
       );
+      expect(mockSetUser).toHaveBeenCalledWith(mockBffLoginResponse.data.user);
       expect(mockSetOrganizationSlug).toHaveBeenCalledWith("acme");
-      expect(mockSetExpiresAt).toHaveBeenCalledWith(
-        "2026-12-31T23:59:59.000Z",
-      );
+      expect(mockSetExpiresAt).toHaveBeenCalledWith("2026-12-31T23:59:59.000Z");
     });
 
     it("Given: invalid credentials When: response is 401 Then: should throw AuthApiError", async () => {
@@ -246,11 +247,12 @@ describe("AuthApiAdapter", () => {
   });
 
   describe("refreshToken", () => {
-    it("Given: valid session When: refreshToken is called Then: should POST to BFF /api/auth/refresh", async () => {
+    it("Given: valid session When: refreshToken is called Then: should POST to BFF /api/auth/refresh and store new accessToken", async () => {
       mockGetOrganizationSlug.mockReturnValue("acme");
       const refreshResponse = {
         success: true,
         data: {
+          accessToken: "new-access-token",
           accessTokenExpiresAt: "2027-06-01T00:00:00.000Z",
         },
       };
@@ -271,10 +273,9 @@ describe("AuthApiAdapter", () => {
           credentials: "include",
         }),
       );
-      expect(mockSetExpiresAt).toHaveBeenCalledWith(
-        "2027-06-01T00:00:00.000Z",
-      );
-      expect(tokens.accessToken).toBe("httponly");
+      expect(mockSetAccessToken).toHaveBeenCalledWith("new-access-token");
+      expect(mockSetExpiresAt).toHaveBeenCalledWith("2027-06-01T00:00:00.000Z");
+      expect(tokens.accessToken).toBe("new-access-token");
     });
 
     it("Given: refresh fails When: response is not OK Then: should clear session and throw", async () => {

@@ -67,11 +67,7 @@ function createTestUser(): User {
 }
 
 function createTestTokens(): Tokens {
-  return Tokens.create(
-    "httponly",
-    "httponly",
-    new Date(Date.now() + 3600000),
-  );
+  return Tokens.create("httponly", "httponly", new Date(Date.now() + 3600000));
 }
 
 describe("useAuthStore", () => {

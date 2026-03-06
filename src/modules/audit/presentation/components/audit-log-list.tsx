@@ -63,9 +63,8 @@ export function AuditLogList() {
         await getContainer().auditLogRepository.findAll(exportFilters);
 
       const ExcelJS = await import("exceljs");
-      const { downloadBlob } = await import(
-        "@/modules/reports/presentation/utils/report-utils"
-      );
+      const { downloadBlob } =
+        await import("@/modules/reports/presentation/utils/report-utils");
 
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("Audit Log");

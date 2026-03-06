@@ -8,6 +8,7 @@ import { ProfileForm } from "./profile-form";
 import { ChangePasswordForm } from "./change-password-form";
 import { AlertConfigurationForm } from "./alert-configuration-form";
 import { MultiCompanyToggle } from "./multi-company-toggle";
+import { CompanyList } from "@/modules/companies/presentation/components";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 
 export function SettingsPage() {
@@ -53,6 +54,9 @@ export function SettingsPage() {
           <TabsContent value="organization" className="space-y-6 mt-6">
             <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
               <MultiCompanyToggle />
+            </PermissionGate>
+            <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
+              <CompanyList />
             </PermissionGate>
           </TabsContent>
         )}

@@ -1,8 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Building2, ChevronDown } from "lucide-react";
+import { Building2, ChevronDown, Check } from "lucide-react";
 import { Button } from "@/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/ui/components/dropdown-menu";
 import { useCompanies } from "@/modules/companies/presentation/hooks/use-companies";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
@@ -28,30 +34,38 @@ export function GlobalCompanySelector() {
   }
 
   return (
-    <div className="relative">
-      <select
-        value={selectedCompanyId || ""}
-        onChange={(e) => setSelectedCompany(e.target.value || null)}
-        className="absolute inset-0 w-full cursor-pointer opacity-0"
-        aria-label={t("selector.label")}
-      >
-        <option value="">{t("selector.all")}</option>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="min-w-[180px] justify-between">
+          <span className="flex items-center">
+            <Building2 className="mr-2 h-4 w-4" />
+            {selectedCompany ? selectedCompany.name : t("selector.all")}
+          </span>
+          <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[220px]">
+        <DropdownMenuItem onClick={() => setSelectedCompany(null)}>
+          <Check
+            className={`mr-2 h-4 w-4 ${selectedCompanyId === null ? "opacity-100" : "opacity-0"}`}
+          />
+          {t("selector.all")}
+        </DropdownMenuItem>
         {data?.data.map((company) => (
-          <option key={company.id} value={company.id}>
-            {company.name} ({company.code})
-          </option>
+          <DropdownMenuItem
+            key={company.id}
+            onClick={() => setSelectedCompany(company.id)}
+          >
+            <Check
+              className={`mr-2 h-4 w-4 ${selectedCompanyId === company.id ? "opacity-100" : "opacity-0"}`}
+            />
+            {company.name}
+            <span className="ml-auto text-xs text-muted-foreground">
+              {company.code}
+            </span>
+          </DropdownMenuItem>
         ))}
-      </select>
-      <Button
-        variant="outline"
-        className="min-w-[180px] justify-between pointer-events-none"
-      >
-        <span className="flex items-center">
-          <Building2 className="mr-2 h-4 w-4" />
-          {selectedCompany ? `${selectedCompany.name}` : t("selector.all")}
-        </span>
-        <ChevronDown className="ml-2 h-4 w-4" />
-      </Button>
-    </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

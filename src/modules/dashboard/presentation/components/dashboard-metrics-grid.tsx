@@ -22,7 +22,7 @@ export function DashboardMetricsGrid({ metrics }: DashboardMetricsGridProps) {
       : t("lowStock.descriptionOk");
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <StatCard
         title={t("totalProducts.title")}
         value={formatNumber(metrics.inventory.totalProducts, locale)}

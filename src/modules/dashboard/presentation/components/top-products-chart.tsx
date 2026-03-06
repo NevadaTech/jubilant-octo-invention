@@ -83,12 +83,14 @@ export function TopProductsChart({ data, currency }: TopProductsChartProps) {
                 className="text-muted-foreground"
               />
               <Tooltip
+                wrapperStyle={{ outline: "none" }}
+                cursor={{ fill: "oklch(50% 0.02 250 / 0.15)" }}
                 content={({ active, payload }) => {
                   if (!active || !payload?.length) return null;
                   const item = payload[0].payload;
                   const idx = data.findIndex((d) => d.sku === item.sku);
                   return (
-                    <div className="rounded-lg border bg-card p-3 shadow-md">
+                    <div className="rounded-lg border border-neutral-200 bg-white p-3 shadow-md dark:border-neutral-700 dark:bg-neutral-900">
                       <div className="flex items-center gap-2">
                         <span
                           className="inline-block h-2.5 w-2.5 rounded-full"
@@ -97,18 +99,18 @@ export function TopProductsChart({ data, currency }: TopProductsChartProps) {
                               BAR_COLORS[idx % BAR_COLORS.length],
                           }}
                         />
-                        <p className="text-sm font-medium text-card-foreground">
+                        <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                           {item.name}
                         </p>
                       </div>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
+                      <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
                         SKU: {item.sku}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
                         {t("topProducts.revenue")}:{" "}
                         {formatCurrency(item.revenue, currency, locale)}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
                         {t("topProducts.sold")}: {item.quantitySold}
                       </p>
                     </div>

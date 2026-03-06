@@ -49,8 +49,9 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawReturnTo = searchParams.get("returnTo");
-  const returnTo =
-    rawReturnTo?.startsWith("/dashboard/") ? rawReturnTo : "/dashboard/inventory/movements";
+  const returnTo = rawReturnTo?.startsWith("/dashboard/")
+    ? rawReturnTo
+    : "/dashboard/inventory/movements";
 
   const createMovement = useCreateMovement();
   const updateMovement = useUpdateMovement();

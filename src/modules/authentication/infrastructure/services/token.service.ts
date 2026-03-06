@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { logger } from "@/shared/infrastructure/logger";
 
+const ACCESS_TOKEN_KEY = "nevada_access_token";
 const EXPIRES_KEY = "nevada_token_expires";
 const ORG_SLUG_KEY = "nevada_org_slug";
 const ORG_ID_KEY = "nevada_org_id";
@@ -106,6 +107,7 @@ export class TokenService {
     if (!isClient()) return;
 
     try {
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
       localStorage.removeItem(EXPIRES_KEY);
       localStorage.removeItem(ORG_SLUG_KEY);
       localStorage.removeItem(ORG_ID_KEY);
@@ -193,24 +195,40 @@ export class TokenService {
     }
   }
 
-  // Legacy compatibility — kept for code that still references these
+  /**
+   * Access token is stored in localStorage for direct backend API calls.
+   * Refresh token is NEVER stored client-side — it lives in HttpOnly cookies.
+   */
+  static setAccessToken(token: string): void {
+    if (!isClient()) return;
+    try {
+      localStorage.setItem(ACCESS_TOKEN_KEY, token);
+    } catch (error) {
+      logger.error("Failed to store access token:", error);
+    }
+  }
+
   static getAccessToken(): string | null {
-    // Tokens are now in HttpOnly cookies; return null
-    return null;
+    if (!isClient()) return null;
+    try {
+      return localStorage.getItem(ACCESS_TOKEN_KEY);
+    } catch {
+      return null;
+    }
   }
 
   static getRefreshToken(): string | null {
-    // Tokens are now in HttpOnly cookies; return null
+    // Refresh token is in HttpOnly cookie — not accessible from JS
     return null;
   }
 
-  static setTokens(_tokens: {
+  static setTokens(tokens: {
     accessToken: string;
-    refreshToken: string;
+    refreshToken?: string;
     expiresAt: string;
   }): void {
-    // Only store the expiry — tokens are in HttpOnly cookies
-    this.setExpiresAt(_tokens.expiresAt);
+    this.setAccessToken(tokens.accessToken);
+    this.setExpiresAt(tokens.expiresAt);
   }
 
   static clearTokens(): void {

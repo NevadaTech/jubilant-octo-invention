@@ -58,14 +58,19 @@ export class AuthApiAdapter implements AuthRepositoryPort {
     // BFF strips tokens from response, validate the user data
     const data = rawResult.data;
     if (!data?.user || !data?.accessTokenExpiresAt) {
-      throw new AuthApiError("Invalid login response from server", "UNKNOWN", 500);
+      throw new AuthApiError(
+        "Invalid login response from server",
+        "UNKNOWN",
+        500,
+      );
     }
 
     const expiresAt = new Date(data.accessTokenExpiresAt);
-    // Tokens are in HttpOnly cookies, create placeholder Tokens VO
-    const tokens = Tokens.create("httponly", "httponly", expiresAt);
+    // Refresh token is in HttpOnly cookie; access token is returned for direct backend calls
+    const tokens = Tokens.create(data.accessToken, "httponly", expiresAt);
 
-    // Store user and organization data (no tokens in localStorage)
+    // Store access token, user, and organization data
+    TokenService.setAccessToken(data.accessToken);
     TokenService.setUser(data.user);
     TokenService.setOrganizationSlug(organizationSlug);
     TokenService.setExpiresAt(data.accessTokenExpiresAt);
@@ -133,6 +138,10 @@ export class AuthApiAdapter implements AuthRepositoryPort {
     }
 
     const expiresAt = new Date(data.accessTokenExpiresAt);
+    // Store new access token and expiry
+    if (data.accessToken) {
+      TokenService.setAccessToken(data.accessToken);
+    }
     TokenService.setExpiresAt(data.accessTokenExpiresAt);
 
     // Update stored user with latest data (including orgSettings)
@@ -143,7 +152,7 @@ export class AuthApiAdapter implements AuthRepositoryPort {
       }
     }
 
-    return Tokens.create("httponly", "httponly", expiresAt);
+    return Tokens.create(data.accessToken || "httponly", "httponly", expiresAt);
   }
 
   async requestPasswordReset(

@@ -23,12 +23,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(result, { status: response.status });
     }
 
-    const { accessToken, refreshToken, ...rest } = result.data;
+    const { refreshToken, ...rest } = result.data;
 
-    // Set HttpOnly cookies
-    await setAuthCookies(accessToken, refreshToken);
+    // Store refresh token in HttpOnly cookie (protected from JS access)
+    // Access token is returned to the browser for API requests to the backend
+    await setAuthCookies(result.data.accessToken, refreshToken);
 
-    // Return everything except tokens to the browser
+    // Return data WITH accessToken (needed for backend API calls) but WITHOUT refreshToken
     return NextResponse.json({
       ...result,
       data: rest,

@@ -101,13 +101,15 @@ export function SalesTrendChart({ data, currency }: SalesTrendChartProps) {
                 className="text-muted-foreground"
               />
               <Tooltip
+                wrapperStyle={{ outline: "none" }}
+                cursor={{ stroke: "oklch(50% 0.02 250 / 0.3)", strokeWidth: 1 }}
                 content={({ active, payload, label }) => {
                   if (!active || !payload?.length) return null;
                   const rev = payload.find((p) => p.dataKey === "revenue");
                   const ord = payload.find((p) => p.dataKey === "count");
                   return (
-                    <div className="rounded-lg border bg-card p-3 shadow-md">
-                      <p className="text-sm font-medium text-card-foreground">
+                    <div className="rounded-lg border border-neutral-200 bg-white p-3 shadow-md dark:border-neutral-700 dark:bg-neutral-900">
+                      <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                         {formatDate(String(label))}
                       </p>
                       {rev && (
@@ -116,7 +118,7 @@ export function SalesTrendChart({ data, currency }: SalesTrendChartProps) {
                             className="inline-block h-2.5 w-2.5 rounded-full"
                             style={{ backgroundColor: "var(--color-chart-1)" }}
                           />
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-sm text-neutral-500 dark:text-neutral-400">
                             {t("salesTrend.revenue")}:{" "}
                             {formatCurrency(
                               rev.value as number,
@@ -132,7 +134,7 @@ export function SalesTrendChart({ data, currency }: SalesTrendChartProps) {
                             className="inline-block h-2.5 w-2.5 rounded-full"
                             style={{ backgroundColor: "var(--color-chart-2)" }}
                           />
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-sm text-neutral-500 dark:text-neutral-400">
                             {t("salesTrend.orders")}: {ord.value}
                           </span>
                         </div>

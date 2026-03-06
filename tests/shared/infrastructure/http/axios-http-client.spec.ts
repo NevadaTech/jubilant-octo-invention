@@ -16,13 +16,13 @@ const { mockAxiosInstance, mockTokenService } = vi.hoisted(() => {
   };
 
   const mockTokenService = {
+    getAccessToken: vi.fn().mockReturnValue(null),
+    setAccessToken: vi.fn(),
     getOrganizationSlug: vi.fn(),
     getOrganizationId: vi.fn(),
     getUser: vi.fn(),
     clearSession: vi.fn(),
     setExpiresAt: vi.fn(),
-    // Legacy methods (still callable)
-    getAccessToken: vi.fn().mockReturnValue(null),
     getRefreshToken: vi.fn().mockReturnValue(null),
     setTokens: vi.fn(),
     clearTokens: vi.fn(),
@@ -230,10 +230,11 @@ describe("AxiosHttpClient", () => {
     });
   });
 
-  // ── Request interceptor (org headers — no more token injection) ────
+  // ── Request interceptor (auth + org headers) ──────────────────────
 
   describe("request interceptor", () => {
-    it("Given: org data When: a request is intercepted Then: should inject org headers but not Authorization", () => {
+    it("Given: access token and org data When: a request is intercepted Then: should inject Authorization and org headers", () => {
+      mockTokenService.getAccessToken.mockReturnValue("my-access-token");
       mockTokenService.getOrganizationSlug.mockReturnValue("acme-corp");
       mockTokenService.getOrganizationId.mockReturnValue("org-123");
       mockTokenService.getUser.mockReturnValue({ id: "user-1" });
@@ -242,14 +243,14 @@ describe("AxiosHttpClient", () => {
       const config = { headers: {} as Record<string, string> };
       const result = interceptor(config) as { headers: Record<string, string> };
 
-      // Tokens are in HttpOnly cookies — no Authorization header
-      expect(result.headers.Authorization).toBeUndefined();
+      expect(result.headers.Authorization).toBe("Bearer my-access-token");
       expect(result.headers["X-Organization-Slug"]).toBe("acme-corp");
       expect(result.headers["X-Organization-ID"]).toBe("org-123");
       expect(result.headers["X-User-ID"]).toBe("user-1");
     });
 
-    it("Given: no org data When: a request is intercepted Then: should not set any headers", () => {
+    it("Given: no access token and no org data When: a request is intercepted Then: should not set any headers", () => {
+      mockTokenService.getAccessToken.mockReturnValue(null);
       mockTokenService.getOrganizationSlug.mockReturnValue(null);
       mockTokenService.getOrganizationId.mockReturnValue(null);
       mockTokenService.getUser.mockReturnValue(null);
@@ -258,6 +259,7 @@ describe("AxiosHttpClient", () => {
       const config = { headers: {} as Record<string, string> };
       const result = interceptor(config) as { headers: Record<string, string> };
 
+      expect(result.headers.Authorization).toBeUndefined();
       expect(result.headers["X-Organization-Slug"]).toBeUndefined();
       expect(result.headers["X-Organization-ID"]).toBeUndefined();
       expect(result.headers["X-User-ID"]).toBeUndefined();

@@ -1,8 +1,16 @@
 "use client";
 
 import { useLocale } from "next-intl";
+import { Globe, Check } from "lucide-react";
 import { useRouter, usePathname } from "@/i18n/navigation";
-import { locales, localeNames, type Locale } from "@/i18n/config";
+import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config";
+import { Button } from "@/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/ui/components/dropdown-menu";
 
 export function LocaleSwitcher() {
   const locale = useLocale();
@@ -14,16 +22,24 @@ export function LocaleSwitcher() {
   };
 
   return (
-    <select
-      value={locale}
-      onChange={(e) => handleChange(e.target.value as Locale)}
-      className="rounded-md border border-input bg-background px-2 py-1 text-sm"
-    >
-      {locales.map((loc) => (
-        <option key={loc} value={loc}>
-          {localeNames[loc]}
-        </option>
-      ))}
-    </select>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2">
+          <Globe className="h-4 w-4" />
+          {localeNames[locale as Locale]}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {locales.map((loc) => (
+          <DropdownMenuItem key={loc} onClick={() => handleChange(loc)}>
+            <Check
+              className={`mr-2 h-4 w-4 ${locale === loc ? "opacity-100" : "opacity-0"}`}
+            />
+            <span className="mr-2">{localeFlags[loc]}</span>
+            {localeNames[loc]}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
