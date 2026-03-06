@@ -7,6 +7,7 @@ describe("SaleMapper", () => {
     productId: "p1",
     productName: "Widget",
     productSku: "WDG-001",
+    productBarcode: "7501234567890",
     quantity: 2,
     salePrice: 25.0,
     currency: "USD",
@@ -77,6 +78,7 @@ describe("SaleMapper", () => {
       expect(result.productId).toBe("p1");
       expect(result.productName).toBe("Widget");
       expect(result.productSku).toBe("WDG-001");
+      expect(result.productBarcode).toBe("7501234567890");
       expect(result.quantity).toBe(2);
       expect(result.salePrice).toBe(25.0);
       expect(result.currency).toBe("USD");

@@ -1003,6 +1003,25 @@
     },
     "toast": {
       "error": "An error occurred. Please try again."
+    },
+    "picking": {
+      "title": "Picking Verification",
+      "progress": "{verified} of {total} lines verified",
+      "inputPlaceholder": "Scan barcode or type SKU...",
+      "verify": "Verify",
+      "resetAll": "Reset All",
+      "product": "Product",
+      "sku": "SKU",
+      "need": "Need",
+      "scanned": "Scanned",
+      "status": "Status",
+      "cameraTitle": "Camera Scanner",
+      "cameraDescription": "Point your camera at a barcode to scan it",
+      "startCamera": "Start Camera",
+      "shipBlocked": "Complete picking verification before shipping",
+      "shipBlockedMessage": "All products must be verified before this sale can be shipped",
+      "backendNative": "Using native barcode detection",
+      "backendZxing": "Using software barcode detection"
     }
   },
   "returns": {
@@ -1916,6 +1935,7 @@
     "tabs": {
       "account": "Account",
       "notifications": "Notifications",
+      "picking": "Picking",
       "organization": "Organization"
     },
     "profile": {
@@ -1968,6 +1988,19 @@
       "saved": "Alert settings updated successfully",
       "errorSaving": "Failed to update alert settings",
       "lastRun": "Last run"
+    },
+    "picking": {
+      "title": "Picking Verification",
+      "description": "Configure how barcode scanning verification works during the picking process",
+      "off": "Off",
+      "offDesc": "No verification required. Ship button is always available.",
+      "optional": "Optional",
+      "optionalDesc": "Verification UI is shown but scanning is not required to ship.",
+      "requiredFull": "Required (Full)",
+      "requiredFullDesc": "All lines must be scanned to their full quantity before shipping.",
+      "requiredPartial": "Required (Partial)",
+      "requiredPartialDesc": "At least one scan per line is required before shipping.",
+      "localNote": "This setting is stored per browser and does not sync across devices."
     },
     "multiCompany": {
       "title": "Multi-Company / Business Lines",

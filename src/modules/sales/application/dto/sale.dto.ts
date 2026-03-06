@@ -9,6 +9,7 @@ export interface SaleLineResponseDto {
   productId: string;
   productName: string;
   productSku: string;
+  productBarcode?: string | null;
   quantity: number;
   salePrice: number;
   currency: string;

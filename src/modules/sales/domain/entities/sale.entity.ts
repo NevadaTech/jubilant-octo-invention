@@ -16,6 +16,7 @@ export interface SaleLineProps {
   productId: string;
   productName: string;
   productSku: string;
+  productBarcode: string | null;
   quantity: number;
   salePrice: number;
   currency: string;
@@ -85,6 +86,10 @@ export class SaleLine extends ValueObject<SaleLineProps> {
 
   get productSku(): string {
     return this.props.productSku;
+  }
+
+  get productBarcode(): string | null {
+    return this.props.productBarcode;
   }
 
   get quantity(): number {

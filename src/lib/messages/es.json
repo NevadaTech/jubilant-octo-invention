@@ -1003,6 +1003,25 @@
     },
     "toast": {
       "error": "Ocurrió un error. Inténtalo de nuevo."
+    },
+    "picking": {
+      "title": "Verificación de Picking",
+      "progress": "{verified} de {total} líneas verificadas",
+      "inputPlaceholder": "Escanear código de barras o escribir SKU...",
+      "verify": "Verificar",
+      "resetAll": "Reiniciar Todo",
+      "product": "Producto",
+      "sku": "SKU",
+      "need": "Necesario",
+      "scanned": "Escaneado",
+      "status": "Estado",
+      "cameraTitle": "Escáner de Cámara",
+      "cameraDescription": "Apunta tu cámara al código de barras para escanearlo",
+      "startCamera": "Iniciar Cámara",
+      "shipBlocked": "Completa la verificación de picking antes de enviar",
+      "shipBlockedMessage": "Todos los productos deben ser verificados antes de enviar esta venta",
+      "backendNative": "Usando detección de códigos nativa",
+      "backendZxing": "Usando detección de códigos por software"
     }
   },
   "returns": {
@@ -1916,6 +1935,7 @@
     "tabs": {
       "account": "Cuenta",
       "notifications": "Notificaciones",
+      "picking": "Picking",
       "organization": "Organización"
     },
     "profile": {
@@ -1968,6 +1988,19 @@
       "saved": "Configuración de alertas actualizada",
       "errorSaving": "Error al actualizar la configuración de alertas",
       "lastRun": "Última ejecución"
+    },
+    "picking": {
+      "title": "Verificación de Picking",
+      "description": "Configura cómo funciona la verificación por escaneo de código de barras durante el proceso de picking",
+      "off": "Desactivado",
+      "offDesc": "No se requiere verificación. El botón de envío siempre está disponible.",
+      "optional": "Opcional",
+      "optionalDesc": "Se muestra la UI de verificación pero no se requiere escanear para enviar.",
+      "requiredFull": "Requerido (Completo)",
+      "requiredFullDesc": "Todas las líneas deben escanearse completamente antes de enviar.",
+      "requiredPartial": "Requerido (Parcial)",
+      "requiredPartialDesc": "Se requiere al menos un escaneo por línea antes de enviar.",
+      "localNote": "Esta configuración se guarda por navegador y no se sincroniza entre dispositivos."
     },
     "multiCompany": {
       "title": "Multi-Empresa / Líneas de Negocio",

@@ -8,6 +8,7 @@ import { ProfileForm } from "./profile-form";
 import { ChangePasswordForm } from "./change-password-form";
 import { AlertConfigurationForm } from "./alert-configuration-form";
 import { MultiCompanyToggle } from "./multi-company-toggle";
+import { PickingConfigForm } from "./picking-config-form";
 import { CompanyList } from "@/modules/companies/presentation/components";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 
@@ -32,6 +33,7 @@ export function SettingsPage() {
           <TabsTrigger value="notifications">
             {t("tabs.notifications")}
           </TabsTrigger>
+          <TabsTrigger value="picking">{t("tabs.picking")}</TabsTrigger>
           {multiCompanyEnabled && (
             <TabsTrigger value="organization">
               {t("tabs.organization")}
@@ -47,6 +49,12 @@ export function SettingsPage() {
         <TabsContent value="notifications" className="space-y-6 mt-6">
           <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
             <AlertConfigurationForm />
+          </PermissionGate>
+        </TabsContent>
+
+        <TabsContent value="picking" className="space-y-6 mt-6">
+          <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
+            <PickingConfigForm />
           </PermissionGate>
         </TabsContent>
 

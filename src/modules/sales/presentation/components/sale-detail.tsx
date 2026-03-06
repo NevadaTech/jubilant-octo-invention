@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
@@ -56,6 +56,8 @@ import { SaleStatusBadge } from "./sale-status-badge";
 import { SaleTimeline } from "./sale-timeline";
 import { SaleSwapDialog } from "./sale-swap-dialog";
 import { SaleSwapHistory } from "./sale-swap-history";
+import { PickingVerificationCard } from "./picking-verification-card";
+import { usePickingConfig } from "../hooks/use-picking-config";
 import type { SaleLine } from "@/modules/sales/domain/entities/sale.entity";
 
 interface SaleDetailProps {
@@ -74,6 +76,13 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
   const startPicking = useStartPicking();
   const shipSale = useShipSale();
   const completeSale = useCompleteSale();
+
+  const { config: pickingConfig } = usePickingConfig();
+  const [pickingVerified, setPickingVerified] = useState(true);
+
+  const handleVerificationChange = useCallback((canShip: boolean) => {
+    setPickingVerified(canShip);
+  }, []);
 
   const [swapLine, setSwapLine] = useState<SaleLine | null>(null);
   const [shipDialogOpen, setShipDialogOpen] = useState(false);
@@ -277,7 +286,12 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
           {sale.canShip && (
             <Dialog open={shipDialogOpen} onOpenChange={setShipDialogOpen}>
               <DialogTrigger asChild>
-                <Button disabled={shipSale.isPending}>
+                <Button
+                  disabled={shipSale.isPending || !pickingVerified}
+                  title={
+                    !pickingVerified ? t("picking.shipBlocked") : undefined
+                  }
+                >
                   {shipSale.isPending ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
@@ -548,6 +562,15 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Picking Verification Card */}
+      {sale.isPicking && pickingConfig.mode !== "OFF" && (
+        <PickingVerificationCard
+          lines={sale.lines}
+          saleId={sale.id}
+          onVerificationChange={handleVerificationChange}
+        />
+      )}
 
       {/* Returns Card - shown when sale has returns */}
       {saleReturns && saleReturns.length > 0 && (
