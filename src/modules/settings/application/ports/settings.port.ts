@@ -9,6 +9,11 @@ import type {
   ChangePasswordResponseDto,
 } from "../dto/change-password.dto";
 
+export interface PickingConfigDto {
+  pickingMode: string;
+  pickingEnabled: boolean;
+}
+
 export interface SettingsRepositoryPort {
   getProfile(): Promise<ProfileResponseDto>;
   updateProfile(data: UpdateProfileDto): Promise<ProfileResponseDto>;
@@ -17,4 +22,9 @@ export interface SettingsRepositoryPort {
     data: UpdateAlertConfigurationDto,
   ): Promise<AlertConfigurationResponseDto>;
   changePassword(data: ChangePasswordDto): Promise<ChangePasswordResponseDto>;
+  getPickingConfig(): Promise<PickingConfigDto>;
+  updatePickingConfig(data: {
+    pickingMode?: string;
+    pickingEnabled?: boolean;
+  }): Promise<PickingConfigDto>;
 }

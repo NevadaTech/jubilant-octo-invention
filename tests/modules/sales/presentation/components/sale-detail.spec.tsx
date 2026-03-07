@@ -97,6 +97,15 @@ vi.mock("@/shared/presentation/components/permission-gate", () => ({
   ),
 }));
 
+vi.mock("@/modules/sales/presentation/hooks/use-picking-config", () => ({
+  usePickingConfig: () => ({
+    config: { mode: "OFF" },
+    setConfig: vi.fn(),
+    isLoading: false,
+    isSaving: false,
+  }),
+}));
+
 vi.mock("@/shared/domain/permissions", () => ({
   PERMISSIONS: { SALES_SWAP: "SALES:SWAP" },
 }));

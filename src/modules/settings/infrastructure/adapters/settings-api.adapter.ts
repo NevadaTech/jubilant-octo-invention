@@ -1,5 +1,8 @@
 import { apiClient } from "@/shared/infrastructure/http/axios-http-client";
-import type { SettingsRepositoryPort } from "../../application/ports/settings.port";
+import type {
+  SettingsRepositoryPort,
+  PickingConfigDto,
+} from "../../application/ports/settings.port";
 import type {
   UpdateProfileDto,
   ProfileResponseDto,
@@ -56,5 +59,23 @@ export class SettingsApiAdapter implements SettingsRepositoryPort {
     await apiClient.patch(`/organizations/${orgId}/settings/multi-company`, {
       enabled,
     });
+  }
+
+  async getPickingConfig(): Promise<PickingConfigDto> {
+    const response = await apiClient.get<{ data: PickingConfigDto }>(
+      "/settings/picking",
+    );
+    return response.data.data;
+  }
+
+  async updatePickingConfig(data: {
+    pickingMode?: string;
+    pickingEnabled?: boolean;
+  }): Promise<PickingConfigDto> {
+    const response = await apiClient.put<{ data: PickingConfigDto }>(
+      "/settings/picking",
+      data,
+    );
+    return response.data.data;
   }
 }

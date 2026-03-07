@@ -2118,7 +2118,9 @@
       "lastRun": "Last run"
     },
     "picking": {
-      "title": "Picking Verification",
+      "enableTitle": "Picking Process",
+      "enableDescription": "Enable the picking and shipping workflow for sales in this organization",
+      "title": "Verification Mode",
       "description": "Configure how barcode scanning verification works during the picking process",
       "off": "Off",
       "offDesc": "No verification required. Ship button is always available.",
@@ -2127,8 +2129,7 @@
       "requiredFull": "Required (Full)",
       "requiredFullDesc": "All lines must be scanned to their full quantity before shipping.",
       "requiredPartial": "Required (Partial)",
-      "requiredPartialDesc": "At least one scan per line is required before shipping.",
-      "localNote": "This setting is stored per browser and does not sync across devices."
+      "requiredPartialDesc": "At least one scan per line is required before shipping."
     },
     "multiCompany": {
       "title": "Multi-Company / Business Lines",

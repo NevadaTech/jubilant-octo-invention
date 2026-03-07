@@ -1,49 +1,112 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { usePickingConfig } from "@/modules/sales/presentation/hooks/use-picking-config";
+import { createQueryWrapper } from "@tests/utils/create-query-wrapper";
 
-vi.mock(
-  "@/modules/authentication/infrastructure/services/token.service",
-  () => ({
-    TokenService: {
-      getOrganizationSlug: () => "test-org",
+const mockGetPickingConfig = vi.fn();
+const mockUpdatePickingConfig = vi.fn();
+
+vi.mock("@/config/di/container", () => ({
+  getContainer: () => ({
+    settingsRepository: {
+      getPickingConfig: mockGetPickingConfig,
+      updatePickingConfig: mockUpdatePickingConfig,
     },
   }),
-);
+}));
 
 describe("usePickingConfig", () => {
   beforeEach(() => {
-    localStorage.clear();
+    vi.clearAllMocks();
   });
 
-  it("returns default config (OFF) when no stored value", () => {
-    const { result } = renderHook(() => usePickingConfig());
-
-    expect(result.current.config).toEqual({ mode: "OFF" });
-  });
-
-  it("persists config to localStorage", () => {
-    const { result } = renderHook(() => usePickingConfig());
-
-    act(() => {
-      result.current.setConfig({ mode: "REQUIRED_FULL" });
+  it("returns default config (OFF) while loading", () => {
+    mockGetPickingConfig.mockResolvedValue({
+      pickingMode: "OFF",
+      pickingEnabled: false,
     });
 
-    const stored = JSON.parse(
-      localStorage.getItem("nevada-picking-config-test-org")!,
-    );
-    expect(stored).toEqual({ mode: "REQUIRED_FULL" });
+    const { Wrapper } = createQueryWrapper();
+    const { result } = renderHook(() => usePickingConfig(), {
+      wrapper: Wrapper,
+    });
+
+    expect(result.current.config).toEqual({ mode: "OFF" });
+    expect(result.current.isLoading).toBe(true);
   });
 
-  it("reads config from localStorage on mount", () => {
-    localStorage.setItem(
-      "nevada-picking-config-test-org",
-      JSON.stringify({ mode: "OPTIONAL" }),
-    );
+  it("fetches config from API", async () => {
+    mockGetPickingConfig.mockResolvedValue({
+      pickingMode: "REQUIRED_FULL",
+      pickingEnabled: true,
+    });
 
-    const { result } = renderHook(() => usePickingConfig());
+    const { Wrapper } = createQueryWrapper();
+    const { result } = renderHook(() => usePickingConfig(), {
+      wrapper: Wrapper,
+    });
 
-    // After hydration from useEffect
-    expect(result.current.config.mode).toBe("OPTIONAL");
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.config).toEqual({ mode: "REQUIRED_FULL" });
+    expect(mockGetPickingConfig).toHaveBeenCalledOnce();
+  });
+
+  it("calls API when setting config", async () => {
+    mockGetPickingConfig.mockResolvedValue({
+      pickingMode: "OFF",
+      pickingEnabled: false,
+    });
+    mockUpdatePickingConfig.mockResolvedValue({
+      pickingMode: "OPTIONAL",
+      pickingEnabled: true,
+    });
+
+    const { Wrapper } = createQueryWrapper();
+    const { result } = renderHook(() => usePickingConfig(), {
+      wrapper: Wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    result.current.setConfig({ mode: "OPTIONAL" });
+
+    await waitFor(() => {
+      expect(mockUpdatePickingConfig).toHaveBeenCalledWith({
+        pickingMode: "OPTIONAL",
+      });
+    });
+  });
+
+  it("calls API when toggling pickingEnabled", async () => {
+    mockGetPickingConfig.mockResolvedValue({
+      pickingMode: "OFF",
+      pickingEnabled: false,
+    });
+    mockUpdatePickingConfig.mockResolvedValue({
+      pickingMode: "OFF",
+      pickingEnabled: true,
+    });
+
+    const { Wrapper } = createQueryWrapper();
+    const { result } = renderHook(() => usePickingConfig(), {
+      wrapper: Wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    result.current.setPickingEnabled(true);
+
+    await waitFor(() => {
+      expect(mockUpdatePickingConfig).toHaveBeenCalledWith({
+        pickingEnabled: true,
+      });
+    });
   });
 });

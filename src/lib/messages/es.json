@@ -2118,7 +2118,9 @@
       "lastRun": "Última ejecución"
     },
     "picking": {
-      "title": "Verificación de Picking",
+      "enableTitle": "Proceso de Picking",
+      "enableDescription": "Habilita el flujo de picking y envío para las ventas de esta organización",
+      "title": "Modo de Verificación",
       "description": "Configura cómo funciona la verificación por escaneo de código de barras durante el proceso de picking",
       "off": "Desactivado",
       "offDesc": "No se requiere verificación. El botón de envío siempre está disponible.",
@@ -2127,8 +2129,7 @@
       "requiredFull": "Requerido (Completo)",
       "requiredFullDesc": "Todas las líneas deben escanearse completamente antes de enviar.",
       "requiredPartial": "Requerido (Parcial)",
-      "requiredPartialDesc": "Se requiere al menos un escaneo por línea antes de enviar.",
-      "localNote": "Esta configuración se guarda por navegador y no se sincroniza entre dispositivos."
+      "requiredPartialDesc": "Se requiere al menos un escaneo por línea antes de enviar."
     },
     "multiCompany": {
       "title": "Multi-Empresa / Líneas de Negocio",
