@@ -1929,6 +1929,134 @@
     "dark": "Dark mode",
     "system": "System"
   },
+  "imports": {
+    "title": "Data Imports",
+    "description": "Import data from external sources",
+    "types": {
+      "products": "Products",
+      "movements": "Movements",
+      "warehouses": "Warehouses",
+      "stock": "Stock",
+      "transfers": "Transfers"
+    },
+    "typeDescriptions": {
+      "products": "Import products with SKU, name, unit, and other attributes",
+      "movements": "Import inventory movements (IN, OUT, adjustments)",
+      "warehouses": "Import warehouse definitions",
+      "stock": "Import initial stock levels as adjustment movements",
+      "transfers": "Import transfer requests between warehouses"
+    },
+    "template": {
+      "title": "Download Template",
+      "csv": "CSV Template",
+      "xlsx": "Excel Template",
+      "description": "Download a template file to fill in your data"
+    },
+    "wizard": {
+      "title": "Import {type}",
+      "step1": "Upload File",
+      "step2": "Preview & Validate",
+      "step3": "Execute Import",
+      "upload": "Upload",
+      "validate": "Validate",
+      "execute": "Execute Import",
+      "back": "Back",
+      "close": "Close",
+      "cancel": "Cancel"
+    },
+    "upload": {
+      "title": "Upload File",
+      "description": "Select a CSV or Excel file to import",
+      "dragDrop": "Drag & drop your file here, or click to browse",
+      "selectedFile": "Selected file",
+      "fileSize": "Size",
+      "removeFile": "Remove file",
+      "maxSize": "Maximum file size: 10MB",
+      "acceptedFormats": "Accepted formats: CSV, XLSX, XLS"
+    },
+    "preview": {
+      "title": "Validation Results",
+      "summary": "Summary",
+      "totalRows": "Total Rows",
+      "validRows": "Valid Rows",
+      "invalidRows": "Invalid Rows",
+      "structureErrors": "Structure Errors",
+      "rowErrors": "Row Errors",
+      "warnings": "Warnings",
+      "noErrors": "No errors found. Ready to import!",
+      "hasErrors": "Fix the errors below before importing",
+      "canProcess": "All rows are valid and ready to be imported",
+      "cannotProcess": "Cannot proceed due to validation errors",
+      "companyCodeNote": "The 'Company Code' column is optional for multi-company organizations"
+    },
+    "execute": {
+      "title": "Executing Import",
+      "processing": "Processing rows...",
+      "completed": "Import completed successfully!",
+      "failed": "Import failed",
+      "progress": "{processed} of {total} rows processed"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "VALIDATING": "Validating",
+      "VALIDATED": "Validated",
+      "PROCESSING": "Processing",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed"
+    },
+    "errors": {
+      "fileTooLarge": "File size exceeds 10MB limit",
+      "invalidFileType": "Invalid file type. Accepted: CSV, XLSX, XLS",
+      "noFile": "Please select a file",
+      "importFailed": "Import failed: {error}"
+    },
+    "messages": {
+      "templateDownloaded": "Template downloaded successfully",
+      "importStarted": "Import started successfully",
+      "importCompleted": "Import completed successfully",
+      "importFailed": "Import failed",
+      "errorReportDownloaded": "Error report downloaded"
+    },
+    "errorReport": {
+      "title": "Error Report",
+      "download": "Download Error Report",
+      "downloadCsv": "Download CSV",
+      "downloadXlsx": "Download Excel"
+    },
+    "history": {
+      "title": "Import History",
+      "empty": "No imports yet",
+      "columns": {
+        "type": "Type",
+        "fileName": "File",
+        "status": "Status",
+        "rows": "Rows",
+        "date": "Date",
+        "progress": "Progress"
+      }
+    },
+    "detail": {
+      "title": "Import Detail",
+      "summary": "Summary",
+      "importedData": "Imported Data",
+      "row": "Row",
+      "status": "Status",
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "errors": "Errors",
+      "warnings": "Warnings",
+      "noRows": "No row data available",
+      "back": "Back to history",
+      "fileName": "File",
+      "type": "Type",
+      "createdAt": "Date",
+      "totalRows": "Total rows",
+      "validRows": "Valid rows",
+      "invalidRows": "Invalid rows",
+      "processedRows": "Processed rows"
+    },
+    "startImport": "Import"
+  },
   "settings": {
     "title": "Settings",
     "description": "Manage your profile and system configuration",

@@ -12,6 +12,7 @@ export interface HttpClientConfig {
 export interface HttpRequestConfig {
   params?: Record<string, unknown>;
   headers?: Record<string, string>;
+  responseType?: "json" | "blob" | "text" | "arraybuffer";
 }
 
 export interface HttpResponse<T> {

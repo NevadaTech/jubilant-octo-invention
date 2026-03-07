@@ -1929,6 +1929,134 @@
     "dark": "Modo oscuro",
     "system": "Sistema"
   },
+  "imports": {
+    "title": "Importaciones",
+    "description": "Importar datos desde fuentes externas",
+    "types": {
+      "products": "Productos",
+      "movements": "Movimientos",
+      "warehouses": "Almacenes",
+      "stock": "Stock",
+      "transfers": "Transferencias"
+    },
+    "typeDescriptions": {
+      "products": "Importar productos con SKU, nombre, unidad y otros atributos",
+      "movements": "Importar movimientos de inventario (entradas, salidas, ajustes)",
+      "warehouses": "Importar definiciones de almacenes",
+      "stock": "Importar niveles de stock inicial como movimientos de ajuste",
+      "transfers": "Importar solicitudes de transferencia entre almacenes"
+    },
+    "template": {
+      "title": "Descargar Plantilla",
+      "csv": "Plantilla CSV",
+      "xlsx": "Plantilla Excel",
+      "description": "Descarga una plantilla para completar tus datos"
+    },
+    "wizard": {
+      "title": "Importar {type}",
+      "step1": "Subir Archivo",
+      "step2": "Vista Previa y Validar",
+      "step3": "Ejecutar Importacion",
+      "upload": "Subir",
+      "validate": "Validar",
+      "execute": "Ejecutar Importacion",
+      "back": "Volver",
+      "close": "Cerrar",
+      "cancel": "Cancelar"
+    },
+    "upload": {
+      "title": "Subir Archivo",
+      "description": "Selecciona un archivo CSV o Excel para importar",
+      "dragDrop": "Arrastra y suelta tu archivo aqui, o haz clic para buscar",
+      "selectedFile": "Archivo seleccionado",
+      "fileSize": "Tamano",
+      "removeFile": "Eliminar archivo",
+      "maxSize": "Tamano maximo de archivo: 10MB",
+      "acceptedFormats": "Formatos aceptados: CSV, XLSX, XLS"
+    },
+    "preview": {
+      "title": "Resultados de Validacion",
+      "summary": "Resumen",
+      "totalRows": "Filas Totales",
+      "validRows": "Filas Validas",
+      "invalidRows": "Filas Invalidas",
+      "structureErrors": "Errores de Estructura",
+      "rowErrors": "Errores por Fila",
+      "warnings": "Advertencias",
+      "noErrors": "No se encontraron errores. Listo para importar!",
+      "hasErrors": "Corrige los errores a continuacion antes de importar",
+      "canProcess": "Todas las filas son validas y estan listas para importar",
+      "cannotProcess": "No se puede continuar debido a errores de validacion",
+      "companyCodeNote": "La columna 'Company Code' es opcional para organizaciones multi-empresa"
+    },
+    "execute": {
+      "title": "Ejecutando Importacion",
+      "processing": "Procesando filas...",
+      "completed": "Importacion completada exitosamente!",
+      "failed": "La importacion fallo",
+      "progress": "{processed} de {total} filas procesadas"
+    },
+    "status": {
+      "PENDING": "Pendiente",
+      "VALIDATING": "Validando",
+      "VALIDATED": "Validado",
+      "PROCESSING": "Procesando",
+      "COMPLETED": "Completado",
+      "FAILED": "Fallido"
+    },
+    "errors": {
+      "fileTooLarge": "El archivo excede el limite de 10MB",
+      "invalidFileType": "Tipo de archivo invalido. Aceptados: CSV, XLSX, XLS",
+      "noFile": "Por favor selecciona un archivo",
+      "importFailed": "La importacion fallo: {error}"
+    },
+    "messages": {
+      "templateDownloaded": "Plantilla descargada exitosamente",
+      "importStarted": "Importacion iniciada exitosamente",
+      "importCompleted": "Importacion completada exitosamente",
+      "importFailed": "La importacion fallo",
+      "errorReportDownloaded": "Reporte de errores descargado"
+    },
+    "errorReport": {
+      "title": "Reporte de Errores",
+      "download": "Descargar Reporte de Errores",
+      "downloadCsv": "Descargar CSV",
+      "downloadXlsx": "Descargar Excel"
+    },
+    "history": {
+      "title": "Historial de Importaciones",
+      "empty": "No hay importaciones aun",
+      "columns": {
+        "type": "Tipo",
+        "fileName": "Archivo",
+        "status": "Estado",
+        "rows": "Filas",
+        "date": "Fecha",
+        "progress": "Progreso"
+      }
+    },
+    "detail": {
+      "title": "Detalle de Importacion",
+      "summary": "Resumen",
+      "importedData": "Datos Importados",
+      "row": "Fila",
+      "status": "Estado",
+      "valid": "Valida",
+      "invalid": "Invalida",
+      "errors": "Errores",
+      "warnings": "Advertencias",
+      "noRows": "No hay datos de filas disponibles",
+      "back": "Volver al historial",
+      "fileName": "Archivo",
+      "type": "Tipo",
+      "createdAt": "Fecha",
+      "totalRows": "Total filas",
+      "validRows": "Filas validas",
+      "invalidRows": "Filas invalidas",
+      "processedRows": "Filas procesadas"
+    },
+    "startImport": "Importar"
+  },
   "settings": {
     "title": "Configuración",
     "description": "Administra tu perfil y configuración del sistema",

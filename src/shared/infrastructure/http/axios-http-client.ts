@@ -60,6 +60,14 @@ export class AxiosHttpClient implements HttpClientPort {
           config.headers["X-User-ID"] = user.id;
         }
 
+        // Let axios auto-detect Content-Type for FormData (multipart/form-data)
+        if (
+          typeof FormData !== "undefined" &&
+          config.data instanceof FormData
+        ) {
+          delete config.headers["Content-Type"];
+        }
+
         return config;
       },
       (error) => Promise.reject(error),

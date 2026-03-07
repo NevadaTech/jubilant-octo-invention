@@ -14,6 +14,7 @@ import type { AuditLogRepositoryPort } from "@/modules/audit/application/ports/a
 import type { ReportRepositoryPort } from "@/modules/reports/application/ports/report.repository.port";
 import type { CompanyRepositoryPort } from "@/modules/companies/application/ports/company.repository.port";
 import type { SettingsRepositoryPort } from "@/modules/settings/application/ports/settings.port";
+import type { ImportRepositoryPort } from "@/modules/imports/application/ports/import.repository.port";
 
 // ── Adapter implementations ─────────────────────────────────────────
 import { AuthApiAdapter } from "@/modules/authentication/infrastructure/adapters/auth-api.adapter";
@@ -31,6 +32,7 @@ import { AuditLogApiAdapter } from "@/modules/audit/infrastructure/adapters/audi
 import { ReportApiAdapter } from "@/modules/reports/infrastructure/adapters/report-api.adapter";
 import { CompanyApiAdapter } from "@/modules/companies/infrastructure/adapters/company-api.adapter";
 import { SettingsApiAdapter } from "@/modules/settings/infrastructure/adapters/settings-api.adapter";
+import { ImportApiAdapter } from "@/modules/imports/infrastructure/adapters/import-api.adapter";
 
 // ── Use case implementations ────────────────────────────────────────
 import {
@@ -100,6 +102,9 @@ export interface Container {
 
   // Settings
   settingsRepository: SettingsRepositoryPort;
+
+  // Imports
+  importRepository: ImportRepositoryPort;
 }
 
 // ── Factory ─────────────────────────────────────────────────────────
@@ -120,6 +125,7 @@ export function createContainer(): Container {
   const reportRepository = new ReportApiAdapter();
   const companyRepository = new CompanyApiAdapter();
   const settingsRepository = new SettingsApiAdapter();
+  const importRepository = new ImportApiAdapter();
 
   return {
     // Authentication
@@ -171,6 +177,9 @@ export function createContainer(): Container {
 
     // Settings
     settingsRepository,
+
+    // Imports
+    importRepository,
   };
 }
 
