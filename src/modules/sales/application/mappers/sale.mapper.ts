@@ -28,6 +28,8 @@ export class SaleMapper {
       status: raw.status,
       warehouseId: raw.warehouseId,
       warehouseName: raw.warehouseName ?? "",
+      contactId: raw.contactId ?? null,
+      contactName: raw.contactName ?? null,
       customerReference:
         typeof raw.customerReference === "string"
           ? raw.customerReference
@@ -82,6 +84,8 @@ export class SaleMapper {
       status: dto.status,
       warehouseId: dto.warehouseId,
       warehouseName: dto.warehouseName ?? "",
+      contactId: dto.contactId ?? null,
+      contactName: dto.contactName ?? null,
       customerReference:
         typeof dto.customerReference === "string"
           ? dto.customerReference

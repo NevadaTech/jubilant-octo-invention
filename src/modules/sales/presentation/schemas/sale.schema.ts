@@ -13,6 +13,7 @@ export const saleLineSchema = z.object({
 
 export const createSaleSchema = z.object({
   warehouseId: z.string().min(1, "Please select a warehouse"),
+  contactId: z.string().min(1, "Please select a contact"),
   customerReference: z.string().optional(),
   externalReference: z.string().optional(),
   note: z.string().optional(),
@@ -31,6 +32,7 @@ export function toCreateSaleDto(data: CreateSaleFormData): CreateSaleDto {
 
   return {
     warehouseId: data.warehouseId,
+    contactId: data.contactId,
     customerReference: data.customerReference || undefined,
     externalReference: data.externalReference || undefined,
     note: data.note || undefined,

@@ -36,6 +36,7 @@ import {
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
+import { useContacts } from "@/modules/contacts/presentation/hooks/use-contacts";
 import type { UpdateStockMovementDto } from "@/modules/inventory/application/dto/stock-movement.dto";
 
 interface MovementFormPageProps {
@@ -79,17 +80,27 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors },
   } = useForm<CreateMovementFormData>({
     resolver: zodResolver(createMovementSchema),
     defaultValues: {
       warehouseId: "",
       type: "IN",
+      contactId: "",
       reference: "",
       reason: "",
       note: "",
       lines: [{ productId: "", quantity: 1, unitCost: undefined }],
     },
+  });
+
+  const watchType = watch("type");
+
+  const { data: suppliersData } = useContacts({
+    type: "SUPPLIER",
+    isActive: true,
+    limit: 100,
   });
 
   // Pre-fill form when editing
@@ -98,6 +109,7 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
       reset({
         warehouseId: existingMovement.warehouseId,
         type: existingMovement.type as import("../../schemas/movement.schema").ManualMovementType,
+        contactId: existingMovement.contactId ?? "",
         reference: existingMovement.reference ?? "",
         reason: existingMovement.reason ?? "",
         note: existingMovement.note ?? "",
@@ -119,6 +131,7 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
     try {
       if (isEditing && movementId) {
         const dto: UpdateStockMovementDto = {
+          contactId: data.contactId || undefined,
           reference: data.reference || undefined,
           reason: data.reason || undefined,
           note: data.note || undefined,
@@ -258,6 +271,35 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
                 />
               </FormField>
             </div>
+
+            {watchType === "IN" && (
+              <FormField error={errors.contactId?.message}>
+                <Label>{t("fields.supplier")}</Label>
+                <Controller
+                  name="contactId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || ""}
+                      onValueChange={(val) => field.onChange(val || undefined)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={t("fields.supplierPlaceholder")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {suppliersData?.data.map((supplier) => (
+                          <SelectItem key={supplier.id} value={supplier.id}>
+                            {supplier.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </FormField>
+            )}
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {/* Reference */}

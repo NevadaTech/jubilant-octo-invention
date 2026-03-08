@@ -40,6 +40,17 @@ vi.mock("@/modules/inventory/presentation/hooks/use-warehouses", () => ({
   }),
 }));
 
+vi.mock("@/modules/contacts/presentation/hooks/use-contacts", () => ({
+  useContacts: () => ({
+    data: {
+      data: [
+        { id: "sup-1", name: "Supplier A" },
+        { id: "sup-2", name: "Supplier B" },
+      ],
+    },
+  }),
+}));
+
 vi.mock("@/modules/inventory/presentation/schemas/movement.schema", () => ({
   createMovementSchema: { parse: vi.fn() },
   toCreateMovementDto: vi.fn((d: unknown) => d),

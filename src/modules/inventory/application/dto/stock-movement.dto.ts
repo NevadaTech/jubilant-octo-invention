@@ -22,6 +22,8 @@ export interface StockMovementResponseDto {
   warehouseId: string;
   warehouseName?: string;
   warehouseCode?: string;
+  contactId?: string | null;
+  contactName?: string;
   type: MovementType;
   status: MovementStatus;
   reference: string | null;
@@ -58,6 +60,7 @@ export interface CreateMovementLineDto {
 export interface CreateStockMovementDto {
   warehouseId: string;
   type: MovementType;
+  contactId?: string;
   reference?: string;
   reason?: string;
   note?: string;
@@ -67,6 +70,7 @@ export interface CreateStockMovementDto {
 export interface UpdateStockMovementDto {
   warehouseId?: string;
   type?: MovementType;
+  contactId?: string;
   reference?: string;
   reason?: string;
   note?: string;

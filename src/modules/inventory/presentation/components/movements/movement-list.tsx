@@ -191,6 +191,7 @@ export function MovementList() {
                         onSort={handleSort}
                       />
                       <th className="pb-3 pr-4">{t("fields.warehouse")}</th>
+                      <th className="pb-3 pr-4">{t("fields.supplier")}</th>
                       <th className="pb-3 pr-4">{t("fields.totalItems")}</th>
                       <th className="pb-3 pr-4">{t("fields.totalQuantity")}</th>
                       <th className="pb-3 pr-4">{t("fields.reference")}</th>
@@ -223,6 +224,11 @@ export function MovementList() {
                           <MovementStatusBadge status={movement.status} />
                         </td>
                         <td className="py-4 pr-4">{movement.warehouseName}</td>
+                        <td className="py-4 pr-4">
+                          {movement.contactName || (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </td>
                         <td className="py-4 pr-4">
                           <span className="font-medium">
                             {movement.totalItems}

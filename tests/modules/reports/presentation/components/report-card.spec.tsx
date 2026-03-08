@@ -106,6 +106,7 @@ vi.mock("lucide-react", () => {
     Truck: Icon,
     TrendingUp: Icon,
     Archive: Icon,
+    Users: Icon,
   };
 });
 

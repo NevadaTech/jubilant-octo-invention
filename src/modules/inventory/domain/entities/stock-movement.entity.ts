@@ -65,6 +65,8 @@ export interface StockMovementProps {
   warehouseId: string;
   warehouseName: string;
   warehouseCode: string | null;
+  contactId: string | null;
+  contactName: string | null;
   type: MovementType;
   status: MovementStatus;
   reference: string | null;
@@ -95,6 +97,8 @@ export class StockMovement extends AggregateRoot<string> {
       warehouseId: props.warehouseId,
       warehouseName: props.warehouseName,
       warehouseCode: props.warehouseCode,
+      contactId: props.contactId,
+      contactName: props.contactName,
       type: props.type,
       status: props.status,
       reference: props.reference,
@@ -123,6 +127,14 @@ export class StockMovement extends AggregateRoot<string> {
 
   get warehouseCode(): string | null {
     return this.props.warehouseCode;
+  }
+
+  get contactId(): string | null {
+    return this.props.contactId;
+  }
+
+  get contactName(): string | null {
+    return this.props.contactName;
   }
 
   get type(): MovementType {

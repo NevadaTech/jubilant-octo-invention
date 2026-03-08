@@ -15,6 +15,7 @@ import type { ReportRepositoryPort } from "@/modules/reports/application/ports/r
 import type { CompanyRepositoryPort } from "@/modules/companies/application/ports/company.repository.port";
 import type { SettingsRepositoryPort } from "@/modules/settings/application/ports/settings.port";
 import type { ImportRepositoryPort } from "@/modules/imports/application/ports/import.repository.port";
+import type { ContactRepositoryPort } from "@/modules/contacts/application/ports/contact.repository.port";
 
 // ── Adapter implementations ─────────────────────────────────────────
 import { AuthApiAdapter } from "@/modules/authentication/infrastructure/adapters/auth-api.adapter";
@@ -33,6 +34,7 @@ import { ReportApiAdapter } from "@/modules/reports/infrastructure/adapters/repo
 import { CompanyApiAdapter } from "@/modules/companies/infrastructure/adapters/company-api.adapter";
 import { SettingsApiAdapter } from "@/modules/settings/infrastructure/adapters/settings-api.adapter";
 import { ImportApiAdapter } from "@/modules/imports/infrastructure/adapters/import-api.adapter";
+import { ContactApiAdapter } from "@/modules/contacts/infrastructure/adapters/contact-api.adapter";
 
 // ── Use case implementations ────────────────────────────────────────
 import {
@@ -105,6 +107,9 @@ export interface Container {
 
   // Imports
   importRepository: ImportRepositoryPort;
+
+  // Contacts
+  contactRepository: ContactRepositoryPort;
 }
 
 // ── Factory ─────────────────────────────────────────────────────────
@@ -126,6 +131,7 @@ export function createContainer(): Container {
   const companyRepository = new CompanyApiAdapter();
   const settingsRepository = new SettingsApiAdapter();
   const importRepository = new ImportApiAdapter();
+  const contactRepository = new ContactApiAdapter();
 
   return {
     // Authentication
@@ -180,6 +186,9 @@ export function createContainer(): Container {
 
     // Imports
     importRepository,
+
+    // Contacts
+    contactRepository,
   };
 }
 

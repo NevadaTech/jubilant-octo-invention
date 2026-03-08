@@ -105,6 +105,7 @@ describe("Sale Schema", () => {
   describe("createSaleSchema", () => {
     const validSale = {
       warehouseId: "wh-001",
+      contactId: "contact-001",
       lines: [{ productId: "prod-1", quantity: 2, salePrice: 25.0 }],
     };
 

@@ -71,6 +71,12 @@ export const PERMISSIONS = {
   COMPANIES_UPDATE: "COMPANIES:UPDATE",
   COMPANIES_DELETE: "COMPANIES:DELETE",
 
+  // Contacts
+  CONTACTS_CREATE: "CONTACTS:CREATE",
+  CONTACTS_READ: "CONTACTS:READ",
+  CONTACTS_UPDATE: "CONTACTS:UPDATE",
+  CONTACTS_DELETE: "CONTACTS:DELETE",
+
   // Settings
   SETTINGS_MANAGE: "SETTINGS:MANAGE",
 } as const;
@@ -89,6 +95,7 @@ export const ROUTE_PERMISSIONS: Record<string, Permission[]> = {
   "/dashboard/sales": [PERMISSIONS.SALES_READ],
   "/dashboard/returns": [PERMISSIONS.RETURNS_READ],
   "/dashboard/reports": [PERMISSIONS.REPORTS_READ],
+  "/dashboard/contacts": [PERMISSIONS.CONTACTS_READ],
   "/dashboard/imports": [PERMISSIONS.PRODUCTS_IMPORT],
   "/dashboard/users": [PERMISSIONS.USERS_READ],
   "/dashboard/roles": [PERMISSIONS.ROLES_READ],

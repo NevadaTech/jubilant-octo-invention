@@ -27,6 +27,7 @@ import { useCreateMovement } from "@/modules/inventory/presentation/hooks/use-mo
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
+import { useContacts } from "@/modules/contacts/presentation/hooks/use-contacts";
 
 interface MovementFormProps {
   open: boolean;
@@ -53,12 +54,14 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
     handleSubmit,
     reset,
     control,
+    watch,
     formState: { errors },
   } = useForm<CreateMovementFormData>({
     resolver: zodResolver(createMovementSchema),
     defaultValues: {
       warehouseId: "",
       type: "IN",
+      contactId: "",
       reference: "",
       reason: "",
       note: "",
@@ -69,6 +72,14 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "lines",
+  });
+
+  const watchType = watch("type");
+
+  const { data: suppliersData } = useContacts({
+    type: "SUPPLIER",
+    isActive: true,
+    limit: 100,
   });
 
   const onSubmit = async (data: CreateMovementFormData) => {
@@ -170,6 +181,37 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
                   />
                 </FormField>
               </div>
+
+              {watchType === "IN" && (
+                <FormField error={errors.contactId?.message}>
+                  <Label>{t("fields.supplier")}</Label>
+                  <Controller
+                    name="contactId"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value || ""}
+                        onValueChange={(val) =>
+                          field.onChange(val || undefined)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={t("fields.supplierPlaceholder")}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {suppliersData?.data.map((supplier) => (
+                            <SelectItem key={supplier.id} value={supplier.id}>
+                              {supplier.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </FormField>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <FormField error={errors.reference?.message}>

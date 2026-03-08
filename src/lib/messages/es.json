@@ -538,7 +538,9 @@
         "postedBy": "Confirmado Por",
         "returnedAt": "Devuelto En",
         "returnedBy": "Devuelto Por",
-        "totalCost": "Costo Total"
+        "totalCost": "Costo Total",
+        "supplier": "Proveedor",
+        "supplierPlaceholder": "Seleccionar proveedor (opcional)"
       },
       "actions": {
         "new": "Nuevo Movimiento",
@@ -834,6 +836,9 @@
       "status": "Estado",
       "warehouse": "Almacén",
       "warehousePlaceholder": "Selecciona un almacén",
+      "contact": "Contacto",
+      "contactPlaceholder": "Seleccionar un cliente",
+      "noContact": "Sin contacto seleccionado",
       "customer": "Cliente",
       "customerPlaceholder": "Nombre o referencia del cliente",
       "externalReference": "Ref. Externa",
@@ -1380,6 +1385,8 @@
       "SALES_BY_PRODUCT_desc": "Análisis detallado de ventas desglosado por producto",
       "SALES_BY_WAREHOUSE": "Ventas por Almacén",
       "SALES_BY_WAREHOUSE_desc": "Rendimiento de ventas comparado entre almacenes",
+      "SALES_BY_CLIENT": "Ventas por Cliente",
+      "SALES_BY_CLIENT_desc": "Análisis de ventas agrupado por cliente con ingresos y promedios",
       "RETURNS": "Reporte de Devoluciones",
       "RETURNS_desc": "Resumen de todas las devoluciones de productos y su estado",
       "RETURNS_BY_TYPE": "Devoluciones por Tipo",
@@ -1806,6 +1813,7 @@
     "returns": "Devoluciones",
     "reports": "Reportes",
     "imports": "Importaciones",
+    "contacts": "Contactos",
     "users": "Usuarios",
     "roles": "Roles",
     "audit": "Auditoría",
@@ -2136,6 +2144,80 @@
       "description": "Habilita esta funcionalidad para gestionar múltiples empresas o líneas de negocio dentro de tu organización. Cada producto puede asignarse a una empresa, y podrás filtrar inventario, ventas y reportes por empresa.",
       "enabled": "Multi-empresa está habilitado",
       "disabled": "Multi-empresa está deshabilitado"
+    }
+  },
+  "contacts": {
+    "title": "Contactos",
+    "description": "Gestiona tus clientes y proveedores",
+    "list": {
+      "title": "Todos los Contactos"
+    },
+    "fields": {
+      "name": "Nombre",
+      "identification": "Identificación",
+      "type": "Tipo",
+      "address": "Dirección",
+      "notes": "Notas",
+      "status": "Estado",
+      "salesCount": "Ventas",
+      "isActive": "Activo",
+      "createdAt": "Creado",
+      "updatedAt": "Actualizado"
+    },
+    "types": {
+      "CUSTOMER": "Cliente",
+      "SUPPLIER": "Proveedor"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "filters": {
+      "search": "Buscar contactos...",
+      "type": "Tipo",
+      "status": "Estado",
+      "allTypes": "Todos los tipos",
+      "allStatuses": "Todos los estados"
+    },
+    "actions": {
+      "new": "Nuevo Contacto",
+      "edit": "Editar",
+      "view": "Ver Detalles",
+      "delete": "Eliminar"
+    },
+    "form": {
+      "createTitle": "Crear Contacto",
+      "createDescription": "Agregar un nuevo cliente o proveedor",
+      "editTitle": "Editar Contacto",
+      "editDescription": "Actualizar información del contacto",
+      "contactInfo": "Información del Contacto",
+      "namePlaceholder": "Ingrese el nombre del contacto",
+      "identificationPlaceholder": "Ingrese la identificación (ej. RUC, DNI)",
+      "typePlaceholder": "Seleccionar tipo",
+      "addressPlaceholder": "Ingrese la dirección",
+      "notesPlaceholder": "Ingrese notas adicionales",
+      "error": "Ocurrió un error al guardar el contacto. Por favor intente de nuevo."
+    },
+    "detail": {
+      "info": "Información del Contacto",
+      "notFound": "Contacto No Encontrado",
+      "notFoundDescription": "El contacto que buscas no existe o ha sido eliminado."
+    },
+    "delete": {
+      "title": "Eliminar Contacto",
+      "description": "¿Estás seguro de que deseas eliminar este contacto? Esta acción no se puede deshacer."
+    },
+    "messages": {
+      "created": "Contacto creado exitosamente",
+      "updated": "Contacto actualizado exitosamente",
+      "deleted": "Contacto eliminado exitosamente"
+    },
+    "empty": {
+      "title": "No se encontraron contactos",
+      "description": "Comienza creando tu primer contacto."
+    },
+    "error": {
+      "loading": "Error al cargar los contactos. Por favor intente de nuevo."
     }
   }
 }

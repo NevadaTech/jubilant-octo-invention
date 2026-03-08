@@ -23,6 +23,8 @@ export interface SaleApiRawDto {
   status: SaleStatus;
   warehouseId: string;
   warehouseName?: string;
+  contactId?: string | null;
+  contactName?: string | null;
   customerReference: string | null;
   externalReference?: string | null;
   note: string | null;
@@ -64,6 +66,8 @@ export interface SaleResponseDto {
   status: SaleStatus;
   warehouseId: string;
   warehouseName?: string;
+  contactId?: string | null;
+  contactName?: string | null;
   customerReference: string | null;
   externalReference?: string | null;
   note: string | null;
@@ -123,6 +127,7 @@ export interface CreateSaleLineDto {
 
 export interface CreateSaleDto {
   warehouseId: string;
+  contactId: string;
   customerReference?: string;
   externalReference?: string;
   note?: string;

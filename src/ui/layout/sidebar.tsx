@@ -16,6 +16,7 @@ import {
   FileBarChart,
   Upload,
   Users,
+  UserRoundSearch,
   Shield,
   ClipboardList,
   Settings,
@@ -107,6 +108,12 @@ export function Sidebar({ className }: SidebarProps) {
       href: "/dashboard/returns",
       icon: <RotateCcw className="h-5 w-5" />,
       requiredPermissions: [PERMISSIONS.RETURNS_READ],
+    },
+    {
+      label: t("navigation.contacts"),
+      href: "/dashboard/contacts",
+      icon: <UserRoundSearch className="h-5 w-5" />,
+      requiredPermissions: [PERMISSIONS.CONTACTS_READ],
     },
     {
       label: t("navigation.reports"),

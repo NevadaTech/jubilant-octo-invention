@@ -29,6 +29,8 @@ export interface SaleProps {
   status: SaleStatus;
   warehouseId: string;
   warehouseName: string;
+  contactId: string | null;
+  contactName: string | null;
   customerReference: string | null;
   externalReference: string | null;
   note: string | null;
@@ -123,6 +125,8 @@ export class Sale extends AggregateRoot<string> {
       status: props.status,
       warehouseId: props.warehouseId,
       warehouseName: props.warehouseName,
+      contactId: props.contactId,
+      contactName: props.contactName,
       customerReference: props.customerReference,
       externalReference: props.externalReference,
       note: props.note,
@@ -172,6 +176,14 @@ export class Sale extends AggregateRoot<string> {
 
   get warehouseName(): string {
     return this.props.warehouseName;
+  }
+
+  get contactId(): string | null {
+    return this.props.contactId;
+  }
+
+  get contactName(): string | null {
+    return this.props.contactName;
   }
 
   get customerReference(): string | null {

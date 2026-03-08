@@ -538,7 +538,9 @@
         "postedBy": "Posted By",
         "returnedAt": "Returned At",
         "returnedBy": "Returned By",
-        "totalCost": "Total Cost"
+        "totalCost": "Total Cost",
+        "supplier": "Supplier",
+        "supplierPlaceholder": "Select supplier (optional)"
       },
       "actions": {
         "new": "New Movement",
@@ -834,6 +836,9 @@
       "status": "Status",
       "warehouse": "Warehouse",
       "warehousePlaceholder": "Select a warehouse",
+      "contact": "Contact",
+      "contactPlaceholder": "Select a customer",
+      "noContact": "No contact selected",
       "customer": "Customer",
       "customerPlaceholder": "Customer name or reference",
       "externalReference": "External Ref.",
@@ -1380,6 +1385,8 @@
       "SALES_BY_PRODUCT_desc": "Detailed sales analysis broken down by product",
       "SALES_BY_WAREHOUSE": "Sales by Warehouse",
       "SALES_BY_WAREHOUSE_desc": "Sales performance compared across warehouses",
+      "SALES_BY_CLIENT": "Sales by Client",
+      "SALES_BY_CLIENT_desc": "Sales analysis grouped by client with revenue and averages",
       "RETURNS": "Returns Report",
       "RETURNS_desc": "Summary of all product returns and their status",
       "RETURNS_BY_TYPE": "Returns by Type",
@@ -1806,6 +1813,7 @@
     "returns": "Returns",
     "reports": "Reports",
     "imports": "Imports",
+    "contacts": "Contacts",
     "users": "Users",
     "roles": "Roles",
     "audit": "Audit Log",
@@ -2136,6 +2144,80 @@
       "description": "Enable this feature to manage multiple companies or business lines within your organization. Each product can be assigned to a company, and you can filter inventory, sales, and reports by company.",
       "enabled": "Multi-company is enabled",
       "disabled": "Multi-company is disabled"
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "description": "Manage your customers and suppliers",
+    "list": {
+      "title": "All Contacts"
+    },
+    "fields": {
+      "name": "Name",
+      "identification": "Identification",
+      "type": "Type",
+      "address": "Address",
+      "notes": "Notes",
+      "status": "Status",
+      "salesCount": "Sales",
+      "isActive": "Active",
+      "createdAt": "Created",
+      "updatedAt": "Updated"
+    },
+    "types": {
+      "CUSTOMER": "Customer",
+      "SUPPLIER": "Supplier"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "filters": {
+      "search": "Search contacts...",
+      "type": "Type",
+      "status": "Status",
+      "allTypes": "All types",
+      "allStatuses": "All statuses"
+    },
+    "actions": {
+      "new": "New Contact",
+      "edit": "Edit",
+      "view": "View Details",
+      "delete": "Delete"
+    },
+    "form": {
+      "createTitle": "Create Contact",
+      "createDescription": "Add a new customer or supplier",
+      "editTitle": "Edit Contact",
+      "editDescription": "Update contact information",
+      "contactInfo": "Contact Information",
+      "namePlaceholder": "Enter contact name",
+      "identificationPlaceholder": "Enter identification (e.g., tax ID)",
+      "typePlaceholder": "Select type",
+      "addressPlaceholder": "Enter address",
+      "notesPlaceholder": "Enter additional notes",
+      "error": "An error occurred while saving the contact. Please try again."
+    },
+    "detail": {
+      "info": "Contact Information",
+      "notFound": "Contact Not Found",
+      "notFoundDescription": "The contact you are looking for does not exist or has been removed."
+    },
+    "delete": {
+      "title": "Delete Contact",
+      "description": "Are you sure you want to delete this contact? This action cannot be undone."
+    },
+    "messages": {
+      "created": "Contact created successfully",
+      "updated": "Contact updated successfully",
+      "deleted": "Contact deleted successfully"
+    },
+    "empty": {
+      "title": "No contacts found",
+      "description": "Get started by creating your first contact."
+    },
+    "error": {
+      "loading": "Failed to load contacts. Please try again."
     }
   }
 }

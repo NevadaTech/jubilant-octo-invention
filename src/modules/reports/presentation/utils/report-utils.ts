@@ -19,6 +19,7 @@ export const REPORT_SLUG_MAP: Record<string, ReportTypeValue> = {
   sales: "SALES",
   "sales-by-product": "SALES_BY_PRODUCT",
   "sales-by-warehouse": "SALES_BY_WAREHOUSE",
+  "sales-by-client": "SALES_BY_CLIENT",
   returns: "RETURNS",
   "returns-by-type": "RETURNS_BY_TYPE",
   "returns-by-product": "RETURNS_BY_PRODUCT",

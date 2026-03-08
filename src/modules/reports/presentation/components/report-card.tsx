@@ -19,6 +19,7 @@ import {
   Truck,
   TrendingUp,
   Archive,
+  Users,
 } from "lucide-react";
 import {
   Card,
@@ -52,6 +53,7 @@ const REPORT_ICONS: Record<ReportTypeValue, React.ElementType> = {
   SALES: ShoppingCart,
   SALES_BY_PRODUCT: BarChart3,
   SALES_BY_WAREHOUSE: Building2,
+  SALES_BY_CLIENT: Users,
   RETURNS: PackageX,
   RETURNS_BY_TYPE: Layers,
   RETURNS_BY_PRODUCT: BarChart3,

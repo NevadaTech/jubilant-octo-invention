@@ -27,6 +27,7 @@ import {
 import { useCreateSale } from "@/modules/sales/presentation/hooks/use-sales";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { useContacts } from "@/modules/contacts/presentation/hooks/use-contacts";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 export function SaleFormPage() {
@@ -44,6 +45,11 @@ export function SaleFormPage() {
     limit: 100,
     statuses: ["ACTIVE"],
   });
+  const { data: contactsData } = useContacts({
+    limit: 100,
+    type: "CUSTOMER",
+    isActive: true,
+  });
 
   const isSubmitting = createSale.isPending;
 
@@ -56,6 +62,7 @@ export function SaleFormPage() {
     resolver: zodResolver(createSaleSchema),
     defaultValues: {
       warehouseId: "",
+      contactId: "",
       customerReference: "",
       externalReference: "",
       note: "",
@@ -130,6 +137,30 @@ export function SaleFormPage() {
                       {warehousesData?.data.map((warehouse) => (
                         <SelectItem key={warehouse.id} value={warehouse.id}>
                           {warehouse.name} ({warehouse.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </FormField>
+
+            <FormField error={errors.contactId?.message}>
+              <Label>{t("fields.contact")} *</Label>
+              <Controller
+                name="contactId"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={t("fields.contactPlaceholder")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {contactsData?.data.map((contact) => (
+                        <SelectItem key={contact.id} value={contact.id}>
+                          {contact.name} ({contact.identification})
                         </SelectItem>
                       ))}
                     </SelectContent>

@@ -18,6 +18,7 @@ export const createMovementSchema = z.object({
   type: z.enum(["IN", "OUT", "ADJUST_IN", "ADJUST_OUT"] as const, {
     message: "Please select a movement type",
   }),
+  contactId: z.string().optional(),
   reference: z
     .string()
     .max(100, "Reference cannot exceed 100 characters")
@@ -39,6 +40,7 @@ export type ManualMovementType = "IN" | "OUT" | "ADJUST_IN" | "ADJUST_OUT";
 export interface CreateMovementFormData {
   warehouseId: string;
   type: ManualMovementType;
+  contactId?: string;
   reference?: string;
   reason?: string;
   note?: string;
@@ -52,6 +54,7 @@ export function toCreateMovementDto(
   return {
     warehouseId: data.warehouseId,
     type: data.type,
+    contactId: data.contactId || undefined,
     reference: data.reference || undefined,
     reason: data.reason || undefined,
     note: data.note || undefined,

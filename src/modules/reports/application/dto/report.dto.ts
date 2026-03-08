@@ -9,6 +9,7 @@ export type ReportTypeValue =
   | "SALES"
   | "SALES_BY_PRODUCT"
   | "SALES_BY_WAREHOUSE"
+  | "SALES_BY_CLIENT"
   | "RETURNS"
   | "RETURNS_BY_TYPE"
   | "RETURNS_BY_PRODUCT"
@@ -148,7 +149,12 @@ export const REPORT_CATEGORIES: ReportCategoryConfig[] = [
   },
   {
     key: "sales",
-    types: ["SALES", "SALES_BY_PRODUCT", "SALES_BY_WAREHOUSE"],
+    types: [
+      "SALES",
+      "SALES_BY_PRODUCT",
+      "SALES_BY_WAREHOUSE",
+      "SALES_BY_CLIENT",
+    ],
   },
   {
     key: "returns",
@@ -210,6 +216,7 @@ export const REPORT_FILTER_CONFIG: Record<
     categoryIds: true,
   },
   SALES_BY_WAREHOUSE: { dateRange: true, warehouseIds: true, companyId: true },
+  SALES_BY_CLIENT: { dateRange: true, warehouseIds: true, companyId: true },
   RETURNS: {
     dateRange: true,
     warehouseIds: true,
@@ -268,6 +275,7 @@ export const REPORT_PATHS: Record<ReportTypeValue, string> = {
   SALES: "/reports/sales",
   SALES_BY_PRODUCT: "/reports/sales/by-product",
   SALES_BY_WAREHOUSE: "/reports/sales/by-warehouse",
+  SALES_BY_CLIENT: "/reports/sales/by-client",
   RETURNS: "/reports/returns",
   RETURNS_BY_TYPE: "/reports/returns/by-type",
   RETURNS_BY_PRODUCT: "/reports/returns/by-product",

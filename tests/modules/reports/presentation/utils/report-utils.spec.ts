@@ -40,8 +40,8 @@ describe("report-utils", () => {
   });
 
   describe("REPORT_SLUG_MAP", () => {
-    it("Given the slug map, When inspected, Then it contains exactly 17 entries", () => {
-      expect(Object.keys(REPORT_SLUG_MAP)).toHaveLength(17);
+    it("Given the slug map, When inspected, Then it contains exactly 18 entries", () => {
+      expect(Object.keys(REPORT_SLUG_MAP)).toHaveLength(18);
     });
 
     it("Given the slug map, When inspected, Then each slug maps to a valid ReportTypeValue", () => {
@@ -56,6 +56,7 @@ describe("report-utils", () => {
         sales: "SALES",
         "sales-by-product": "SALES_BY_PRODUCT",
         "sales-by-warehouse": "SALES_BY_WAREHOUSE",
+        "sales-by-client": "SALES_BY_CLIENT",
         returns: "RETURNS",
         "returns-by-type": "RETURNS_BY_TYPE",
         "returns-by-product": "RETURNS_BY_PRODUCT",

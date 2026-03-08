@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   Warehouse,
   User,
+  UserRoundSearch,
   Calendar,
   FileText,
   Hash,
@@ -201,6 +202,23 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
                   )}
                 </div>
               </div>
+
+              {/* Supplier */}
+              {movement.contactName && (
+                <div className="flex items-center gap-3 rounded-lg border bg-muted/30 px-4 py-3 mb-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-background border">
+                    <UserRoundSearch className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      {t("fields.supplier")}
+                    </p>
+                    <p className="font-semibold text-base leading-tight">
+                      {movement.contactName}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {/* Reference */}

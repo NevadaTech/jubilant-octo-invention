@@ -47,6 +47,17 @@ vi.mock("@/modules/inventory/presentation/hooks/use-warehouses", () => ({
   }),
 }));
 
+vi.mock("@/modules/contacts/presentation/hooks/use-contacts", () => ({
+  useContacts: () => ({
+    data: {
+      data: [
+        { id: "c1", name: "Customer A", identification: "900111222-1" },
+        { id: "c2", name: "Customer B", identification: "900222333-2" },
+      ],
+    },
+  }),
+}));
+
 vi.mock("@/modules/sales/presentation/schemas/sale.schema", () => ({
   createSaleSchema: { parse: vi.fn() },
   toCreateSaleDto: vi.fn((d: unknown) => d),
