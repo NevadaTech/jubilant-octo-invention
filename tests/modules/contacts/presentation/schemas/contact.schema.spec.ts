@@ -25,6 +25,8 @@ describe("Contact Schemas", () => {
         name: "John Doe",
         identification: "12345678-9",
         type: "SUPPLIER",
+        email: "john@example.com",
+        phone: "+57 300 123 4567",
         address: "123 Main St",
         notes: "Important",
       };
@@ -34,7 +36,67 @@ describe("Contact Schemas", () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.type).toBe("SUPPLIER");
+        expect(result.data.email).toBe("john@example.com");
+        expect(result.data.phone).toBe("+57 300 123 4567");
         expect(result.data.address).toBe("123 Main St");
+      }
+    });
+
+    it("Given: valid email When: parsing Then: should pass validation", () => {
+      const data = {
+        name: "John Doe",
+        identification: "12345678-9",
+        type: "CUSTOMER",
+        email: "john.doe@company.co",
+      };
+
+      const result = createContactSchema.safeParse(data);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.email).toBe("john.doe@company.co");
+      }
+    });
+
+    it("Given: invalid email When: parsing Then: should fail validation", () => {
+      const data = {
+        name: "John Doe",
+        identification: "12345678-9",
+        type: "CUSTOMER",
+        email: "not-an-email",
+      };
+
+      const result = createContactSchema.safeParse(data);
+
+      expect(result.success).toBe(false);
+    });
+
+    it("Given: empty email string When: parsing Then: should pass validation", () => {
+      const data = {
+        name: "John Doe",
+        identification: "12345678-9",
+        type: "CUSTOMER",
+        email: "",
+      };
+
+      const result = createContactSchema.safeParse(data);
+
+      expect(result.success).toBe(true);
+    });
+
+    it("Given: phone provided When: parsing Then: should pass validation", () => {
+      const data = {
+        name: "John Doe",
+        identification: "12345678-9",
+        type: "CUSTOMER",
+        phone: "+57 300 123 4567",
+      };
+
+      const result = createContactSchema.safeParse(data);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.phone).toBe("+57 300 123 4567");
       }
     });
 
@@ -125,6 +187,8 @@ describe("Contact Schemas", () => {
         name: "John Doe",
         identification: "12345678-9",
         type: "CUSTOMER" as const,
+        email: "",
+        phone: "",
         address: "",
         notes: "",
       };
@@ -134,21 +198,27 @@ describe("Contact Schemas", () => {
       expect(dto.name).toBe("John Doe");
       expect(dto.identification).toBe("12345678-9");
       expect(dto.type).toBe("CUSTOMER");
+      expect(dto.email).toBeUndefined();
+      expect(dto.phone).toBeUndefined();
       expect(dto.address).toBeUndefined();
       expect(dto.notes).toBeUndefined();
     });
 
-    it("Given: form data with address When: converting Then: should include address", () => {
+    it("Given: form data with all fields When: converting Then: should include all", () => {
       const formData = {
         name: "John Doe",
         identification: "12345678-9",
         type: "SUPPLIER" as const,
+        email: "john@example.com",
+        phone: "+57 300 123 4567",
         address: "123 Main St",
         notes: "VIP",
       };
 
       const dto = toCreateContactDto(formData);
 
+      expect(dto.email).toBe("john@example.com");
+      expect(dto.phone).toBe("+57 300 123 4567");
       expect(dto.address).toBe("123 Main St");
       expect(dto.notes).toBe("VIP");
     });
@@ -160,6 +230,8 @@ describe("Contact Schemas", () => {
         name: "Jane Doe",
         identification: "87654321",
         type: "SUPPLIER" as const,
+        email: "jane@example.com",
+        phone: "+57 311 987 6543",
         address: "456 Oak Ave",
         notes: "Updated",
         isActive: true,
@@ -169,8 +241,31 @@ describe("Contact Schemas", () => {
 
       expect(dto.name).toBe("Jane Doe");
       expect(dto.type).toBe("SUPPLIER");
+      expect(dto.email).toBe("jane@example.com");
+      expect(dto.phone).toBe("+57 311 987 6543");
       expect(dto.address).toBe("456 Oak Ave");
       expect(dto.isActive).toBe(true);
+    });
+
+    it("Given: update form data with empty email/phone When: converting Then: should strip them", () => {
+      const formData = {
+        name: "Jane Doe",
+        identification: "87654321",
+        type: "SUPPLIER" as const,
+        email: "",
+        phone: "",
+        address: "",
+        notes: "",
+        isActive: false,
+      };
+
+      const dto = toUpdateContactDto(formData);
+
+      expect(dto.email).toBeUndefined();
+      expect(dto.phone).toBeUndefined();
+      expect(dto.address).toBeUndefined();
+      expect(dto.notes).toBeUndefined();
+      expect(dto.isActive).toBe(false);
     });
   });
 });

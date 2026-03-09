@@ -29,6 +29,9 @@ describe("Permissions", () => {
       expect(modules).toContain("RETURNS");
       expect(modules).toContain("REPORTS");
       expect(modules).toContain("AUDIT");
+      expect(modules).toContain("COMPANIES");
+      expect(modules).toContain("CONTACTS");
+      expect(modules).toContain("INTEGRATIONS");
       expect(modules).toContain("SETTINGS");
     });
 
@@ -47,6 +50,15 @@ describe("Permissions", () => {
       expect(PERMISSIONS.PRODUCTS_READ).toBe("PRODUCTS:READ");
       expect(PERMISSIONS.SALES_CONFIRM).toBe("SALES:CONFIRM");
       expect(PERMISSIONS.INVENTORY_TRANSFER).toBe("INVENTORY:TRANSFER");
+      expect(PERMISSIONS.CONTACTS_CREATE).toBe("CONTACTS:CREATE");
+      expect(PERMISSIONS.CONTACTS_READ).toBe("CONTACTS:READ");
+      expect(PERMISSIONS.CONTACTS_UPDATE).toBe("CONTACTS:UPDATE");
+      expect(PERMISSIONS.CONTACTS_DELETE).toBe("CONTACTS:DELETE");
+      expect(PERMISSIONS.INTEGRATIONS_CREATE).toBe("INTEGRATIONS:CREATE");
+      expect(PERMISSIONS.INTEGRATIONS_READ).toBe("INTEGRATIONS:READ");
+      expect(PERMISSIONS.INTEGRATIONS_UPDATE).toBe("INTEGRATIONS:UPDATE");
+      expect(PERMISSIONS.INTEGRATIONS_DELETE).toBe("INTEGRATIONS:DELETE");
+      expect(PERMISSIONS.INTEGRATIONS_SYNC).toBe("INTEGRATIONS:SYNC");
       expect(PERMISSIONS.SETTINGS_MANAGE).toBe("SETTINGS:MANAGE");
     });
   });
@@ -80,6 +92,20 @@ describe("Permissions", () => {
       // Assert
       expect(ROUTE_PERMISSIONS["/dashboard/audit"]).toContain(
         PERMISSIONS.AUDIT_READ,
+      );
+    });
+
+    it("Given: contacts route When: checking permissions Then: should require CONTACTS_READ", () => {
+      // Assert
+      expect(ROUTE_PERMISSIONS["/dashboard/contacts"]).toContain(
+        PERMISSIONS.CONTACTS_READ,
+      );
+    });
+
+    it("Given: integrations route When: checking permissions Then: should require INTEGRATIONS_READ", () => {
+      // Assert
+      expect(ROUTE_PERMISSIONS["/dashboard/integrations"]).toContain(
+        PERMISSIONS.INTEGRATIONS_READ,
       );
     });
 

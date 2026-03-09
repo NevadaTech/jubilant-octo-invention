@@ -5,6 +5,8 @@ export interface ContactResponseDto {
   name: string;
   identification: string;
   type: ContactType;
+  email?: string | null;
+  phone?: string | null;
   address?: string | null;
   notes?: string | null;
   isActive: boolean;
@@ -39,6 +41,8 @@ export interface CreateContactDto {
   name: string;
   identification: string;
   type?: ContactType;
+  email?: string;
+  phone?: string;
   address?: string;
   notes?: string;
 }
@@ -47,6 +51,8 @@ export interface UpdateContactDto {
   name?: string;
   identification?: string;
   type?: ContactType;
+  email?: string;
+  phone?: string;
   address?: string;
   notes?: string;
   isActive?: boolean;

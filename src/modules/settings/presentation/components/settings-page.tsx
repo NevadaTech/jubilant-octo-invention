@@ -8,13 +8,14 @@ import { ProfileForm } from "./profile-form";
 import { ChangePasswordForm } from "./change-password-form";
 import { AlertConfigurationForm } from "./alert-configuration-form";
 import { MultiCompanyToggle } from "./multi-company-toggle";
+import { IntegrationsToggle } from "./integrations-toggle";
 import { PickingConfigForm } from "./picking-config-form";
 import { CompanyList } from "@/modules/companies/presentation/components";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 
 export function SettingsPage() {
   const t = useTranslations("settings");
-  const { multiCompanyEnabled } = useOrgSettings();
+  const { multiCompanyEnabled, integrationsEnabled } = useOrgSettings();
 
   return (
     <div className="space-y-6">
@@ -34,11 +35,9 @@ export function SettingsPage() {
             {t("tabs.notifications")}
           </TabsTrigger>
           <TabsTrigger value="picking">{t("tabs.picking")}</TabsTrigger>
-          {multiCompanyEnabled && (
-            <TabsTrigger value="organization">
-              {t("tabs.organization")}
-            </TabsTrigger>
-          )}
+          <TabsTrigger value="organization">
+            {t("tabs.organization")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="account" className="space-y-6 mt-6">
@@ -58,16 +57,19 @@ export function SettingsPage() {
           </PermissionGate>
         </TabsContent>
 
-        {multiCompanyEnabled && (
-          <TabsContent value="organization" className="space-y-6 mt-6">
-            <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
-              <MultiCompanyToggle />
-            </PermissionGate>
+        <TabsContent value="organization" className="space-y-6 mt-6">
+          <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
+            <MultiCompanyToggle />
+          </PermissionGate>
+          {multiCompanyEnabled && (
             <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
               <CompanyList />
             </PermissionGate>
-          </TabsContent>
-        )}
+          )}
+          <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
+            <IntegrationsToggle />
+          </PermissionGate>
+        </TabsContent>
       </Tabs>
     </div>
   );

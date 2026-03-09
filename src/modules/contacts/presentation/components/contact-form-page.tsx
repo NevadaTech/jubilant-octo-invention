@@ -62,6 +62,8 @@ export function ContactFormPage({ mode, contactId }: ContactFormPageProps) {
       name: "",
       identification: "",
       type: "CUSTOMER",
+      email: "",
+      phone: "",
       address: "",
       notes: "",
     },
@@ -73,6 +75,8 @@ export function ContactFormPage({ mode, contactId }: ContactFormPageProps) {
         name: contact.name,
         identification: contact.identification,
         type: contact.type,
+        email: contact.email || "",
+        phone: contact.phone || "",
         address: contact.address || "",
         notes: contact.notes || "",
         isActive: contact.isActive,
@@ -189,6 +193,27 @@ export function ContactFormPage({ mode, contactId }: ContactFormPageProps) {
                 )}
               />
             </FormField>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <FormField error={errors.email?.message}>
+                <Label htmlFor="email">{t("fields.email")}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  {...register("email")}
+                  placeholder={t("form.emailPlaceholder")}
+                />
+              </FormField>
+
+              <FormField error={errors.phone?.message}>
+                <Label htmlFor="phone">{t("fields.phone")}</Label>
+                <Input
+                  id="phone"
+                  {...register("phone")}
+                  placeholder={t("form.phonePlaceholder")}
+                />
+              </FormField>
+            </div>
 
             <FormField error={errors.address?.message}>
               <Label htmlFor="address">{t("fields.address")}</Label>

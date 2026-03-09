@@ -1814,6 +1814,7 @@
     "reports": "Reports",
     "imports": "Imports",
     "contacts": "Contacts",
+    "integrations": "Integrations",
     "users": "Users",
     "roles": "Roles",
     "audit": "Audit Log",
@@ -2144,6 +2145,12 @@
       "description": "Enable this feature to manage multiple companies or business lines within your organization. Each product can be assigned to a company, and you can filter inventory, sales, and reports by company.",
       "enabled": "Multi-company is enabled",
       "disabled": "Multi-company is disabled"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "description": "Enable external platform integrations (VTEX, MercadoLibre, etc.) for this organization. This allows automatic synchronization of orders, products, and inventory.",
+      "enabled": "Integrations are enabled",
+      "disabled": "Integrations are disabled"
     }
   },
   "contacts": {
@@ -2156,6 +2163,8 @@
       "name": "Name",
       "identification": "Identification",
       "type": "Type",
+      "email": "Email",
+      "phone": "Phone",
       "address": "Address",
       "notes": "Notes",
       "status": "Status",
@@ -2194,6 +2203,8 @@
       "namePlaceholder": "Enter contact name",
       "identificationPlaceholder": "Enter identification (e.g., tax ID)",
       "typePlaceholder": "Select type",
+      "emailPlaceholder": "Enter email address",
+      "phonePlaceholder": "Enter phone number",
       "addressPlaceholder": "Enter address",
       "notesPlaceholder": "Enter additional notes",
       "error": "An error occurred while saving the contact. Please try again."
@@ -2218,6 +2229,135 @@
     },
     "error": {
       "loading": "Failed to load contacts. Please try again."
+    }
+  },
+  "integrations": {
+    "title": "Integrations",
+    "description": "Connect external platforms to synchronize orders and inventory",
+    "list": {
+      "empty": "No integrations connected",
+      "emptyDescription": "Connect your first platform to start synchronizing orders automatically.",
+      "addVtex": "Connect VTEX"
+    },
+    "fields": {
+      "status": "Status",
+      "lastSync": "Last Sync",
+      "syncedOrders": "Synced Orders",
+      "connectedAt": "Connected Since",
+      "lastError": "Last Error"
+    },
+    "form": {
+      "createTitle": "Connect VTEX Store",
+      "createDescription": "Enter your VTEX credentials to connect your store",
+      "editTitle": "Edit Connection",
+      "editDescription": "Update connection settings",
+      "accountName": "Account Name",
+      "accountNamePlaceholder": "your-vtex-account",
+      "storeName": "Store Name",
+      "storeNamePlaceholder": "My VTEX Store",
+      "appKey": "App Key",
+      "appKeyPlaceholder": "Enter VTEX App Key",
+      "appKeyUpdatePlaceholder": "Leave empty to keep current",
+      "appToken": "App Token",
+      "appTokenPlaceholder": "Enter VTEX App Token",
+      "appTokenUpdatePlaceholder": "Leave empty to keep current",
+      "syncStrategy": "Sync Strategy",
+      "syncStrategyBoth": "Webhook + Polling",
+      "syncDirection": "Sync Direction",
+      "warehouse": "Default Warehouse",
+      "warehousePlaceholder": "Select warehouse",
+      "defaultContact": "Default Contact",
+      "defaultContactPlaceholder": "Select fallback contact (optional)",
+      "company": "Company",
+      "companyPlaceholder": "Enter company ID (optional)"
+    },
+    "syncDirection": {
+      "inbound": "Inbound (VTEX → Nevada)",
+      "outbound": "Outbound (Nevada → VTEX)",
+      "bidirectional": "Bidirectional",
+      "inboundDescription": "Only receive orders from VTEX",
+      "outboundDescription": "Only reflect status changes to VTEX",
+      "bidirectionalDescription": "Sync orders both ways"
+    },
+    "status": {
+      "CONNECTED": "Connected",
+      "DISCONNECTED": "Disconnected",
+      "ERROR": "Error"
+    },
+    "actions": {
+      "test": "Test Connection",
+      "sync": "Sync Now",
+      "edit": "Edit",
+      "delete": "Delete",
+      "connect": "Connect"
+    },
+    "messages": {
+      "created": "Integration connected successfully",
+      "updated": "Integration updated successfully",
+      "deleted": "Integration disconnected successfully",
+      "testSuccess": "Connection test passed",
+      "testFailed": "Connection test failed. Check your credentials.",
+      "syncStarted": "Synchronization started",
+      "confirmDelete": "Disconnect Integration?",
+      "confirmDeleteDescription": "This will stop all synchronization with this platform. Existing sales will not be affected."
+    },
+    "detail": {
+      "info": "Connection Details",
+      "notFound": "Connection Not Found",
+      "notFoundDescription": "The integration you are looking for does not exist or has been removed."
+    },
+    "syncLogs": {
+      "title": "Sync Log",
+      "allActions": "All actions",
+      "empty": "No sync logs yet",
+      "columns": {
+        "orderId": "Order ID",
+        "action": "Action",
+        "saleId": "Sale",
+        "error": "Error",
+        "date": "Date",
+        "actions": ""
+      },
+      "actions": {
+        "CREATED": "Created",
+        "UPDATED": "Updated",
+        "SKIPPED": "Skipped",
+        "FAILED": "Failed",
+        "OUTBOUND_OK": "Outbound OK",
+        "OUTBOUND_FAILED": "Outbound Failed"
+      }
+    },
+    "skuMapping": {
+      "title": "SKU Mappings",
+      "externalSku": "External SKU",
+      "product": "Product",
+      "productSku": "Internal SKU",
+      "add": "Add",
+      "delete": "Remove",
+      "added": "SKU mapping added",
+      "deleted": "SKU mapping removed",
+      "empty": "No SKU mappings configured",
+      "externalSkuPlaceholder": "VTEX SKU or RefId",
+      "productIdPlaceholder": "Internal Product ID",
+      "unmatchedAlert": "Unmatched SKUs",
+      "unmatchedDescription": "These SKUs from VTEX could not be matched to internal products. Map them to enable order synchronization.",
+      "mapThis": "Map"
+    },
+    "failedSyncs": {
+      "title": "Failed Syncs",
+      "retryOne": "Retry",
+      "retryAll": "Retry All",
+      "retrySuccess": "Sync retried successfully",
+      "retryAllSuccess": "All failed syncs are being retried",
+      "empty": "No failed syncs",
+      "errorTypes": {
+        "SKU_NOT_FOUND": "SKU not found",
+        "CONTACT_ERROR": "Contact error",
+        "API_ERROR": "API error"
+      }
+    },
+    "error": {
+      "loading": "Failed to load integrations. Please try again."
     }
   }
 }

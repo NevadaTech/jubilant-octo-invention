@@ -16,6 +16,7 @@ import type { CompanyRepositoryPort } from "@/modules/companies/application/port
 import type { SettingsRepositoryPort } from "@/modules/settings/application/ports/settings.port";
 import type { ImportRepositoryPort } from "@/modules/imports/application/ports/import.repository.port";
 import type { ContactRepositoryPort } from "@/modules/contacts/application/ports/contact.repository.port";
+import type { IntegrationRepositoryPort } from "@/modules/integrations/application/ports/integration.repository.port";
 
 // ── Adapter implementations ─────────────────────────────────────────
 import { AuthApiAdapter } from "@/modules/authentication/infrastructure/adapters/auth-api.adapter";
@@ -35,6 +36,7 @@ import { CompanyApiAdapter } from "@/modules/companies/infrastructure/adapters/c
 import { SettingsApiAdapter } from "@/modules/settings/infrastructure/adapters/settings-api.adapter";
 import { ImportApiAdapter } from "@/modules/imports/infrastructure/adapters/import-api.adapter";
 import { ContactApiAdapter } from "@/modules/contacts/infrastructure/adapters/contact-api.adapter";
+import { IntegrationApiAdapter } from "@/modules/integrations/infrastructure/adapters/integration-api.adapter";
 
 // ── Use case implementations ────────────────────────────────────────
 import {
@@ -110,6 +112,9 @@ export interface Container {
 
   // Contacts
   contactRepository: ContactRepositoryPort;
+
+  // Integrations
+  integrationRepository: IntegrationRepositoryPort;
 }
 
 // ── Factory ─────────────────────────────────────────────────────────
@@ -132,6 +137,7 @@ export function createContainer(): Container {
   const settingsRepository = new SettingsApiAdapter();
   const importRepository = new ImportApiAdapter();
   const contactRepository = new ContactApiAdapter();
+  const integrationRepository = new IntegrationApiAdapter();
 
   return {
     // Authentication
@@ -189,6 +195,9 @@ export function createContainer(): Container {
 
     // Contacts
     contactRepository,
+
+    // Integrations
+    integrationRepository,
   };
 }
 

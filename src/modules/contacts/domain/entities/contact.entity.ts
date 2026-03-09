@@ -7,6 +7,8 @@ export interface ContactProps {
   name: string;
   identification: string;
   type: ContactType;
+  email: string | null;
+  phone: string | null;
   address: string | null;
   notes: string | null;
   isActive: boolean;
@@ -28,6 +30,8 @@ export class Contact extends Entity<string> {
       name: props.name,
       identification: props.identification,
       type: props.type,
+      email: props.email,
+      phone: props.phone,
       address: props.address,
       notes: props.notes,
       isActive: props.isActive,
@@ -45,6 +49,12 @@ export class Contact extends Entity<string> {
   }
   get type(): ContactType {
     return this.props.type;
+  }
+  get email(): string | null {
+    return this.props.email;
+  }
+  get phone(): string | null {
+    return this.props.phone;
   }
   get address(): string | null {
     return this.props.address;

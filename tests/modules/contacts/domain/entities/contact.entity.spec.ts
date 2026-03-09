@@ -12,6 +12,8 @@ describe("Contact Entity", () => {
     name: "John Doe",
     identification: "12345678-9",
     type: "CUSTOMER",
+    email: "john@example.com",
+    phone: "+57 300 123 4567",
     address: "123 Main St, Bogotá",
     notes: "Important client",
     isActive: true,
@@ -28,6 +30,8 @@ describe("Contact Entity", () => {
       expect(entity.name).toBe("John Doe");
       expect(entity.identification).toBe("12345678-9");
       expect(entity.type).toBe("CUSTOMER");
+      expect(entity.email).toBe("john@example.com");
+      expect(entity.phone).toBe("+57 300 123 4567");
       expect(entity.address).toBe("123 Main St, Bogotá");
       expect(entity.notes).toBe("Important client");
       expect(entity.isActive).toBe(true);
@@ -39,6 +43,8 @@ describe("Contact Entity", () => {
     it("Given: minimal props with nulls When: creating Then: should preserve null values", () => {
       const props: ContactProps = {
         ...validProps,
+        email: null,
+        phone: null,
         address: null,
         notes: null,
         salesCount: 0,
@@ -46,9 +52,31 @@ describe("Contact Entity", () => {
 
       const entity = Contact.create(props);
 
+      expect(entity.email).toBeNull();
+      expect(entity.phone).toBeNull();
       expect(entity.address).toBeNull();
       expect(entity.notes).toBeNull();
       expect(entity.salesCount).toBe(0);
+    });
+
+    it("Given: email and phone provided When: creating Then: should store email and phone", () => {
+      const entity = Contact.create(validProps);
+
+      expect(entity.email).toBe("john@example.com");
+      expect(entity.phone).toBe("+57 300 123 4567");
+    });
+
+    it("Given: null email and phone When: creating Then: should accept null values", () => {
+      const props: ContactProps = {
+        ...validProps,
+        email: null,
+        phone: null,
+      };
+
+      const entity = Contact.create(props);
+
+      expect(entity.email).toBeNull();
+      expect(entity.phone).toBeNull();
     });
   });
 

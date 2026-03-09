@@ -161,6 +161,18 @@ export function ContactDetail({ contactId }: ContactDetailProps) {
             </div>
             <div>
               <dt className="text-sm font-medium text-muted-foreground">
+                {t("fields.email")}
+              </dt>
+              <dd className="mt-1 text-sm">{contact.email || "-"}</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                {t("fields.phone")}
+              </dt>
+              <dd className="mt-1 text-sm">{contact.phone || "-"}</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
                 {t("fields.address")}
               </dt>
               <dd className="mt-1 text-sm">{contact.address || "-"}</dd>

@@ -9,6 +9,8 @@ export class ContactMapper {
       name: dto.name,
       identification: dto.identification,
       type: (dto.type as ContactType) || "CUSTOMER",
+      email: dto.email ?? null,
+      phone: dto.phone ?? null,
       address: dto.address ?? null,
       notes: dto.notes ?? null,
       isActive: dto.isActive,

@@ -28,6 +28,8 @@ describe("ContactApiAdapter", () => {
     name: "John Doe",
     identification: "12345678-9",
     type: "CUSTOMER",
+    email: "john@example.com",
+    phone: "+57 300 123 4567",
     address: "123 Main St",
     notes: null,
     isActive: true,

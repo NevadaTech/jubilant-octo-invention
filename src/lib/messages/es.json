@@ -1814,6 +1814,7 @@
     "reports": "Reportes",
     "imports": "Importaciones",
     "contacts": "Contactos",
+    "integrations": "Integraciones",
     "users": "Usuarios",
     "roles": "Roles",
     "audit": "Auditoría",
@@ -2144,6 +2145,12 @@
       "description": "Habilita esta funcionalidad para gestionar múltiples empresas o líneas de negocio dentro de tu organización. Cada producto puede asignarse a una empresa, y podrás filtrar inventario, ventas y reportes por empresa.",
       "enabled": "Multi-empresa está habilitado",
       "disabled": "Multi-empresa está deshabilitado"
+    },
+    "integrations": {
+      "title": "Integraciones",
+      "description": "Habilita integraciones con plataformas externas (VTEX, MercadoLibre, etc.) para esta organización. Permite la sincronización automática de órdenes, productos e inventario.",
+      "enabled": "Las integraciones están habilitadas",
+      "disabled": "Las integraciones están deshabilitadas"
     }
   },
   "contacts": {
@@ -2156,6 +2163,8 @@
       "name": "Nombre",
       "identification": "Identificación",
       "type": "Tipo",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
       "address": "Dirección",
       "notes": "Notas",
       "status": "Estado",
@@ -2194,6 +2203,8 @@
       "namePlaceholder": "Ingrese el nombre del contacto",
       "identificationPlaceholder": "Ingrese la identificación (ej. RUC, DNI)",
       "typePlaceholder": "Seleccionar tipo",
+      "emailPlaceholder": "Ingrese el correo electrónico",
+      "phonePlaceholder": "Ingrese el número de teléfono",
       "addressPlaceholder": "Ingrese la dirección",
       "notesPlaceholder": "Ingrese notas adicionales",
       "error": "Ocurrió un error al guardar el contacto. Por favor intente de nuevo."
@@ -2218,6 +2229,135 @@
     },
     "error": {
       "loading": "Error al cargar los contactos. Por favor intente de nuevo."
+    }
+  },
+  "integrations": {
+    "title": "Integraciones",
+    "description": "Conecta plataformas externas para sincronizar órdenes e inventario",
+    "list": {
+      "empty": "Sin integraciones conectadas",
+      "emptyDescription": "Conecta tu primera plataforma para comenzar a sincronizar órdenes automáticamente.",
+      "addVtex": "Conectar VTEX"
+    },
+    "fields": {
+      "status": "Estado",
+      "lastSync": "Última sincronización",
+      "syncedOrders": "Órdenes sincronizadas",
+      "connectedAt": "Conectado desde",
+      "lastError": "Último error"
+    },
+    "form": {
+      "createTitle": "Conectar tienda VTEX",
+      "createDescription": "Ingresa tus credenciales de VTEX para conectar tu tienda",
+      "editTitle": "Editar conexión",
+      "editDescription": "Actualizar configuración de la conexión",
+      "accountName": "Nombre de cuenta",
+      "accountNamePlaceholder": "tu-cuenta-vtex",
+      "storeName": "Nombre de tienda",
+      "storeNamePlaceholder": "Mi tienda VTEX",
+      "appKey": "App Key",
+      "appKeyPlaceholder": "Ingrese la App Key de VTEX",
+      "appKeyUpdatePlaceholder": "Dejar vacío para mantener actual",
+      "appToken": "App Token",
+      "appTokenPlaceholder": "Ingrese el App Token de VTEX",
+      "appTokenUpdatePlaceholder": "Dejar vacío para mantener actual",
+      "syncStrategy": "Estrategia de sincronización",
+      "syncStrategyBoth": "Webhook + Polling",
+      "syncDirection": "Dirección de sincronización",
+      "warehouse": "Almacén por defecto",
+      "warehousePlaceholder": "Seleccionar almacén",
+      "defaultContact": "Contacto por defecto",
+      "defaultContactPlaceholder": "Seleccionar contacto de respaldo (opcional)",
+      "company": "Empresa",
+      "companyPlaceholder": "Ingrese ID de empresa (opcional)"
+    },
+    "syncDirection": {
+      "inbound": "Entrada (VTEX → Nevada)",
+      "outbound": "Salida (Nevada → VTEX)",
+      "bidirectional": "Bidireccional",
+      "inboundDescription": "Solo recibir órdenes de VTEX",
+      "outboundDescription": "Solo reflejar cambios de estado en VTEX",
+      "bidirectionalDescription": "Sincronizar órdenes en ambas direcciones"
+    },
+    "status": {
+      "CONNECTED": "Conectado",
+      "DISCONNECTED": "Desconectado",
+      "ERROR": "Error"
+    },
+    "actions": {
+      "test": "Probar conexión",
+      "sync": "Sincronizar ahora",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "connect": "Conectar"
+    },
+    "messages": {
+      "created": "Integración conectada exitosamente",
+      "updated": "Integración actualizada exitosamente",
+      "deleted": "Integración desconectada exitosamente",
+      "testSuccess": "Prueba de conexión exitosa",
+      "testFailed": "Prueba de conexión fallida. Verifica tus credenciales.",
+      "syncStarted": "Sincronización iniciada",
+      "confirmDelete": "¿Desconectar integración?",
+      "confirmDeleteDescription": "Esto detendrá toda la sincronización con esta plataforma. Las ventas existentes no serán afectadas."
+    },
+    "detail": {
+      "info": "Detalles de conexión",
+      "notFound": "Conexión no encontrada",
+      "notFoundDescription": "La integración que buscas no existe o ha sido eliminada."
+    },
+    "syncLogs": {
+      "title": "Registro de sincronización",
+      "allActions": "Todas las acciones",
+      "empty": "Sin registros de sincronización",
+      "columns": {
+        "orderId": "ID de orden",
+        "action": "Acción",
+        "saleId": "Venta",
+        "error": "Error",
+        "date": "Fecha",
+        "actions": ""
+      },
+      "actions": {
+        "CREATED": "Creado",
+        "UPDATED": "Actualizado",
+        "SKIPPED": "Omitido",
+        "FAILED": "Fallido",
+        "OUTBOUND_OK": "Salida OK",
+        "OUTBOUND_FAILED": "Salida fallida"
+      }
+    },
+    "skuMapping": {
+      "title": "Mapeo de SKUs",
+      "externalSku": "SKU externo",
+      "product": "Producto",
+      "productSku": "SKU interno",
+      "add": "Agregar",
+      "delete": "Eliminar",
+      "added": "Mapeo de SKU agregado",
+      "deleted": "Mapeo de SKU eliminado",
+      "empty": "Sin mapeos de SKU configurados",
+      "externalSkuPlaceholder": "SKU o RefId de VTEX",
+      "productIdPlaceholder": "ID de producto interno",
+      "unmatchedAlert": "SKUs sin coincidencia",
+      "unmatchedDescription": "Estos SKUs de VTEX no pudieron coincidir con productos internos. Mapéalos para habilitar la sincronización de órdenes.",
+      "mapThis": "Mapear"
+    },
+    "failedSyncs": {
+      "title": "Sincronizaciones fallidas",
+      "retryOne": "Reintentar",
+      "retryAll": "Reintentar todos",
+      "retrySuccess": "Sincronización reintentada exitosamente",
+      "retryAllSuccess": "Se están reintentando todas las sincronizaciones fallidas",
+      "empty": "Sin sincronizaciones fallidas",
+      "errorTypes": {
+        "SKU_NOT_FOUND": "SKU no encontrado",
+        "CONTACT_ERROR": "Error de contacto",
+        "API_ERROR": "Error de API"
+      }
+    },
+    "error": {
+      "loading": "Error al cargar las integraciones. Por favor intente de nuevo."
     }
   }
 }

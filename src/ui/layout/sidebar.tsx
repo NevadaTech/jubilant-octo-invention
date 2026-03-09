@@ -15,6 +15,7 @@ import {
   RotateCcw,
   FileBarChart,
   Upload,
+  Plug,
   Users,
   UserRoundSearch,
   Shield,
@@ -126,6 +127,12 @@ export function Sidebar({ className }: SidebarProps) {
       href: "/dashboard/imports",
       icon: <Upload className="h-5 w-5" />,
       requiredPermissions: [PERMISSIONS.PRODUCTS_IMPORT],
+    },
+    {
+      label: t("navigation.integrations"),
+      href: "/dashboard/integrations",
+      icon: <Plug className="h-5 w-5" />,
+      requiredPermissions: [PERMISSIONS.INTEGRATIONS_READ],
     },
     {
       label: t("navigation.users"),
