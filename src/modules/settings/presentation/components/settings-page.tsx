@@ -58,6 +58,11 @@ export function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="organization" className="space-y-6 mt-6">
+          {integrationsEnabled && (
+            <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
+              <IntegrationsToggle />
+            </PermissionGate>
+          )}
           <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
             <MultiCompanyToggle />
           </PermissionGate>
@@ -66,9 +71,6 @@ export function SettingsPage() {
               <CompanyList />
             </PermissionGate>
           )}
-          <PermissionGate permission={PERMISSIONS.SETTINGS_MANAGE}>
-            <IntegrationsToggle />
-          </PermissionGate>
         </TabsContent>
       </Tabs>
     </div>

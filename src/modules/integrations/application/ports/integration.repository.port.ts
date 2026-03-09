@@ -43,7 +43,9 @@ export interface IntegrationRepositoryPort {
     id: string,
     filters?: SyncLogFilters,
   ): Promise<PaginatedResult<IntegrationSyncLog>>;
-  getSkuMappings(connectionId: string): Promise<IntegrationSkuMappingResponseDto[]>;
+  getSkuMappings(
+    connectionId: string,
+  ): Promise<IntegrationSkuMappingResponseDto[]>;
   createSkuMapping(
     connectionId: string,
     data: CreateSkuMappingDto,

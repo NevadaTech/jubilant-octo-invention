@@ -240,9 +240,7 @@ export function VtexConnectionForm({
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
-                    <SelectValue
-                      placeholder={t("form.warehousePlaceholder")}
-                    />
+                    <SelectValue placeholder={t("form.warehousePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {warehouses.map((w) => (

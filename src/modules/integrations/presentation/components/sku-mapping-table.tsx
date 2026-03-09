@@ -51,7 +51,9 @@ export function SkuMappingTable({ connectionId }: SkuMappingTableProps) {
           {mappings.map((mapping) => (
             <tr key={mapping.id} className="border-b">
               <td className="py-2 font-mono text-xs">{mapping.externalSku}</td>
-              <td className="py-2">{mapping.productName || mapping.productId}</td>
+              <td className="py-2">
+                {mapping.productName || mapping.productId}
+              </td>
               <td className="py-2 text-xs text-muted-foreground">
                 {mapping.productSku || "-"}
               </td>

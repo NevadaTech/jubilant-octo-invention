@@ -1298,7 +1298,9 @@
         "organization": "Organización",
         "imports": "Importaciones",
         "movements": "Movimientos",
-        "stock": "Stock"
+        "stock": "Stock",
+        "contacts": "Contactos",
+        "integrations": "Integraciones"
       },
       "actions": {
         "CREATE": "Crear",
@@ -1331,7 +1333,8 @@
         "UPDATE_SETTINGS": "Actualizar Configuración",
         "MANAGE_BRANDING": "Gestionar Marca",
         "POST": "Confirmar",
-        "VOID": "Anular"
+        "VOID": "Anular",
+        "SYNC": "Sincronizar"
       }
     },
     "delete": {

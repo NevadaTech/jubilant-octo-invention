@@ -177,9 +177,7 @@ export function IntegrationList() {
                   <span className="text-sm text-muted-foreground">
                     {t("fields.lastSync")}
                   </span>
-                  <span className="text-sm">
-                    {formatDate(conn.lastSyncAt)}
-                  </span>
+                  <span className="text-sm">{formatDate(conn.lastSyncAt)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">

@@ -48,10 +48,7 @@ export function SkuMappingForm({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex items-end gap-3"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex items-end gap-3">
       <FormField error={errors.externalSku?.message} className="flex-1">
         <Input
           {...register("externalSku")}

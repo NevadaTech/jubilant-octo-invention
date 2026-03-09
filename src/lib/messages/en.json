@@ -1298,7 +1298,9 @@
         "organization": "Organization",
         "imports": "Imports",
         "movements": "Movements",
-        "stock": "Stock"
+        "stock": "Stock",
+        "contacts": "Contacts",
+        "integrations": "Integrations"
       },
       "actions": {
         "CREATE": "Create",
@@ -1331,7 +1333,8 @@
         "UPDATE_SETTINGS": "Update Settings",
         "MANAGE_BRANDING": "Manage Branding",
         "POST": "Post",
-        "VOID": "Void"
+        "VOID": "Void",
+        "SYNC": "Sync"
       }
     },
     "delete": {

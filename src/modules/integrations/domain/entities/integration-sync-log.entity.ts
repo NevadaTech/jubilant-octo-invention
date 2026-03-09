@@ -23,10 +23,7 @@ export interface IntegrationSyncLogProps {
 export class IntegrationSyncLog extends Entity<string> {
   private readonly props: Omit<IntegrationSyncLogProps, "id">;
 
-  private constructor(
-    id: string,
-    props: Omit<IntegrationSyncLogProps, "id">,
-  ) {
+  private constructor(id: string, props: Omit<IntegrationSyncLogProps, "id">) {
     super(id);
     this.props = props;
   }

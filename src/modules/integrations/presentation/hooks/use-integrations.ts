@@ -98,8 +98,7 @@ export function useDeleteIntegration() {
   const tErrors = useTranslations("apiErrors");
 
   return useMutation({
-    mutationFn: (id: string) =>
-      getContainer().integrationRepository.delete(id),
+    mutationFn: (id: string) => getContainer().integrationRepository.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: integrationKeys.lists() });
       toast.success(t("messages.deleted"));

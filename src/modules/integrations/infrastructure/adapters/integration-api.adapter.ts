@@ -38,11 +38,10 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
     if (filters?.provider) params.provider = filters.provider;
     if (filters?.status) params.status = filters.status;
 
-    const response =
-      await apiClient.get<IntegrationConnectionListResponseDto>(
-        this.basePath,
-        { params },
-      );
+    const response = await apiClient.get<IntegrationConnectionListResponseDto>(
+      this.basePath,
+      { params },
+    );
 
     return response.data.data.map(IntegrationConnectionMapper.toDomain);
   }
@@ -112,11 +111,10 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
     if (filters?.page) params.page = filters.page;
     if (filters?.limit) params.limit = filters.limit;
 
-    const response =
-      await apiClient.get<IntegrationSyncLogListResponseDto>(
-        `${this.basePath}/${id}/logs`,
-        { params },
-      );
+    const response = await apiClient.get<IntegrationSyncLogListResponseDto>(
+      `${this.basePath}/${id}/logs`,
+      { params },
+    );
 
     return {
       data: response.data.data.map(IntegrationSyncLogMapper.toDomain),
@@ -127,10 +125,9 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
   async getSkuMappings(
     connectionId: string,
   ): Promise<IntegrationSkuMappingResponseDto[]> {
-    const response =
-      await apiClient.get<IntegrationSkuMappingListResponseDto>(
-        `${this.basePath}/${connectionId}/sku-mappings`,
-      );
+    const response = await apiClient.get<IntegrationSkuMappingListResponseDto>(
+      `${this.basePath}/${connectionId}/sku-mappings`,
+    );
     return response.data.data;
   }
 
@@ -164,9 +161,7 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
   }
 
   async retrySyncLog(connectionId: string, logId: string): Promise<void> {
-    await apiClient.post(
-      `${this.basePath}/${connectionId}/retry/${logId}`,
-    );
+    await apiClient.post(`${this.basePath}/${connectionId}/retry/${logId}`);
   }
 
   async retryAllFailed(connectionId: string): Promise<void> {

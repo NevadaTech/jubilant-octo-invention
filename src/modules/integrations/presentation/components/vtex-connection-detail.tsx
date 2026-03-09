@@ -51,11 +51,7 @@ export function VtexConnectionDetail({
   const t = useTranslations("integrations");
   const tCommon = useTranslations("common");
   const router = useRouter();
-  const {
-    data: connection,
-    isLoading,
-    isError,
-  } = useIntegration(connectionId);
+  const { data: connection, isLoading, isError } = useIntegration(connectionId);
   const deleteIntegration = useDeleteIntegration();
   const testIntegration = useTestIntegration();
   const triggerSync = useTriggerSync();
