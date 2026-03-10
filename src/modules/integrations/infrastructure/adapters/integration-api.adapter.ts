@@ -29,7 +29,7 @@ import { IntegrationConnectionMapper } from "@/modules/integrations/application/
 import { IntegrationSyncLogMapper } from "@/modules/integrations/application/mappers/integration-sync-log.mapper";
 
 export class IntegrationApiAdapter implements IntegrationRepositoryPort {
-  private readonly basePath = "/integrations";
+  private readonly basePath = "/integrations/connections";
 
   async findAll(
     filters?: IntegrationConnectionFilters,
@@ -77,7 +77,7 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
     data: UpdateIntegrationConnectionDto,
   ): Promise<IntegrationConnection> {
     const response =
-      await apiClient.patch<IntegrationConnectionDetailResponseDto>(
+      await apiClient.put<IntegrationConnectionDetailResponseDto>(
         `${this.basePath}/${id}`,
         data,
       );
@@ -155,7 +155,7 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
 
   async getUnmatchedSkus(connectionId: string): Promise<UnmatchedSkuDto[]> {
     const response = await apiClient.get<UnmatchedSkusResponseDto>(
-      `${this.basePath}/${connectionId}/unmatched-skus`,
+      `${this.basePath}/${connectionId}/unmatched`,
     );
     return response.data.data;
   }

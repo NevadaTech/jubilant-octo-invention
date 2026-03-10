@@ -160,13 +160,13 @@ function ProductList() {
 
 Contains the base abstractions of the system:
 
-| Class                      | File                            | Purpose                                  |
-| -------------------------- | ------------------------------- | ---------------------------------------- |
-| `Entity<T>`                | `entities/entity.ts`            | Base class with `id`, `equals()`         |
-| `AggregateRoot<T>`         | `entities/aggregate-root.ts`    | Extends Entity, for aggregates           |
-| `ValueObject<T>`           | `value-objects/value-object.ts` | Immutable objects, equality by value     |
-| `WorkflowService<TStatus>` | `services/workflow.service.ts`  | State machine for transitions            |
-| `PERMISSIONS`              | `permissions.ts`                | Permission constants + route mapping     |
+| Class                      | File                            | Purpose                              |
+| -------------------------- | ------------------------------- | ------------------------------------ |
+| `Entity<T>`                | `entities/entity.ts`            | Base class with `id`, `equals()`     |
+| `AggregateRoot<T>`         | `entities/aggregate-root.ts`    | Extends Entity, for aggregates       |
+| `ValueObject<T>`           | `value-objects/value-object.ts` | Immutable objects, equality by value |
+| `WorkflowService<TStatus>` | `services/workflow.service.ts`  | State machine for transitions        |
+| `PERMISSIONS`              | `permissions.ts`                | Permission constants + route mapping |
 
 ### Application Layer
 
@@ -447,24 +447,24 @@ const t = await getTranslations('inventory.products');
 
 ### Translation Namespaces
 
-| Namespace                | Content                            |
-| ------------------------ | ---------------------------------- |
-| `auth.*`                 | Login, session, auth errors        |
-| `common.*`               | Buttons, actions, generic states   |
-| `dashboard.*`            | Metrics, charts                    |
-| `inventory.products.*`   | Products UI                        |
-| `inventory.categories.*` | Categories UI                      |
-| `inventory.warehouses.*` | Warehouses UI                      |
-| `inventory.stock.*`      | Stock UI                           |
-| `inventory.movements.*`  | Movements UI                       |
-| `inventory.transfers.*`  | Transfers UI                       |
-| `sales.*`                | Sales UI                           |
-| `returns.*`              | Returns UI                         |
-| `reports.*`              | Reports UI                         |
-| `users.*`                | Users UI                           |
-| `roles.*`                | Roles UI                           |
-| `audit.*`                | Audit UI                           |
-| `settings.*`             | Settings UI                        |
+| Namespace                | Content                          |
+| ------------------------ | -------------------------------- |
+| `auth.*`                 | Login, session, auth errors      |
+| `common.*`               | Buttons, actions, generic states |
+| `dashboard.*`            | Metrics, charts                  |
+| `inventory.products.*`   | Products UI                      |
+| `inventory.categories.*` | Categories UI                    |
+| `inventory.warehouses.*` | Warehouses UI                    |
+| `inventory.stock.*`      | Stock UI                         |
+| `inventory.movements.*`  | Movements UI                     |
+| `inventory.transfers.*`  | Transfers UI                     |
+| `sales.*`                | Sales UI                         |
+| `returns.*`              | Returns UI                       |
+| `reports.*`              | Reports UI                       |
+| `users.*`                | Users UI                         |
+| `roles.*`                | Roles UI                         |
+| `audit.*`                | Audit UI                         |
+| `settings.*`             | Settings UI                      |
 
 ---
 

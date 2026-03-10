@@ -45,16 +45,16 @@ Frontend del **Nevada Inventory System**, un sistema de gestion de inventarios m
 
 ### Objetivos
 
-| Objetivo              | Descripcion                                                         |
-| --------------------- | ------------------------------------------------------------------- |
-| **Interfaz moderna**  | UI responsiva con shadcn/ui + Tailwind CSS                          |
-| **Tipo seguro**       | TypeScript estricto end-to-end con validacion Zod                   |
-| **Multi-idioma**      | Soporte completo para ingles y espanol (next-intl)                  |
-| **Control de acceso** | RBAC con 80+ permisos granulares                                    |
-| **Reportes**          | 17 tipos de reportes con exportacion a Excel                        |
-| **Integraciones**     | Conexion con plataformas e-commerce (VTEX, extensible)              |
-| **Multi-empresa**     | Segmentacion de datos por empresa/linea de negocio                  |
-| **Tiempo real**       | Dashboard con metricas y graficos actualizados                      |
+| Objetivo              | Descripcion                                            |
+| --------------------- | ------------------------------------------------------ |
+| **Interfaz moderna**  | UI responsiva con shadcn/ui + Tailwind CSS             |
+| **Tipo seguro**       | TypeScript estricto end-to-end con validacion Zod      |
+| **Multi-idioma**      | Soporte completo para ingles y espanol (next-intl)     |
+| **Control de acceso** | RBAC con 80+ permisos granulares                       |
+| **Reportes**          | 17 tipos de reportes con exportacion a Excel           |
+| **Integraciones**     | Conexion con plataformas e-commerce (VTEX, extensible) |
+| **Multi-empresa**     | Segmentacion de datos por empresa/linea de negocio     |
+| **Tiempo real**       | Dashboard con metricas y graficos actualizados         |
 
 ---
 
@@ -164,24 +164,24 @@ Frontend del **Nevada Inventory System**, un sistema de gestion de inventarios m
 
 ### UI
 
-| Tecnologia         | Proposito                                        |
-| ------------------ | ------------------------------------------------ |
-| **Radix UI**       | Primitivos accesibles (Dialog, Select, Dropdown) |
-| **shadcn/ui**      | Componentes estilizados                          |
-| **Recharts**       | Graficos (Area, Bar, Pie)                        |
-| **Lucide React**   | Iconos                                           |
-| **Framer Motion**  | Animaciones                                      |
-| **Sonner**         | Notificaciones toast                             |
+| Tecnologia        | Proposito                                        |
+| ----------------- | ------------------------------------------------ |
+| **Radix UI**      | Primitivos accesibles (Dialog, Select, Dropdown) |
+| **shadcn/ui**     | Componentes estilizados                          |
+| **Recharts**      | Graficos (Area, Bar, Pie)                        |
+| **Lucide React**  | Iconos                                           |
+| **Framer Motion** | Animaciones                                      |
+| **Sonner**        | Notificaciones toast                             |
 
 ### Herramientas
 
-| Tecnologia            | Proposito                    |
-| --------------------- | ---------------------------- |
-| **next-intl**         | Internacionalizacion (en/es) |
+| Tecnologia            | Proposito                       |
+| --------------------- | ------------------------------- |
+| **next-intl**         | Internacionalizacion (en/es)    |
 | **ExcelJS**           | Exportacion e importacion Excel |
-| **Vitest**            | Unit testing                 |
-| **Playwright**        | E2E testing                  |
-| **ESLint + Prettier** | Linting y formateo           |
+| **Vitest**            | Unit testing                    |
+| **Playwright**        | E2E testing                     |
+| **ESLint + Prettier** | Linting y formateo              |
 
 ---
 
@@ -423,12 +423,12 @@ Todas las peticiones autenticadas incluyen:
 
 La mayoria de los endpoints del backend siguen uno de estos formatos:
 
-| Formato                                           | Usado por                                  |
-| ------------------------------------------------- | ------------------------------------------ |
-| `{ data: T }`                                     | Detalle de entidades de inventario         |
-| `{ data: T[], pagination }`                       | Listas de inventario                       |
-| `{ success, message, data, timestamp }`           | Auth, ventas, devoluciones, integraciones  |
-| `{ success, message, data, pagination, timestamp }` | Listas de auth, ventas, devoluciones     |
+| Formato                                             | Usado por                                 |
+| --------------------------------------------------- | ----------------------------------------- |
+| `{ data: T }`                                       | Detalle de entidades de inventario        |
+| `{ data: T[], pagination }`                         | Listas de inventario                      |
+| `{ success, message, data, timestamp }`             | Auth, ventas, devoluciones, integraciones |
+| `{ success, message, data, pagination, timestamp }` | Listas de auth, ventas, devoluciones      |
 
 ---
 
@@ -476,17 +476,17 @@ Se aplica CSP con `strict-dynamic` para scripts y `unsafe-inline` para estilos (
 
 ### Convenciones
 
-| Aspecto          | Convencion                                    |
-| ---------------- | --------------------------------------------- |
-| **Codigo**       | Ingles (variables, funciones, componentes)    |
-| **Componentes**  | PascalCase (`ProductList.tsx`)                |
-| **Hooks**        | Prefijo `use` (`useProducts.ts`)              |
-| **Stores**       | Sufijo `.store.ts`                            |
-| **Schemas**      | Sufijo `.schema.ts`                           |
-| **DTOs**         | Sufijo `.dto.ts`                              |
-| **Mappers**      | Sufijo `.mapper.ts`                           |
+| Aspecto          | Convencion                                       |
+| ---------------- | ------------------------------------------------ |
+| **Codigo**       | Ingles (variables, funciones, componentes)       |
+| **Componentes**  | PascalCase (`ProductList.tsx`)                   |
+| **Hooks**        | Prefijo `use` (`useProducts.ts`)                 |
+| **Stores**       | Sufijo `.store.ts`                               |
+| **Schemas**      | Sufijo `.schema.ts`                              |
+| **DTOs**         | Sufijo `.dto.ts`                                 |
+| **Mappers**      | Sufijo `.mapper.ts`                              |
 | **Traducciones** | Namespace con punto (`inventory.products.title`) |
-| **Tests**        | Sufijo `.test.ts` o `.test.tsx`               |
+| **Tests**        | Sufijo `.test.ts` o `.test.tsx`                  |
 
 ### Estructura de un Commit
 

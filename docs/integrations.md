@@ -41,14 +41,14 @@ Manages connections with external e-commerce platforms to automatically synchron
 
 ## Routes and Pages
 
-| Resource | Location |
-| --- | --- |
-| **Module** | `src/modules/integrations/` |
-| **List page** | `src/app/[locale]/(dashboard)/dashboard/integrations/page.tsx` |
+| Resource        | Location                                                            |
+| --------------- | ------------------------------------------------------------------- |
+| **Module**      | `src/modules/integrations/`                                         |
+| **List page**   | `src/app/[locale]/(dashboard)/dashboard/integrations/page.tsx`      |
 | **Detail page** | `src/app/[locale]/(dashboard)/dashboard/integrations/[id]/page.tsx` |
-| **List URL** | `/dashboard/integrations` |
-| **Detail URL** | `/dashboard/integrations/[id]` |
-| **Sidebar** | `Plug` icon, after Imports, before Users |
+| **List URL**    | `/dashboard/integrations`                                           |
+| **Detail URL**  | `/dashboard/integrations/[id]`                                      |
+| **Sidebar**     | `Plug` icon, after Imports, before Users                            |
 
 ---
 
@@ -107,34 +107,34 @@ Entity representing an active connection to an e-commerce platform. Extends `Ent
 
 **Props** (`IntegrationConnectionProps`):
 
-| Property | Type | Description |
-| --- | --- | --- |
-| `id` | `string` | Connection UUID |
-| `provider` | `IntegrationProvider` | Provider: `"VTEX"` or `"MERCADOLIBRE"` |
-| `accountName` | `string` | Account name on the platform (e.g., `"my-store"`) |
-| `storeName` | `string` | Descriptive store name |
-| `status` | `ConnectionStatus` | `"CONNECTED"`, `"DISCONNECTED"`, or `"ERROR"` |
-| `syncStrategy` | `SyncStrategy` | `"WEBHOOK"`, `"POLLING"`, or `"BOTH"` |
-| `syncDirection` | `SyncDirection` | `"INBOUND"`, `"OUTBOUND"`, or `"BIDIRECTIONAL"` |
-| `defaultWarehouseId` | `string` | Default warehouse for synced orders |
-| `warehouseName` | `string \| null` | Warehouse name (joined from backend) |
-| `defaultContactId` | `string \| null` | Default contact for VTEX orders |
-| `defaultContactName` | `string \| null` | Contact name (joined) |
-| `companyId` | `string \| null` | Associated company (multi-company) |
-| `companyName` | `string \| null` | Company name (joined) |
-| `connectedAt` | `Date \| null` | Successful connection date |
-| `lastSyncAt` | `Date \| null` | Last synchronization |
-| `lastSyncError` | `string \| null` | Last sync error |
-| `syncedOrdersCount` | `number` | Total synced orders |
-| `createdAt` | `Date` | Creation date |
-| `updatedAt` | `Date` | Update date |
+| Property             | Type                  | Description                                       |
+| -------------------- | --------------------- | ------------------------------------------------- |
+| `id`                 | `string`              | Connection UUID                                   |
+| `provider`           | `IntegrationProvider` | Provider: `"VTEX"` or `"MERCADOLIBRE"`            |
+| `accountName`        | `string`              | Account name on the platform (e.g., `"my-store"`) |
+| `storeName`          | `string`              | Descriptive store name                            |
+| `status`             | `ConnectionStatus`    | `"CONNECTED"`, `"DISCONNECTED"`, or `"ERROR"`     |
+| `syncStrategy`       | `SyncStrategy`        | `"WEBHOOK"`, `"POLLING"`, or `"BOTH"`             |
+| `syncDirection`      | `SyncDirection`       | `"INBOUND"`, `"OUTBOUND"`, or `"BIDIRECTIONAL"`   |
+| `defaultWarehouseId` | `string`              | Default warehouse for synced orders               |
+| `warehouseName`      | `string \| null`      | Warehouse name (joined from backend)              |
+| `defaultContactId`   | `string \| null`      | Default contact for VTEX orders                   |
+| `defaultContactName` | `string \| null`      | Contact name (joined)                             |
+| `companyId`          | `string \| null`      | Associated company (multi-company)                |
+| `companyName`        | `string \| null`      | Company name (joined)                             |
+| `connectedAt`        | `Date \| null`        | Successful connection date                        |
+| `lastSyncAt`         | `Date \| null`        | Last synchronization                              |
+| `lastSyncError`      | `string \| null`      | Last sync error                                   |
+| `syncedOrdersCount`  | `number`              | Total synced orders                               |
+| `createdAt`          | `Date`                | Creation date                                     |
+| `updatedAt`          | `Date`                | Update date                                       |
 
 **Computed getters**:
 
-| Getter | Return | Logic |
-| --- | --- | --- |
+| Getter        | Return    | Logic                    |
+| ------------- | --------- | ------------------------ |
 | `isConnected` | `boolean` | `status === "CONNECTED"` |
-| `hasError` | `boolean` | `status === "ERROR"` |
+| `hasError`    | `boolean` | `status === "ERROR"`     |
 
 ### IntegrationSyncLog
 
@@ -142,23 +142,23 @@ Entity representing an individual sync log entry. Extends `Entity<string>`.
 
 **Props** (`IntegrationSyncLogProps`):
 
-| Property | Type | Description |
-| --- | --- | --- |
-| `id` | `string` | Log UUID |
-| `connectionId` | `string` | Associated connection ID |
-| `externalOrderId` | `string` | Order ID on the external platform |
-| `action` | `SyncAction` | Action performed |
-| `saleId` | `string \| null` | ID of the sale created in Nevada |
-| `contactId` | `string \| null` | ID of the created/associated contact |
-| `errorMessage` | `string \| null` | Error message (if failed) |
-| `rawPayload` | `unknown \| null` | Original payload (not exposed in list API) |
-| `processedAt` | `Date` | Processing date |
+| Property          | Type              | Description                                |
+| ----------------- | ----------------- | ------------------------------------------ |
+| `id`              | `string`          | Log UUID                                   |
+| `connectionId`    | `string`          | Associated connection ID                   |
+| `externalOrderId` | `string`          | Order ID on the external platform          |
+| `action`          | `SyncAction`      | Action performed                           |
+| `saleId`          | `string \| null`  | ID of the sale created in Nevada           |
+| `contactId`       | `string \| null`  | ID of the created/associated contact       |
+| `errorMessage`    | `string \| null`  | Error message (if failed)                  |
+| `rawPayload`      | `unknown \| null` | Original payload (not exposed in list API) |
+| `processedAt`     | `Date`            | Processing date                            |
 
 **Computed getters**:
 
-| Getter | Return | Logic |
-| --- | --- | --- |
-| `isFailed` | `boolean` | `action === "FAILED"` |
+| Getter             | Return    | Logic                          |
+| ------------------ | --------- | ------------------------------ |
+| `isFailed`         | `boolean` | `action === "FAILED"`          |
 | `isOutboundFailed` | `boolean` | `action === "OUTBOUND_FAILED"` |
 
 ### Types
@@ -168,7 +168,13 @@ type IntegrationProvider = "VTEX" | "MERCADOLIBRE";
 type ConnectionStatus = "CONNECTED" | "DISCONNECTED" | "ERROR";
 type SyncStrategy = "WEBHOOK" | "POLLING" | "BOTH";
 type SyncDirection = "INBOUND" | "OUTBOUND" | "BIDIRECTIONAL";
-type SyncAction = "CREATED" | "UPDATED" | "SKIPPED" | "FAILED" | "OUTBOUND_OK" | "OUTBOUND_FAILED";
+type SyncAction =
+  | "CREATED"
+  | "UPDATED"
+  | "SKIPPED"
+  | "FAILED"
+  | "OUTBOUND_OK"
+  | "OUTBOUND_FAILED";
 ```
 
 ---
@@ -177,34 +183,34 @@ type SyncAction = "CREATED" | "UPDATED" | "SKIPPED" | "FAILED" | "OUTBOUND_OK" |
 
 ### Connection DTOs (`integration-connection.dto.ts`)
 
-| DTO | Usage |
-| --- | --- |
-| `IntegrationConnectionResponseDto` | A single connection record (raw from API, dates as `string`) |
-| `IntegrationConnectionListResponseDto` | `{ success, message, data: ResponseDto[], timestamp }` |
-| `IntegrationConnectionDetailResponseDto` | `{ success, message, data: ResponseDto, timestamp }` |
-| `CreateIntegrationConnectionDto` | Body for creation: provider, accountName, storeName, appKey, appToken, syncStrategy, syncDirection, defaultWarehouseId, defaultContactId?, companyId? |
-| `UpdateIntegrationConnectionDto` | Body for update: all optional except credentials |
-| `IntegrationConnectionFilters` | List filters: `provider?`, `status?` |
-| `TestConnectionResponseDto` | `{ success, message, timestamp }` |
-| `TriggerSyncResponseDto` | `{ success, message, timestamp }` |
+| DTO                                      | Usage                                                                                                                                                 |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `IntegrationConnectionResponseDto`       | A single connection record (raw from API, dates as `string`)                                                                                          |
+| `IntegrationConnectionListResponseDto`   | `{ success, message, data: ResponseDto[], timestamp }`                                                                                                |
+| `IntegrationConnectionDetailResponseDto` | `{ success, message, data: ResponseDto, timestamp }`                                                                                                  |
+| `CreateIntegrationConnectionDto`         | Body for creation: provider, accountName, storeName, appKey, appToken, syncStrategy, syncDirection, defaultWarehouseId, defaultContactId?, companyId? |
+| `UpdateIntegrationConnectionDto`         | Body for update: all optional except credentials                                                                                                      |
+| `IntegrationConnectionFilters`           | List filters: `provider?`, `status?`                                                                                                                  |
+| `TestConnectionResponseDto`              | `{ success, message, timestamp }`                                                                                                                     |
+| `TriggerSyncResponseDto`                 | `{ success, message, timestamp }`                                                                                                                     |
 
 ### SyncLog DTOs (`integration-sync-log.dto.ts`)
 
-| DTO | Usage |
-| --- | --- |
-| `IntegrationSyncLogResponseDto` | A single log record (without `rawPayload`) |
+| DTO                                 | Usage                                                         |
+| ----------------------------------- | ------------------------------------------------------------- |
+| `IntegrationSyncLogResponseDto`     | A single log record (without `rawPayload`)                    |
 | `IntegrationSyncLogListResponseDto` | `{ success, message, data: LogDto[], pagination, timestamp }` |
-| `SyncLogFilters` | `action?`, `page?`, `limit?` |
+| `SyncLogFilters`                    | `action?`, `page?`, `limit?`                                  |
 
 ### SKU Mapping DTOs (`integration-sku-mapping.dto.ts`)
 
-| DTO | Usage |
-| --- | --- |
-| `IntegrationSkuMappingResponseDto` | `id, connectionId, externalSku, productId, productName?, productSku?, createdAt` |
-| `IntegrationSkuMappingListResponseDto` | `{ success, message, data: MappingDto[], timestamp }` |
-| `CreateSkuMappingDto` | `{ externalSku, productId }` |
-| `UnmatchedSkuDto` | `{ externalSku, externalOrderId, errorMessage, processedAt }` |
-| `UnmatchedSkusResponseDto` | `{ success, message, data: UnmatchedSkuDto[], timestamp }` |
+| DTO                                    | Usage                                                                            |
+| -------------------------------------- | -------------------------------------------------------------------------------- |
+| `IntegrationSkuMappingResponseDto`     | `id, connectionId, externalSku, productId, productName?, productSku?, createdAt` |
+| `IntegrationSkuMappingListResponseDto` | `{ success, message, data: MappingDto[], timestamp }`                            |
+| `CreateSkuMappingDto`                  | `{ externalSku, productId }`                                                     |
+| `UnmatchedSkuDto`                      | `{ externalSku, externalOrderId, errorMessage, processedAt }`                    |
+| `UnmatchedSkusResponseDto`             | `{ success, message, data: UnmatchedSkuDto[], timestamp }`                       |
 
 ---
 
@@ -238,22 +244,22 @@ Converts `processedAt` to `Date`. The `rawPayload` field is set to `null` (not i
 
 Defines 14 methods:
 
-| Method | Parameters | Return | Description |
-| --- | --- | --- | --- |
-| `findAll` | `filters?` | `IntegrationConnection[]` | List connections with optional filters |
-| `findById` | `id` | `IntegrationConnection \| null` | Get connection by ID |
-| `create` | `CreateIntegrationConnectionDto` | `IntegrationConnection` | Create new connection |
-| `update` | `id, UpdateIntegrationConnectionDto` | `IntegrationConnection` | Update connection |
-| `delete` | `id` | `void` | Delete connection |
-| `testConnection` | `id` | `TestConnectionResponseDto` | Test connectivity with the platform |
-| `triggerSync` | `id` | `TriggerSyncResponseDto` | Force manual synchronization |
-| `getSyncLogs` | `id, filters?` | `PaginatedResult<IntegrationSyncLog>` | Sync logs (paginated) |
-| `getSkuMappings` | `connectionId` | `IntegrationSkuMappingResponseDto[]` | SKU mappings for the connection |
-| `createSkuMapping` | `connectionId, CreateSkuMappingDto` | `IntegrationSkuMappingResponseDto` | Create SKU mapping |
-| `deleteSkuMapping` | `connectionId, mappingId` | `void` | Delete SKU mapping |
-| `getUnmatchedSkus` | `connectionId` | `UnmatchedSkuDto[]` | External SKUs without mapping |
-| `retrySyncLog` | `connectionId, logId` | `void` | Retry a failed log |
-| `retryAllFailed` | `connectionId` | `void` | Retry all failed logs |
+| Method             | Parameters                           | Return                                | Description                            |
+| ------------------ | ------------------------------------ | ------------------------------------- | -------------------------------------- |
+| `findAll`          | `filters?`                           | `IntegrationConnection[]`             | List connections with optional filters |
+| `findById`         | `id`                                 | `IntegrationConnection \| null`       | Get connection by ID                   |
+| `create`           | `CreateIntegrationConnectionDto`     | `IntegrationConnection`               | Create new connection                  |
+| `update`           | `id, UpdateIntegrationConnectionDto` | `IntegrationConnection`               | Update connection                      |
+| `delete`           | `id`                                 | `void`                                | Delete connection                      |
+| `testConnection`   | `id`                                 | `TestConnectionResponseDto`           | Test connectivity with the platform    |
+| `triggerSync`      | `id`                                 | `TriggerSyncResponseDto`              | Force manual synchronization           |
+| `getSyncLogs`      | `id, filters?`                       | `PaginatedResult<IntegrationSyncLog>` | Sync logs (paginated)                  |
+| `getSkuMappings`   | `connectionId`                       | `IntegrationSkuMappingResponseDto[]`  | SKU mappings for the connection        |
+| `createSkuMapping` | `connectionId, CreateSkuMappingDto`  | `IntegrationSkuMappingResponseDto`    | Create SKU mapping                     |
+| `deleteSkuMapping` | `connectionId, mappingId`            | `void`                                | Delete SKU mapping                     |
+| `getUnmatchedSkus` | `connectionId`                       | `UnmatchedSkuDto[]`                   | External SKUs without mapping          |
+| `retrySyncLog`     | `connectionId, logId`                | `void`                                | Retry a failed log                     |
+| `retryAllFailed`   | `connectionId`                       | `void`                                | Retry all failed logs                  |
 
 `PaginatedResult<T>` is defined **locally** in this port file (project pattern: each module defines its own `PaginatedResult`).
 
@@ -263,22 +269,22 @@ Implements `IntegrationRepositoryPort` using `apiClient` from `@/shared/infrastr
 
 **Base path**: `/integrations`
 
-| Method | Endpoint | HTTP Method |
-| --- | --- | --- |
-| `findAll` | `/integrations?provider=&status=` | GET |
-| `findById` | `/integrations/:id` | GET |
-| `create` | `/integrations` | POST |
-| `update` | `/integrations/:id` | PATCH |
-| `delete` | `/integrations/:id` | DELETE |
-| `testConnection` | `/integrations/:id/test` | POST |
-| `triggerSync` | `/integrations/:id/sync` | POST |
-| `getSyncLogs` | `/integrations/:id/logs?action=&page=&limit=` | GET |
-| `getSkuMappings` | `/integrations/:id/sku-mappings` | GET |
-| `createSkuMapping` | `/integrations/:id/sku-mappings` | POST |
-| `deleteSkuMapping` | `/integrations/:id/sku-mappings/:mappingId` | DELETE |
-| `getUnmatchedSkus` | `/integrations/:id/unmatched-skus` | GET |
-| `retrySyncLog` | `/integrations/:id/retry/:logId` | POST |
-| `retryAllFailed` | `/integrations/:id/retry-all` | POST |
+| Method             | Endpoint                                      | HTTP Method |
+| ------------------ | --------------------------------------------- | ----------- |
+| `findAll`          | `/integrations?provider=&status=`             | GET         |
+| `findById`         | `/integrations/:id`                           | GET         |
+| `create`           | `/integrations`                               | POST        |
+| `update`           | `/integrations/:id`                           | PATCH       |
+| `delete`           | `/integrations/:id`                           | DELETE      |
+| `testConnection`   | `/integrations/:id/test`                      | POST        |
+| `triggerSync`      | `/integrations/:id/sync`                      | POST        |
+| `getSyncLogs`      | `/integrations/:id/logs?action=&page=&limit=` | GET         |
+| `getSkuMappings`   | `/integrations/:id/sku-mappings`              | GET         |
+| `createSkuMapping` | `/integrations/:id/sku-mappings`              | POST        |
+| `deleteSkuMapping` | `/integrations/:id/sku-mappings/:mappingId`   | DELETE      |
+| `getUnmatchedSkus` | `/integrations/:id/unmatched-skus`            | GET         |
+| `retrySyncLog`     | `/integrations/:id/retry/:logId`              | POST        |
+| `retryAllFailed`   | `/integrations/:id/retry-all`                 | POST        |
 
 ---
 
@@ -290,37 +296,37 @@ File: `use-integrations.ts`
 
 ```typescript
 const integrationKeys = {
-  all:           ["integrations"],
-  lists:         () => [...all, "list"],
-  list:          (filters?) => [...lists(), filters],
-  details:       () => [...all, "detail"],
-  detail:        (id) => [...details(), id],
-  logs:          (id) => [...all, "logs", id],
-  logList:       (id, filters?) => [...logs(id), filters],
-  skuMappings:   (id) => [...all, "sku-mappings", id],
+  all: ["integrations"],
+  lists: () => [...all, "list"],
+  list: (filters?) => [...lists(), filters],
+  details: () => [...all, "detail"],
+  detail: (id) => [...details(), id],
+  logs: (id) => [...all, "logs", id],
+  logList: (id, filters?) => [...logs(id), filters],
+  skuMappings: (id) => [...all, "sku-mappings", id],
   unmatchedSkus: (id) => [...all, "unmatched-skus", id],
-  failedSyncs:   (id) => [...all, "failed-syncs", id],
+  failedSyncs: (id) => [...all, "failed-syncs", id],
 };
 ```
 
 ### Hooks
 
-| Hook | Type | Description | Invalidations |
-| --- | --- | --- | --- |
-| `useIntegrations(filters?)` | Query | List of connections | - |
-| `useIntegration(id)` | Query | Connection detail | - |
-| `useCreateIntegration()` | Mutation | Create connection | `lists()` |
-| `useUpdateIntegration()` | Mutation | Update connection | `lists()`, `detail(id)` |
-| `useDeleteIntegration()` | Mutation | Delete connection | `lists()` |
-| `useTestIntegration()` | Mutation | Test connectivity | - |
-| `useTriggerSync()` | Mutation | Force manual sync | `detail(id)`, `logs(id)` |
-| `useSyncLogs(id, filters?)` | Query | Sync logs (paginated) | - |
-| `useSkuMappings(connectionId)` | Query | SKU mappings | - |
-| `useCreateSkuMapping(connectionId)` | Mutation | Create SKU mapping | `skuMappings(id)`, `unmatchedSkus(id)` |
-| `useDeleteSkuMapping(connectionId)` | Mutation | Delete SKU mapping | `skuMappings(id)` |
-| `useUnmatchedSkus(connectionId)` | Query | Unmapped SKUs | - |
-| `useRetrySyncLog(connectionId)` | Mutation | Retry a failed log | `logs(id)`, `detail(id)` |
-| `useRetryAllFailed(connectionId)` | Mutation | Retry all failed logs | `logs(id)`, `detail(id)` |
+| Hook                                | Type     | Description           | Invalidations                          |
+| ----------------------------------- | -------- | --------------------- | -------------------------------------- |
+| `useIntegrations(filters?)`         | Query    | List of connections   | -                                      |
+| `useIntegration(id)`                | Query    | Connection detail     | -                                      |
+| `useCreateIntegration()`            | Mutation | Create connection     | `lists()`                              |
+| `useUpdateIntegration()`            | Mutation | Update connection     | `lists()`, `detail(id)`                |
+| `useDeleteIntegration()`            | Mutation | Delete connection     | `lists()`                              |
+| `useTestIntegration()`              | Mutation | Test connectivity     | -                                      |
+| `useTriggerSync()`                  | Mutation | Force manual sync     | `detail(id)`, `logs(id)`               |
+| `useSyncLogs(id, filters?)`         | Query    | Sync logs (paginated) | -                                      |
+| `useSkuMappings(connectionId)`      | Query    | SKU mappings          | -                                      |
+| `useCreateSkuMapping(connectionId)` | Mutation | Create SKU mapping    | `skuMappings(id)`, `unmatchedSkus(id)` |
+| `useDeleteSkuMapping(connectionId)` | Mutation | Delete SKU mapping    | `skuMappings(id)`                      |
+| `useUnmatchedSkus(connectionId)`    | Query    | Unmapped SKUs         | -                                      |
+| `useRetrySyncLog(connectionId)`     | Mutation | Retry a failed log    | `logs(id)`, `detail(id)`               |
+| `useRetryAllFailed(connectionId)`   | Mutation | Retry all failed logs | `logs(id)`, `detail(id)`               |
 
 **Stale time**: 5 minutes (`STALE_TIME = 5 * 60 * 1000`).
 
@@ -336,17 +342,17 @@ File: `integration-connection.schema.ts`
 
 Schema for creating a VTEX connection:
 
-| Field | Validation |
-| --- | --- |
-| `accountName` | `string`, min 1, max 100, regex `/^[a-zA-Z0-9-]+$/` (alphanumeric + hyphens) |
-| `storeName` | `string`, min 1, max 200 |
-| `appKey` | `string`, min 1 |
-| `appToken` | `string`, min 1 |
-| `syncStrategy` | enum `["WEBHOOK", "POLLING", "BOTH"]` |
-| `syncDirection` | enum `["INBOUND", "OUTBOUND", "BIDIRECTIONAL"]` |
-| `defaultWarehouseId` | `string`, min 1 |
-| `defaultContactId` | `string`, optional |
-| `companyId` | `string`, optional |
+| Field                | Validation                                                                   |
+| -------------------- | ---------------------------------------------------------------------------- |
+| `accountName`        | `string`, min 1, max 100, regex `/^[a-zA-Z0-9-]+$/` (alphanumeric + hyphens) |
+| `storeName`          | `string`, min 1, max 200                                                     |
+| `appKey`             | `string`, min 1                                                              |
+| `appToken`           | `string`, min 1                                                              |
+| `syncStrategy`       | enum `["WEBHOOK", "POLLING", "BOTH"]`                                        |
+| `syncDirection`      | enum `["INBOUND", "OUTBOUND", "BIDIRECTIONAL"]`                              |
+| `defaultWarehouseId` | `string`, min 1                                                              |
+| `defaultContactId`   | `string`, optional                                                           |
+| `companyId`          | `string`, optional                                                           |
 
 ### updateConnectionSchema
 
@@ -354,10 +360,10 @@ Same as `vtexConnectionSchema` but `appKey` and `appToken` are optional (can be 
 
 ### skuMappingSchema
 
-| Field | Validation |
-| --- | --- |
+| Field         | Validation      |
+| ------------- | --------------- |
 | `externalSku` | `string`, min 1 |
-| `productId` | `string`, min 1 |
+| `productId`   | `string`, min 1 |
 
 ### Helpers
 
@@ -373,23 +379,23 @@ toUpdateConnectionDto(data): UpdateIntegrationConnectionDto
 
 ## Components
 
-| Component | Props | Description |
-| --- | --- | --- |
-| `IntegrationsPage` | - | Main page with title, banner, and tabs by provider (VTEX, MercadoLibre) |
-| `IntegrationsEnabledBanner` | - | Informational banner: green if `integrationsEnabled`, amber if disabled. Link to Settings. |
-| `ProviderTabContent` | `provider: IntegrationProvider` | VTEX tab content: header, card grid, add button, form dialog, confirm delete |
-| `VtexProviderHeader` | `connections: IntegrationConnection[]` | Provider descriptive header with statistics (total connections, connected, errors, synced orders) |
-| `ConnectionCard` | `connection, onTest, onSync, onDelete` | Individual connection card: name, account, status badge, last sync, orders, dropdown menu (test/sync/edit/delete) |
-| `ComingSoonProviderTab` | `providerKey: string` | Placeholder for future providers (MercadoLibre) |
-| `ConnectionStatusBadge` | `status: ConnectionStatus` | Badge with color variant based on status: success (CONNECTED), secondary (DISCONNECTED), destructive (ERROR) |
-| `VtexConnectionForm` | `open, onOpenChange, mode: "create" \| "edit", connection?` | Dialog for creating or editing a VTEX connection. Includes selects for warehouse, contact, company (if multiCompanyEnabled). Credential fields use `type="password"`. |
-| `VtexConnectionDetail` | `connectionId: string` | Complete detail page: header with actions (test, sync, edit, delete), info card, unmatched SKUs alert, tabs (logs, SKU mappings, failed syncs) |
-| `SyncLogTable` | `connectionId: string` | Paginated sync log table with action filter |
-| `SkuMappingTable` | `connectionId: string` | SKU mappings table with per-row delete button |
-| `SkuMappingForm` | `connectionId: string` | Inline form to add a new mapping (externalSku + product select) |
-| `UnmatchedSkusAlert` | `connectionId: string` | Alert shown when unmapped external SKUs exist; displays list with details |
-| `FailedSyncsTab` | `connectionId: string` | Tab showing failed syncs (FAILED + OUTBOUND_FAILED) with individual retry and retry-all buttons |
-| `IntegrationList` | - | Legacy connection list without tabs (deprecated; use IntegrationsPage instead) |
+| Component                   | Props                                                       | Description                                                                                                                                                           |
+| --------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `IntegrationsPage`          | -                                                           | Main page with title, banner, and tabs by provider (VTEX, MercadoLibre)                                                                                               |
+| `IntegrationsEnabledBanner` | -                                                           | Informational banner: green if `integrationsEnabled`, amber if disabled. Link to Settings.                                                                            |
+| `ProviderTabContent`        | `provider: IntegrationProvider`                             | VTEX tab content: header, card grid, add button, form dialog, confirm delete                                                                                          |
+| `VtexProviderHeader`        | `connections: IntegrationConnection[]`                      | Provider descriptive header with statistics (total connections, connected, errors, synced orders)                                                                     |
+| `ConnectionCard`            | `connection, onTest, onSync, onDelete`                      | Individual connection card: name, account, status badge, last sync, orders, dropdown menu (test/sync/edit/delete)                                                     |
+| `ComingSoonProviderTab`     | `providerKey: string`                                       | Placeholder for future providers (MercadoLibre)                                                                                                                       |
+| `ConnectionStatusBadge`     | `status: ConnectionStatus`                                  | Badge with color variant based on status: success (CONNECTED), secondary (DISCONNECTED), destructive (ERROR)                                                          |
+| `VtexConnectionForm`        | `open, onOpenChange, mode: "create" \| "edit", connection?` | Dialog for creating or editing a VTEX connection. Includes selects for warehouse, contact, company (if multiCompanyEnabled). Credential fields use `type="password"`. |
+| `VtexConnectionDetail`      | `connectionId: string`                                      | Complete detail page: header with actions (test, sync, edit, delete), info card, unmatched SKUs alert, tabs (logs, SKU mappings, failed syncs)                        |
+| `SyncLogTable`              | `connectionId: string`                                      | Paginated sync log table with action filter                                                                                                                           |
+| `SkuMappingTable`           | `connectionId: string`                                      | SKU mappings table with per-row delete button                                                                                                                         |
+| `SkuMappingForm`            | `connectionId: string`                                      | Inline form to add a new mapping (externalSku + product select)                                                                                                       |
+| `UnmatchedSkusAlert`        | `connectionId: string`                                      | Alert shown when unmapped external SKUs exist; displays list with details                                                                                             |
+| `FailedSyncsTab`            | `connectionId: string`                                      | Tab showing failed syncs (FAILED + OUTBOUND_FAILED) with individual retry and retry-all buttons                                                                       |
+| `IntegrationList`           | -                                                           | Legacy connection list without tabs (deprecated; use IntegrationsPage instead)                                                                                        |
 
 ---
 
@@ -466,9 +472,9 @@ const { integrationsEnabled } = useOrgSettings();
 
 ### Behavior
 
-| State | Effect |
-| --- | --- |
-| **Enabled** | Green banner, sidebar visible, full functionality |
+| State        | Effect                                                                                               |
+| ------------ | ---------------------------------------------------------------------------------------------------- |
+| **Enabled**  | Green banner, sidebar visible, full functionality                                                    |
 | **Disabled** | Amber banner with warning, user can see the page but sync operations are not executed on the backend |
 
 ### Activation
@@ -479,13 +485,13 @@ Activated from the **Settings** page (admin-only). The banner includes a direct 
 
 ## Permissions
 
-| Permission | Usage |
-| --- | --- |
-| `INTEGRATIONS:CREATE` | Create new connections |
-| `INTEGRATIONS:READ` | View connection list and details |
-| `INTEGRATIONS:UPDATE` | Edit existing connections |
-| `INTEGRATIONS:DELETE` | Delete connections |
-| `INTEGRATIONS:SYNC` | Run connection test and force manual synchronization |
+| Permission            | Usage                                                |
+| --------------------- | ---------------------------------------------------- |
+| `INTEGRATIONS:CREATE` | Create new connections                               |
+| `INTEGRATIONS:READ`   | View connection list and details                     |
+| `INTEGRATIONS:UPDATE` | Edit existing connections                            |
+| `INTEGRATIONS:DELETE` | Delete connections                                   |
+| `INTEGRATIONS:SYNC`   | Run connection test and force manual synchronization |
 
 ### Route Protection
 
@@ -505,46 +511,46 @@ All translations are under the `"integrations"` namespace in `src/lib/messages/{
 
 ### Main Sections
 
-| Key | Content |
-| --- | --- |
-| `integrations.title` | Page title |
-| `integrations.description` | Page description |
-| `integrations.providers.vtex.*` | VTEX provider name, description, addConnection |
-| `integrations.providers.mercadolibre.*` | MercadoLibre provider name, description |
-| `integrations.enabledBanner.*` | Banner text (enabled, disabled, goToSettings) |
-| `integrations.form.*` | Form labels (accountName, storeName, appKey, appToken, etc.) |
-| `integrations.fields.*` | Read-only field labels (status, connectedAt, lastSync, syncedOrders, lastError) |
-| `integrations.status.*` | Status labels (connected, disconnected, error) |
-| `integrations.actions.*` | Action buttons (test, sync, edit, delete, connect) |
-| `integrations.syncDirection.*` | Direction labels (inbound, outbound, bidirectional) |
-| `integrations.messages.*` | Success/error messages (created, updated, deleted, testSuccess, testFailed, syncStarted, confirmDelete) |
-| `integrations.syncLogs.*` | Logs tab (title, columns) |
-| `integrations.skuMapping.*` | SKU mappings tab (title, added, deleted, form labels) |
-| `integrations.failedSyncs.*` | Failed syncs tab (title, retrySuccess, retryAllSuccess) |
-| `integrations.detail.*` | Detail page (info, notFound, notFoundDescription) |
-| `integrations.list.*` | List (empty, emptyDescription) |
-| `integrations.error.*` | Error messages (loading) |
+| Key                                     | Content                                                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `integrations.title`                    | Page title                                                                                              |
+| `integrations.description`              | Page description                                                                                        |
+| `integrations.providers.vtex.*`         | VTEX provider name, description, addConnection                                                          |
+| `integrations.providers.mercadolibre.*` | MercadoLibre provider name, description                                                                 |
+| `integrations.enabledBanner.*`          | Banner text (enabled, disabled, goToSettings)                                                           |
+| `integrations.form.*`                   | Form labels (accountName, storeName, appKey, appToken, etc.)                                            |
+| `integrations.fields.*`                 | Read-only field labels (status, connectedAt, lastSync, syncedOrders, lastError)                         |
+| `integrations.status.*`                 | Status labels (connected, disconnected, error)                                                          |
+| `integrations.actions.*`                | Action buttons (test, sync, edit, delete, connect)                                                      |
+| `integrations.syncDirection.*`          | Direction labels (inbound, outbound, bidirectional)                                                     |
+| `integrations.messages.*`               | Success/error messages (created, updated, deleted, testSuccess, testFailed, syncStarted, confirmDelete) |
+| `integrations.syncLogs.*`               | Logs tab (title, columns)                                                                               |
+| `integrations.skuMapping.*`             | SKU mappings tab (title, added, deleted, form labels)                                                   |
+| `integrations.failedSyncs.*`            | Failed syncs tab (title, retrySuccess, retryAllSuccess)                                                 |
+| `integrations.detail.*`                 | Detail page (info, notFound, notFoundDescription)                                                       |
+| `integrations.list.*`                   | List (empty, emptyDescription)                                                                          |
+| `integrations.error.*`                  | Error messages (loading)                                                                                |
 
 ---
 
 ## API Endpoints Consumed
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| GET | `/integrations` | List connections (filters: `provider`, `status`) |
-| GET | `/integrations/:id` | Connection detail |
-| POST | `/integrations` | Create connection (body includes credentials in plaintext) |
-| PATCH | `/integrations/:id` | Update connection |
-| DELETE | `/integrations/:id` | Delete connection |
-| POST | `/integrations/:id/test` | Test connectivity with the platform |
-| POST | `/integrations/:id/sync` | Trigger manual synchronization |
-| GET | `/integrations/:id/logs` | Sync logs (paginated, filter: `action`, `page`, `limit`) |
-| GET | `/integrations/:id/sku-mappings` | SKU mappings for the connection |
-| POST | `/integrations/:id/sku-mappings` | Create SKU mapping |
-| DELETE | `/integrations/:id/sku-mappings/:mappingId` | Delete SKU mapping |
-| GET | `/integrations/:id/unmatched-skus` | External SKUs without mapping |
-| POST | `/integrations/:id/retry/:logId` | Retry a failed log |
-| POST | `/integrations/:id/retry-all` | Retry all failed logs |
+| Method | Endpoint                                    | Description                                                |
+| ------ | ------------------------------------------- | ---------------------------------------------------------- |
+| GET    | `/integrations`                             | List connections (filters: `provider`, `status`)           |
+| GET    | `/integrations/:id`                         | Connection detail                                          |
+| POST   | `/integrations`                             | Create connection (body includes credentials in plaintext) |
+| PATCH  | `/integrations/:id`                         | Update connection                                          |
+| DELETE | `/integrations/:id`                         | Delete connection                                          |
+| POST   | `/integrations/:id/test`                    | Test connectivity with the platform                        |
+| POST   | `/integrations/:id/sync`                    | Trigger manual synchronization                             |
+| GET    | `/integrations/:id/logs`                    | Sync logs (paginated, filter: `action`, `page`, `limit`)   |
+| GET    | `/integrations/:id/sku-mappings`            | SKU mappings for the connection                            |
+| POST   | `/integrations/:id/sku-mappings`            | Create SKU mapping                                         |
+| DELETE | `/integrations/:id/sku-mappings/:mappingId` | Delete SKU mapping                                         |
+| GET    | `/integrations/:id/unmatched-skus`          | External SKUs without mapping                              |
+| POST   | `/integrations/:id/retry/:logId`            | Retry a failed log                                         |
+| POST   | `/integrations/:id/retry-all`               | Retry all failed logs                                      |
 
 **Response pattern**: `{ success: boolean, message: string, data: T | T[], timestamp: string }` (log lists include `pagination`).
 

@@ -25,6 +25,7 @@ import {
 } from "@/ui/components/select";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useContacts } from "@/modules/contacts/presentation/hooks/use-contacts";
+import { useCompanies } from "@/modules/companies/presentation/hooks/use-companies";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 import {
   useCreateIntegration,
@@ -61,6 +62,9 @@ export function VtexConnectionForm({
 
   const { data: contactsResult } = useContacts({ limit: 100 });
   const contacts = contactsResult?.data ?? [];
+
+  const { data: companiesResult } = useCompanies({ isActive: true });
+  const companies = companiesResult?.data ?? [];
 
   const createIntegration = useCreateIntegration();
   const updateIntegration = useUpdateIntegration();
@@ -189,20 +193,27 @@ export function VtexConnectionForm({
             <Controller
               name="syncStrategy"
               control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="WEBHOOK">Webhook</SelectItem>
-                    <SelectItem value="POLLING">Polling</SelectItem>
-                    <SelectItem value="BOTH">
-                      {t("form.syncStrategyBoth")}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
+              render={({ field }) => {
+                const strategyLabels: Record<string, string> = {
+                  WEBHOOK: "Webhook",
+                  POLLING: "Polling",
+                  BOTH: t("form.syncStrategyBoth"),
+                };
+                return (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue>{strategyLabels[field.value]}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="WEBHOOK">Webhook</SelectItem>
+                      <SelectItem value="POLLING">Polling</SelectItem>
+                      <SelectItem value="BOTH">
+                        {t("form.syncStrategyBoth")}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                );
+              }}
             />
           </FormField>
 
@@ -211,24 +222,31 @@ export function VtexConnectionForm({
             <Controller
               name="syncDirection"
               control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="INBOUND">
-                      {t("syncDirection.inbound")}
-                    </SelectItem>
-                    <SelectItem value="OUTBOUND">
-                      {t("syncDirection.outbound")}
-                    </SelectItem>
-                    <SelectItem value="BIDIRECTIONAL">
-                      {t("syncDirection.bidirectional")}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
+              render={({ field }) => {
+                const directionLabels: Record<string, string> = {
+                  INBOUND: t("syncDirection.inbound"),
+                  OUTBOUND: t("syncDirection.outbound"),
+                  BIDIRECTIONAL: t("syncDirection.bidirectional"),
+                };
+                return (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue>{directionLabels[field.value]}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="INBOUND">
+                        {t("syncDirection.inbound")}
+                      </SelectItem>
+                      <SelectItem value="OUTBOUND">
+                        {t("syncDirection.outbound")}
+                      </SelectItem>
+                      <SelectItem value="BIDIRECTIONAL">
+                        {t("syncDirection.bidirectional")}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                );
+              }}
             />
           </FormField>
 
@@ -288,11 +306,21 @@ export function VtexConnectionForm({
                 name="companyId"
                 control={control}
                 render={({ field }) => (
-                  <Input
-                    {...field}
+                  <Select
                     value={field.value || ""}
-                    placeholder={t("form.companyPlaceholder")}
-                  />
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("form.companyPlaceholder")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               />
             </FormField>

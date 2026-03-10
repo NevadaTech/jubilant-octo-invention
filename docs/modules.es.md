@@ -358,11 +358,11 @@ Gestion de clientes y proveedores como contactos. Cada contacto puede clasificar
 
 ### Tipos de Contacto
 
-| Tipo      | Codigo     | Descripcion                                      |
-| --------- | ---------- | ------------------------------------------------ |
-| Cliente   | `CUSTOMER` | Cliente final que compra productos               |
-| Proveedor | `SUPPLIER` | Proveedor que suministra productos               |
-| Ambos     | `BOTH`     | Actua como cliente y proveedor simultaneamente   |
+| Tipo      | Codigo     | Descripcion                                    |
+| --------- | ---------- | ---------------------------------------------- |
+| Cliente   | `CUSTOMER` | Cliente final que compra productos             |
+| Proveedor | `SUPPLIER` | Proveedor que suministra productos             |
+| Ambos     | `BOTH`     | Actua como cliente y proveedor simultaneamente |
 
 ### Entity
 
@@ -370,7 +370,7 @@ Gestion de clientes y proveedores como contactos. Cada contacto puede clasificar
 class Contact extends Entity<string> {
   name: string;
   identification: string; // Unico por organizacion
-  type: ContactType;      // CUSTOMER | SUPPLIER | BOTH
+  type: ContactType; // CUSTOMER | SUPPLIER | BOTH
   email?: string;
   phone?: string;
   address?: string;
@@ -381,24 +381,24 @@ class Contact extends Entity<string> {
 
 ### Componentes Clave
 
-| Componente     | Ruta                         | Descripcion                                    |
-| -------------- | ---------------------------- | ---------------------------------------------- |
-| ContactList    | `/contacts`                  | Lista con filtros, busqueda y paginacion       |
-| ContactDetail  | `/contacts/[id]`             | Vista de detalle                               |
-| ContactForm    | `/contacts/new`, `[id]/edit` | Formulario de creacion/edicion                 |
+| Componente    | Ruta                         | Descripcion                              |
+| ------------- | ---------------------------- | ---------------------------------------- |
+| ContactList   | `/contacts`                  | Lista con filtros, busqueda y paginacion |
+| ContactDetail | `/contacts/[id]`             | Vista de detalle                         |
+| ContactForm   | `/contacts/new`, `[id]/edit` | Formulario de creacion/edicion           |
 
 ### Campos
 
-| Campo            | Tipo     | Requerido | Descripcion                              |
-| ---------------- | -------- | --------- | ---------------------------------------- |
-| `name`           | string   | Si        | Nombre del contacto                      |
-| `identification` | string   | Si        | Identificador unico por organizacion     |
-| `type`           | enum     | Si        | CUSTOMER, SUPPLIER o BOTH                |
-| `email`          | string   | No        | Direccion de correo electronico          |
-| `phone`          | string   | No        | Numero de telefono                       |
-| `address`        | string   | No        | Direccion fisica                         |
-| `notes`          | string   | No        | Notas adicionales                        |
-| `isActive`       | boolean  | Si        | Estado activo                            |
+| Campo            | Tipo    | Requerido | Descripcion                          |
+| ---------------- | ------- | --------- | ------------------------------------ |
+| `name`           | string  | Si        | Nombre del contacto                  |
+| `identification` | string  | Si        | Identificador unico por organizacion |
+| `type`           | enum    | Si        | CUSTOMER, SUPPLIER o BOTH            |
+| `email`          | string  | No        | Direccion de correo electronico      |
+| `phone`          | string  | No        | Numero de telefono                   |
+| `address`        | string  | No        | Direccion fisica                     |
+| `notes`          | string  | No        | Notas adicionales                    |
+| `isActive`       | boolean | Si        | Estado activo                        |
 
 ### Integracion con Ventas
 
@@ -406,24 +406,24 @@ Las ventas tienen un `contactId` + `contactName` opcional (unido desde la tabla 
 
 ### API Endpoints
 
-| Metodo | Endpoint        | Descripcion          |
-| ------ | --------------- | -------------------- |
-| GET    | `/contacts`     | Listar contactos     |
-| POST   | `/contacts`     | Crear contacto       |
-| GET    | `/contacts/:id` | Detalle de contacto  |
-| PATCH  | `/contacts/:id` | Actualizar contacto  |
-| DELETE | `/contacts/:id` | Eliminar contacto    |
+| Metodo | Endpoint        | Descripcion         |
+| ------ | --------------- | ------------------- |
+| GET    | `/contacts`     | Listar contactos    |
+| POST   | `/contacts`     | Crear contacto      |
+| GET    | `/contacts/:id` | Detalle de contacto |
+| PATCH  | `/contacts/:id` | Actualizar contacto |
+| DELETE | `/contacts/:id` | Eliminar contacto   |
 
 **Respuesta**: `{ success, message, data, timestamp }`
 
 ### Permisos
 
-| Permiso           | Descripcion                  |
-| ----------------- | ---------------------------- |
-| `CONTACTS:CREATE` | Crear nuevos contactos       |
-| `CONTACTS:READ`   | Ver contactos                |
-| `CONTACTS:UPDATE` | Actualizar contactos         |
-| `CONTACTS:DELETE` | Eliminar contactos           |
+| Permiso           | Descripcion            |
+| ----------------- | ---------------------- |
+| `CONTACTS:CREATE` | Crear nuevos contactos |
+| `CONTACTS:READ`   | Ver contactos          |
+| `CONTACTS:UPDATE` | Actualizar contactos   |
+| `CONTACTS:DELETE` | Eliminar contactos     |
 
 ### Notas
 
@@ -500,13 +500,13 @@ Importacion masiva de datos desde archivos Excel (.xlsx) y CSV. Soporta cinco ti
 
 ### Tipos de Importacion
 
-| Tipo           | Codigo      | Descripcion                                           |
-| -------------- | ----------- | ----------------------------------------------------- |
+| Tipo           | Codigo      | Descripcion                                                |
+| -------------- | ----------- | ---------------------------------------------------------- |
 | Productos      | `PRODUCTS`  | Importar catalogo de productos (SKU, nombre, precio, etc.) |
-| Movimientos    | `MOVEMENTS` | Importar movimientos de stock (IN/OUT/ADJUST)         |
-| Transferencias | `TRANSFERS` | Importar registros de transferencias entre bodegas    |
-| Ventas         | `SALES`     | Importar ventas historicas                            |
-| Devoluciones   | `RETURNS`   | Importar registros de devoluciones                    |
+| Movimientos    | `MOVEMENTS` | Importar movimientos de stock (IN/OUT/ADJUST)              |
+| Transferencias | `TRANSFERS` | Importar registros de transferencias entre bodegas         |
+| Ventas         | `SALES`     | Importar ventas historicas                                 |
+| Devoluciones   | `RETURNS`   | Importar registros de devoluciones                         |
 
 ### Flujo de Dos Fases
 
@@ -517,6 +517,7 @@ Importacion masiva de datos desde archivos Excel (.xlsx) y CSV. Soporta cinco ti
 ```
 
 **Fase 1 -- Vista previa**: El backend parsea el archivo, valida cada fila (campos requeridos, tipos de datos, referencias de claves foraneas) y retorna una vista previa con:
+
 - Total de filas encontradas
 - Cantidad de filas validas
 - Filas con errores indicando numero de linea y descripcion del error
@@ -526,12 +527,12 @@ Importacion masiva de datos desde archivos Excel (.xlsx) y CSV. Soporta cinco ti
 
 ### Componentes Clave
 
-| Componente        | Descripcion                                                    |
-| ----------------- | -------------------------------------------------------------- |
-| `ImportsPage`     | Pagina principal con selector de tipo de importacion y carga   |
-| `ImportPreview`   | Tabla de vista previa mostrando filas validadas y errores      |
-| `ImportErrors`    | Lista de errores con numeros de fila y descripciones           |
-| `ImportProgress`  | Indicador de progreso durante la ejecucion                     |
+| Componente       | Descripcion                                                  |
+| ---------------- | ------------------------------------------------------------ |
+| `ImportsPage`    | Pagina principal con selector de tipo de importacion y carga |
+| `ImportPreview`  | Tabla de vista previa mostrando filas validadas y errores    |
+| `ImportErrors`   | Lista de errores con numeros de fila y descripciones         |
+| `ImportProgress` | Indicador de progreso durante la ejecucion                   |
 
 ### Requisitos de Archivos
 
@@ -541,10 +542,10 @@ Importacion masiva de datos desde archivos Excel (.xlsx) y CSV. Soporta cinco ti
 
 ### API Endpoints
 
-| Metodo | Endpoint            | Descripcion                                      |
-| ------ | ------------------- | ------------------------------------------------ |
-| POST   | `/imports/preview`  | Subir archivo y obtener vista previa de validacion |
-| POST   | `/imports/execute`  | Ejecutar importacion con datos validados         |
+| Metodo | Endpoint           | Descripcion                                        |
+| ------ | ------------------ | -------------------------------------------------- |
+| POST   | `/imports/preview` | Subir archivo y obtener vista previa de validacion |
+| POST   | `/imports/execute` | Ejecutar importacion con datos validados           |
 
 **Request**: `multipart/form-data` con campo `file` y campo `type` (PRODUCTS, MOVEMENTS, etc.)
 
@@ -552,10 +553,10 @@ Importacion masiva de datos desde archivos Excel (.xlsx) y CSV. Soporta cinco ti
 
 ### Permisos
 
-| Permiso         | Descripcion                         |
-| --------------- | ----------------------------------- |
-| `IMPORTS:CREATE`| Subir y ejecutar importaciones      |
-| `IMPORTS:READ`  | Ver historial de importaciones      |
+| Permiso          | Descripcion                    |
+| ---------------- | ------------------------------ |
+| `IMPORTS:CREATE` | Subir y ejecutar importaciones |
+| `IMPORTS:READ`   | Ver historial de importaciones |
 
 ### Notas
 
@@ -836,33 +837,33 @@ Gestion de conexiones con plataformas e-commerce externas (VTEX como primer prov
 
 ### Componentes Clave
 
-| Componente | Descripcion |
-| --- | --- |
-| `IntegrationsPage` | Pagina principal con tabs por proveedor (VTEX, MercadoLibre) |
-| `ProviderTabContent` | Grid de cards de conexiones + header + formulario |
-| `ConnectionCard` | Card individual con status, ultimo sync y acciones |
-| `VtexConnectionForm` | Dialog crear/editar conexion (credenciales, bodega, contacto) |
-| `VtexConnectionDetail` | Detalle con tabs: sync logs, SKU mappings, failed syncs |
-| `FailedSyncsTab` | Syncs fallidos con retry individual y retry-all |
+| Componente             | Descripcion                                                   |
+| ---------------------- | ------------------------------------------------------------- |
+| `IntegrationsPage`     | Pagina principal con tabs por proveedor (VTEX, MercadoLibre)  |
+| `ProviderTabContent`   | Grid de cards de conexiones + header + formulario             |
+| `ConnectionCard`       | Card individual con status, ultimo sync y acciones            |
+| `VtexConnectionForm`   | Dialog crear/editar conexion (credenciales, bodega, contacto) |
+| `VtexConnectionDetail` | Detalle con tabs: sync logs, SKU mappings, failed syncs       |
+| `FailedSyncsTab`       | Syncs fallidos con retry individual y retry-all               |
 
 ### API Endpoints
 
-| Metodo | Endpoint | Descripcion |
-| --- | --- | --- |
-| GET | `/integrations` | Listar conexiones |
-| GET | `/integrations/:id` | Detalle de conexion |
-| POST | `/integrations` | Crear conexion |
-| PATCH | `/integrations/:id` | Actualizar conexion |
-| DELETE | `/integrations/:id` | Eliminar conexion |
-| POST | `/integrations/:id/test` | Probar conectividad |
-| POST | `/integrations/:id/sync` | Forzar sincronizacion |
-| GET | `/integrations/:id/logs` | Logs de sincronizacion |
-| GET | `/integrations/:id/sku-mappings` | Mapeos de SKU |
-| POST | `/integrations/:id/sku-mappings` | Crear mapeo SKU |
-| DELETE | `/integrations/:id/sku-mappings/:mid` | Eliminar mapeo |
-| GET | `/integrations/:id/unmatched-skus` | SKUs sin mapear |
-| POST | `/integrations/:id/retry/:logId` | Reintentar log fallido |
-| POST | `/integrations/:id/retry-all` | Reintentar todos los fallidos |
+| Metodo | Endpoint                              | Descripcion                   |
+| ------ | ------------------------------------- | ----------------------------- |
+| GET    | `/integrations`                       | Listar conexiones             |
+| GET    | `/integrations/:id`                   | Detalle de conexion           |
+| POST   | `/integrations`                       | Crear conexion                |
+| PATCH  | `/integrations/:id`                   | Actualizar conexion           |
+| DELETE | `/integrations/:id`                   | Eliminar conexion             |
+| POST   | `/integrations/:id/test`              | Probar conectividad           |
+| POST   | `/integrations/:id/sync`              | Forzar sincronizacion         |
+| GET    | `/integrations/:id/logs`              | Logs de sincronizacion        |
+| GET    | `/integrations/:id/sku-mappings`      | Mapeos de SKU                 |
+| POST   | `/integrations/:id/sku-mappings`      | Crear mapeo SKU               |
+| DELETE | `/integrations/:id/sku-mappings/:mid` | Eliminar mapeo                |
+| GET    | `/integrations/:id/unmatched-skus`    | SKUs sin mapear               |
+| POST   | `/integrations/:id/retry/:logId`      | Reintentar log fallido        |
+| POST   | `/integrations/:id/retry-all`         | Reintentar todos los fallidos |
 
 **Respuesta**: `{ success, message, data, timestamp }` (logs incluyen `pagination`).
 

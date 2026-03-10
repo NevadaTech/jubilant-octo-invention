@@ -96,7 +96,7 @@ describe("IntegrationApiAdapter", () => {
 
       const result = await adapter.findAll();
 
-      expect(apiClient.get).toHaveBeenCalledWith("/integrations", {
+      expect(apiClient.get).toHaveBeenCalledWith("/integrations/connections", {
         params: {},
       });
       expect(result).toHaveLength(1);
@@ -114,7 +114,7 @@ describe("IntegrationApiAdapter", () => {
 
       await adapter.findAll({ provider: "VTEX" });
 
-      expect(apiClient.get).toHaveBeenCalledWith("/integrations", {
+      expect(apiClient.get).toHaveBeenCalledWith("/integrations/connections", {
         params: { provider: "VTEX" },
       });
     });
@@ -131,7 +131,7 @@ describe("IntegrationApiAdapter", () => {
 
       await adapter.findAll({ status: "ERROR" });
 
-      expect(apiClient.get).toHaveBeenCalledWith("/integrations", {
+      expect(apiClient.get).toHaveBeenCalledWith("/integrations/connections", {
         params: { status: "ERROR" },
       });
     });
@@ -148,7 +148,7 @@ describe("IntegrationApiAdapter", () => {
 
       await adapter.findAll({ provider: "VTEX", status: "CONNECTED" });
 
-      expect(apiClient.get).toHaveBeenCalledWith("/integrations", {
+      expect(apiClient.get).toHaveBeenCalledWith("/integrations/connections", {
         params: { provider: "VTEX", status: "CONNECTED" },
       });
     });
@@ -167,7 +167,7 @@ describe("IntegrationApiAdapter", () => {
 
       const result = await adapter.findById("conn-001");
 
-      expect(apiClient.get).toHaveBeenCalledWith("/integrations/conn-001");
+      expect(apiClient.get).toHaveBeenCalledWith("/integrations/connections/conn-001");
       expect(result).toBeTruthy();
     });
 
@@ -214,14 +214,14 @@ describe("IntegrationApiAdapter", () => {
       };
       const result = await adapter.create(createDto);
 
-      expect(apiClient.post).toHaveBeenCalledWith("/integrations", createDto);
+      expect(apiClient.post).toHaveBeenCalledWith("/integrations/connections", createDto);
       expect(result).toBeTruthy();
     });
   });
 
   describe("update", () => {
-    it("Given: valid update data When: update is called Then: should PATCH and return mapped connection", async () => {
-      vi.mocked(apiClient.patch).mockResolvedValue({
+    it("Given: valid update data When: update is called Then: should PUT and return mapped connection", async () => {
+      vi.mocked(apiClient.put).mockResolvedValue({
         data: {
           success: true,
           message: "Updated",
@@ -234,7 +234,7 @@ describe("IntegrationApiAdapter", () => {
         storeName: "Updated Store",
       });
 
-      expect(apiClient.patch).toHaveBeenCalledWith("/integrations/conn-001", {
+      expect(apiClient.put).toHaveBeenCalledWith("/integrations/connections/conn-001", {
         storeName: "Updated Store",
       });
       expect(result).toBeTruthy();
@@ -247,7 +247,7 @@ describe("IntegrationApiAdapter", () => {
 
       await adapter.delete("conn-001");
 
-      expect(apiClient.delete).toHaveBeenCalledWith("/integrations/conn-001");
+      expect(apiClient.delete).toHaveBeenCalledWith("/integrations/connections/conn-001");
     });
   });
 
@@ -263,7 +263,7 @@ describe("IntegrationApiAdapter", () => {
       const result = await adapter.testConnection("conn-001");
 
       expect(apiClient.post).toHaveBeenCalledWith(
-        "/integrations/conn-001/test",
+        "/integrations/connections/conn-001/test",
       );
       expect(result.success).toBe(true);
       expect(result.message).toBe("Connection is healthy");
@@ -296,7 +296,7 @@ describe("IntegrationApiAdapter", () => {
       const result = await adapter.triggerSync("conn-001");
 
       expect(apiClient.post).toHaveBeenCalledWith(
-        "/integrations/conn-001/sync",
+        "/integrations/connections/conn-001/sync",
       );
       expect(result.success).toBe(true);
       expect(result.message).toBe("Sync triggered successfully");
@@ -318,7 +318,7 @@ describe("IntegrationApiAdapter", () => {
       const result = await adapter.getSyncLogs("conn-001");
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        "/integrations/conn-001/logs",
+        "/integrations/connections/conn-001/logs",
         { params: {} },
       );
       expect(result.data).toHaveLength(1);
@@ -339,7 +339,7 @@ describe("IntegrationApiAdapter", () => {
       await adapter.getSyncLogs("conn-001", { action: "FAILED" });
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        "/integrations/conn-001/logs",
+        "/integrations/connections/conn-001/logs",
         { params: { action: "FAILED" } },
       );
     });
@@ -358,7 +358,7 @@ describe("IntegrationApiAdapter", () => {
       await adapter.getSyncLogs("conn-001", { page: 2, limit: 25 });
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        "/integrations/conn-001/logs",
+        "/integrations/connections/conn-001/logs",
         { params: { page: 2, limit: 25 } },
       );
     });
@@ -389,7 +389,7 @@ describe("IntegrationApiAdapter", () => {
       const result = await adapter.getSkuMappings("conn-001");
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        "/integrations/conn-001/sku-mappings",
+        "/integrations/connections/conn-001/sku-mappings",
       );
       expect(result).toHaveLength(1);
       expect(result[0].externalSku).toBe("VTEX-SKU-001");
@@ -420,7 +420,7 @@ describe("IntegrationApiAdapter", () => {
       });
 
       expect(apiClient.post).toHaveBeenCalledWith(
-        "/integrations/conn-001/sku-mappings",
+        "/integrations/connections/conn-001/sku-mappings",
         { externalSku: "VTEX-SKU-002", productId: "prod-002" },
       );
       expect(result.id).toBe("map-002");
@@ -434,7 +434,7 @@ describe("IntegrationApiAdapter", () => {
       await adapter.deleteSkuMapping("conn-001", "map-001");
 
       expect(apiClient.delete).toHaveBeenCalledWith(
-        "/integrations/conn-001/sku-mappings/map-001",
+        "/integrations/connections/conn-001/sku-mappings/map-001",
       );
     });
   });
@@ -461,7 +461,7 @@ describe("IntegrationApiAdapter", () => {
       const result = await adapter.getUnmatchedSkus("conn-001");
 
       expect(apiClient.get).toHaveBeenCalledWith(
-        "/integrations/conn-001/unmatched-skus",
+        "/integrations/connections/conn-001/unmatched",
       );
       expect(result).toHaveLength(1);
       expect(result[0].externalSku).toBe("VTEX-SKU-999");
@@ -475,7 +475,7 @@ describe("IntegrationApiAdapter", () => {
       await adapter.retrySyncLog("conn-001", "log-001");
 
       expect(apiClient.post).toHaveBeenCalledWith(
-        "/integrations/conn-001/retry/log-001",
+        "/integrations/connections/conn-001/retry/log-001",
       );
     });
   });
@@ -487,7 +487,7 @@ describe("IntegrationApiAdapter", () => {
       await adapter.retryAllFailed("conn-001");
 
       expect(apiClient.post).toHaveBeenCalledWith(
-        "/integrations/conn-001/retry-all",
+        "/integrations/connections/conn-001/retry-all",
       );
     });
   });

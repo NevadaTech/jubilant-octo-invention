@@ -45,14 +45,14 @@ Frontend for the **Nevada Inventory System**, a multi-tenant inventory managemen
 
 ### Goals
 
-| Goal                  | Description                                          |
-| --------------------- | ---------------------------------------------------- |
-| **Modern interface**  | Responsive UI with shadcn/ui + Tailwind CSS          |
-| **Type safe**         | Strict TypeScript end-to-end with Zod validation     |
-| **Multi-language**    | Full support for English and Spanish (next-intl)     |
-| **Access control**    | RBAC with 80+ granular permissions                   |
-| **Reports**           | 17 report types with Excel export                    |
-| **Real-time data**    | Dashboard with live metrics and updated charts       |
+| Goal                 | Description                                      |
+| -------------------- | ------------------------------------------------ |
+| **Modern interface** | Responsive UI with shadcn/ui + Tailwind CSS      |
+| **Type safe**        | Strict TypeScript end-to-end with Zod validation |
+| **Multi-language**   | Full support for English and Spanish (next-intl) |
+| **Access control**   | RBAC with 80+ granular permissions               |
+| **Reports**          | 17 report types with Excel export                |
+| **Real-time data**   | Dashboard with live metrics and updated charts   |
 
 ---
 
@@ -137,12 +137,12 @@ Frontend for the **Nevada Inventory System**, a multi-tenant inventory managemen
 
 ### Core
 
-| Technology       | Version | Purpose                          |
-| ---------------- | ------- | -------------------------------- |
-| **Next.js**      | 16.1    | Framework with App Router        |
-| **React**        | 19.2    | UI library                       |
-| **TypeScript**   | 5.9+    | Strict static typing             |
-| **Tailwind CSS** | 4.2     | Utility-first styling            |
+| Technology       | Version | Purpose                   |
+| ---------------- | ------- | ------------------------- |
+| **Next.js**      | 16.1    | Framework with App Router |
+| **React**        | 19.2    | UI library                |
+| **TypeScript**   | 5.9+    | Strict static typing      |
+| **Tailwind CSS** | 4.2     | Utility-first styling     |
 
 ### State and Data
 
@@ -156,24 +156,24 @@ Frontend for the **Nevada Inventory System**, a multi-tenant inventory managemen
 
 ### UI
 
-| Technology         | Purpose                                          |
-| ------------------ | ------------------------------------------------ |
-| **Radix UI**       | Accessible primitives (Dialog, Select, Dropdown) |
-| **shadcn/ui**      | Styled component library                         |
-| **Recharts**       | Charts (Area, Bar, Pie)                          |
-| **Lucide React**   | Icons                                            |
-| **Framer Motion**  | Animations                                       |
-| **Sonner**         | Toast notifications                              |
+| Technology        | Purpose                                          |
+| ----------------- | ------------------------------------------------ |
+| **Radix UI**      | Accessible primitives (Dialog, Select, Dropdown) |
+| **shadcn/ui**     | Styled component library                         |
+| **Recharts**      | Charts (Area, Bar, Pie)                          |
+| **Lucide React**  | Icons                                            |
+| **Framer Motion** | Animations                                       |
+| **Sonner**        | Toast notifications                              |
 
 ### Tools
 
-| Technology            | Purpose                          |
-| --------------------- | -------------------------------- |
-| **next-intl**         | Internationalization (en/es)     |
-| **ExcelJS**           | Excel export                     |
-| **Vitest**            | Unit testing                     |
-| **Playwright**        | E2E testing                      |
-| **ESLint + Prettier** | Linting and formatting           |
+| Technology            | Purpose                      |
+| --------------------- | ---------------------------- |
+| **next-intl**         | Internationalization (en/es) |
+| **ExcelJS**           | Excel export                 |
+| **Vitest**            | Unit testing                 |
+| **Playwright**        | E2E testing                  |
+| **ESLint + Prettier** | Linting and formatting       |
 
 ---
 
@@ -199,11 +199,11 @@ npm run dev
 
 ### Prerequisites
 
-| Tool              | Version | Required                                    |
-| ----------------- | ------- | ------------------------------------------- |
-| Node.js           | 18+     | Yes                                         |
-| npm / yarn / pnpm | -       | Yes                                         |
-| Backend API       | -       | Yes (improved-parakeet must be running)     |
+| Tool              | Version | Required                                |
+| ----------------- | ------- | --------------------------------------- |
+| Node.js           | 18+     | Yes                                     |
+| npm / yarn / pnpm | -       | Yes                                     |
+| Backend API       | -       | Yes (improved-parakeet must be running) |
 
 ---
 
@@ -291,22 +291,22 @@ This architecture ensures a clear separation of concerns: the domain layer has n
 
 ## Modules
 
-| Module             | Description                                                        | Route                            |
-| ------------------ | ------------------------------------------------------------------ | -------------------------------- |
-| **Authentication** | Login, tokens, session, permissions                                | `/login`                         |
-| **Dashboard**      | Metrics, charts, recent activity                                   | `/dashboard`                     |
-| **Inventory**      | Products, categories, warehouses, stock, movements, transfers      | `/dashboard/inventory/*`         |
-| **Sales**          | Sales with full workflow (5 states)                                | `/dashboard/sales/*`             |
-| **Returns**        | Customer returns and supplier returns                              | `/dashboard/returns/*`           |
-| **Contacts**       | Customer and supplier management                                   | `/dashboard/contacts/*`          |
-| **Integrations**   | VTEX e-commerce connection, sync logs, SKU mapping                 | `/dashboard/integrations/*`      |
-| **Reports**        | 17 report types with filters and export                            | `/dashboard/reports/*`           |
-| **Imports**        | Bulk data import from Excel/CSV                                    | `/dashboard/imports/*`           |
-| **Users**          | User CRUD with status management                                   | `/dashboard/users/*`             |
-| **Roles**          | System and custom roles, permissions                               | `/dashboard/roles/*`             |
-| **Audit**          | Audit log with filters and export                                  | `/dashboard/audit`               |
-| **Companies**      | Business units / lines of business (multi-company)                 | `/dashboard/inventory/companies` |
-| **Settings**       | User profile and alert configuration                               | `/dashboard/settings`            |
+| Module             | Description                                                   | Route                            |
+| ------------------ | ------------------------------------------------------------- | -------------------------------- |
+| **Authentication** | Login, tokens, session, permissions                           | `/login`                         |
+| **Dashboard**      | Metrics, charts, recent activity                              | `/dashboard`                     |
+| **Inventory**      | Products, categories, warehouses, stock, movements, transfers | `/dashboard/inventory/*`         |
+| **Sales**          | Sales with full workflow (5 states)                           | `/dashboard/sales/*`             |
+| **Returns**        | Customer returns and supplier returns                         | `/dashboard/returns/*`           |
+| **Contacts**       | Customer and supplier management                              | `/dashboard/contacts/*`          |
+| **Integrations**   | VTEX e-commerce connection, sync logs, SKU mapping            | `/dashboard/integrations/*`      |
+| **Reports**        | 17 report types with filters and export                       | `/dashboard/reports/*`           |
+| **Imports**        | Bulk data import from Excel/CSV                               | `/dashboard/imports/*`           |
+| **Users**          | User CRUD with status management                              | `/dashboard/users/*`             |
+| **Roles**          | System and custom roles, permissions                          | `/dashboard/roles/*`             |
+| **Audit**          | Audit log with filters and export                             | `/dashboard/audit`               |
+| **Companies**      | Business units / lines of business (multi-company)            | `/dashboard/inventory/companies` |
+| **Settings**       | User profile and alert configuration                          | `/dashboard/settings`            |
 
 > For detailed documentation on each module, see [docs/modules.md](docs/modules.md).
 
@@ -368,12 +368,12 @@ SENTRY_AUTH_TOKEN=
 
 ## Additional Documentation
 
-| Document                  | Description                                | Links                                                                   |
-| ------------------------- | ------------------------------------------ | ----------------------------------------------------------------------- |
-| **Architecture**          | Clean/Hexagonal Architecture, state, auth  | [EN](docs/architecture.md) / [ES](docs/architecture.md)                |
-| **Modules**               | Detailed guide for all 14 business modules | [EN](docs/modules.md) / [ES](docs/modules.md)                          |
-| **Testing Structure**     | Testing conventions and organization       | [EN](docs/testing-structure.md) / [ES](docs/testing-structure.md)      |
-| **Integrations**          | VTEX integration and extensibility guide   | [EN](docs/integrations.md) / [ES](docs/integrations.md)                |
+| Document              | Description                                | Links                                                             |
+| --------------------- | ------------------------------------------ | ----------------------------------------------------------------- |
+| **Architecture**      | Clean/Hexagonal Architecture, state, auth  | [EN](docs/architecture.md) / [ES](docs/architecture.md)           |
+| **Modules**           | Detailed guide for all 14 business modules | [EN](docs/modules.md) / [ES](docs/modules.md)                     |
+| **Testing Structure** | Testing conventions and organization       | [EN](docs/testing-structure.md) / [ES](docs/testing-structure.md) |
+| **Integrations**      | VTEX integration and extensibility guide   | [EN](docs/integrations.md) / [ES](docs/integrations.md)           |
 
 ---
 
@@ -399,12 +399,12 @@ This frontend consumes the REST API from the **improved-parakeet** backend:
 
 All authenticated requests include the following headers:
 
-| Header                | Description                        |
-| --------------------- | ---------------------------------- |
-| `Authorization`       | `Bearer {accessToken}`             |
-| `X-Organization-Slug` | Slug of the active organization    |
-| `X-Organization-ID`   | ID of the active organization      |
-| `X-User-ID`           | ID of the authenticated user       |
+| Header                | Description                     |
+| --------------------- | ------------------------------- |
+| `Authorization`       | `Bearer {accessToken}`          |
+| `X-Organization-Slug` | Slug of the active organization |
+| `X-Organization-ID`   | ID of the active organization   |
+| `X-User-ID`           | ID of the authenticated user    |
 
 ---
 
@@ -412,14 +412,14 @@ All authenticated requests include the following headers:
 
 The application implements multiple layers of security:
 
-| Layer                     | Implementation                                                                 |
-| ------------------------- | ------------------------------------------------------------------------------ |
-| **Token storage**         | HttpOnly / Secure / SameSite=Strict cookies -- no tokens in JavaScript         |
-| **BFF routes**            | `src/app/api/auth/{login,refresh,logout}/route.ts` proxy authentication calls  |
-| **Content Security Policy** | `strict-dynamic` for scripts, `unsafe-inline` for styles (Tailwind)          |
-| **Session timeout**       | 15-minute idle detection with 2-minute warning dialog before forced logout     |
-| **Permission gates**      | `<PermissionGate>` and `<RequirePermission>` components enforce RBAC in the UI |
-| **Error suppression**     | Production logger suppresses error details to prevent information leakage      |
+| Layer                       | Implementation                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| **Token storage**           | HttpOnly / Secure / SameSite=Strict cookies -- no tokens in JavaScript         |
+| **BFF routes**              | `src/app/api/auth/{login,refresh,logout}/route.ts` proxy authentication calls  |
+| **Content Security Policy** | `strict-dynamic` for scripts, `unsafe-inline` for styles (Tailwind)            |
+| **Session timeout**         | 15-minute idle detection with 2-minute warning dialog before forced logout     |
+| **Permission gates**        | `<PermissionGate>` and `<RequirePermission>` components enforce RBAC in the UI |
+| **Error suppression**       | Production logger suppresses error details to prevent information leakage      |
 
 ---
 
@@ -434,14 +434,14 @@ The application implements multiple layers of security:
 
 ### Conventions
 
-| Aspect             | Convention                                    |
-| ------------------ | --------------------------------------------- |
-| **Code**           | English (variables, functions, components)    |
-| **Components**     | PascalCase (`ProductList.tsx`)                |
-| **Hooks**          | `use` prefix (`useProducts.ts`)               |
-| **Stores**         | `.store.ts` suffix                            |
-| **Schemas**        | `.schema.ts` suffix                           |
-| **Translations**   | Namespace dotted (`inventory.products.title`) |
+| Aspect           | Convention                                    |
+| ---------------- | --------------------------------------------- |
+| **Code**         | English (variables, functions, components)    |
+| **Components**   | PascalCase (`ProductList.tsx`)                |
+| **Hooks**        | `use` prefix (`useProducts.ts`)               |
+| **Stores**       | `.store.ts` suffix                            |
+| **Schemas**      | `.schema.ts` suffix                           |
+| **Translations** | Namespace dotted (`inventory.products.title`) |
 
 ---
 

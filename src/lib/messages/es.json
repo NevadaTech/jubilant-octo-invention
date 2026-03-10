@@ -2272,7 +2272,7 @@
       "defaultContact": "Contacto por defecto",
       "defaultContactPlaceholder": "Seleccionar contacto de respaldo (opcional)",
       "company": "Empresa",
-      "companyPlaceholder": "Ingrese ID de empresa (opcional)"
+      "companyPlaceholder": "Seleccionar empresa (opcional)"
     },
     "syncDirection": {
       "inbound": "Entrada (VTEX → Nevada)",
@@ -2361,6 +2361,29 @@
     },
     "error": {
       "loading": "Error al cargar las integraciones. Por favor intente de nuevo."
+    },
+    "providers": {
+      "vtex": {
+        "name": "VTEX",
+        "description": "Conecta tus tiendas VTEX para sincronizar órdenes y gestionar inventario entre plataformas.",
+        "addConnection": "Agregar conexión VTEX"
+      },
+      "mercadolibre": {
+        "name": "MercadoLibre",
+        "description": "Integra con MercadoLibre para sincronizar publicaciones y órdenes.",
+        "comingSoon": "Próximamente",
+        "comingSoonDescription": "La integración con MercadoLibre está en desarrollo. Mantente atento a las novedades."
+      }
+    },
+    "stats": {
+      "totalConnections": "{count, plural, =0 {Sin conexiones} =1 {1 conexión} other {# conexiones}}",
+      "connected": "{count} conectadas",
+      "withErrors": "{count} con errores"
+    },
+    "enabledBanner": {
+      "enabled": "Las integraciones están habilitadas para tu organización.",
+      "disabled": "Las integraciones están deshabilitadas. Habilítalas en Configuración para conectar plataformas externas.",
+      "goToSettings": "Gestionar en Configuración"
     }
   }
 }

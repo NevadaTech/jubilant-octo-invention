@@ -1,5 +1,10 @@
 export { IntegrationsPage } from "./integrations-page";
 export { IntegrationList } from "./integration-list";
+export { ConnectionCard } from "./connection-card";
+export { ProviderTabContent } from "./provider-tab-content";
+export { VtexProviderHeader } from "./vtex-provider-header";
+export { ComingSoonProviderTab } from "./coming-soon-provider-tab";
+export { IntegrationsEnabledBanner } from "./integrations-enabled-banner";
 export { VtexConnectionForm } from "./vtex-connection-form";
 export { VtexConnectionDetail } from "./vtex-connection-detail";
 export { ConnectionStatusBadge } from "./connection-status-badge";

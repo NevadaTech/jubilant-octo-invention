@@ -80,12 +80,12 @@ interface AuthStore {
 
 ### API Endpoints Consumed
 
-| Method | Endpoint        | Description              |
-| ------ | --------------- | ------------------------ |
+| Method | Endpoint        | Description                 |
+| ------ | --------------- | --------------------------- |
 | POST   | `/auth/login`   | Login with email + password |
-| POST   | `/auth/refresh` | Refresh access token     |
-| POST   | `/auth/logout`  | Close session            |
-| GET    | `/users/me`     | Get current user         |
+| POST   | `/auth/refresh` | Refresh access token        |
+| POST   | `/auth/logout`  | Close session               |
+| GET    | `/users/me`     | Get current user            |
 
 ---
 
@@ -101,30 +101,30 @@ Displays aggregated metrics and charts showing the state of the business.
 ### Metrics
 
 | Metric             | Description                            | Visualization       |
-| ------------------ | -------------------------------------- | -------------------- |
-| `inventorySummary` | Total products, warehouses, categories | Stat Cards           |
-| `lowStockCount`    | Products below minimum level           | Stat Card            |
-| `monthlySales`     | Sales for the month (volume + value)   | Stat Card            |
-| `salesTrend`       | Revenue per day (last 7 days)          | AreaChart            |
-| `topProducts`      | Top 5 products by revenue              | BarChart horizontal  |
-| `stockByWarehouse` | Stock distribution by warehouse        | PieChart (donut)     |
-| `recentActivity`   | Latest activities                      | Feed with icons      |
+| ------------------ | -------------------------------------- | ------------------- |
+| `inventorySummary` | Total products, warehouses, categories | Stat Cards          |
+| `lowStockCount`    | Products below minimum level           | Stat Card           |
+| `monthlySales`     | Sales for the month (volume + value)   | Stat Card           |
+| `salesTrend`       | Revenue per day (last 7 days)          | AreaChart           |
+| `topProducts`      | Top 5 products by revenue              | BarChart horizontal |
+| `stockByWarehouse` | Stock distribution by warehouse        | PieChart (donut)    |
+| `recentActivity`   | Latest activities                      | Feed with icons     |
 
 ### Components
 
-| Component                | File                           | Description                                  |
-| ------------------------ | ------------------------------ | -------------------------------------------- |
-| `DashboardContent`       | `dashboard-content.tsx`        | Orchestrator: loading/error/empty + charts   |
-| `SalesTrendChart`        | `sales-trend-chart.tsx`        | Recharts AreaChart                           |
-| `TopProductsChart`       | `top-products-chart.tsx`       | Horizontal BarChart                          |
-| `StockDistributionChart` | `stock-distribution-chart.tsx` | Donut PieChart                               |
-| `RecentActivityFeed`     | `recent-activity-feed.tsx`     | List with icons                              |
+| Component                | File                           | Description                                |
+| ------------------------ | ------------------------------ | ------------------------------------------ |
+| `DashboardContent`       | `dashboard-content.tsx`        | Orchestrator: loading/error/empty + charts |
+| `SalesTrendChart`        | `sales-trend-chart.tsx`        | Recharts AreaChart                         |
+| `TopProductsChart`       | `top-products-chart.tsx`       | Horizontal BarChart                        |
+| `StockDistributionChart` | `stock-distribution-chart.tsx` | Donut PieChart                             |
+| `RecentActivityFeed`     | `recent-activity-feed.tsx`     | List with icons                            |
 
 ### API
 
-| Method | Endpoint             | Description                          |
-| ------ | -------------------- | ------------------------------------ |
-| GET    | `/dashboard/metrics` | All metrics in a single call         |
+| Method | Endpoint             | Description                  |
+| ------ | -------------------- | ---------------------------- |
+| GET    | `/dashboard/metrics` | All metrics in a single call |
 
 **Response**: `{ success, message, data: DashboardMetricsDto, timestamp }`
 
@@ -160,23 +160,23 @@ Complete inventory management: products, categories, warehouses, stock, movement
 
 #### Categories
 
-| Component    | Route                       | Description     |
-| ------------ | --------------------------- | --------------- |
-| CategoryList | `/inventory/categories`     | Category list   |
-| CategoryForm | `/inventory/categories/new` | Create/edit     |
+| Component    | Route                       | Description   |
+| ------------ | --------------------------- | ------------- |
+| CategoryList | `/inventory/categories`     | Category list |
+| CategoryForm | `/inventory/categories/new` | Create/edit   |
 
 #### Warehouses
 
-| Component       | Route                        | Description            |
-| --------------- | ---------------------------- | ---------------------- |
-| WarehouseList   | `/inventory/warehouses`      | Warehouse list         |
-| WarehouseDetail | `/inventory/warehouses/[id]` | Detail with locations  |
+| Component       | Route                        | Description           |
+| --------------- | ---------------------------- | --------------------- |
+| WarehouseList   | `/inventory/warehouses`      | Warehouse list        |
+| WarehouseDetail | `/inventory/warehouses/[id]` | Detail with locations |
 
 #### Stock
 
-| Component | Route              | Description                            |
-| --------- | ------------------ | -------------------------------------- |
-| StockList | `/inventory/stock` | Stock levels by product/warehouse      |
+| Component | Route              | Description                       |
+| --------- | ------------------ | --------------------------------- |
+| StockList | `/inventory/stock` | Stock levels by product/warehouse |
 
 **Notes**:
 
@@ -274,14 +274,14 @@ class Sale extends AggregateRoot<string> {
 
 ### Key Components
 
-| Component         | Description                                        |
-| ----------------- | -------------------------------------------------- |
-| `SaleList`        | List with filters, status badge, pagination        |
-| `SaleDetail`      | Detail with lines + action buttons per status      |
-| `SaleForm`        | Form with dynamic lines                            |
-| `SaleTimeline`    | Visual lifecycle timeline                          |
-| `SaleStatusBadge` | Badge with color per status                        |
-| `SaleFilters`     | Filters: status, dateRange, customer, warehouse    |
+| Component         | Description                                     |
+| ----------------- | ----------------------------------------------- |
+| `SaleList`        | List with filters, status badge, pagination     |
+| `SaleDetail`      | Detail with lines + action buttons per status   |
+| `SaleForm`        | Form with dynamic lines                         |
+| `SaleTimeline`    | Visual lifecycle timeline                       |
+| `SaleStatusBadge` | Badge with color per status                     |
+| `SaleFilters`     | Filters: status, dateRange, customer, warehouse |
 
 ### API Response Pattern
 
@@ -308,10 +308,10 @@ Management of customer returns and returns to suppliers.
 
 ### Types
 
-| Type              | Code              | Description              |
-| ----------------- | ----------------- | ------------------------ |
-| Customer return   | `RETURN_CUSTOMER` | Customer returns product |
-| Supplier return   | `RETURN_SUPPLIER` | Return to supplier       |
+| Type            | Code              | Description              |
+| --------------- | ----------------- | ------------------------ |
+| Customer return | `RETURN_CUSTOMER` | Customer returns product |
+| Supplier return | `RETURN_SUPPLIER` | Return to supplier       |
 
 ### Workflow
 
@@ -358,11 +358,11 @@ Management of customers and suppliers as contacts. Each contact can be classifie
 
 ### Contact Types
 
-| Type       | Code       | Description                                   |
-| ---------- | ---------- | --------------------------------------------- |
-| Customer   | `CUSTOMER` | End customer who buys products                |
-| Supplier   | `SUPPLIER` | Supplier who provides products                |
-| Both       | `BOTH`     | Acts as both customer and supplier            |
+| Type     | Code       | Description                        |
+| -------- | ---------- | ---------------------------------- |
+| Customer | `CUSTOMER` | End customer who buys products     |
+| Supplier | `SUPPLIER` | Supplier who provides products     |
+| Both     | `BOTH`     | Acts as both customer and supplier |
 
 ### Entity
 
@@ -370,7 +370,7 @@ Management of customers and suppliers as contacts. Each contact can be classifie
 class Contact extends Entity<string> {
   name: string;
   identification: string; // Unique per organization
-  type: ContactType;      // CUSTOMER | SUPPLIER | BOTH
+  type: ContactType; // CUSTOMER | SUPPLIER | BOTH
   email?: string;
   phone?: string;
   address?: string;
@@ -381,24 +381,24 @@ class Contact extends Entity<string> {
 
 ### Key Components
 
-| Component      | Route                  | Description                                |
-| -------------- | ---------------------- | ------------------------------------------ |
-| ContactList    | `/contacts`            | List with filters, search, and pagination  |
-| ContactDetail  | `/contacts/[id]`       | Detail view                                |
-| ContactForm    | `/contacts/new`, `[id]/edit` | Create/edit form                     |
+| Component     | Route                        | Description                               |
+| ------------- | ---------------------------- | ----------------------------------------- |
+| ContactList   | `/contacts`                  | List with filters, search, and pagination |
+| ContactDetail | `/contacts/[id]`             | Detail view                               |
+| ContactForm   | `/contacts/new`, `[id]/edit` | Create/edit form                          |
 
 ### Fields
 
-| Field            | Type     | Required | Description                             |
-| ---------------- | -------- | -------- | --------------------------------------- |
-| `name`           | string   | Yes      | Contact name                            |
-| `identification` | string   | Yes      | Unique identifier per organization      |
-| `type`           | enum     | Yes      | CUSTOMER, SUPPLIER, or BOTH             |
-| `email`          | string   | No       | Email address                           |
-| `phone`          | string   | No       | Phone number                            |
-| `address`        | string   | No       | Physical address                        |
-| `notes`          | string   | No       | Additional notes                        |
-| `isActive`       | boolean  | Yes      | Active status                           |
+| Field            | Type    | Required | Description                        |
+| ---------------- | ------- | -------- | ---------------------------------- |
+| `name`           | string  | Yes      | Contact name                       |
+| `identification` | string  | Yes      | Unique identifier per organization |
+| `type`           | enum    | Yes      | CUSTOMER, SUPPLIER, or BOTH        |
+| `email`          | string  | No       | Email address                      |
+| `phone`          | string  | No       | Phone number                       |
+| `address`        | string  | No       | Physical address                   |
+| `notes`          | string  | No       | Additional notes                   |
+| `isActive`       | boolean | Yes      | Active status                      |
 
 ### Sales Integration
 
@@ -406,24 +406,24 @@ Sales have an optional `contactId` + `contactName` (joined from the Contact tabl
 
 ### API Endpoints
 
-| Method | Endpoint        | Description          |
-| ------ | --------------- | -------------------- |
-| GET    | `/contacts`     | List contacts        |
-| POST   | `/contacts`     | Create contact       |
-| GET    | `/contacts/:id` | Contact detail       |
-| PATCH  | `/contacts/:id` | Update contact       |
-| DELETE | `/contacts/:id` | Delete contact       |
+| Method | Endpoint        | Description    |
+| ------ | --------------- | -------------- |
+| GET    | `/contacts`     | List contacts  |
+| POST   | `/contacts`     | Create contact |
+| GET    | `/contacts/:id` | Contact detail |
+| PATCH  | `/contacts/:id` | Update contact |
+| DELETE | `/contacts/:id` | Delete contact |
 
 **Response**: `{ success, message, data, timestamp }`
 
 ### Permissions
 
-| Permission        | Description               |
-| ----------------- | ------------------------- |
-| `CONTACTS:CREATE` | Create new contacts       |
-| `CONTACTS:READ`   | View contacts             |
-| `CONTACTS:UPDATE` | Update existing contacts  |
-| `CONTACTS:DELETE` | Delete contacts           |
+| Permission        | Description              |
+| ----------------- | ------------------------ |
+| `CONTACTS:CREATE` | Create new contacts      |
+| `CONTACTS:READ`   | View contacts            |
+| `CONTACTS:UPDATE` | Update existing contacts |
+| `CONTACTS:DELETE` | Delete contacts          |
 
 ### Notes
 
@@ -500,13 +500,13 @@ Bulk data import from Excel (.xlsx) and CSV files. Supports five import types wi
 
 ### Import Types
 
-| Type        | Code        | Description                                 |
-| ----------- | ----------- | ------------------------------------------- |
-| Products    | `PRODUCTS`  | Import product catalog (SKU, name, price, etc.) |
-| Movements   | `MOVEMENTS` | Import stock movements (IN/OUT/ADJUST)      |
-| Transfers   | `TRANSFERS` | Import transfer records between warehouses  |
-| Sales       | `SALES`     | Import historical sales                     |
-| Returns     | `RETURNS`   | Import return records                       |
+| Type      | Code        | Description                                     |
+| --------- | ----------- | ----------------------------------------------- |
+| Products  | `PRODUCTS`  | Import product catalog (SKU, name, price, etc.) |
+| Movements | `MOVEMENTS` | Import stock movements (IN/OUT/ADJUST)          |
+| Transfers | `TRANSFERS` | Import transfer records between warehouses      |
+| Sales     | `SALES`     | Import historical sales                         |
+| Returns   | `RETURNS`   | Import return records                           |
 
 ### Two-Phase Workflow
 
@@ -517,6 +517,7 @@ Bulk data import from Excel (.xlsx) and CSV files. Supports five import types wi
 ```
 
 **Phase 1 -- Preview**: The backend parses the file, validates each row (required fields, data types, foreign key references), and returns a preview with:
+
 - Total rows found
 - Valid rows count
 - Error rows with line number and error description
@@ -526,12 +527,12 @@ Bulk data import from Excel (.xlsx) and CSV files. Supports five import types wi
 
 ### Key Components
 
-| Component         | Description                                          |
-| ----------------- | ---------------------------------------------------- |
-| `ImportsPage`     | Main page with import type selector and file upload  |
-| `ImportPreview`   | Preview table showing validated rows and errors      |
-| `ImportErrors`    | Error list with row numbers and descriptions         |
-| `ImportProgress`  | Progress indicator during execution                  |
+| Component        | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| `ImportsPage`    | Main page with import type selector and file upload |
+| `ImportPreview`  | Preview table showing validated rows and errors     |
+| `ImportErrors`   | Error list with row numbers and descriptions        |
+| `ImportProgress` | Progress indicator during execution                 |
 
 ### File Requirements
 
@@ -541,10 +542,10 @@ Bulk data import from Excel (.xlsx) and CSV files. Supports five import types wi
 
 ### API Endpoints
 
-| Method | Endpoint            | Description                              |
-| ------ | ------------------- | ---------------------------------------- |
-| POST   | `/imports/preview`  | Upload file and get validation preview   |
-| POST   | `/imports/execute`  | Execute import with validated data       |
+| Method | Endpoint           | Description                            |
+| ------ | ------------------ | -------------------------------------- |
+| POST   | `/imports/preview` | Upload file and get validation preview |
+| POST   | `/imports/execute` | Execute import with validated data     |
 
 **Request**: `multipart/form-data` with `file` field and `type` field (PRODUCTS, MOVEMENTS, etc.)
 
@@ -552,10 +553,10 @@ Bulk data import from Excel (.xlsx) and CSV files. Supports five import types wi
 
 ### Permissions
 
-| Permission      | Description                    |
-| --------------- | ------------------------------ |
-| `IMPORTS:CREATE`| Upload and execute imports     |
-| `IMPORTS:READ`  | View import history            |
+| Permission       | Description                |
+| ---------------- | -------------------------- |
+| `IMPORTS:CREATE` | Upload and execute imports |
+| `IMPORTS:READ`   | View import history        |
 
 ### Notes
 
@@ -576,11 +577,11 @@ User CRUD with status management and role assignment.
 
 ### User Statuses
 
-| Status     | Description                                    |
-| ---------- | ---------------------------------------------- |
-| `ACTIVE`   | Active user, can use the system                |
-| `INACTIVE` | Deactivated, cannot log in                     |
-| `LOCKED`   | Locked (e.g., too many failed login attempts)  |
+| Status     | Description                                   |
+| ---------- | --------------------------------------------- |
+| `ACTIVE`   | Active user, can use the system               |
+| `INACTIVE` | Deactivated, cannot log in                    |
+| `LOCKED`   | Locked (e.g., too many failed login attempts) |
 
 ### Entity
 
@@ -624,22 +625,22 @@ CRUD for roles (system and custom) with permission management.
 
 ### Role Types
 
-| Type     | Description                                  | Editable      |
-| -------- | -------------------------------------------- | ------------- |
-| `SYSTEM` | Predefined roles (ADMIN, SUPERVISOR, etc.)   | Read-only     |
-| `CUSTOM` | Custom roles per organization                | Yes           |
+| Type     | Description                                | Editable  |
+| -------- | ------------------------------------------ | --------- |
+| `SYSTEM` | Predefined roles (ADMIN, SUPERVISOR, etc.) | Read-only |
+| `CUSTOM` | Custom roles per organization              | Yes       |
 
 ### System Roles
 
-| Role                 | Description                       |
-| -------------------- | --------------------------------- |
-| `SYSTEM_ADMIN`       | Full access, permission bypass    |
-| `ADMIN`              | Organization administrator        |
-| `SUPERVISOR`         | Operations supervisor             |
-| `WAREHOUSE_OPERATOR` | Warehouse operator                |
-| `CONSULTANT`         | Read-only (analyst)               |
-| `IMPORT_OPERATOR`    | Import operator                   |
-| `SALES_PERSON`       | Sales staff                       |
+| Role                 | Description                    |
+| -------------------- | ------------------------------ |
+| `SYSTEM_ADMIN`       | Full access, permission bypass |
+| `ADMIN`              | Organization administrator     |
+| `SUPERVISOR`         | Operations supervisor          |
+| `WAREHOUSE_OPERATOR` | Warehouse operator             |
+| `CONSULTANT`         | Read-only (analyst)            |
+| `IMPORT_OPERATOR`    | Import operator                |
+| `SALES_PERSON`       | Sales staff                    |
 
 ### Permission Management
 
@@ -649,12 +650,12 @@ CRUD for roles (system and custom) with permission management.
 
 ### API Endpoints
 
-| Method | Endpoint                 | Description                     |
-| ------ | ------------------------ | ------------------------------- |
-| GET    | `/roles`                 | List roles (no pagination)      |
-| GET    | `/roles/permissions`     | All available permissions       |
-| GET    | `/roles/:id/permissions` | Permissions for a role          |
-| POST   | `/roles/:id/permissions` | Assign permissions to a role    |
+| Method | Endpoint                 | Description                  |
+| ------ | ------------------------ | ---------------------------- |
+| GET    | `/roles`                 | List roles (no pagination)   |
+| GET    | `/roles/permissions`     | All available permissions    |
+| GET    | `/roles/:id/permissions` | Permissions for a role       |
+| POST   | `/roles/:id/permissions` | Assign permissions to a role |
 
 ---
 
@@ -669,25 +670,25 @@ View system activity history with advanced filters and export.
 
 ### Available Filters
 
-| Filter                  | Type   | Description                                    |
-| ----------------------- | ------ | ---------------------------------------------- |
-| `entityType`            | Select | Entity type (Product, Sale, User, etc.)        |
-| `action`                | Select | Action (CREATE, UPDATE, DELETE, etc.)          |
-| `httpMethod`            | Select | HTTP method (GET, POST, PUT, PATCH, DELETE)    |
-| `performedBy`           | Input  | ID of the user who performed the action        |
-| `entityId`              | Input  | ID of the affected entity                      |
-| `startDate` / `endDate` | Date   | Date range                                     |
+| Filter                  | Type   | Description                                 |
+| ----------------------- | ------ | ------------------------------------------- |
+| `entityType`            | Select | Entity type (Product, Sale, User, etc.)     |
+| `action`                | Select | Action (CREATE, UPDATE, DELETE, etc.)       |
+| `httpMethod`            | Select | HTTP method (GET, POST, PUT, PATCH, DELETE) |
+| `performedBy`           | Input  | ID of the user who performed the action     |
+| `entityId`              | Input  | ID of the affected entity                   |
+| `startDate` / `endDate` | Date   | Date range                                  |
 
 ### Components
 
-| Component              | Description                     |
-| ---------------------- | ------------------------------- |
-| `AuditLogList`         | Table with pagination           |
-| `AuditLogFilters`      | Filter panel                    |
-| `AuditLogDetailDialog` | Dialog with change details      |
-| `AuditActionBadge`     | Badge by action type            |
-| `AuditMethodBadge`     | Badge by HTTP method            |
-| `AuditStatusIndicator` | Status indicator                |
+| Component              | Description                |
+| ---------------------- | -------------------------- |
+| `AuditLogList`         | Table with pagination      |
+| `AuditLogFilters`      | Filter panel               |
+| `AuditLogDetailDialog` | Dialog with change details |
+| `AuditActionBadge`     | Badge by action type       |
+| `AuditMethodBadge`     | Badge by HTTP method       |
+| `AuditStatusIndicator` | Status indicator           |
 
 ### Export
 
@@ -743,27 +744,27 @@ In the DashboardHeader, a selector (Building2 icon) appears when `multiCompanyEn
 
 ### Filtering by companyId
 
-| Module    | Where it applies                                                         |
-| --------- | ------------------------------------------------------------------------ |
-| Products  | ProductFilters, list, form (CompanySelector in form)                     |
-| Stock     | StockFilters, table                                                      |
-| Movements | StockMovementFilters, list, form                                         |
-| Sales     | SaleFilters, list, form (filters available products)                     |
-| Returns   | ReturnFilters, list, form                                                |
-| Transfers | Form (filters available products)                                        |
-| Reports   | ReportParameters, all report filters, pre-selects company                |
-| Dashboard | useDashboardMetrics(companyId) -- passes to backend                      |
+| Module    | Where it applies                                          |
+| --------- | --------------------------------------------------------- |
+| Products  | ProductFilters, list, form (CompanySelector in form)      |
+| Stock     | StockFilters, table                                       |
+| Movements | StockMovementFilters, list, form                          |
+| Sales     | SaleFilters, list, form (filters available products)      |
+| Returns   | ReturnFilters, list, form                                 |
+| Transfers | Form (filters available products)                         |
+| Reports   | ReportParameters, all report filters, pre-selects company |
+| Dashboard | useDashboardMetrics(companyId) -- passes to backend       |
 
 ### API Endpoints
 
-| Method | Endpoint                                    | Description            |
-| ------ | ------------------------------------------- | ---------------------- |
-| GET    | `/inventory/companies`                      | List companies         |
-| POST   | `/inventory/companies`                      | Create company         |
-| GET    | `/inventory/companies/:id`                  | Company detail         |
-| PUT    | `/inventory/companies/:id`                  | Update company         |
-| DELETE | `/inventory/companies/:id`                  | Delete company         |
-| PATCH  | `/organizations/:id/settings/multi-company` | Toggle multi-company   |
+| Method | Endpoint                                    | Description          |
+| ------ | ------------------------------------------- | -------------------- |
+| GET    | `/inventory/companies`                      | List companies       |
+| POST   | `/inventory/companies`                      | Create company       |
+| GET    | `/inventory/companies/:id`                  | Company detail       |
+| PUT    | `/inventory/companies/:id`                  | Update company       |
+| DELETE | `/inventory/companies/:id`                  | Delete company       |
+| PATCH  | `/organizations/:id/settings/multi-company` | Toggle multi-company |
 
 ### Notes
 
@@ -786,33 +787,33 @@ User profile configuration and stock alerts.
 
 #### Profile (all users)
 
-| Field        | Type   | Description    |
-| ------------ | ------ | -------------- |
-| `phone`      | Input  | Phone          |
-| `timezone`   | Select | Timezone       |
+| Field        | Type   | Description        |
+| ------------ | ------ | ------------------ |
+| `phone`      | Input  | Phone              |
+| `timezone`   | Select | Timezone           |
 | `language`   | Select | Preferred language |
-| `jobTitle`   | Input  | Job title      |
-| `department` | Input  | Department     |
+| `jobTitle`   | Input  | Job title          |
+| `department` | Input  | Department         |
 
 #### Stock Alerts (admin only, gated by `SETTINGS:MANAGE`)
 
-| Field                 | Type    | Description                                           |
-| --------------------- | ------- | ----------------------------------------------------- |
+| Field                 | Type    | Description                                          |
+| --------------------- | ------- | ---------------------------------------------------- |
 | `cronFrequency`       | Select  | EVERY_HOUR, EVERY_6_HOURS, EVERY_12_HOURS, EVERY_DAY |
-| `notifyLowStock`      | Switch  | Notify on low stock                                   |
-| `notifyCriticalStock` | Switch  | Notify on critical stock                              |
-| `notifyOutOfStock`    | Switch  | Notify on out of stock                                |
-| `recipientEmails`     | Input[] | Recipient email addresses                             |
-| `isEnabled`           | Switch  | Enable/disable alerts                                 |
+| `notifyLowStock`      | Switch  | Notify on low stock                                  |
+| `notifyCriticalStock` | Switch  | Notify on critical stock                             |
+| `notifyOutOfStock`    | Switch  | Notify on out of stock                               |
+| `recipientEmails`     | Input[] | Recipient email addresses                            |
+| `isEnabled`           | Switch  | Enable/disable alerts                                |
 
 ### API Endpoints
 
-| Method | Endpoint           | Description      |
-| ------ | ------------------ | ---------------- |
-| GET    | `/users/me`        | Get profile      |
-| PUT    | `/users/me`        | Update profile   |
-| GET    | `/settings/alerts` | Alert config     |
-| PUT    | `/settings/alerts` | Update alerts    |
+| Method | Endpoint           | Description    |
+| ------ | ------------------ | -------------- |
+| GET    | `/users/me`        | Get profile    |
+| PUT    | `/users/me`        | Update profile |
+| GET    | `/settings/alerts` | Alert config   |
+| PUT    | `/settings/alerts` | Update alerts  |
 
 ---
 
@@ -836,33 +837,33 @@ Management of connections with external e-commerce platforms (VTEX as the first 
 
 ### Key Components
 
-| Component | Description |
-| --- | --- |
-| `IntegrationsPage` | Main page with tabs per provider (VTEX, MercadoLibre) |
-| `ProviderTabContent` | Grid of connection cards + header + form |
-| `ConnectionCard` | Individual card with status, last sync, and actions |
-| `VtexConnectionForm` | Dialog to create/edit connection (credentials, warehouse, contact) |
-| `VtexConnectionDetail` | Detail with tabs: sync logs, SKU mappings, failed syncs |
-| `FailedSyncsTab` | Failed syncs with individual retry and retry-all |
+| Component              | Description                                                        |
+| ---------------------- | ------------------------------------------------------------------ |
+| `IntegrationsPage`     | Main page with tabs per provider (VTEX, MercadoLibre)              |
+| `ProviderTabContent`   | Grid of connection cards + header + form                           |
+| `ConnectionCard`       | Individual card with status, last sync, and actions                |
+| `VtexConnectionForm`   | Dialog to create/edit connection (credentials, warehouse, contact) |
+| `VtexConnectionDetail` | Detail with tabs: sync logs, SKU mappings, failed syncs            |
+| `FailedSyncsTab`       | Failed syncs with individual retry and retry-all                   |
 
 ### API Endpoints
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| GET | `/integrations` | List connections |
-| GET | `/integrations/:id` | Connection detail |
-| POST | `/integrations` | Create connection |
-| PATCH | `/integrations/:id` | Update connection |
-| DELETE | `/integrations/:id` | Delete connection |
-| POST | `/integrations/:id/test` | Test connectivity |
-| POST | `/integrations/:id/sync` | Force synchronization |
-| GET | `/integrations/:id/logs` | Synchronization logs |
-| GET | `/integrations/:id/sku-mappings` | SKU mappings |
-| POST | `/integrations/:id/sku-mappings` | Create SKU mapping |
-| DELETE | `/integrations/:id/sku-mappings/:mid` | Delete mapping |
-| GET | `/integrations/:id/unmatched-skus` | Unmapped SKUs |
-| POST | `/integrations/:id/retry/:logId` | Retry failed log |
-| POST | `/integrations/:id/retry-all` | Retry all failed |
+| Method | Endpoint                              | Description           |
+| ------ | ------------------------------------- | --------------------- |
+| GET    | `/integrations`                       | List connections      |
+| GET    | `/integrations/:id`                   | Connection detail     |
+| POST   | `/integrations`                       | Create connection     |
+| PATCH  | `/integrations/:id`                   | Update connection     |
+| DELETE | `/integrations/:id`                   | Delete connection     |
+| POST   | `/integrations/:id/test`              | Test connectivity     |
+| POST   | `/integrations/:id/sync`              | Force synchronization |
+| GET    | `/integrations/:id/logs`              | Synchronization logs  |
+| GET    | `/integrations/:id/sku-mappings`      | SKU mappings          |
+| POST   | `/integrations/:id/sku-mappings`      | Create SKU mapping    |
+| DELETE | `/integrations/:id/sku-mappings/:mid` | Delete mapping        |
+| GET    | `/integrations/:id/unmatched-skus`    | Unmapped SKUs         |
+| POST   | `/integrations/:id/retry/:logId`      | Retry failed log      |
+| POST   | `/integrations/:id/retry-all`         | Retry all failed      |
 
 **Response**: `{ success, message, data, timestamp }` (logs include `pagination`).
 
