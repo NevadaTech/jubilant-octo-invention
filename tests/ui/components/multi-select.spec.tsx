@@ -149,6 +149,108 @@ describe("MultiSelect", () => {
     expect(mockOnValueChange).toHaveBeenCalledWith([]);
   });
 
+  it("Given: no values selected and no allLabel When: rendering Then: should display the placeholder", () => {
+    render(
+      <MultiSelect
+        value={[]}
+        onValueChange={mockOnValueChange}
+        options={options}
+        placeholder="Pick colors"
+      />,
+    );
+
+    expect(screen.getByRole("combobox")).toHaveTextContent("Pick colors");
+  });
+
+  it("Given: one value selected that is not in options When: rendering Then: should display the raw value", () => {
+    render(
+      <MultiSelect
+        value={["unknown"]}
+        onValueChange={mockOnValueChange}
+        options={options}
+      />,
+    );
+
+    expect(screen.getByRole("combobox")).toHaveTextContent("unknown");
+  });
+
+  it("Given: multiple values selected without selectedLabel When: rendering Then: should display count with 'selected'", () => {
+    render(
+      <MultiSelect
+        value={["red", "blue"]}
+        onValueChange={mockOnValueChange}
+        options={options}
+      />,
+    );
+
+    expect(screen.getByRole("combobox")).toHaveTextContent("2 selected");
+  });
+
+  it("Given: disabled is true When: clicking trigger Then: should not open dropdown", () => {
+    render(
+      <MultiSelect
+        value={[]}
+        onValueChange={mockOnValueChange}
+        options={options}
+        disabled={true}
+      />,
+    );
+
+    const trigger = screen.getByRole("combobox");
+    fireEvent.click(trigger);
+
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("Given: dropdown is open When: clicking outside Then: should close the dropdown", () => {
+    render(
+      <MultiSelect
+        value={[]}
+        onValueChange={mockOnValueChange}
+        options={options}
+      />,
+    );
+
+    const trigger = screen.getByRole("combobox");
+    fireEvent.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+    // Click outside
+    fireEvent.mouseDown(document.body);
+
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("Given: values are selected When: pressing Enter on clear button Then: should clear selection", () => {
+    render(
+      <MultiSelect
+        value={["red"]}
+        onValueChange={mockOnValueChange}
+        options={options}
+      />,
+    );
+
+    const clearSpan = screen.getByTestId("x-icon").closest("[role='button']");
+    fireEvent.keyDown(clearSpan!, { key: "Enter" });
+
+    expect(mockOnValueChange).toHaveBeenCalledWith([]);
+  });
+
+  it("Given: values are selected When: pressing non-Enter key on clear button Then: should not clear", () => {
+    render(
+      <MultiSelect
+        value={["red"]}
+        onValueChange={mockOnValueChange}
+        options={options}
+      />,
+    );
+
+    const clearSpan = screen.getByTestId("x-icon").closest("[role='button']");
+    fireEvent.keyDown(clearSpan!, { key: "Tab" });
+
+    expect(mockOnValueChange).not.toHaveBeenCalled();
+  });
+
   it("Given: the dropdown is open When: pressing Escape Then: should close the dropdown", () => {
     render(
       <MultiSelect

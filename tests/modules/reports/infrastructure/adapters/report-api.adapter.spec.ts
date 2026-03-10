@@ -189,6 +189,228 @@ describe("ReportApiAdapter", () => {
     });
   });
 
+  describe("buildQueryParams additional branches", () => {
+    it("Given: returnTypes filter, When viewReport is called, Then returnType param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("RETURNS", {
+        returnTypes: ["RETURN_CUSTOMER", "RETURN_SUPPLIER"],
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith("/reports/returns/view", {
+        params: expect.objectContaining({
+          returnType: "RETURN_CUSTOMER,RETURN_SUPPLIER",
+        }),
+      });
+    });
+
+    it("Given: movementTypes filter, When viewReport is called, Then movementType param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("MOVEMENT_HISTORY", {
+        movementTypes: ["IN", "OUT"],
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith(
+        "/reports/inventory/movement-history/view",
+        {
+          params: expect.objectContaining({
+            movementType: "IN,OUT",
+          }),
+        },
+      );
+    });
+
+    it("Given: severities filter, When viewReport is called, Then severity param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("LOW_STOCK", {
+        severities: ["LOW", "CRITICAL"],
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith(
+        "/reports/inventory/low-stock/view",
+        {
+          params: expect.objectContaining({
+            severity: "LOW,CRITICAL",
+          }),
+        },
+      );
+    });
+
+    it("Given: productId filter, When viewReport is called, Then productId param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("AVAILABLE_INVENTORY", {
+        productId: "prod-1",
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith(
+        "/reports/inventory/available/view",
+        {
+          params: expect.objectContaining({
+            productId: "prod-1",
+          }),
+        },
+      );
+    });
+
+    it("Given: period filter, When viewReport is called, Then period param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("SALES", {
+        period: "MONTHLY",
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith("/reports/sales/view", {
+        params: expect.objectContaining({
+          period: "MONTHLY",
+        }),
+      });
+    });
+
+    it("Given: customerReference filter, When viewReport is called, Then customerReference param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("SALES", {
+        customerReference: "CUS-123",
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith("/reports/sales/view", {
+        params: expect.objectContaining({
+          customerReference: "CUS-123",
+        }),
+      });
+    });
+
+    it("Given: saleId filter, When viewReport is called, Then saleId param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("SALES", {
+        saleId: "sale-1",
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith("/reports/sales/view", {
+        params: expect.objectContaining({
+          saleId: "sale-1",
+        }),
+      });
+    });
+
+    it("Given: movementId filter, When viewReport is called, Then movementId param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("MOVEMENT_HISTORY", {
+        movementId: "mov-1",
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith(
+        "/reports/inventory/movement-history/view",
+        {
+          params: expect.objectContaining({
+            movementId: "mov-1",
+          }),
+        },
+      );
+    });
+
+    it("Given: locationId filter, When viewReport is called, Then locationId param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("AVAILABLE_INVENTORY", {
+        locationId: "loc-1",
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith(
+        "/reports/inventory/available/view",
+        {
+          params: expect.objectContaining({
+            locationId: "loc-1",
+          }),
+        },
+      );
+    });
+
+    it("Given: companyId filter, When viewReport is called, Then companyId param is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("AVAILABLE_INVENTORY", {
+        companyId: "comp-1",
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith(
+        "/reports/inventory/available/view",
+        {
+          params: expect.objectContaining({
+            companyId: "comp-1",
+          }),
+        },
+      );
+    });
+
+    it("Given: empty arrays in filters, When viewReport is called, Then those params are omitted", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("AVAILABLE_INVENTORY", {
+        warehouseIds: [],
+        categoryIds: [],
+        status: [],
+        returnTypes: [],
+        movementTypes: [],
+        severities: [],
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith(
+        "/reports/inventory/available/view",
+        { params: {} },
+      );
+    });
+
+    it("Given: dateRange with only startDate, When viewReport is called, Then only startDate is sent", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("SALES", {
+        dateRange: { startDate: "2026-01-01" },
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith("/reports/sales/view", {
+        params: {
+          "dateRange[startDate]": "2026-01-01",
+        },
+      });
+    });
+
+    it("Given: includeInactive is false, When viewReport is called, Then includeInactive param is sent as false", async () => {
+      const response = buildViewResponse();
+      mockedGet.mockResolvedValue({ data: response, status: 200, headers: {} });
+
+      await adapter.viewReport("AVAILABLE_INVENTORY", {
+        includeInactive: false,
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith(
+        "/reports/inventory/available/view",
+        {
+          params: expect.objectContaining({
+            includeInactive: false,
+          }),
+        },
+      );
+    });
+  });
+
   describe("exportReport", () => {
     it("Given report type SALES and format EXCEL, When exportReport is called, Then it posts to /export with correct payload", async () => {
       const mockBlob = new Blob(["test data"], {

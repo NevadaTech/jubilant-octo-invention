@@ -207,4 +207,65 @@ describe("Return", () => {
     expect(ret.totalQuantity).toBe(10);
     expect(ret.lineCount).toBe(2);
   });
+
+  it("Given: return with lines as undefined When: accessing lineCount Then: returns 0 via nullish coalescing", () => {
+    // Arrange — force undefined lines to trigger the ?? 0 branch
+    const ret = Return.create({
+      id: "ret-2",
+      returnNumber: "R-2026-002",
+      status: "DRAFT",
+      type: "RETURN_CUSTOMER",
+      reason: null,
+      warehouseId: "wh-1",
+      warehouseName: "Main Warehouse",
+      saleId: null,
+      saleNumber: null,
+      sourceMovementId: null,
+      returnMovementId: null,
+      note: null,
+      totalAmount: 0,
+      currency: "USD",
+      lines: undefined as any,
+      createdBy: "user-1",
+      createdAt: new Date("2026-02-15T00:00:00Z"),
+      confirmedAt: null,
+      cancelledAt: null,
+    });
+
+    // Act & Assert
+    expect(ret.lineCount).toBe(0);
+  });
+
+  it("Given: return with all optional fields populated When: accessing getters Then: returns correct values", () => {
+    const ret = Return.create({
+      id: "ret-3",
+      returnNumber: "R-2026-003",
+      status: "CONFIRMED",
+      type: "RETURN_SUPPLIER",
+      reason: "Defective item",
+      warehouseId: "wh-1",
+      warehouseName: "Main Warehouse",
+      saleId: "sale-1",
+      saleNumber: "S-2026-001",
+      sourceMovementId: "mov-1",
+      returnMovementId: "mov-2",
+      note: "Urgent return",
+      totalAmount: 100,
+      currency: "USD",
+      lines: [makeLine()],
+      createdBy: "user-1",
+      createdAt: new Date("2026-02-15T00:00:00Z"),
+      confirmedAt: new Date("2026-02-16T00:00:00Z"),
+      cancelledAt: new Date("2026-02-17T00:00:00Z"),
+    });
+
+    expect(ret.reason).toBe("Defective item");
+    expect(ret.saleId).toBe("sale-1");
+    expect(ret.saleNumber).toBe("S-2026-001");
+    expect(ret.sourceMovementId).toBe("mov-1");
+    expect(ret.returnMovementId).toBe("mov-2");
+    expect(ret.note).toBe("Urgent return");
+    expect(ret.confirmedAt).toEqual(new Date("2026-02-16T00:00:00Z"));
+    expect(ret.cancelledAt).toEqual(new Date("2026-02-17T00:00:00Z"));
+  });
 });

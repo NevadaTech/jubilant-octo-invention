@@ -167,7 +167,9 @@ describe("IntegrationApiAdapter", () => {
 
       const result = await adapter.findById("conn-001");
 
-      expect(apiClient.get).toHaveBeenCalledWith("/integrations/connections/conn-001");
+      expect(apiClient.get).toHaveBeenCalledWith(
+        "/integrations/connections/conn-001",
+      );
       expect(result).toBeTruthy();
     });
 
@@ -188,6 +190,48 @@ describe("IntegrationApiAdapter", () => {
       await expect(adapter.findById("conn-001")).rejects.toThrow(
         "Internal Server Error",
       );
+    });
+
+    it("Given: error is string When: findById Then: should rethrow (not 404)", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue("string error");
+
+      await expect(adapter.findById("conn-001")).rejects.toBe("string error");
+    });
+
+    it("Given: error is null When: findById Then: should rethrow", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue(null);
+
+      await expect(adapter.findById("conn-001")).rejects.toBeNull();
+    });
+
+    it("Given: error with response but non-404 status When: findById Then: should rethrow", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue({
+        response: { status: 500 },
+      });
+
+      await expect(adapter.findById("conn-001")).rejects.toEqual({
+        response: { status: 500 },
+      });
+    });
+
+    it("Given: error with response but no status When: findById Then: should rethrow", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue({
+        response: {},
+      });
+
+      await expect(adapter.findById("conn-001")).rejects.toEqual({
+        response: {},
+      });
+    });
+
+    it("Given: error with response as non-object When: findById Then: should rethrow", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue({
+        response: "not an object",
+      });
+
+      await expect(adapter.findById("conn-001")).rejects.toEqual({
+        response: "not an object",
+      });
     });
   });
 
@@ -214,7 +258,10 @@ describe("IntegrationApiAdapter", () => {
       };
       const result = await adapter.create(createDto);
 
-      expect(apiClient.post).toHaveBeenCalledWith("/integrations/connections", createDto);
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/integrations/connections",
+        createDto,
+      );
       expect(result).toBeTruthy();
     });
   });
@@ -234,9 +281,12 @@ describe("IntegrationApiAdapter", () => {
         storeName: "Updated Store",
       });
 
-      expect(apiClient.put).toHaveBeenCalledWith("/integrations/connections/conn-001", {
-        storeName: "Updated Store",
-      });
+      expect(apiClient.put).toHaveBeenCalledWith(
+        "/integrations/connections/conn-001",
+        {
+          storeName: "Updated Store",
+        },
+      );
       expect(result).toBeTruthy();
     });
   });
@@ -247,7 +297,9 @@ describe("IntegrationApiAdapter", () => {
 
       await adapter.delete("conn-001");
 
-      expect(apiClient.delete).toHaveBeenCalledWith("/integrations/connections/conn-001");
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        "/integrations/connections/conn-001",
+      );
     });
   });
 

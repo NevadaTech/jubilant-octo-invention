@@ -10,6 +10,15 @@ vi.mock("next-intl", () => ({
   useLocale: () => "en-US",
 }));
 
+let capturedTooltipContent:
+  | ((props: {
+      active?: boolean;
+      payload?: Array<{ dataKey: string; value: number }>;
+      label?: string;
+    }) => React.ReactNode)
+  | null = null;
+let capturedLegendFormatter: ((value: string) => React.ReactNode) | null = null;
+
 vi.mock("recharts", () => ({
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="chart-container">{children}</div>
@@ -21,8 +30,26 @@ vi.mock("recharts", () => ({
   XAxis: () => null,
   YAxis: () => null,
   CartesianGrid: () => null,
-  Tooltip: () => null,
-  Legend: () => null,
+  Tooltip: ({
+    content,
+  }: {
+    content?: (props: {
+      active?: boolean;
+      payload?: Array<{ dataKey: string; value: number }>;
+      label?: string;
+    }) => React.ReactNode;
+  }) => {
+    if (content) capturedTooltipContent = content;
+    return null;
+  },
+  Legend: ({
+    formatter,
+  }: {
+    formatter?: (value: string) => React.ReactNode;
+  }) => {
+    if (formatter) capturedLegendFormatter = formatter;
+    return null;
+  },
 }));
 
 vi.mock("@/ui/components/card", () => ({
@@ -109,5 +136,100 @@ describe("SalesTrendChart", () => {
     expect(screen.getByTestId("card")).toBeDefined();
     expect(screen.getByTestId("card-title")).toBeDefined();
     expect(screen.getByText("salesTrend.title")).toBeDefined();
+  });
+
+  // --- Branch: Tooltip content with active=false returns null ---
+  it("Given: Tooltip content When: active is false Then: should return null", () => {
+    render(<SalesTrendChart data={makeTrendData()} currency="USD" />);
+
+    expect(capturedTooltipContent).not.toBeNull();
+    const result = capturedTooltipContent!({
+      active: false,
+      payload: [],
+      label: "2026-02-25",
+    });
+    expect(result).toBeNull();
+  });
+
+  // --- Branch: Tooltip content with active=true but empty payload ---
+  it("Given: Tooltip content When: active is true but payload empty Then: should return null", () => {
+    render(<SalesTrendChart data={makeTrendData()} currency="USD" />);
+
+    const result = capturedTooltipContent!({
+      active: true,
+      payload: [],
+      label: "2026-02-25",
+    });
+    expect(result).toBeNull();
+  });
+
+  // --- Branch: Tooltip content with active=true and payload ---
+  it("Given: Tooltip content When: active is true with payload Then: should render tooltip content", () => {
+    render(<SalesTrendChart data={makeTrendData()} currency="USD" />);
+
+    const result = capturedTooltipContent!({
+      active: true,
+      payload: [
+        { dataKey: "revenue", value: 1500 },
+        { dataKey: "count", value: 5 },
+      ],
+      label: "2026-02-25",
+    });
+    expect(result).not.toBeNull();
+  });
+
+  // --- Branch: Tooltip content with only revenue ---
+  it("Given: Tooltip content When: payload has only revenue Then: should render revenue line", () => {
+    render(<SalesTrendChart data={makeTrendData()} currency="USD" />);
+
+    const result = capturedTooltipContent!({
+      active: true,
+      payload: [{ dataKey: "revenue", value: 2000 }],
+      label: "2026-02-26",
+    });
+    expect(result).not.toBeNull();
+  });
+
+  // --- Branch: Tooltip content with only count ---
+  it("Given: Tooltip content When: payload has only count Then: should render count line", () => {
+    render(<SalesTrendChart data={makeTrendData()} currency="USD" />);
+
+    const result = capturedTooltipContent!({
+      active: true,
+      payload: [{ dataKey: "count", value: 3 }],
+      label: "2026-02-27",
+    });
+    expect(result).not.toBeNull();
+  });
+
+  // --- Branch: Tooltip with no payload (undefined) ---
+  it("Given: Tooltip content When: payload is undefined Then: should return null", () => {
+    render(<SalesTrendChart data={makeTrendData()} currency="USD" />);
+
+    const result = capturedTooltipContent!({
+      active: true,
+      payload: undefined as unknown as Array<{
+        dataKey: string;
+        value: number;
+      }>,
+      label: "2026-02-25",
+    });
+    expect(result).toBeNull();
+  });
+
+  // --- Branch: Legend formatter revenue vs orders ---
+  it("Given: Legend formatter When: value is revenue Then: should render revenue label", () => {
+    render(<SalesTrendChart data={makeTrendData()} currency="USD" />);
+
+    expect(capturedLegendFormatter).not.toBeNull();
+    const result = capturedLegendFormatter!("revenue");
+    expect(result).toBeDefined();
+  });
+
+  it("Given: Legend formatter When: value is not revenue Then: should render orders label", () => {
+    render(<SalesTrendChart data={makeTrendData()} currency="USD" />);
+
+    const result = capturedLegendFormatter!("count");
+    expect(result).toBeDefined();
   });
 });

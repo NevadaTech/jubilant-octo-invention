@@ -168,5 +168,125 @@ describe("Product Schema", () => {
       expect(dto.isActive).toBe(false);
       expect(dto.sku).toBeUndefined();
     });
+
+    it("Given: empty description When: converting to DTO Then: should set description to undefined", () => {
+      const formData: UpdateProductFormData = {
+        description: "",
+      };
+
+      const dto = toUpdateProductDto(formData);
+
+      expect(dto.description).toBeUndefined();
+    });
+
+    it("Given: non-empty description When: converting to DTO Then: should include description", () => {
+      const formData: UpdateProductFormData = {
+        description: "A description",
+      };
+
+      const dto = toUpdateProductDto(formData);
+
+      expect(dto.description).toBe("A description");
+    });
+
+    it("Given: categoryIds defined When: converting to DTO Then: should include categoryIds", () => {
+      const formData: UpdateProductFormData = {
+        categoryIds: ["cat-1", "cat-2"],
+      };
+
+      const dto = toUpdateProductDto(formData);
+
+      expect(dto.categoryIds).toEqual(["cat-1", "cat-2"]);
+    });
+
+    it("Given: unitOfMeasure defined When: converting to DTO Then: should include unitOfMeasure", () => {
+      const formData: UpdateProductFormData = {
+        unitOfMeasure: "kg",
+      };
+
+      const dto = toUpdateProductDto(formData);
+
+      expect(dto.unitOfMeasure).toBe("kg");
+    });
+
+    it("Given: companyId defined but empty When: converting to DTO Then: should set to undefined", () => {
+      const formData: UpdateProductFormData = {
+        companyId: "",
+      };
+
+      const dto = toUpdateProductDto(formData);
+
+      expect(dto.companyId).toBeUndefined();
+    });
+
+    it("Given: companyId with value When: converting to DTO Then: should include it", () => {
+      const formData: UpdateProductFormData = {
+        companyId: "comp-1",
+      };
+
+      const dto = toUpdateProductDto(formData);
+
+      expect(dto.companyId).toBe("comp-1");
+    });
+
+    it("Given: no fields defined When: converting to DTO Then: should return empty object", () => {
+      const formData: UpdateProductFormData = {};
+
+      const dto = toUpdateProductDto(formData);
+
+      expect(dto).toEqual({});
+    });
+
+    it("Given: all fields defined When: converting to DTO Then: should include all", () => {
+      const formData: UpdateProductFormData = {
+        name: "Updated",
+        description: "Updated desc",
+        categoryIds: ["cat-1"],
+        unitOfMeasure: "pcs",
+        price: 99,
+        isActive: true,
+        companyId: "comp-1",
+      };
+
+      const dto = toUpdateProductDto(formData);
+
+      expect(dto.name).toBe("Updated");
+      expect(dto.description).toBe("Updated desc");
+      expect(dto.categoryIds).toEqual(["cat-1"]);
+      expect(dto.unitOfMeasure).toBe("pcs");
+      expect(dto.price).toBe(99);
+      expect(dto.isActive).toBe(true);
+      expect(dto.companyId).toBe("comp-1");
+    });
+  });
+
+  describe("toCreateProductDto", () => {
+    it("Given: form data with empty companyId When: converting to DTO Then: should set companyId to undefined", () => {
+      const formData: CreateProductFormData = {
+        sku: "PROD-001",
+        name: "Test Product",
+        unitOfMeasure: "unit",
+        price: 20,
+        companyId: "",
+      };
+
+      const dto = toCreateProductDto(formData);
+
+      expect(dto.companyId).toBeUndefined();
+    });
+
+    it("Given: form data with companyId When: converting to DTO Then: should include companyId", () => {
+      const formData: CreateProductFormData = {
+        sku: "PROD-001",
+        name: "Test Product",
+        unitOfMeasure: "unit",
+        price: 20,
+        companyId: "comp-1",
+      };
+
+      const dto = toCreateProductDto(formData);
+
+      expect(dto.companyId).toBe("comp-1");
+    });
   });
 });

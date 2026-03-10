@@ -151,6 +151,68 @@ describe("SearchableSelect", () => {
     );
   });
 
+  it("Given: dropdown is open When: clicking outside Then: should close the dropdown", () => {
+    render(
+      <SearchableSelect options={options} onValueChange={mockOnValueChange} />,
+    );
+
+    fireEvent.click(screen.getByRole("combobox"));
+    expect(screen.getByRole("combobox")).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+
+    fireEvent.mouseDown(document.body);
+
+    expect(screen.getByRole("combobox")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
+  it("Given: dropdown is open When: searching by description Then: should filter by description", () => {
+    render(
+      <SearchableSelect options={options} onValueChange={mockOnValueChange} />,
+    );
+
+    fireEvent.click(screen.getByRole("combobox"));
+
+    const searchInput = screen.getByPlaceholderText("Search...");
+    fireEvent.change(searchInput, { target: { value: "red fruit" } });
+
+    const optionElements = screen.getAllByRole("option");
+    expect(optionElements).toHaveLength(1);
+    expect(optionElements[0]).toHaveTextContent("Apple");
+  });
+
+  it("Given: a function ref When: rendering Then: should call the function ref with the element", () => {
+    const fnRef = vi.fn();
+
+    render(
+      <SearchableSelect
+        ref={fnRef}
+        options={options}
+        onValueChange={mockOnValueChange}
+      />,
+    );
+
+    expect(fnRef).toHaveBeenCalledWith(expect.any(HTMLButtonElement));
+  });
+
+  it("Given: an object ref When: rendering Then: should set ref.current to the element", () => {
+    const objRef = { current: null as HTMLButtonElement | null };
+
+    render(
+      <SearchableSelect
+        ref={objRef}
+        options={options}
+        onValueChange={mockOnValueChange}
+      />,
+    );
+
+    expect(objRef.current).toBeInstanceOf(HTMLButtonElement);
+  });
+
   it("Given: the component is disabled When: clicking the trigger Then: should not open the dropdown", () => {
     render(
       <SearchableSelect

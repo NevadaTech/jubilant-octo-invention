@@ -164,5 +164,150 @@ describe("ReturnMapper", () => {
       expect(result.confirmedAt).toBeInstanceOf(Date);
       expect(result.cancelledAt).toBeInstanceOf(Date);
     });
+
+    it("Given a ReturnResponseDto with non-string nullable fields, When toDomain is called, Then they default to null", () => {
+      const dtoNulls = {
+        ...mockDto,
+        reason: null,
+        saleId: null,
+        saleNumber: null,
+        sourceMovementId: null,
+        returnMovementId: null,
+        note: null,
+        warehouseName: undefined,
+        lines: undefined,
+        confirmedAt: null,
+        cancelledAt: null,
+      };
+
+      const result = ReturnMapper.toDomain(dtoNulls as any);
+
+      expect(result.reason).toBeNull();
+      expect(result.saleId).toBeNull();
+      expect(result.saleNumber).toBeNull();
+      expect(result.sourceMovementId).toBeNull();
+      expect(result.returnMovementId).toBeNull();
+      expect(result.note).toBeNull();
+      expect(result.warehouseName).toBe("");
+      expect(result.lines).toEqual([]);
+      expect(result.confirmedAt).toBeNull();
+      expect(result.cancelledAt).toBeNull();
+    });
+
+    it("Given a ReturnResponseDto with numeric values for typeof-string fields, When toDomain is called, Then they are null", () => {
+      const dtoWeird = {
+        ...mockDto,
+        reason: 123,
+        saleId: 456,
+        saleNumber: 789,
+        sourceMovementId: 0,
+        returnMovementId: false,
+        note: undefined,
+        confirmedAt: 12345,
+        cancelledAt: false,
+      };
+
+      const result = ReturnMapper.toDomain(dtoWeird as any);
+
+      expect(result.reason).toBeNull();
+      expect(result.saleId).toBeNull();
+      expect(result.saleNumber).toBeNull();
+      expect(result.sourceMovementId).toBeNull();
+      expect(result.returnMovementId).toBeNull();
+      expect(result.note).toBeNull();
+      expect(result.confirmedAt).toBeNull();
+      expect(result.cancelledAt).toBeNull();
+    });
+  });
+
+  describe("fromApiRaw - typeof branches", () => {
+    it("Given a raw dto with non-string nullable fields set to numbers, When fromApiRaw is called, Then they default to null", () => {
+      const rawWeird = {
+        ...mockRaw,
+        reason: 0,
+        saleId: false,
+        saleNumber: 123,
+        sourceMovementId: undefined,
+        returnMovementId: [],
+        note: null,
+        confirmedAt: 999,
+        cancelledAt: false,
+        warehouseName: undefined,
+      };
+
+      const result = ReturnMapper.fromApiRaw(rawWeird as any);
+
+      expect(result.reason).toBeNull();
+      expect(result.saleId).toBeNull();
+      expect(result.saleNumber).toBeNull();
+      expect(result.sourceMovementId).toBeNull();
+      expect(result.returnMovementId).toBeNull();
+      expect(result.note).toBeNull();
+      expect(result.confirmedAt).toBeNull();
+      expect(result.cancelledAt).toBeNull();
+      expect(result.warehouseName).toBe("");
+    });
+
+    it("Given a raw dto with valid string values for all optional fields, When fromApiRaw is called, Then they are mapped correctly", () => {
+      const rawFull = {
+        ...mockRaw,
+        reason: "Defective",
+        saleId: "sale-1",
+        saleNumber: "S-001",
+        sourceMovementId: "mov-1",
+        returnMovementId: "mov-2",
+        note: "Return note",
+        warehouseName: "Main",
+        lines: [
+          {
+            id: "rl-1",
+            productId: "p1",
+            quantity: 2,
+            currency: "USD",
+            totalPrice: 50,
+            productName: "A",
+            productSku: "SK",
+          },
+        ],
+        confirmedAt: "2025-03-02T10:00:00.000Z",
+        cancelledAt: "2025-03-03T10:00:00.000Z",
+      };
+
+      const result = ReturnMapper.fromApiRaw(rawFull as any);
+
+      expect(result.reason).toBe("Defective");
+      expect(result.saleId).toBe("sale-1");
+      expect(result.saleNumber).toBe("S-001");
+      expect(result.sourceMovementId).toBe("mov-1");
+      expect(result.returnMovementId).toBe("mov-2");
+      expect(result.note).toBe("Return note");
+      expect(result.warehouseName).toBe("Main");
+      expect(result.lines).toHaveLength(1);
+      expect(result.confirmedAt).toBeInstanceOf(Date);
+      expect(result.cancelledAt).toBeInstanceOf(Date);
+    });
+  });
+
+  describe("lineFromApiRaw - with present optional fields", () => {
+    it("Given a raw line with all optional fields present, When lineFromApiRaw is called, Then they are mapped correctly", () => {
+      const rawLine = {
+        id: "rl-3",
+        productId: "p3",
+        productName: "Product C",
+        productSku: "PC-003",
+        quantity: 5,
+        originalSalePrice: 30.0,
+        originalUnitCost: 15.0,
+        currency: "USD",
+        totalPrice: 150.0,
+      };
+
+      const result = ReturnMapper.lineFromApiRaw(rawLine as any);
+
+      expect(result.productName).toBe("Product C");
+      expect(result.productSku).toBe("PC-003");
+      expect(result.originalSalePrice).toBe(30.0);
+      expect(result.originalUnitCost).toBe(15.0);
+    });
   });
 });

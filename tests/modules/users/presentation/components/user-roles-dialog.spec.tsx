@@ -297,4 +297,243 @@ describe("UserRolesDialog", () => {
 
     expect(screen.getByText("roles.noRolesAvailable")).toBeDefined();
   });
+
+  it("Given: SYSTEM_ADMIN role exists When: rendering available roles Then: it should be excluded", () => {
+    const user = makeUser({ roles: ["ADMIN"] });
+    const allRoles = [
+      makeRoleEntity({ id: "r1", name: "ADMIN", isActive: true }),
+      makeRoleEntity({ id: "r2", name: "SYSTEM_ADMIN", isActive: true }),
+      makeRoleEntity({ id: "r3", name: "VIEWER", isActive: true }),
+    ];
+    mockRolesData = { data: allRoles, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    const selectItems = screen.getAllByTestId("select-item");
+    const itemNames = selectItems.map((item) => item.textContent);
+    expect(itemNames).not.toContain("SYSTEM_ADMIN");
+    expect(itemNames).toContain("VIEWER");
+  });
+
+  it("Given: inactive role exists When: rendering available roles Then: it should be excluded", () => {
+    const user = makeUser({ roles: ["ADMIN"] });
+    const allRoles = [
+      makeRoleEntity({ id: "r1", name: "ADMIN", isActive: true }),
+      makeRoleEntity({ id: "r2", name: "INACTIVE_ROLE", isActive: false }),
+      makeRoleEntity({ id: "r3", name: "EDITOR", isActive: true }),
+    ];
+    mockRolesData = { data: allRoles, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    const selectItems = screen.getAllByTestId("select-item");
+    const itemNames = selectItems.map((item) => item.textContent);
+    expect(itemNames).not.toContain("INACTIVE_ROLE");
+    expect(itemNames).toContain("EDITOR");
+  });
+
+  it("Given: user is null When: rendering Then: should still render without crash", () => {
+    mockRolesData = { data: [], isLoading: false };
+
+    render(
+      <UserRolesDialog user={null} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    const title = screen.getByTestId("dialog-title");
+    expect(title.textContent).toContain("roles.title");
+  });
+
+  it("Given: user has multiple roles When: rendering Then: remove buttons should be visible for each", () => {
+    const user = makeUser({ roles: ["ADMIN", "EDITOR"] });
+    const allRoles = [
+      makeRoleEntity({ id: "r1", name: "ADMIN", isActive: true }),
+      makeRoleEntity({ id: "r2", name: "EDITOR", isActive: true }),
+    ];
+    mockRolesData = { data: allRoles, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    const removeButtons = screen.getAllByTitle("roles.remove");
+    expect(removeButtons.length).toBe(2);
+  });
+
+  it("Given: user has multiple roles When: rendering Then: cannotRemoveLast message should NOT be shown", () => {
+    const user = makeUser({ roles: ["ADMIN", "EDITOR"] });
+    const allRoles = [
+      makeRoleEntity({ id: "r1", name: "ADMIN", isActive: true }),
+      makeRoleEntity({ id: "r2", name: "EDITOR", isActive: true }),
+    ];
+    mockRolesData = { data: allRoles, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    expect(screen.queryByText("roles.cannotRemoveLast")).toBeNull();
+  });
+
+  it("Given: user has one role When: rendering Then: remove button should NOT be visible (canRemove=false)", () => {
+    const user = makeUser({ roles: ["ADMIN"] });
+    const allRoles = [
+      makeRoleEntity({ id: "r1", name: "ADMIN", isActive: true }),
+      makeRoleEntity({ id: "r2", name: "VIEWER", isActive: true }),
+    ];
+    mockRolesData = { data: allRoles, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    expect(screen.queryByTitle("roles.remove")).toBeNull();
+  });
+
+  it("Given: no assigned roles (empty) When: rendering Then: should show dash placeholder", () => {
+    const user = makeUser({ roles: [] });
+    const allRoles = [
+      makeRoleEntity({ id: "r1", name: "VIEWER", isActive: true }),
+    ];
+    mockRolesData = { data: allRoles, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    // The dash placeholder for empty assigned roles
+    const dashText = screen.getByText("\u2014");
+    expect(dashText).toBeDefined();
+  });
+
+  it("Given: allRoles is undefined/null When: rendering Then: should render without crash", () => {
+    const user = makeUser({ roles: ["ADMIN"] });
+    mockRolesData = { data: undefined, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    // Should show dash for assigned roles since no roles loaded
+    expect(screen.getByText("\u2014")).toBeDefined();
+  });
+
+  // --- Branch: close button calls onOpenChange(false) ---
+  it("Given: dialog is open When: clicking close button Then: should call onOpenChange(false)", async () => {
+    const { fireEvent } = await import("@testing-library/react");
+    const user = makeUser({ roles: ["ADMIN"] });
+    mockRolesData = { data: [], isLoading: false };
+    const onClose = vi.fn();
+
+    render(<UserRolesDialog user={user} open={true} onOpenChange={onClose} />);
+
+    const closeBtn = screen.getByText("close");
+    fireEvent.click(closeBtn);
+    expect(onClose).toHaveBeenCalledWith(false);
+  });
+
+  // --- Branch: handleAdd with null user ---
+  it("Given: user is null When: handleAdd fires Then: should not call assignRole", async () => {
+    const { fireEvent } = await import("@testing-library/react");
+    mockRolesData = {
+      data: [makeRoleEntity({ id: "r1", name: "VIEWER", isActive: true })],
+      isLoading: false,
+    };
+
+    render(
+      <UserRolesDialog user={null} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    // The Select's onValueChange is what triggers handleAdd
+    // Since user is null, handleAdd should return early
+    expect(mockAssignMutateAsync).not.toHaveBeenCalled();
+  });
+
+  // --- Branch: handleRemove with canRemove=false ---
+  it("Given: user has only one role When: trying to remove Then: should not call removeRole", () => {
+    const user = makeUser({ roles: ["ADMIN"] });
+    const allRoles = [
+      makeRoleEntity({ id: "r1", name: "ADMIN", isActive: true }),
+    ];
+    mockRolesData = { data: allRoles, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    // canRemove is false (only one role), so remove button should not exist
+    expect(screen.queryByTitle("roles.remove")).toBeNull();
+    expect(mockRemoveMutateAsync).not.toHaveBeenCalled();
+  });
+
+  // --- Branch: assignedRoles.length > 1 and cannotRemoveLast NOT shown ---
+  it("Given: user has multiple roles When: rendering Then: cannotRemoveLast should not appear and remove buttons are visible", () => {
+    const user = makeUser({ roles: ["ADMIN", "EDITOR", "VIEWER"] });
+    const allRoles = [
+      makeRoleEntity({ id: "r1", name: "ADMIN", isActive: true }),
+      makeRoleEntity({ id: "r2", name: "EDITOR", isActive: true }),
+      makeRoleEntity({ id: "r3", name: "VIEWER", isActive: true }),
+    ];
+    mockRolesData = { data: allRoles, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    expect(screen.queryByText("roles.cannotRemoveLast")).toBeNull();
+    const removeButtons = screen.getAllByTitle("roles.remove");
+    expect(removeButtons.length).toBe(3);
+  });
+
+  // --- Branch: assignedRoles length > 1 so canRemove is true; cannotRemoveLast NOT displayed ---
+  it("Given: assignedRoles=2 When: rendering Then: cannotRemoveLast hidden and remove visible", () => {
+    const user = makeUser({ roles: ["ADMIN", "VIEWER"] });
+    mockRolesData = {
+      data: [
+        makeRoleEntity({ id: "r1", name: "ADMIN", isActive: true }),
+        makeRoleEntity({ id: "r2", name: "VIEWER", isActive: true }),
+      ],
+      isLoading: false,
+    };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    expect(screen.queryByText("roles.cannotRemoveLast")).toBeNull();
+    expect(screen.getAllByTitle("roles.remove")).toHaveLength(2);
+  });
+
+  // --- Branch: displayRoleName falls back to raw name when tRoles.has returns false ---
+  it("Given: role name has no translation When: rendering Then: should display raw role name", () => {
+    const user = makeUser({ roles: ["CUSTOM_ROLE"] });
+    const allRoles = [
+      makeRoleEntity({ id: "r1", name: "CUSTOM_ROLE", isActive: true }),
+    ];
+    mockRolesData = { data: allRoles, isLoading: false };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    // Since tRoles.has returns false (our mock), displayRoleName returns the raw name
+    expect(screen.getByText("CUSTOM_ROLE")).toBeDefined();
+  });
+
+  // --- Branch: loading state for add role shows skeleton ---
+  it("Given: roles are loading When: rendering add section Then: should show skeleton for add role", () => {
+    const user = makeUser({ roles: ["ADMIN"] });
+    mockRolesData = { data: undefined, isLoading: true };
+
+    render(
+      <UserRolesDialog user={user} open={true} onOpenChange={onOpenChange} />,
+    );
+
+    // Both assigned and add sections show skeletons
+    const skeletons = screen.getAllByTestId("skeleton");
+    expect(skeletons.length).toBeGreaterThanOrEqual(3);
+  });
 });

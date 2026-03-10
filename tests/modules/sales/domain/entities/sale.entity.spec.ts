@@ -39,6 +39,7 @@ describe("Sale", () => {
       productId: "prod-1",
       productName: "Widget A",
       productSku: "WDG-001",
+      productBarcode: null,
       quantity: overrides.quantity ?? 2,
       salePrice: 49.99,
       currency: "USD",
@@ -59,6 +60,8 @@ describe("Sale", () => {
       status: (overrides.status as any) ?? "DRAFT",
       warehouseId: "wh-1",
       warehouseName: "Main Warehouse",
+      contactId: null,
+      contactName: null,
       customerReference: null,
       externalReference: null,
       note: null,
@@ -283,5 +286,141 @@ describe("Sale", () => {
 
     // Assert
     expect(sale.canAddLines).toBe(false);
+  });
+
+  it("Given: CONFIRMED sale When: checking canSwapLine Then: returns true", () => {
+    const sale = makeSale({ status: "CONFIRMED" });
+    expect(sale.canSwapLine).toBe(true);
+  });
+
+  it("Given: PICKING sale When: checking canSwapLine Then: returns true", () => {
+    const sale = makeSale({ status: "PICKING" });
+    expect(sale.canSwapLine).toBe(true);
+  });
+
+  it("Given: DRAFT sale When: checking canSwapLine Then: returns false", () => {
+    const sale = makeSale({ status: "DRAFT" });
+    expect(sale.canSwapLine).toBe(false);
+  });
+
+  it("Given: sale with all optional fields populated When: accessing getters Then: returns correct values", () => {
+    const sale = Sale.create({
+      id: "sale-2",
+      saleNumber: "S-2026-002",
+      status: "COMPLETED",
+      warehouseId: "wh-1",
+      warehouseName: "Main Warehouse",
+      contactId: "contact-1",
+      contactName: "John Doe",
+      customerReference: "CUS-REF-001",
+      externalReference: "EXT-REF-001",
+      note: "Urgent order",
+      totalAmount: 200,
+      currency: "USD",
+      lines: [makeLine()],
+      movementId: "mov-1",
+      createdBy: "user-1",
+      createdByName: "Admin User",
+      createdAt: new Date("2026-02-10T00:00:00Z"),
+      confirmedAt: new Date("2026-02-11T00:00:00Z"),
+      confirmedBy: "user-2",
+      confirmedByName: "Confirmer User",
+      cancelledAt: new Date("2026-02-12T00:00:00Z"),
+      cancelledBy: "user-3",
+      cancelledByName: "Canceller User",
+      pickedAt: new Date("2026-02-13T00:00:00Z"),
+      pickedBy: "user-4",
+      pickedByName: "Picker User",
+      shippedAt: new Date("2026-02-14T00:00:00Z"),
+      shippedBy: "user-5",
+      shippedByName: "Shipper User",
+      trackingNumber: "TRACK-123",
+      shippingCarrier: "FedEx",
+      shippingNotes: "Handle with care",
+      completedAt: new Date("2026-02-15T00:00:00Z"),
+      completedBy: "user-6",
+      completedByName: "Completer User",
+      returnedAt: new Date("2026-02-16T00:00:00Z"),
+      returnedBy: "user-7",
+      returnedByName: "Returner User",
+      pickingEnabled: true,
+    });
+
+    expect(sale.contactId).toBe("contact-1");
+    expect(sale.contactName).toBe("John Doe");
+    expect(sale.customerReference).toBe("CUS-REF-001");
+    expect(sale.externalReference).toBe("EXT-REF-001");
+    expect(sale.note).toBe("Urgent order");
+    expect(sale.movementId).toBe("mov-1");
+    expect(sale.createdByName).toBe("Admin User");
+    expect(sale.confirmedAt).toEqual(new Date("2026-02-11T00:00:00Z"));
+    expect(sale.confirmedBy).toBe("user-2");
+    expect(sale.confirmedByName).toBe("Confirmer User");
+    expect(sale.cancelledAt).toEqual(new Date("2026-02-12T00:00:00Z"));
+    expect(sale.cancelledBy).toBe("user-3");
+    expect(sale.cancelledByName).toBe("Canceller User");
+    expect(sale.pickedAt).toEqual(new Date("2026-02-13T00:00:00Z"));
+    expect(sale.pickedBy).toBe("user-4");
+    expect(sale.pickedByName).toBe("Picker User");
+    expect(sale.shippedAt).toEqual(new Date("2026-02-14T00:00:00Z"));
+    expect(sale.shippedBy).toBe("user-5");
+    expect(sale.shippedByName).toBe("Shipper User");
+    expect(sale.trackingNumber).toBe("TRACK-123");
+    expect(sale.shippingCarrier).toBe("FedEx");
+    expect(sale.shippingNotes).toBe("Handle with care");
+    expect(sale.completedAt).toEqual(new Date("2026-02-15T00:00:00Z"));
+    expect(sale.completedBy).toBe("user-6");
+    expect(sale.completedByName).toBe("Completer User");
+    expect(sale.returnedAt).toEqual(new Date("2026-02-16T00:00:00Z"));
+    expect(sale.returnedBy).toBe("user-7");
+    expect(sale.returnedByName).toBe("Returner User");
+    expect(sale.pickingEnabled).toBe(true);
+  });
+
+  it("Given: SaleLine with productBarcode When: accessing productBarcode Then: returns barcode value", () => {
+    const line = SaleLine.create({
+      id: "sl-1",
+      productId: "prod-1",
+      productName: "Widget A",
+      productSku: "WDG-001",
+      productBarcode: "7891234567890",
+      quantity: 2,
+      salePrice: 29.99,
+      currency: "USD",
+      totalPrice: 59.98,
+    });
+
+    expect(line.productBarcode).toBe("7891234567890");
+  });
+
+  it("Given: SaleLine with null productBarcode When: accessing productBarcode Then: returns null", () => {
+    const line = SaleLine.create({
+      id: "sl-1",
+      productId: "prod-1",
+      productName: "Widget A",
+      productSku: "WDG-001",
+      productBarcode: null,
+      quantity: 2,
+      salePrice: 29.99,
+      currency: "USD",
+      totalPrice: 59.98,
+    });
+
+    expect(line.productBarcode).toBeNull();
+  });
+
+  it("Given: CONFIRMED sale without pickingEnabled When: checking canShip Then: returns false", () => {
+    const sale = makeSale({ status: "CONFIRMED", pickingEnabled: false });
+    expect(sale.canShip).toBe(false);
+  });
+
+  it("Given: SHIPPED sale without pickingEnabled When: checking canComplete Then: returns false", () => {
+    const sale = makeSale({ status: "SHIPPED", pickingEnabled: false });
+    expect(sale.canComplete).toBe(false);
+  });
+
+  it("Given: COMPLETED sale When: checking canCancel Then: returns false", () => {
+    const sale = makeSale({ status: "COMPLETED" });
+    expect(sale.canCancel).toBe(false);
   });
 });

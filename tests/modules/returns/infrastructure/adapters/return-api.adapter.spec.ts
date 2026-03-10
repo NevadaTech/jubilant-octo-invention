@@ -268,4 +268,149 @@ describe("ReturnApiAdapter", () => {
       expect(result).toBeInstanceOf(Return);
     });
   });
+
+  describe("findById error branches", () => {
+    it("Given a non-object error, When findById is called, Then it rethrows", async () => {
+      mockedGet.mockRejectedValue("string error");
+
+      await expect(adapter.findById("ret-1")).rejects.toBe("string error");
+    });
+
+    it("Given a null error, When findById is called, Then it rethrows", async () => {
+      mockedGet.mockRejectedValue(null);
+
+      await expect(adapter.findById("ret-1")).rejects.toBe(null);
+    });
+
+    it("Given error with response but non-404 status, When findById is called, Then it rethrows", async () => {
+      const error = { response: { status: 500 } };
+      mockedGet.mockRejectedValue(error);
+
+      await expect(adapter.findById("ret-1")).rejects.toBe(error);
+    });
+
+    it("Given error with response but no status, When findById is called, Then it rethrows", async () => {
+      const error = { response: {} };
+      mockedGet.mockRejectedValue(error);
+
+      await expect(adapter.findById("ret-1")).rejects.toBe(error);
+    });
+
+    it("Given error with response set to null, When findById is called, Then it rethrows", async () => {
+      const error = { response: null };
+      mockedGet.mockRejectedValue(error);
+
+      await expect(adapter.findById("ret-1")).rejects.toBe(error);
+    });
+  });
+
+  describe("buildQueryParams additional branches", () => {
+    it("Given companyId filter, When findAll is called, Then it includes companyId in params", async () => {
+      mockedGet.mockResolvedValue(wrapListResponse([]));
+
+      await adapter.findAll({ companyId: "comp-1" });
+
+      expect(mockedGet).toHaveBeenCalledWith("/returns", {
+        params: { companyId: "comp-1" },
+      });
+    });
+
+    it("Given empty arrays in filters, When findAll is called, Then empty arrays are omitted", async () => {
+      mockedGet.mockResolvedValue(wrapListResponse([]));
+
+      await adapter.findAll({ warehouseIds: [], status: [], types: [] });
+
+      expect(mockedGet).toHaveBeenCalledWith("/returns", { params: {} });
+    });
+
+    it("Given only page and limit, When findAll is called, Then only those are sent", async () => {
+      mockedGet.mockResolvedValue(wrapListResponse([]));
+
+      await adapter.findAll({ page: 2, limit: 15 });
+
+      expect(mockedGet).toHaveBeenCalledWith("/returns", {
+        params: { page: 2, limit: 15 },
+      });
+    });
+
+    it("Given null data from API, When findAll is called, Then data defaults to empty array", async () => {
+      mockedGet.mockResolvedValue({
+        data: {
+          data: null,
+          pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+        },
+        status: 200,
+        headers: {},
+      });
+
+      const result = await adapter.findAll();
+
+      expect(result.data).toEqual([]);
+    });
+
+    it("Given sortBy and sortOrder, When findAll is called, Then they are passed through", async () => {
+      mockedGet.mockResolvedValue(wrapListResponse([]));
+
+      await adapter.findAll({ sortBy: "createdAt", sortOrder: "asc" });
+
+      expect(mockedGet).toHaveBeenCalledWith("/returns", {
+        params: { sortBy: "createdAt", sortOrder: "asc" },
+      });
+    });
+
+    it("Given only search filter, When findAll is called, Then only search param is sent", async () => {
+      mockedGet.mockResolvedValue(wrapListResponse([]));
+
+      await adapter.findAll({ search: "RT-001" });
+
+      expect(mockedGet).toHaveBeenCalledWith("/returns", {
+        params: { search: "RT-001" },
+      });
+    });
+
+    it("Given only startDate filter, When findAll is called, Then only startDate param is sent", async () => {
+      mockedGet.mockResolvedValue(wrapListResponse([]));
+
+      await adapter.findAll({ startDate: "2026-01-01" });
+
+      expect(mockedGet).toHaveBeenCalledWith("/returns", {
+        params: { startDate: "2026-01-01" },
+      });
+    });
+
+    it("Given only endDate filter, When findAll is called, Then only endDate param is sent", async () => {
+      mockedGet.mockResolvedValue(wrapListResponse([]));
+
+      await adapter.findAll({ endDate: "2026-12-31" });
+
+      expect(mockedGet).toHaveBeenCalledWith("/returns", {
+        params: { endDate: "2026-12-31" },
+      });
+    });
+
+    it("Given undefined values in filters, When findAll is called, Then they are omitted from params", async () => {
+      mockedGet.mockResolvedValue(wrapListResponse([]));
+
+      await adapter.findAll({
+        search: undefined,
+        sortBy: undefined,
+        sortOrder: undefined,
+        startDate: undefined,
+        endDate: undefined,
+        companyId: undefined,
+      });
+
+      expect(mockedGet).toHaveBeenCalledWith("/returns", { params: {} });
+    });
+
+    it("Given only types filter, When findAll is called, Then only type param is sent", async () => {
+      mockedGet.mockResolvedValue(wrapListResponse([]));
+
+      await adapter.findAll({ types: ["RETURN_SUPPLIER"] });
+
+      expect(mockedGet).toHaveBeenCalledWith("/returns", {
+        params: { type: "RETURN_SUPPLIER" },
+      });
+    });
+  });
 });

@@ -221,6 +221,112 @@ describe("SettingsApiAdapter", () => {
     });
   });
 
+  describe("changePassword", () => {
+    it("Given valid password data, When changePassword is called, Then it puts to /users/me/password", async () => {
+      const dto = { currentPassword: "old123", newPassword: "new456" };
+      const responseData = { success: true, message: "Password changed" };
+      mockedPut.mockResolvedValue({
+        data: responseData,
+        status: 200,
+        headers: {},
+      });
+
+      const result = await adapter.changePassword(dto);
+
+      expect(mockedPut).toHaveBeenCalledWith("/users/me/password", dto);
+      expect(result).toEqual(responseData);
+    });
+  });
+
+  describe("toggleMultiCompany", () => {
+    it("Given orgId is present, When toggleMultiCompany is called with true, Then it patches the setting", async () => {
+      vi.doMock(
+        "@/modules/authentication/infrastructure/services/token.service",
+        () => ({
+          TokenService: { getOrganizationId: () => "org-1" },
+        }),
+      );
+      const mockedPatch = vi.mocked(apiClient.patch);
+      mockedPatch.mockResolvedValue({ data: {}, status: 200, headers: {} });
+
+      await adapter.toggleMultiCompany(true);
+
+      expect(mockedPatch).toHaveBeenCalledWith(
+        "/organizations/org-1/settings/multi-company",
+        { enabled: true },
+      );
+    });
+
+    it("Given orgId is null, When toggleMultiCompany is called, Then it throws", async () => {
+      vi.doMock(
+        "@/modules/authentication/infrastructure/services/token.service",
+        () => ({
+          TokenService: { getOrganizationId: () => null },
+        }),
+      );
+
+      // Re-instantiate to pick up new mock
+      const { SettingsApiAdapter: Fresh } =
+        await import("@/modules/settings/infrastructure/adapters/settings-api.adapter");
+      const freshAdapter = new Fresh();
+
+      await expect(freshAdapter.toggleMultiCompany(false)).rejects.toThrow(
+        "Organization ID not found",
+      );
+    });
+  });
+
+  describe("getPickingConfig", () => {
+    it("Given picking config exists, When getPickingConfig is called, Then it returns the PickingConfigDto", async () => {
+      const pickingConfig = {
+        pickingMode: "REQUIRED_FULL",
+        pickingEnabled: true,
+      };
+      mockedGet.mockResolvedValue({
+        data: { data: pickingConfig },
+        status: 200,
+        headers: {},
+      });
+
+      const result = await adapter.getPickingConfig();
+
+      expect(mockedGet).toHaveBeenCalledWith("/settings/picking");
+      expect(result).toEqual(pickingConfig);
+    });
+  });
+
+  describe("updatePickingConfig", () => {
+    it("Given valid picking config, When updatePickingConfig is called, Then it puts and returns updated config", async () => {
+      const updateDto = { pickingMode: "OFF", pickingEnabled: false };
+      const updatedConfig = { pickingMode: "OFF", pickingEnabled: false };
+      mockedPut.mockResolvedValue({
+        data: { data: updatedConfig },
+        status: 200,
+        headers: {},
+      });
+
+      const result = await adapter.updatePickingConfig(updateDto);
+
+      expect(mockedPut).toHaveBeenCalledWith("/settings/picking", updateDto);
+      expect(result).toEqual(updatedConfig);
+    });
+
+    it("Given partial picking config update, When updatePickingConfig is called, Then it only sends the provided fields", async () => {
+      const updateDto = { pickingEnabled: true };
+      mockedPut.mockResolvedValue({
+        data: { data: { pickingMode: "REQUIRED_FULL", pickingEnabled: true } },
+        status: 200,
+        headers: {},
+      });
+
+      await adapter.updatePickingConfig(updateDto);
+
+      expect(mockedPut).toHaveBeenCalledWith("/settings/picking", {
+        pickingEnabled: true,
+      });
+    });
+  });
+
   describe("error propagation", () => {
     it("Given the API returns an error, When getProfile is called, Then the error propagates to the caller", async () => {
       mockedGet.mockRejectedValue(new Error("Unauthorized"));
@@ -234,6 +340,20 @@ describe("SettingsApiAdapter", () => {
       await expect(
         adapter.updateAlertConfiguration({ isEnabled: false }),
       ).rejects.toThrow("Forbidden");
+    });
+
+    it("Given the API returns an error, When changePassword is called, Then the error propagates", async () => {
+      mockedPut.mockRejectedValue(new Error("Bad password"));
+
+      await expect(
+        adapter.changePassword({ currentPassword: "x", newPassword: "y" }),
+      ).rejects.toThrow("Bad password");
+    });
+
+    it("Given the API returns an error, When getPickingConfig is called, Then the error propagates", async () => {
+      mockedGet.mockRejectedValue(new Error("Internal"));
+
+      await expect(adapter.getPickingConfig()).rejects.toThrow("Internal");
     });
   });
 });

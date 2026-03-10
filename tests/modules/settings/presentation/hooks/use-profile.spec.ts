@@ -167,5 +167,35 @@ describe("use-profile hooks", () => {
 
       expect(toast.error).toHaveBeenCalled();
     });
+
+    it("Given storedUser is null, When mutate succeeds, Then it should NOT call setUser or setState", async () => {
+      mockGetUser.mockReturnValue(null);
+      const updatedResponse = {
+        data: {
+          firstName: "Jane",
+          lastName: "Doe",
+          phone: "+1234567890",
+          timezone: "America/Chicago",
+          language: "en",
+          jobTitle: "Manager",
+          department: "Sales",
+        },
+      };
+      mockUpdateProfile.mockResolvedValueOnce(updatedResponse);
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useUpdateProfile(), {
+        wrapper: Wrapper,
+      });
+
+      await act(async () => {
+        await result.current.mutateAsync({ firstName: "Jane" });
+      });
+
+      expect(toast.success).toHaveBeenCalledWith("saved");
+      // storedUser is null, so setUser and setState should NOT be called
+      expect(mockSetUser).not.toHaveBeenCalled();
+      expect(mockSetState).not.toHaveBeenCalled();
+    });
   });
 });

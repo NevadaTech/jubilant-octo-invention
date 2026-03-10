@@ -82,6 +82,10 @@ vi.mock("@/ui/components/sortable-header", () => ({
   SortableHeader: ({ label }: { label: string }) => <th>{label}</th>,
 }));
 
+vi.mock("@/modules/companies/infrastructure/store/company.store", () => ({
+  useCompanyStore: () => null,
+}));
+
 // --- Helpers ---
 
 function makeMovement(
@@ -227,5 +231,130 @@ describe("MovementList", () => {
     render(<MovementList />);
 
     expect(screen.getByText("error.loading")).toBeDefined();
+  });
+
+  // --- Branch: movement with null reference ---
+  it("Given: movement with null reference When: rendering Then: should show dash", () => {
+    const mov = makeMovement({ id: "mov-no-ref", reference: null });
+    mockQueryState = {
+      data: {
+        data: [mov],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<MovementList />);
+    // No reference should render a dash span
+    const dashes = screen.getAllByText("-");
+    expect(dashes.length).toBeGreaterThan(0);
+  });
+
+  // --- Branch: movement with string reference ---
+  it("Given: movement with reference When: rendering Then: should show reference text", () => {
+    const mov = makeMovement({ id: "mov-ref", reference: "PO-123" });
+    mockQueryState = {
+      data: {
+        data: [mov],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<MovementList />);
+    expect(screen.getByText("PO-123")).toBeDefined();
+  });
+
+  // --- Branch: isDraft true ---
+  it("Given: movement is DRAFT When: checking isDraft Then: should be true", () => {
+    const mov = makeMovement({ id: "mov-draft", status: "DRAFT" });
+    expect(mov.isDraft).toBe(true);
+
+    mockQueryState = {
+      data: {
+        data: [mov],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<MovementList />);
+    // Renders the movement row for draft
+    expect(screen.getByText("DRAFT")).toBeDefined();
+  });
+
+  // --- Branch: isDraft false ---
+  it("Given: movement is POSTED When: checking isDraft Then: should be false", () => {
+    const mov = makeMovement({ id: "mov-posted", status: "POSTED" });
+    expect(mov.isDraft).toBe(false);
+
+    mockQueryState = {
+      data: {
+        data: [mov],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<MovementList />);
+    expect(screen.getByText("POSTED")).toBeDefined();
+  });
+
+  // --- Branch: postedAt null vs defined ---
+  it("Given: movement with postedAt null When: rendering Then: should show dash for posted date", () => {
+    const mov = makeMovement({ id: "mov-no-post" });
+    // The makeMovement has postedAt: null by default
+    mockQueryState = {
+      data: {
+        data: [mov],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<MovementList />);
+    // Multiple dashes may appear (reference, contactName, postedAt)
+    const dashes = screen.getAllByText("-");
+    expect(dashes.length).toBeGreaterThanOrEqual(1);
+  });
+
+  // --- Branch: movement type OUT (isEntry = false) ---
+  it("Given: OUT movement When: rendering Then: should show minus sign", () => {
+    const mov = makeMovement({ id: "mov-out", type: "OUT" });
+    mockQueryState = {
+      data: {
+        data: [mov],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<MovementList />);
+    // The "-10" text (negative quantity) should be visible
+    const negativeSpans = document.querySelectorAll(".text-red-600");
+    expect(negativeSpans.length).toBeGreaterThan(0);
+  });
+
+  // --- Branch: movement type IN (isEntry = true) ---
+  it("Given: IN movement When: rendering Then: should show plus sign", () => {
+    const mov = makeMovement({ id: "mov-in", type: "IN" });
+    mockQueryState = {
+      data: {
+        data: [mov],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 10 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<MovementList />);
+    const positiveSpans = document.querySelectorAll(".text-green-600");
+    expect(positiveSpans.length).toBeGreaterThan(0);
   });
 });

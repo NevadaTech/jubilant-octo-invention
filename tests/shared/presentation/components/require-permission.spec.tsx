@@ -89,6 +89,36 @@ describe("RequirePermission", () => {
     expect(screen.getByText("Edit User Page")).toBeDefined();
   });
 
+  it('Given: multiple permissions with default mode "any" When: user has at least one Then: should display children', () => {
+    mockHasAnyPermission.mockReturnValue(true);
+
+    render(
+      <RequirePermission
+        permission={[PERMISSIONS.USERS_READ, PERMISSIONS.USERS_UPDATE]}
+      >
+        <span>Any Permission Page</span>
+      </RequirePermission>,
+    );
+
+    expect(screen.getByText("Any Permission Page")).toBeDefined();
+    expect(mockHasAnyPermission).toHaveBeenCalled();
+  });
+
+  it('Given: multiple permissions with default mode "any" When: user lacks all Then: should display AccessDenied', () => {
+    mockHasAnyPermission.mockReturnValue(false);
+
+    render(
+      <RequirePermission
+        permission={[PERMISSIONS.USERS_READ, PERMISSIONS.USERS_UPDATE]}
+      >
+        <span>Any Permission Page</span>
+      </RequirePermission>,
+    );
+
+    expect(screen.queryByText("Any Permission Page")).toBeNull();
+    expect(screen.getByText("accessDenied")).toBeDefined();
+  });
+
   it('Given: multiple permissions with mode "all" When: user lacks one Then: should display AccessDenied', () => {
     // Arrange
     mockHasAllPermissions.mockReturnValue(false);

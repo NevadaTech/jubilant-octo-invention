@@ -5,6 +5,7 @@ import { createQueryWrapper } from "@tests/utils/create-query-wrapper";
 const mockFindAll = vi.fn();
 const mockFindById = vi.fn();
 const mockGetReturns = vi.fn();
+const mockGetSwapHistory = vi.fn();
 const mockCreate = vi.fn();
 const mockUpdate = vi.fn();
 const mockConfirm = vi.fn();
@@ -14,6 +15,7 @@ const mockShip = vi.fn();
 const mockComplete = vi.fn();
 const mockAddLine = vi.fn();
 const mockRemoveLine = vi.fn();
+const mockSwapLine = vi.fn();
 
 vi.mock("@/config/di/container", () => ({
   getContainer: vi.fn(() => ({
@@ -21,6 +23,7 @@ vi.mock("@/config/di/container", () => ({
       findAll: mockFindAll,
       findById: mockFindById,
       getReturns: mockGetReturns,
+      getSwapHistory: mockGetSwapHistory,
       create: mockCreate,
       update: mockUpdate,
       confirm: mockConfirm,
@@ -30,6 +33,7 @@ vi.mock("@/config/di/container", () => ({
       complete: mockComplete,
       addLine: mockAddLine,
       removeLine: mockRemoveLine,
+      swapLine: mockSwapLine,
     },
   })),
 }));
@@ -46,6 +50,7 @@ import {
   useSales,
   useSale,
   useSaleReturns,
+  useSaleSwapHistory,
   useCreateSale,
   useUpdateSale,
   useConfirmSale,
@@ -55,6 +60,7 @@ import {
   useCompleteSale,
   useAddSaleLine,
   useRemoveSaleLine,
+  useSwapSaleLine,
 } from "@/modules/sales/presentation/hooks/use-sales";
 import { toast } from "sonner";
 
@@ -469,6 +475,227 @@ describe("use-sales hooks", () => {
       await act(async () => {
         try {
           await result.current.mutateAsync({ saleId: "s-1", lineId: "sl-1" });
+        } catch {
+          // expected
+        }
+      });
+
+      expect(toast.error).toHaveBeenCalled();
+    });
+  });
+
+  // ── useSaleSwapHistory ──────────────────────────────────────────────
+
+  describe("useSaleSwapHistory", () => {
+    it("Given a valid saleId, When the hook fetches, Then it returns the swap history", async () => {
+      const history = [{ id: "swap-1", saleId: "s-1" }];
+      mockGetSwapHistory.mockResolvedValueOnce(history);
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useSaleSwapHistory("s-1"), {
+        wrapper: Wrapper,
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(mockGetSwapHistory).toHaveBeenCalledWith("s-1");
+      expect(result.current.data).toEqual(history);
+    });
+
+    it("Given an empty saleId, When the hook renders, Then it does not fetch", () => {
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useSaleSwapHistory(""), {
+        wrapper: Wrapper,
+      });
+
+      expect(result.current.fetchStatus).toBe("idle");
+      expect(mockGetSwapHistory).not.toHaveBeenCalled();
+    });
+
+    it("Given enabled=false, When the hook renders, Then it does not fetch", () => {
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useSaleSwapHistory("s-1", false), {
+        wrapper: Wrapper,
+      });
+
+      expect(result.current.fetchStatus).toBe("idle");
+      expect(mockGetSwapHistory).not.toHaveBeenCalled();
+    });
+  });
+
+  // ── useSwapSaleLine ─────────────────────────────────────────────────
+
+  describe("useSwapSaleLine", () => {
+    it("Given valid data, When mutate is called, Then it swaps the line and shows success toast", async () => {
+      mockSwapLine.mockResolvedValueOnce({ swapId: "sw-1" });
+      const { Wrapper, queryClient } = createQueryWrapper();
+      const invalidateSpy = vi.spyOn(queryClient, "invalidateQueries");
+
+      const { result } = renderHook(() => useSwapSaleLine(), {
+        wrapper: Wrapper,
+      });
+
+      await act(async () => {
+        await result.current.mutateAsync({
+          saleId: "s-1",
+          data: {
+            lineId: "l-1",
+            replacementProductId: "p-2",
+            swapQuantity: 1,
+            sourceWarehouseId: "wh-1",
+            pricingStrategy: "KEEP_ORIGINAL" as const,
+          },
+        });
+      });
+
+      expect(mockSwapLine).toHaveBeenCalledWith("s-1", {
+        lineId: "l-1",
+        replacementProductId: "p-2",
+        swapQuantity: 1,
+        sourceWarehouseId: "wh-1",
+        pricingStrategy: "KEEP_ORIGINAL",
+      });
+      expect(toast.success).toHaveBeenCalledWith("messages.lineSwapped");
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: ["sales", "list"],
+      });
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: ["sales", "detail", "s-1"],
+      });
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: ["sales", "swaps", "s-1"],
+      });
+    });
+
+    it("Given a server error, When swapping, Then it shows error toast", async () => {
+      mockSwapLine.mockRejectedValueOnce(new Error("Fail"));
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useSwapSaleLine(), {
+        wrapper: Wrapper,
+      });
+
+      await act(async () => {
+        try {
+          await result.current.mutateAsync({
+            saleId: "s-1",
+            data: {
+              lineId: "l-1",
+              replacementProductId: "p-2",
+              swapQuantity: 1,
+              sourceWarehouseId: "wh-1",
+              pricingStrategy: "NEW_PRICE" as const,
+              newSalePrice: 50,
+            },
+          });
+        } catch {
+          // expected
+        }
+      });
+
+      expect(toast.error).toHaveBeenCalled();
+    });
+  });
+
+  // ── error paths for remaining hooks ─────────────────────────────────
+
+  describe("useCancelSale error path", () => {
+    it("Given a server error, When cancelling, Then it shows error toast", async () => {
+      mockCancel.mockRejectedValueOnce(new Error("Fail"));
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useCancelSale(), {
+        wrapper: Wrapper,
+      });
+
+      await act(async () => {
+        try {
+          await result.current.mutateAsync("s-1");
+        } catch {
+          // expected
+        }
+      });
+
+      expect(toast.error).toHaveBeenCalled();
+    });
+  });
+
+  describe("useStartPicking error path", () => {
+    it("Given a server error, When starting picking, Then it shows error toast", async () => {
+      mockStartPicking.mockRejectedValueOnce(new Error("Fail"));
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useStartPicking(), {
+        wrapper: Wrapper,
+      });
+
+      await act(async () => {
+        try {
+          await result.current.mutateAsync("s-1");
+        } catch {
+          // expected
+        }
+      });
+
+      expect(toast.error).toHaveBeenCalled();
+    });
+  });
+
+  describe("useShipSale error path", () => {
+    it("Given a server error, When shipping, Then it shows error toast", async () => {
+      mockShip.mockRejectedValueOnce(new Error("Fail"));
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useShipSale(), {
+        wrapper: Wrapper,
+      });
+
+      await act(async () => {
+        try {
+          await result.current.mutateAsync({ id: "s-1", data: {} });
+        } catch {
+          // expected
+        }
+      });
+
+      expect(toast.error).toHaveBeenCalled();
+    });
+  });
+
+  describe("useCompleteSale error path", () => {
+    it("Given a server error, When completing, Then it shows error toast", async () => {
+      mockComplete.mockRejectedValueOnce(new Error("Fail"));
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useCompleteSale(), {
+        wrapper: Wrapper,
+      });
+
+      await act(async () => {
+        try {
+          await result.current.mutateAsync("s-1");
+        } catch {
+          // expected
+        }
+      });
+
+      expect(toast.error).toHaveBeenCalled();
+    });
+  });
+
+  describe("useUpdateSale error path", () => {
+    it("Given a server error, When updating, Then it shows error toast", async () => {
+      mockUpdate.mockRejectedValueOnce(new Error("Fail"));
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useUpdateSale(), {
+        wrapper: Wrapper,
+      });
+
+      await act(async () => {
+        try {
+          await result.current.mutateAsync({ id: "s-1", data: {} });
         } catch {
           // expected
         }

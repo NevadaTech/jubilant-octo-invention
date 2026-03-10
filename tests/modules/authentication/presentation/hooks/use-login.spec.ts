@@ -24,6 +24,17 @@ vi.mock("@/modules/authentication/presentation/store/auth.store", () => ({
   },
 }));
 
+let mockGetUser: ReturnType<typeof vi.fn> = vi.fn(() => null);
+
+vi.mock(
+  "@/modules/authentication/infrastructure/services/token.service",
+  () => ({
+    TokenService: {
+      getUser: () => mockGetUser(),
+    },
+  }),
+);
+
 import { useLogin } from "@/modules/authentication/presentation/hooks/use-login";
 
 describe("use-login hook", () => {
@@ -36,6 +47,7 @@ describe("use-login hook", () => {
   describe("useLogin", () => {
     it("Given valid credentials, When login is called, Then it clears error, calls login, and redirects to dashboard", async () => {
       mockLogin.mockResolvedValueOnce(undefined);
+      mockGetUser.mockReturnValue(null);
       const { Wrapper } = createQueryWrapper();
 
       const { result } = renderHook(() => useLogin(), { wrapper: Wrapper });
@@ -52,6 +64,40 @@ describe("use-login hook", () => {
         email: "user@example.com",
         password: "password123",
       });
+      expect(mockPush).toHaveBeenCalledWith("/dashboard");
+    });
+
+    it("Given user must change password, When login succeeds, Then it redirects to change-password", async () => {
+      mockLogin.mockResolvedValueOnce(undefined);
+      mockGetUser.mockReturnValue({ mustChangePassword: true });
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useLogin(), { wrapper: Wrapper });
+
+      await act(async () => {
+        await result.current.loginAsync({
+          email: "user@example.com",
+          password: "password123",
+        });
+      });
+
+      expect(mockPush).toHaveBeenCalledWith("/change-password");
+    });
+
+    it("Given user does not need to change password, When login succeeds, Then it redirects to dashboard", async () => {
+      mockLogin.mockResolvedValueOnce(undefined);
+      mockGetUser.mockReturnValue({ mustChangePassword: false });
+      const { Wrapper } = createQueryWrapper();
+
+      const { result } = renderHook(() => useLogin(), { wrapper: Wrapper });
+
+      await act(async () => {
+        await result.current.loginAsync({
+          email: "user@example.com",
+          password: "password123",
+        });
+      });
+
       expect(mockPush).toHaveBeenCalledWith("/dashboard");
     });
 

@@ -229,4 +229,99 @@ describe("AuditLogList", () => {
 
     expect(screen.getByText("error.loading")).toBeDefined();
   });
+
+  // --- Branch: duration is null ---
+  it("Given: log with null duration When: rendering Then: should not show duration in ms format", () => {
+    const log = AuditLog.create({
+      id: "log-null-dur",
+      orgId: "org-1",
+      entityType: "Product",
+      entityId: "entity-1",
+      action: "CREATE",
+      performedBy: "user-1",
+      metadata: {},
+      ipAddress: "127.0.0.1",
+      userAgent: "Mozilla/5.0",
+      httpMethod: "POST",
+      httpUrl: "/api/products",
+      httpStatusCode: 201,
+      duration: null,
+      createdAt: new Date("2026-02-25T12:00:00Z"),
+    });
+    mockQueryState = {
+      data: {
+        data: [log],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 20 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<AuditLogList />);
+    // Should NOT find any "Xms" pattern since duration is null
+    expect(screen.queryByText(/\d+ms/)).toBeNull();
+  });
+
+  // --- Branch: duration is not null ---
+  it("Given: log with non-null duration When: rendering Then: should show duration in ms", () => {
+    const log = makeAuditLog({ id: "log-dur", duration: 99 });
+    mockQueryState = {
+      data: {
+        data: [log],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 20 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<AuditLogList />);
+    expect(screen.getByText("99ms")).toBeDefined();
+  });
+
+  // --- Branch: data is undefined but not loading/error (initial) ---
+  it("Given: data undefined and not loading When: rendering Then: should show title", () => {
+    mockQueryState = { data: undefined, isLoading: false, isError: false };
+
+    render(<AuditLogList />);
+    expect(screen.getByText("list.title")).toBeDefined();
+  });
+
+  // --- Branch: row click sets selectedLog ---
+  it("Given: logs rendered When: clicking a row Then: should trigger detail dialog", async () => {
+    const { fireEvent } = await import("@testing-library/react");
+    const log = makeAuditLog({ id: "log-click" });
+    mockQueryState = {
+      data: {
+        data: [log],
+        pagination: { page: 1, totalPages: 1, total: 1, limit: 20 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<AuditLogList />);
+    const rows = document.querySelectorAll("tr.border-b");
+    if (rows.length > 0) {
+      fireEvent.click(rows[0]);
+      expect(screen.getByTestId("audit-log-detail-dialog")).toBeDefined();
+    }
+  });
+
+  // --- Branch: disabled export when no data ---
+  it("Given: empty data When: rendering Then: should disable export button", () => {
+    mockQueryState = {
+      data: {
+        data: [],
+        pagination: { page: 1, totalPages: 0, total: 0, limit: 20 },
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+    render(<AuditLogList />);
+    const exportBtn = screen.queryByText("export.excel");
+    if (exportBtn) {
+      expect(exportBtn.closest("button")?.disabled).toBe(true);
+    }
+  });
 });

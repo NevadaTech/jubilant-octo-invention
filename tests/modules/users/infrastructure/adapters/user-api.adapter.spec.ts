@@ -71,6 +71,26 @@ describe("UserApiAdapter", () => {
       expect(result.pagination).toEqual(mockPagination);
     });
 
+    it("Given: empty status array When: findAll is called Then: should not include status param", async () => {
+      vi.mocked(apiClient.get).mockResolvedValue({
+        data: {
+          success: true,
+          message: "OK",
+          data: [],
+          pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+          timestamp: "2025-01-15T10:00:00.000Z",
+        },
+        status: 200,
+        headers: {},
+      });
+
+      await adapter.findAll({ status: [] });
+
+      expect(apiClient.get).toHaveBeenCalledWith("/users", {
+        params: {},
+      });
+    });
+
     it("Given: status and search filters When: findAll is called Then: should join status array with commas", async () => {
       vi.mocked(apiClient.get).mockResolvedValue({
         data: {
@@ -138,6 +158,42 @@ describe("UserApiAdapter", () => {
       await expect(adapter.findById("user-001")).rejects.toThrow(
         "Server Error",
       );
+    });
+
+    it("Given: error is a non-object (string) When: findById is called Then: should rethrow", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue("string error");
+
+      await expect(adapter.findById("user-001")).rejects.toBe("string error");
+    });
+
+    it("Given: error is null When: findById is called Then: should rethrow", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue(null);
+
+      await expect(adapter.findById("user-001")).rejects.toBeNull();
+    });
+
+    it("Given: error has response but not an object (string) When: findById is called Then: should rethrow", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue({ response: "not-an-object" });
+
+      await expect(adapter.findById("user-001")).rejects.toEqual({
+        response: "not-an-object",
+      });
+    });
+
+    it("Given: error has response with status 500 When: findById is called Then: should rethrow", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue({ response: { status: 500 } });
+
+      await expect(adapter.findById("user-001")).rejects.toEqual({
+        response: { status: 500 },
+      });
+    });
+
+    it("Given: error has response with no status When: findById is called Then: should rethrow", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue({ response: {} });
+
+      await expect(adapter.findById("user-001")).rejects.toEqual({
+        response: {},
+      });
     });
   });
 

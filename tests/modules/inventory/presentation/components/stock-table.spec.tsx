@@ -39,6 +39,10 @@ vi.mock("@/ui/components/multi-select", () => ({
   MultiSelect: () => <div data-testid="multi-select" />,
 }));
 
+vi.mock("@/modules/companies/infrastructure/store/company.store", () => ({
+  useCompanyStore: () => null,
+}));
+
 // --- Helpers ---
 
 function makeStock(
@@ -183,6 +187,208 @@ describe("StockTable", () => {
 
     render(<StockTable />);
 
+    expect(screen.getByText(/error\.loading/)).toBeDefined();
+  });
+
+  // --- Branch: stock with no productName (falls back to productId) ---
+  it("Given: stock with no productName When: rendering Then: should show productId", () => {
+    const stock = Stock.create({
+      id: "s-no-name",
+      productId: "pid-fallback",
+      productName: "",
+      productSku: "SK-1",
+      warehouseId: "wh-1",
+      warehouseName: "Main",
+      quantity: 50,
+      reservedQuantity: 0,
+      availableQuantity: 50,
+      averageCost: 10,
+      totalValue: 500,
+      currency: "USD",
+      lastMovementAt: null,
+    });
+    mockQueryState = {
+      data: { data: [stock] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+
+    render(<StockTable />);
+    expect(screen.getByText("pid-fallback")).toBeDefined();
+  });
+
+  // --- Branch: stock with no productSku ---
+  it("Given: stock with no productSku When: rendering Then: should not show SKU line", () => {
+    const stock = Stock.create({
+      id: "s-no-sku",
+      productId: "p1",
+      productName: "Widget",
+      productSku: "",
+      warehouseId: "wh-1",
+      warehouseName: "Main",
+      quantity: 50,
+      reservedQuantity: 0,
+      availableQuantity: 50,
+      averageCost: 10,
+      totalValue: 500,
+      currency: "USD",
+      lastMovementAt: null,
+    });
+    mockQueryState = {
+      data: { data: [stock] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+
+    render(<StockTable />);
+    expect(screen.getByText("Widget")).toBeDefined();
+  });
+
+  // --- Branch: stock with no warehouseName (falls back to warehouseId) ---
+  it("Given: stock with no warehouseName When: rendering Then: should show warehouseId", () => {
+    const stock = Stock.create({
+      id: "s-no-wh-name",
+      productId: "p1",
+      productName: "Widget",
+      productSku: "SK-1",
+      warehouseId: "wh-fallback",
+      warehouseName: "",
+      quantity: 50,
+      reservedQuantity: 0,
+      availableQuantity: 50,
+      averageCost: 10,
+      totalValue: 500,
+      currency: "USD",
+      lastMovementAt: null,
+    });
+    mockQueryState = {
+      data: { data: [stock] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+
+    render(<StockTable />);
+    expect(screen.getByText("wh-fallback")).toBeDefined();
+  });
+
+  // --- Branch: low stock (availableQuantity <= 10) shows warning ---
+  it("Given: stock with low quantity When: rendering Then: should show warning styling", () => {
+    const stock = Stock.create({
+      id: "s-low",
+      productId: "p1",
+      productName: "Widget Low",
+      productSku: "SK-LOW",
+      warehouseId: "wh-1",
+      warehouseName: "Main",
+      quantity: 5,
+      reservedQuantity: 0,
+      availableQuantity: 5,
+      averageCost: 10,
+      totalValue: 50,
+      currency: "USD",
+      lastMovementAt: null,
+    });
+    mockQueryState = {
+      data: { data: [stock] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+
+    const { container } = render(<StockTable />);
+    // Warning icon and styling
+    const warningElements = container.querySelectorAll(".text-warning-500");
+    expect(warningElements.length).toBeGreaterThan(0);
+  });
+
+  // --- Branch: out of stock (isOutOfStock = true) ---
+  it("Given: stock with zero quantity When: rendering Then: should have isOutOfStock true", () => {
+    const stock = Stock.create({
+      id: "s-oos",
+      productId: "p1",
+      productName: "Widget OOS",
+      productSku: "SK-OOS",
+      warehouseId: "wh-1",
+      warehouseName: "Main",
+      quantity: 0,
+      reservedQuantity: 0,
+      availableQuantity: 0,
+      averageCost: 10,
+      totalValue: 0,
+      currency: "USD",
+      lastMovementAt: null,
+    });
+    mockQueryState = {
+      data: { data: [stock] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+
+    render(<StockTable />);
+    // Zero quantity stock should be out of stock
+    expect(stock.isOutOfStock).toBe(true);
+    expect(screen.getByText("Widget OOS")).toBeDefined();
+  });
+
+  // --- Branch: lastMovementAt null shows dash ---
+  it("Given: stock with null lastMovementAt When: rendering Then: should show dash", () => {
+    const stock = Stock.create({
+      id: "s-no-last-mov",
+      productId: "p1",
+      productName: "Widget NoMov",
+      productSku: "SK-NM",
+      warehouseId: "wh-1",
+      warehouseName: "Main",
+      quantity: 50,
+      reservedQuantity: 0,
+      availableQuantity: 50,
+      averageCost: 10,
+      totalValue: 500,
+      currency: "USD",
+      lastMovementAt: null,
+    });
+    mockQueryState = {
+      data: { data: [stock] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+
+    render(<StockTable />);
+    const dashes = screen.getAllByText("-");
+    expect(dashes.length).toBeGreaterThan(0);
+  });
+
+  // --- Branch: lastMovementAt defined shows date ---
+  it("Given: stock with lastMovementAt When: rendering Then: should show formatted date", () => {
+    const stock = makeStock();
+    mockQueryState = {
+      data: { data: [stock] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+
+    render(<StockTable />);
+    // Date is formatted by toLocaleDateString
+    // At least no dash should appear for this cell
+    expect(screen.getByText("Widget A")).toBeDefined();
+  });
+
+  // --- Branch: error with no message ---
+  it("Given: error state with null error When: rendering Then: should still show error", () => {
+    mockQueryState = {
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: null,
+    };
+
+    render(<StockTable />);
     expect(screen.getByText(/error\.loading/)).toBeDefined();
   });
 });

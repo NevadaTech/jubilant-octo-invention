@@ -115,4 +115,100 @@ describe("useBarcodeScanner", () => {
     expect(spy).toHaveBeenCalledWith("keydown", expect.any(Function), true);
     spy.mockRestore();
   });
+
+  // --- Branch: INPUT without data-scan-input should be ignored ---
+  it("Given: target is INPUT without data-scan-input When: rapid keys Then: should not fire onScan", () => {
+    renderHook(() => useBarcodeScanner({ enabled: true, onScan }));
+
+    const input = document.createElement("input");
+    document.body.appendChild(input);
+
+    for (const key of "ABC123") {
+      input.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+    }
+    input.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+
+    expect(onScan).not.toHaveBeenCalled();
+    document.body.removeChild(input);
+  });
+
+  // --- Branch: INPUT with data-scan-input should be processed ---
+  it("Given: target is INPUT with data-scan-input When: rapid keys Then: should fire onScan", () => {
+    renderHook(() => useBarcodeScanner({ enabled: true, onScan }));
+
+    const input = document.createElement("input");
+    input.setAttribute("data-scan-input", "");
+    document.body.appendChild(input);
+
+    for (const key of "ABC123") {
+      input.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+    }
+    input.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+
+    expect(onScan).toHaveBeenCalledWith("ABC123");
+    document.body.removeChild(input);
+  });
+
+  // --- Branch: TEXTAREA target should be ignored ---
+  it("Given: target is TEXTAREA When: rapid keys Then: should not fire onScan", () => {
+    renderHook(() => useBarcodeScanner({ enabled: true, onScan }));
+
+    const textarea = document.createElement("textarea");
+    document.body.appendChild(textarea);
+
+    for (const key of "ABC123") {
+      textarea.dispatchEvent(
+        new KeyboardEvent("keydown", { key, bubbles: true }),
+      );
+    }
+    textarea.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+
+    expect(onScan).not.toHaveBeenCalled();
+    document.body.removeChild(textarea);
+  });
+
+  // --- Branch: SELECT target should be ignored ---
+  it("Given: target is SELECT When: rapid keys Then: should not fire onScan", () => {
+    renderHook(() => useBarcodeScanner({ enabled: true, onScan }));
+
+    const select = document.createElement("select");
+    document.body.appendChild(select);
+
+    for (const key of "ABC123") {
+      select.dispatchEvent(
+        new KeyboardEvent("keydown", { key, bubbles: true }),
+      );
+    }
+    select.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+
+    expect(onScan).not.toHaveBeenCalled();
+    document.body.removeChild(select);
+  });
+
+  // --- Branch: non-printable key (key.length !== 1) should be ignored ---
+  it("Given: non-printable key pressed When: scanning Then: should not add to buffer", () => {
+    renderHook(() => useBarcodeScanner({ enabled: true, onScan }));
+
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Shift", bubbles: true }),
+    );
+    for (const key of "ABC") {
+      window.dispatchEvent(
+        new KeyboardEvent("keydown", { key, bubbles: true }),
+      );
+    }
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+
+    expect(onScan).toHaveBeenCalledWith("ABC");
+  });
 });

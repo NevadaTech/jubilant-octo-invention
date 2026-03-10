@@ -193,5 +193,171 @@ describe("SaleMapper", () => {
       // Assert
       expect(result.lines).toEqual([]);
     });
+
+    it("Given a SaleResponseDto with non-string typeof fields as numbers, When toDomain is called, Then they default to null", () => {
+      const dtoWeird = {
+        ...mockDto,
+        customerReference: 123,
+        externalReference: false,
+        note: null,
+        movementId: 999,
+        confirmedAt: 123,
+        cancelledAt: false,
+        pickedAt: null,
+        shippedAt: undefined,
+        completedAt: 0,
+        returnedAt: [],
+        contactId: undefined,
+        contactName: undefined,
+        warehouseName: undefined,
+        createdByName: undefined,
+        confirmedBy: undefined,
+        confirmedByName: undefined,
+        cancelledBy: undefined,
+        cancelledByName: undefined,
+        pickedBy: undefined,
+        pickedByName: undefined,
+        shippedBy: undefined,
+        shippedByName: undefined,
+        trackingNumber: undefined,
+        shippingCarrier: undefined,
+        shippingNotes: undefined,
+        completedBy: undefined,
+        completedByName: undefined,
+        returnedBy: undefined,
+        returnedByName: undefined,
+        pickingEnabled: undefined,
+      };
+
+      const result = SaleMapper.toDomain(dtoWeird as any);
+
+      expect(result.customerReference).toBeNull();
+      expect(result.externalReference).toBeNull();
+      expect(result.note).toBeNull();
+      expect(result.movementId).toBeNull();
+      expect(result.confirmedAt).toBeNull();
+      expect(result.cancelledAt).toBeNull();
+      expect(result.pickedAt).toBeNull();
+      expect(result.shippedAt).toBeNull();
+      expect(result.completedAt).toBeNull();
+      expect(result.returnedAt).toBeNull();
+      expect(result.contactId).toBeNull();
+      expect(result.contactName).toBeNull();
+      expect(result.warehouseName).toBe("");
+      expect(result.pickingEnabled).toBe(false);
+    });
+
+    it("Given a SaleResponseDto with all date strings present, When toDomain is called, Then all dates are Date objects", () => {
+      const dtoAllDates = {
+        ...mockDto,
+        cancelledAt: "2025-02-05T10:00:00.000Z",
+        pickedAt: "2025-02-06T10:00:00.000Z",
+        returnedAt: "2025-02-07T10:00:00.000Z",
+      };
+
+      const result = SaleMapper.toDomain(dtoAllDates as any);
+
+      expect(result.cancelledAt).toBeInstanceOf(Date);
+      expect(result.pickedAt).toBeInstanceOf(Date);
+      expect(result.returnedAt).toBeInstanceOf(Date);
+    });
+  });
+
+  describe("fromApiRaw - typeof branches", () => {
+    it("Given a raw dto with non-string typeof fields, When fromApiRaw is called, Then they default to null", () => {
+      const rawWeird = {
+        ...mockRaw,
+        customerReference: 123,
+        externalReference: null,
+        note: false,
+        movementId: 0,
+        confirmedAt: null,
+        cancelledAt: undefined,
+        pickedAt: 999,
+        shippedAt: false,
+        completedAt: null,
+        returnedAt: undefined,
+        contactId: undefined,
+        contactName: undefined,
+      };
+
+      const result = SaleMapper.fromApiRaw(rawWeird as any);
+
+      expect(result.customerReference).toBeNull();
+      expect(result.externalReference).toBeNull();
+      expect(result.note).toBeNull();
+      expect(result.movementId).toBeNull();
+      expect(result.confirmedAt).toBeNull();
+      expect(result.cancelledAt).toBeNull();
+      expect(result.pickedAt).toBeNull();
+      expect(result.shippedAt).toBeNull();
+      expect(result.completedAt).toBeNull();
+      expect(result.returnedAt).toBeNull();
+      expect(result.contactId).toBeNull();
+      expect(result.contactName).toBeNull();
+    });
+
+    it("Given a raw dto with all optional string fields present, When fromApiRaw is called, Then they map correctly", () => {
+      const rawFull = {
+        ...mockRaw,
+        warehouseName: "Main",
+        contactId: "ct-1",
+        contactName: "John Doe",
+        customerReference: "CUS-REF",
+        externalReference: "EXT-REF",
+        note: "A note",
+        lines: [mockLine],
+        movementId: "mov-1",
+        createdByName: "Creator",
+        confirmedAt: "2025-02-02T10:00:00.000Z",
+        confirmedBy: "user-2",
+        confirmedByName: "Confirmer",
+        cancelledAt: "2025-02-03T10:00:00.000Z",
+        cancelledBy: "user-3",
+        cancelledByName: "Canceller",
+        pickedAt: "2025-02-04T10:00:00.000Z",
+        pickedBy: "user-4",
+        pickedByName: "Picker",
+        shippedAt: "2025-02-05T10:00:00.000Z",
+        shippedBy: "user-5",
+        shippedByName: "Shipper",
+        trackingNumber: "TRACK-123",
+        shippingCarrier: "FedEx",
+        shippingNotes: "Handle with care",
+        completedAt: "2025-02-06T10:00:00.000Z",
+        completedBy: "user-6",
+        completedByName: "Completer",
+        returnedAt: "2025-02-07T10:00:00.000Z",
+        returnedBy: "user-7",
+        returnedByName: "Returner",
+        pickingEnabled: true,
+      };
+
+      const result = SaleMapper.fromApiRaw(rawFull as any);
+
+      expect(result.contactId).toBe("ct-1");
+      expect(result.contactName).toBe("John Doe");
+      expect(result.customerReference).toBe("CUS-REF");
+      expect(result.externalReference).toBe("EXT-REF");
+      expect(result.note).toBe("A note");
+      expect(result.movementId).toBe("mov-1");
+      expect(result.cancelledAt).toBeInstanceOf(Date);
+      expect(result.pickedAt).toBeInstanceOf(Date);
+      expect(result.shippedAt).toBeInstanceOf(Date);
+      expect(result.completedAt).toBeInstanceOf(Date);
+      expect(result.returnedAt).toBeInstanceOf(Date);
+      expect(result.trackingNumber).toBe("TRACK-123");
+      expect(result.shippingCarrier).toBe("FedEx");
+      expect(result.shippingNotes).toBe("Handle with care");
+      expect(result.pickingEnabled).toBe(true);
+    });
+  });
+
+  describe("lineToDomain - barcode branch", () => {
+    it("Given a line with null productBarcode, When lineToDomain is called, Then barcode is null", () => {
+      const lineNoBarcode = { ...mockLine, productBarcode: undefined };
+      const result = SaleMapper.lineToDomain(lineNoBarcode as any);
+      expect(result.productBarcode).toBeNull();
+    });
   });
 });

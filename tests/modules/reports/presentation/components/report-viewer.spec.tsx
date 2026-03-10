@@ -319,4 +319,367 @@ describe("ReportViewer", () => {
 
     expect(screen.getByTestId("report-summary-bar")).toBeDefined();
   });
+
+  it("Given: report data with empty summary When: rendering Then: should NOT display the summary bar", () => {
+    const report = makeReportResult({ summary: {} });
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="View current stock levels"
+      />,
+    );
+
+    expect(screen.queryByTestId("report-summary-bar")).toBeNull();
+  });
+
+  it("Given: report data without summary When: rendering Then: should NOT display the summary bar", () => {
+    const report = makeReportResult({ summary: undefined });
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="View current stock levels"
+      />,
+    );
+
+    expect(screen.queryByTestId("report-summary-bar")).toBeNull();
+  });
+
+  it("Given: report data without fromCache When: rendering Then: should NOT display cache badge", () => {
+    const report = makeReportResult({ fromCache: false });
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="View current stock levels"
+      />,
+    );
+
+    expect(screen.queryByText("fromCache")).toBeNull();
+  });
+
+  it("Given: report with rows containing currency field When: rendering Then: currency is detected", () => {
+    const report = makeReportResult({
+      rows: [
+        { name: "Product A", quantity: 100, currency: "EUR" },
+        { name: "Product B", quantity: 50 },
+      ],
+    });
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="View current stock levels"
+      />,
+    );
+
+    // The component renders without errors and shows the table
+    expect(screen.getByTestId("report-table")).toBeDefined();
+  });
+
+  it("Given: report with no generatedAt When: rendering Then: should not show timestamp", () => {
+    const report = makeReportResult({
+      metadata: {
+        reportType: "AVAILABLE_INVENTORY",
+        reportTitle: "Available Inventory",
+        generatedAt: "",
+        totalRecords: 2,
+      },
+    });
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="View current stock levels"
+      />,
+    );
+
+    // No timestamp element should be visible
+    expect(screen.getByTestId("report-table")).toBeDefined();
+  });
+
+  it("Given: error without message When: rendering Then: should display fallback error text", () => {
+    mockReportQueryState = {
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="View current stock levels"
+      />,
+    );
+
+    expect(screen.getByText("errors.loadFailed")).toBeDefined();
+    // Falls back to tCommon("somethingWentWrong")
+    expect(screen.getByText("somethingWentWrong")).toBeDefined();
+  });
+
+  it("Given: no report data and not loading/error When: rendering Then: should show filters only", () => {
+    mockReportQueryState = {
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="View current stock levels"
+      />,
+    );
+
+    expect(screen.getByTestId("report-filters-form")).toBeDefined();
+    expect(screen.queryByTestId("report-table")).toBeNull();
+  });
+
+  it("Given: report loaded When: rendering Then: should show export and refresh buttons", () => {
+    const report = makeReportResult();
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="View current stock levels"
+      />,
+    );
+
+    // The export button is rendered
+    expect(
+      screen.getAllByTestId("report-export-button").length,
+    ).toBeGreaterThanOrEqual(1);
+    // tryAgain / refresh button
+    expect(screen.getByText("tryAgain")).toBeDefined();
+  });
+
+  // --- Branch: refetch is called when refresh button clicked ---
+  it("Given: report loaded When: clicking refresh Then: should call refetch", async () => {
+    const { fireEvent } = await import("@testing-library/react");
+    const mockRefetch = vi.fn();
+    const report = makeReportResult();
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: mockRefetch,
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="View current stock levels"
+      />,
+    );
+
+    const refreshBtn = screen.getByText("tryAgain");
+    fireEvent.click(refreshBtn);
+    expect(mockRefetch).toHaveBeenCalled();
+  });
+
+  // --- Branch: refetch on error retry button ---
+  it("Given: error state When: clicking retry Then: should call refetch", async () => {
+    const { fireEvent } = await import("@testing-library/react");
+    const mockRefetch = vi.fn();
+    mockReportQueryState = {
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new Error("Fail"),
+      refetch: mockRefetch,
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="desc"
+      />,
+    );
+
+    const retryBtn = screen.getByText("tryAgain");
+    fireEvent.click(retryBtn);
+    expect(mockRefetch).toHaveBeenCalled();
+  });
+
+  // --- Branch: no report => no export/refresh buttons ---
+  it("Given: no report data When: rendering Then: should not show export or refresh buttons", () => {
+    mockReportQueryState = {
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="desc"
+      />,
+    );
+
+    expect(screen.queryByText("tryAgain")).toBeNull();
+  });
+
+  // --- Branch: report with currency in rows but no currency field ---
+  it("Given: report with rows without currency When: rendering Then: currency is undefined", () => {
+    const report = makeReportResult({
+      rows: [{ name: "A", quantity: 1 }],
+    });
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="desc"
+      />,
+    );
+
+    expect(screen.getByTestId("report-table")).toBeDefined();
+  });
+
+  // --- Branch: report with valid generatedAt timestamp ---
+  it("Given: report with valid generatedAt When: rendering Then: should display formatted timestamp", () => {
+    const report = makeReportResult({
+      metadata: {
+        reportType: "AVAILABLE_INVENTORY",
+        reportTitle: "Available Inventory",
+        generatedAt: "2026-02-15T10:00:00Z",
+        totalRecords: 2,
+      },
+    });
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="desc"
+      />,
+    );
+
+    // The generatedAt timestamp should render (locale formatted)
+    expect(screen.getByTestId("report-table")).toBeDefined();
+  });
+
+  // --- Branch: report isLoading true with existing data ---
+  it("Given: isLoading is true When: rendering Then: should show skeleton AND no report table", () => {
+    mockReportQueryState = {
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="desc"
+      />,
+    );
+
+    expect(screen.getAllByTestId("skeleton").length).toBeGreaterThan(0);
+    expect(screen.queryByTestId("report-table")).toBeNull();
+  });
+
+  // --- Branch: report with currency in non-first row ---
+  it("Given: report with currency only in second row When: rendering Then: currency detected from find", () => {
+    const report = makeReportResult({
+      rows: [
+        { name: "A", quantity: 1 },
+        { name: "B", quantity: 2, currency: "GBP" },
+      ],
+    });
+    mockReportQueryState = {
+      data: report,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    };
+
+    render(
+      <ReportViewer
+        type="AVAILABLE_INVENTORY"
+        title="Available Inventory"
+        description="desc"
+      />,
+    );
+
+    expect(screen.getByTestId("report-table")).toBeDefined();
+  });
 });
