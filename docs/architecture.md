@@ -1,86 +1,89 @@
-# Arquitectura del Frontend
+> **[English](./architecture.md)** | [Español](./architecture.es.md)
 
-## Tabla de Contenidos
+# Frontend Architecture
 
-- [Vision General](#vision-general)
+## Table of Contents
+
+- [Overview](#overview)
 - [Clean / Hexagonal Architecture](#clean--hexagonal-architecture)
-- [Capas de la Arquitectura](#capas-de-la-arquitectura)
-- [Estado y Datos](#estado-y-datos)
-- [Flujo de Autenticacion](#flujo-de-autenticacion)
-- [Inyeccion de Dependencias](#inyeccion-de-dependencias)
-- [Internacionalizacion](#internacionalizacion)
-- [Sistema de Permisos (RBAC)](#sistema-de-permisos-rbac)
-- [Routing y Middleware](#routing-y-middleware)
-- [Componentes UI](#componentes-ui)
+- [Architecture Layers](#architecture-layers)
+- [State and Data](#state-and-data)
+- [Authentication Flow](#authentication-flow)
+- [Dependency Injection](#dependency-injection)
+- [Internationalization](#internationalization)
+- [Permissions System (RBAC)](#permissions-system-rbac)
+- [Routing and Middleware](#routing-and-middleware)
+- [UI Components](#ui-components)
+- [Architecture Decision Records](#architecture-decision-records)
 
 ---
 
-## Vision General
+## Overview
 
-El frontend sigue tres principios arquitectonicos fundamentales:
+The frontend follows three fundamental architectural principles:
 
-1. **Screaming Architecture**: La estructura de carpetas refleja el dominio del negocio, no el framework
-2. **Clean Architecture**: Separacion de capas con dependencias hacia adentro
-3. **Hexagonal Architecture (Ports & Adapters)**: El dominio en el centro, adaptadores para la infraestructura
+1. **Screaming Architecture**: The folder structure reflects the business domain, not the framework
+2. **Clean Architecture**: Layer separation with dependencies pointing inward
+3. **Hexagonal Architecture (Ports & Adapters)**: The domain at the center, adapters for infrastructure
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                      PRESENTATION LAYER                         │
-│   Components, Hooks (React Query), Schemas (Zod)               │
-├─────────────────────────────────────────────────────────────────┤
-│                      INFRASTRUCTURE LAYER                       │
-│   API Adapters (Axios), Zustand Stores, TokenService            │
-├─────────────────────────────────────────────────────────────────┤
-│                      APPLICATION LAYER                          │
-│   DTOs, Mappers (API ↔ Domain), Use Cases, Ports               │
-├─────────────────────────────────────────────────────────────────┤
-│                        DOMAIN LAYER                             │
-│   Entities, Value Objects, Workflow Services, Permissions       │
-└─────────────────────────────────────────────────────────────────┘
++---------------------------------------------------------------+
+|                      PRESENTATION LAYER                         |
+|   Components, Hooks (React Query), Schemas (Zod)               |
++-----------------------------------------------------------------+
+|                      INFRASTRUCTURE LAYER                       |
+|   API Adapters (Axios), Zustand Stores, TokenService            |
++-----------------------------------------------------------------+
+|                      APPLICATION LAYER                          |
+|   DTOs, Mappers (API <-> Domain), Use Cases, Ports              |
++-----------------------------------------------------------------+
+|                        DOMAIN LAYER                             |
+|   Entities, Value Objects, Workflow Services, Permissions       |
++-----------------------------------------------------------------+
 ```
 
-Las dependencias **siempre apuntan hacia adentro**: Presentation → Infrastructure → Application → Domain.
+Dependencies **always point inward**: Presentation -> Infrastructure -> Application -> Domain.
 
 ---
 
 ## Clean / Hexagonal Architecture
 
-### Estructura de un Modulo
+### Module Structure
 
-Cada modulo de negocio en `src/modules/` sigue la misma estructura:
+Each business module in `src/modules/` follows the same structure:
 
 ```
-modules/{nombre}/
+modules/{name}/
 ├── domain/
-│   ├── entities/              # Entidades de dominio
-│   │   └── {name}.entity.ts   # Extiende Entity<string> de @/shared/domain
-│   ├── services/              # Servicios de dominio (ej: WorkflowService)
-│   ├── value-objects/         # Objetos de valor inmutables
-│   └── ports/                 # Interfaces que definen lo que el dominio necesita
+│   ├── entities/              # Domain entities
+│   │   └── {name}.entity.ts   # Extends Entity<string> from @/shared/domain
+│   ├── services/              # Domain services (e.g., WorkflowService)
+│   ├── value-objects/         # Immutable value objects
+│   └── ports/                 # Interfaces defining what the domain needs
 │       └── {name}-repository.port.ts
 │
 ├── application/
 │   ├── dto/                   # Data Transfer Objects
-│   │   ├── {name}.dto.ts      # DTOs de respuesta de la API
+│   │   ├── {name}.dto.ts      # API response DTOs
 │   │   └── {name}-filters.dto.ts
-│   ├── mappers/               # Conversion entre capas
+│   ├── mappers/               # Conversion between layers
 │   │   └── {name}.mapper.ts   # toDomain(), toApi(), fromApiRaw()
-│   ├── use-cases/             # Logica de negocio (opcional en frontend)
-│   └── ports/                 # Puertos de repositorio con PaginatedResult<T>
+│   ├── use-cases/             # Business logic (optional in frontend)
+│   └── ports/                 # Repository ports with PaginatedResult<T>
 │
 ├── infrastructure/
-│   ├── adapters/              # Implementacion de los puertos
-│   │   └── {name}-api.adapter.ts  # Usa apiClient (Axios)
-│   ├── store/                 # Estado local del modulo (Zustand)
+│   ├── adapters/              # Port implementations
+│   │   └── {name}-api.adapter.ts  # Uses apiClient (Axios)
+│   ├── store/                 # Module local state (Zustand)
 │   │   └── {name}.store.ts
-│   └── services/              # Servicios tecnicos (ej: TokenService)
+│   └── services/              # Technical services (e.g., TokenService)
 │
 └── presentation/
     ├── hooks/                 # React Query hooks
     │   └── use-{names}.ts     # useProducts(), useCreateProduct(), etc.
-    ├── schemas/               # Validacion de formularios
+    ├── schemas/               # Form validation
     │   └── {name}.schema.ts   # Zod schemas
-    └── components/            # Componentes React
+    └── components/            # React components
         ├── {name}-list.tsx
         ├── {name}-detail.tsx
         ├── {name}-form.tsx
@@ -88,27 +91,27 @@ modules/{nombre}/
         └── index.ts           # Barrel export
 ```
 
-### Flujo de Datos
+### Data Flow
 
 ```
-Usuario interactua con Component
-    ↓
-Component usa Hook (useProducts)
-    ↓
-Hook llama al Adapter via React Query
-    ↓
-Adapter hace HTTP request con apiClient
-    ↓
-Adapter recibe respuesta API
-    ↓
-Mapper convierte DTO → Entity de dominio
-    ↓
-Hook retorna Entity al Component
-    ↓
-Component renderiza la Entity
+User interacts with Component
+    |
+Component uses Hook (useProducts)
+    |
+Hook calls Adapter via React Query
+    |
+Adapter makes HTTP request with apiClient
+    |
+Adapter receives API response
+    |
+Mapper converts DTO -> Domain Entity
+    |
+Hook returns Entity to Component
+    |
+Component renders the Entity
 ```
 
-### Ejemplo Concreto: Listar Productos
+### Concrete Example: Listing Products
 
 ```typescript
 // 1. Domain Entity
@@ -151,31 +154,31 @@ function ProductList() {
 
 ---
 
-## Capas de la Arquitectura
+## Architecture Layers
 
 ### Domain Layer (`shared/domain/`)
 
-Contiene las abstracciones base del sistema:
+Contains the base abstractions of the system:
 
-| Clase                      | Archivo                         | Proposito                               |
-| -------------------------- | ------------------------------- | --------------------------------------- |
-| `Entity<T>`                | `entities/entity.ts`            | Clase base con `id`, `equals()`         |
-| `AggregateRoot<T>`         | `entities/aggregate-root.ts`    | Extiende Entity, para agregados         |
-| `ValueObject<T>`           | `value-objects/value-object.ts` | Objetos inmutables, igualdad por valor  |
-| `WorkflowService<TStatus>` | `services/workflow.service.ts`  | Maquina de estados para transiciones    |
-| `PERMISSIONS`              | `permissions.ts`                | Constantes de permisos + mapeo de rutas |
+| Class                      | File                            | Purpose                                  |
+| -------------------------- | ------------------------------- | ---------------------------------------- |
+| `Entity<T>`                | `entities/entity.ts`            | Base class with `id`, `equals()`         |
+| `AggregateRoot<T>`         | `entities/aggregate-root.ts`    | Extends Entity, for aggregates           |
+| `ValueObject<T>`           | `value-objects/value-object.ts` | Immutable objects, equality by value     |
+| `WorkflowService<TStatus>` | `services/workflow.service.ts`  | State machine for transitions            |
+| `PERMISSIONS`              | `permissions.ts`                | Permission constants + route mapping     |
 
 ### Application Layer
 
-Cada modulo define sus propios DTOs, mappers y puertos:
+Each module defines its own DTOs, mappers, and ports:
 
-- **DTOs**: Representan la estructura de datos de la API
-- **Mappers**: Convierten entre DTO de API y Entity de dominio
-- **Ports**: Interfaces que definen las operaciones disponibles
-- **PaginatedResult<T>**: Definido localmente en cada puerto (no compartido)
+- **DTOs**: Represent the API data structure
+- **Mappers**: Convert between API DTOs and domain Entities
+- **Ports**: Interfaces defining available operations
+- **PaginatedResult<T>**: Defined locally in each port (not shared)
 
 ```typescript
-// Cada port define su propio PaginatedResult
+// Each port defines its own PaginatedResult
 interface PaginatedResult<T> {
   data: T[];
   pagination: {
@@ -189,10 +192,10 @@ interface PaginatedResult<T> {
 
 ### Infrastructure Layer
 
-**API Adapters**: Implementan los puertos usando `apiClient` (Axios singleton):
+**API Adapters**: Implement ports using `apiClient` (Axios singleton):
 
 ```typescript
-// apiClient agrega automaticamente:
+// apiClient automatically adds:
 // - Authorization: Bearer {token}
 // - X-Organization-Slug
 // - X-Organization-ID
@@ -200,7 +203,7 @@ interface PaginatedResult<T> {
 const apiClient = new AxiosHttpClient(baseURL);
 ```
 
-**Zustand Stores**: Estado local de cada modulo (filtros, modals):
+**Zustand Stores**: Module-local state (filters, modals):
 
 ```typescript
 const useInventoryStore = create<InventoryStore>((set) => ({
@@ -213,7 +216,7 @@ const useInventoryStore = create<InventoryStore>((set) => ({
 
 ### Presentation Layer
 
-**React Query Hooks**: Patron de query key factory:
+**React Query Hooks**: Query key factory pattern:
 
 ```typescript
 const productKeys = {
@@ -225,7 +228,7 @@ const productKeys = {
 };
 ```
 
-**Zod Schemas**: Validacion de formularios:
+**Zod Schemas**: Form validation:
 
 ```typescript
 const productSchema = z.object({
@@ -237,53 +240,53 @@ const productSchema = z.object({
 
 ---
 
-## Estado y Datos
+## State and Data
 
-### Arquitectura de Estado
+### State Architecture
 
-El sistema usa una **separacion clara** entre server state y client state:
+The system uses a **clear separation** between server state and client state:
 
 ```
-┌─────────────────────────────────────────────┐
-│                SERVER STATE                  │
-│          (TanStack React Query)              │
-│                                              │
-│  - Datos de la API (productos, ventas, etc.) │
-│  - Cache automatico (staleTime: 60s)         │
-│  - Invalidacion selectiva por query keys     │
-│  - Refetch en background                     │
-│  - Optimistic updates                        │
-└─────────────────────────────────────────────┘
++---------------------------------------------+
+|                SERVER STATE                  |
+|          (TanStack React Query)              |
+|                                              |
+|  - API data (products, sales, etc.)          |
+|  - Automatic caching (staleTime: 60s)        |
+|  - Selective invalidation by query keys      |
+|  - Background refetch                        |
+|  - Optimistic updates                        |
++---------------------------------------------+
 
-┌─────────────────────────────────────────────┐
-│                CLIENT STATE                  │
-│               (Zustand)                      │
-│                                              │
-│  - Filtros de busqueda                       │
-│  - Estado de modals/forms                    │
-│  - Preferencias de UI                        │
-│  - Auth store (usuario, tokens)              │
-└─────────────────────────────────────────────┘
++---------------------------------------------+
+|                CLIENT STATE                  |
+|               (Zustand)                      |
+|                                              |
+|  - Search filters                            |
+|  - Modal/form state                          |
+|  - UI preferences                            |
+|  - Auth store (user, tokens)                 |
++---------------------------------------------+
 ```
 
-### Configuracion de Query Client
+### Query Client Configuration
 
 ```typescript
 // src/app/[locale]/providers.tsx
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000, // 1 minuto
-      refetchOnWindowFocus: false, // No refetch al volver a la ventana
+      staleTime: 60 * 1000, // 1 minute
+      refetchOnWindowFocus: false, // No refetch on window focus
     },
   },
 });
 ```
 
-### Patron de Invalidacion
+### Invalidation Pattern
 
 ```typescript
-// Despues de crear un producto, invalida la lista
+// After creating a product, invalidate the list
 const createProduct = useMutation({
   mutationFn: (data) => adapter.create(data),
   onSuccess: () => {
@@ -294,48 +297,48 @@ const createProduct = useMutation({
 
 ---
 
-## Flujo de Autenticacion
+## Authentication Flow
 
 ### Login
 
 ```
-1. Usuario ingresa org slug + email + password
-2. useLogin() → authRepository.login()
-3. API retorna: { accessToken, refreshToken, expiresAt, user }
-4. TokenService.setTokens() → localStorage + cookie
-5. useAuthStore.login() → actualiza user + isAuthenticated
-6. Router redirige a /dashboard (o callbackUrl)
+1. User enters org slug + email + password
+2. useLogin() -> authRepository.login()
+3. API returns: { accessToken, refreshToken, expiresAt, user }
+4. TokenService.setTokens() -> localStorage + cookie
+5. useAuthStore.login() -> updates user + isAuthenticated
+6. Router redirects to /dashboard (or callbackUrl)
 ```
 
-### Hidratacion de Sesion (al cargar la app)
+### Session Hydration (on app load)
 
 ```
-1. AuthHydration component → useAuthStore.hydrate()
-2. Verificar si existe token y es valido
-3. Si el token expira pronto (<60s), hacer refresh
-4. GET /users/me para obtener usuario actual
-5. isHydrated = true (desbloquea las rutas)
+1. AuthHydration component -> useAuthStore.hydrate()
+2. Check if token exists and is valid
+3. If token expires soon (<60s), perform refresh
+4. GET /users/me to fetch current user
+5. isHydrated = true (unblocks routes)
 ```
 
-### Renovacion Automatica de Token (en 401)
+### Automatic Token Renewal (on 401)
 
 ```
-1. Request recibe 401
-2. Interceptor de AxiosHttpClient detecta el 401
-3. POST /auth/refresh con refreshToken
-4. Actualiza tokens en localStorage + cookie
-5. Reintenta la request original
-6. Si multiples 401s simultaneos, comparten un solo refresh
+1. Request receives 401
+2. AxiosHttpClient interceptor detects the 401
+3. POST /auth/refresh with refreshToken
+4. Updates tokens in localStorage + cookie
+5. Retries the original request
+6. If multiple simultaneous 401s, they share a single refresh
 ```
 
-### Logout / Expiracion
+### Logout / Expiration
 
 ```
-1. Token expira o refresh falla
-2. Interceptor emite evento 'auth:session-expired'
-3. AuthHydration escucha el evento
-4. forceLogout() → limpia tokens + redirige a /login
-5. Toast: "Tu sesion ha expirado"
+1. Token expires or refresh fails
+2. Interceptor emits 'auth:session-expired' event
+3. AuthHydration listens for the event
+4. forceLogout() -> clears tokens + redirects to /login
+5. Toast: "Your session has expired"
 ```
 
 ### TokenService
@@ -354,16 +357,16 @@ class TokenService {
 }
 ```
 
-Los tokens se almacenan en:
+Tokens are stored in:
 
-- **localStorage**: para el cliente JavaScript
-- **Cookie**: para el middleware de Next.js (`proxy.ts`)
+- **localStorage**: for the JavaScript client
+- **Cookie**: for the Next.js middleware (`proxy.ts`)
 
 ---
 
-## Inyeccion de Dependencias
+## Dependency Injection
 
-El proyecto usa un **IoC Container manual** (sin framework de DI):
+The project uses a **manual IoC Container** (no DI framework):
 
 ```typescript
 // src/config/di/container.ts
@@ -371,7 +374,7 @@ interface Container {
   authRepository: AuthRepositoryPort;
   productRepository: ProductRepositoryPort;
   saleRepository: SaleRepositoryPort;
-  // ... todos los repositorios
+  // ... all repositories
 }
 
 function createContainer(): Container {
@@ -382,25 +385,25 @@ function createContainer(): Container {
   };
 }
 
-// Singleton global
+// Global singleton
 let container: Container | null = null;
 export function getContainer(): Container { ... }
 ```
 
-### Uso en Componentes
+### Usage in Components
 
 ```typescript
 // Via React Context
 const { productRepository } = useContainer();
 
-// O directamente en hooks
+// Or directly in hooks
 const adapter = getContainer().productRepository;
 ```
 
 ### Testing
 
 ```typescript
-// Mock-friendly: sobrescribir el container
+// Mock-friendly: override the container
 setContainer({
   productRepository: mockProductRepository,
 });
@@ -408,30 +411,30 @@ setContainer({
 
 ---
 
-## Internacionalizacion
+## Internationalization
 
-### Configuracion (next-intl)
+### Configuration (next-intl)
 
 ```
 src/i18n/
 ├── config.ts       # Locales: ['en', 'es'], default: 'en'
-├── routing.ts      # Routing con prefix /en/, /es/
+├── routing.ts      # Routing with prefix /en/, /es/
 ├── request.ts      # Server-side i18n
-└── navigation.ts   # Link, useRouter con locale
+└── navigation.ts   # Link, useRouter with locale
 
 src/lib/messages/
-├── en.json         # ~2000+ keys en ingles
-└── es.json         # ~2000+ keys en espanol
+├── en.json         # ~2000+ keys in English
+└── es.json         # ~2000+ keys in Spanish
 ```
 
-### Patron de Rutas
+### Route Pattern
 
 ```
-/en/dashboard/inventory/products  → Ingles
-/es/dashboard/inventory/products  → Espanol
+/en/dashboard/inventory/products  -> English
+/es/dashboard/inventory/products  -> Spanish
 ```
 
-### Uso en Componentes
+### Usage in Components
 
 ```typescript
 // Client Component
@@ -442,40 +445,40 @@ return <h1>{t('title')}</h1>;
 const t = await getTranslations('inventory.products');
 ```
 
-### Namespaces de Traduccion
+### Translation Namespaces
 
-| Namespace                | Contenido                            |
-| ------------------------ | ------------------------------------ |
-| `auth.*`                 | Login, sesion, errores de auth       |
-| `common.*`               | Botones, acciones, estados genericos |
-| `dashboard.*`            | Metricas, graficos                   |
-| `inventory.products.*`   | UI de productos                      |
-| `inventory.categories.*` | UI de categorias                     |
-| `inventory.warehouses.*` | UI de bodegas                        |
-| `inventory.stock.*`      | UI de stock                          |
-| `inventory.movements.*`  | UI de movimientos                    |
-| `inventory.transfers.*`  | UI de transferencias                 |
-| `sales.*`                | UI de ventas                         |
-| `returns.*`              | UI de devoluciones                   |
-| `reports.*`              | UI de reportes                       |
-| `users.*`                | UI de usuarios                       |
-| `roles.*`                | UI de roles                          |
-| `audit.*`                | UI de auditoria                      |
-| `settings.*`             | UI de configuracion                  |
+| Namespace                | Content                            |
+| ------------------------ | ---------------------------------- |
+| `auth.*`                 | Login, session, auth errors        |
+| `common.*`               | Buttons, actions, generic states   |
+| `dashboard.*`            | Metrics, charts                    |
+| `inventory.products.*`   | Products UI                        |
+| `inventory.categories.*` | Categories UI                      |
+| `inventory.warehouses.*` | Warehouses UI                      |
+| `inventory.stock.*`      | Stock UI                           |
+| `inventory.movements.*`  | Movements UI                       |
+| `inventory.transfers.*`  | Transfers UI                       |
+| `sales.*`                | Sales UI                           |
+| `returns.*`              | Returns UI                         |
+| `reports.*`              | Reports UI                         |
+| `users.*`                | Users UI                           |
+| `roles.*`                | Roles UI                           |
+| `audit.*`                | Audit UI                           |
+| `settings.*`             | Settings UI                        |
 
 ---
 
-## Sistema de Permisos (RBAC)
+## Permissions System (RBAC)
 
-### Formato de Permisos
+### Permission Format
 
 ```
-MODULO:ACCION
+MODULE:ACTION
 ```
 
-Ejemplos: `PRODUCTS:CREATE`, `SALES:CONFIRM`, `REPORTS:VIEW`, `SETTINGS:MANAGE`
+Examples: `PRODUCTS:CREATE`, `SALES:CONFIRM`, `REPORTS:VIEW`, `SETTINGS:MANAGE`
 
-### Constantes
+### Constants
 
 ```typescript
 // src/shared/domain/permissions.ts
@@ -486,7 +489,7 @@ export const PERMISSIONS = {
   PRODUCTS_DELETE: "PRODUCTS:DELETE",
   SALES_CREATE: "SALES:CREATE",
   SALES_CONFIRM: "SALES:CONFIRM",
-  // ... 80+ permisos
+  // ... 80+ permissions
 };
 
 export const ROUTE_PERMISSIONS = {
@@ -502,102 +505,102 @@ export const ROUTE_PERMISSIONS = {
 const { hasPermission, hasAnyPermission } = usePermissions();
 
 if (hasPermission(PERMISSIONS.PRODUCTS_CREATE)) {
-  // Mostrar boton de crear
+  // Show create button
 }
 ```
 
-### Componentes de Control de Acceso
+### Access Control Components
 
 ```typescript
-// Ocultar/mostrar elementos de UI
+// Hide/show UI elements
 <PermissionGate permission={PERMISSIONS.PRODUCTS_CREATE}>
-  <Button>Crear Producto</Button>
+  <Button>Create Product</Button>
 </PermissionGate>
 
-// Guardia a nivel de pagina (muestra AccessDenied si no tiene permiso)
+// Page-level guard (shows AccessDenied if no permission)
 <RequirePermission permission={PERMISSIONS.PRODUCTS_READ}>
   <ProductListPage />
 </RequirePermission>
 ```
 
-### Filtrado del Sidebar
+### Sidebar Filtering
 
-Los items del sidebar tienen `requiredPermissions`:
+Sidebar items have `requiredPermissions`:
 
 ```typescript
 const navItems = [
   {
-    label: "Productos",
+    label: "Products",
     href: "/dashboard/inventory/products",
     requiredPermissions: [PERMISSIONS.PRODUCTS_READ],
   },
 ];
-// Items sin permiso se ocultan automaticamente
+// Items without permission are automatically hidden
 ```
 
 ---
 
-## Routing y Middleware
+## Routing and Middleware
 
-### Next.js 16: proxy.ts (no middleware.ts)
+### Next.js 16: proxy.ts (not middleware.ts)
 
-Next.js 16 renombro `middleware.ts` a `proxy.ts`:
+Next.js 16 renamed `middleware.ts` to `proxy.ts`:
 
 ```typescript
 // src/proxy.ts
 export function proxy(request: NextRequest) {
-  // 1. Manejo de i18n (next-intl)
-  // 2. Verificacion de token en cookies para rutas protegidas
-  // 3. Redireccion a /login si no autenticado
-  // 4. Redireccion a /dashboard si ya autenticado y va a /login
+  // 1. i18n handling (next-intl)
+  // 2. Token verification in cookies for protected routes
+  // 3. Redirect to /login if not authenticated
+  // 4. Redirect to /dashboard if already authenticated and going to /login
 }
 ```
 
-### Estructura de Rutas
+### Route Structure
 
 ```
 src/app/[locale]/
-├── (auth)/              # Layout sin sidebar
+├── (auth)/              # Layout without sidebar
 │   └── login/page.tsx
-└── (dashboard)/         # Layout con sidebar + header
+└── (dashboard)/         # Layout with sidebar + header
     ├── layout.tsx       # DashboardShell (Sidebar + Header + Content)
     └── dashboard/
-        ├── page.tsx     # Home con metricas
-        └── {modulo}/
-            ├── page.tsx         # Lista
-            ├── new/page.tsx     # Crear
+        ├── page.tsx     # Home with metrics
+        └── {module}/
+            ├── page.tsx         # List
+            ├── new/page.tsx     # Create
             └── [id]/
-                ├── page.tsx     # Detalle
-                └── edit/page.tsx # Editar
+                ├── page.tsx     # Detail
+                └── edit/page.tsx # Edit
 ```
 
 ---
 
-## Componentes UI
+## UI Components
 
-### Libreria de Componentes (`src/ui/`)
+### Component Library (`src/ui/`)
 
-24 componentes reutilizables basados en Radix UI + Tailwind:
+24 reusable components based on Radix UI + Tailwind:
 
-| Categoria      | Componentes                                                                                             |
+| Category       | Components                                                                                              |
 | -------------- | ------------------------------------------------------------------------------------------------------- |
-| **Formulario** | Button, Input, Textarea, Label, FormField, CurrencyInput, Select, SearchableSelect, MultiSelect, Switch |
-| **Datos**      | Table, TablePagination, Badge, SortableHeader                                                           |
+| **Form**       | Button, Input, Textarea, Label, FormField, CurrencyInput, Select, SearchableSelect, MultiSelect, Switch |
+| **Data**       | Table, TablePagination, Badge, SortableHeader                                                           |
 | **Modals**     | Dialog, AlertDialog, ConfirmDeleteDialog                                                                |
-| **Navegacion** | DropdownMenu, Tabs                                                                                      |
+| **Navigation** | DropdownMenu, Tabs                                                                                      |
 | **Feedback**   | Spinner, Skeleton                                                                                       |
 | **Layout**     | Card, UserAvatar, PagePlaceholder                                                                       |
 
-### Variantes de Badge
+### Badge Variants
 
 ```typescript
-// Disponibles: default, secondary, destructive, outline, success, warning, info, error
-<Badge variant="success">Activo</Badge>
-<Badge variant="destructive">Eliminado</Badge>
-<Badge variant="warning">Pendiente</Badge>
+// Available: default, secondary, destructive, outline, success, warning, info, error
+<Badge variant="success">Active</Badge>
+<Badge variant="destructive">Deleted</Badge>
+<Badge variant="warning">Pending</Badge>
 ```
 
-### Patron cn() para clases condicionales
+### cn() Pattern for Conditional Classes
 
 ```typescript
 import { cn } from '@/ui/lib/utils';
@@ -608,3 +611,39 @@ import { cn } from '@/ui/lib/utils';
   variant === 'primary' && 'primary-classes',
 )} />
 ```
+
+---
+
+## Architecture Decision Records
+
+### ADR-1: Local PaginatedResult per Port
+
+**Context**: Multiple modules need paginated responses from the API, and pagination shapes may vary between endpoints.
+
+**Decision**: Each port file defines its own `PaginatedResult<T>` interface locally rather than importing a shared one from `@/shared/domain`.
+
+**Rationale**: Different backend endpoints may return slightly different pagination metadata (e.g., some include `totalPages`, others do not; some wrap data in `{ success, message, data }`, others in `{ data, pagination }`). By keeping `PaginatedResult<T>` local to each port, each module can adapt to its specific API contract without forcing a one-size-fits-all type. This also avoids coupling modules to a shared type that would require coordinated changes when a single API endpoint evolves.
+
+### ADR-2: Manual Dependency Injection Container
+
+**Context**: The application needs to decouple presentation hooks from infrastructure adapters for testability and flexibility.
+
+**Decision**: Use a hand-written IoC container (`src/config/di/container.ts`) instead of a DI framework like InversifyJS or tsyringe.
+
+**Rationale**: Frontend DI frameworks add runtime overhead (reflect-metadata, decorators) and increase bundle size. The number of injectable services in this project (roughly one repository adapter per module) is small enough that a plain TypeScript object with explicit wiring is sufficient. The manual container is fully type-safe without decorators, trivially mockable in tests via `setContainer()`, and has zero additional dependencies.
+
+### ADR-3: proxy.ts Instead of middleware.ts (Next.js 16)
+
+**Context**: Next.js 16 introduced a breaking change that renames the edge middleware entry point from `middleware.ts` / `middleware()` to `proxy.ts` / `proxy()`.
+
+**Decision**: The project uses `src/proxy.ts` exporting `export function proxy(request: NextRequest)` and must not be renamed back to `middleware.ts`.
+
+**Rationale**: This is a mandatory framework requirement in Next.js 16. The file handles i18n routing (via next-intl), token-based authentication checks on protected routes, and login/dashboard redirects. Renaming it to `middleware.ts` would cause the edge function to be silently ignored at runtime, breaking authentication guards and locale detection.
+
+### ADR-4: HttpOnly Cookies for Token Storage
+
+**Context**: The application needs to store JWT access and refresh tokens securely in the browser.
+
+**Decision**: Tokens are stored in HttpOnly, Secure, SameSite=Strict cookies via BFF (Backend-for-Frontend) API routes (`src/app/api/auth/{login,refresh,logout}/route.ts`). The `TokenService` in localStorage only stores non-sensitive data (user profile, organization info, token expiry timestamp) -- never the tokens themselves in production.
+
+**Rationale**: HttpOnly cookies are inaccessible to JavaScript, which eliminates the most common XSS token-theft vector. The `Secure` flag ensures cookies are only sent over HTTPS. `SameSite=Strict` mitigates CSRF attacks. The BFF pattern keeps the token exchange server-side so that raw tokens never appear in client-side code. This approach is recommended by OWASP for SPAs that communicate with their own backend.

@@ -1,20 +1,20 @@
-# Testing Structure - Inventory System
+# Estructura de Tests - Sistema de Inventarios
 
-> **[English](./testing-structure.md)** | [Espanol](./testing-structure.es.md)
+> [English](./testing-structure.md) | **[Espanol](./testing-structure.es.md)**
 
-**Testing Framework: Vitest v4** (~227 suites, ~1,921 tests)
+**Framework de Testing: Vitest v4** (~227 suites, ~1,921 tests)
 
-> **Note**: This project uses **Vitest**, not Jest. While the API is largely compatible, configuration lives in `vitest.config.ts` and some features (such as in-source testing or Vite-native transforms) are Vitest-specific. All commands below use `npm run test` / `npx vitest run`.
+> **Nota**: Este proyecto usa **Vitest**, no Jest. Aunque la API es mayormente compatible, la configuracion esta en `vitest.config.ts` y algunas funcionalidades (como testing en source o transformaciones nativas de Vite) son especificas de Vitest. Todos los comandos a continuacion usan `npm run test` / `npx vitest run`.
 
 ---
 
-## Overview
+## Descripcion
 
-This document describes the test structure of the inventory system frontend, which follows the **AAA (Arrange, Act, Assert)** and **Given-When-Then** patterns for maximum clarity and maintainability.
+Este documento describe la estructura de tests del sistema de inventarios, que sigue los patrones **AAA (Arrange, Act, Assert)** y **Given-When-Then** para mayor claridad y mantenibilidad.
 
-## Folder Structure
+## Estructura de Carpetas
 
-The test structure mirrors the `src/` directory to maintain consistency:
+La estructura de tests refleja exactamente la estructura de `src/` para mantener consistencia:
 
 ```
 test/
@@ -35,22 +35,22 @@ test/
 └── healthCheck.e2e-spec.ts
 ```
 
-## Testing Patterns
+## Patrones de Testing
 
 ### **AAA (Arrange, Act, Assert)**
 
-Each test is structured in three clear sections:
+Cada test se estructura en tres secciones claras:
 
 ```typescript
 it("Given: condition When: action Then: expected result", () => {
-  // Arrange: Prepare data and mocks
+  // Arrange: Preparar datos y mocks
   const mockData = { status: "healthy" };
   mockService.getHealth.mockResolvedValue(mockData);
 
-  // Act: Execute the function under test
+  // Act: Ejecutar la funcion a testear
   const result = await service.getHealth();
 
-  // Assert: Verify the result
+  // Assert: Verificar el resultado
   expect(result).toEqual(mockData);
   expect(mockService.getHealth).toHaveBeenCalled();
 });
@@ -58,7 +58,7 @@ it("Given: condition When: action Then: expected result", () => {
 
 ### **Given-When-Then**
 
-Test names follow the BDD (Behavior Driven Development) pattern:
+Los nombres de los tests siguen el patron BDD (Behavior Driven Development):
 
 ```typescript
 it("Given: healthy database When: checking health Then: should return healthy status", () => {
@@ -70,28 +70,28 @@ it("Given: database failure When: checking health Then: should return unhealthy 
 });
 ```
 
-## Naming Conventions
+## Convenciones de Naming
 
-### **Test Files**
+### **Archivos de Test**
 
-- **Unit tests**: `*.spec.ts`
+- **Unitarios**: `*.spec.ts`
 - **End-to-End**: `*.e2e-spec.ts`
-- **Integration**: `*.integration-spec.ts`
+- **Integracion**: `*.integration-spec.ts`
 
-### **Test Names**
+### **Nombres de Tests**
 
-- **Format**: `Given: precondition When: action Then: expected result`
-- **Example**: `Given: valid user credentials When: logging in Then: should return JWT token`
+- **Formato**: `Given: precondition When: action Then: expected result`
+- **Ejemplo**: `Given: valid user credentials When: logging in Then: should return JWT token`
 
-### **Variables and Mocks**
+### **Variables y Mocks**
 
 - **Mocks**: `mockServiceName`
-- **Test variables**: `expectedResult`, `actualResult`
-- **Test data**: `validUserData`, `invalidUserData`
+- **Variables de test**: `expectedResult`, `actualResult`
+- **Datos de prueba**: `validUserData`, `invalidUserData`
 
-## Types of Tests
+## Tipos de Tests
 
-### **1. Unit Tests (Domain Layer)**
+### **1. Tests Unitarios (Domain Layer)**
 
 ```typescript
 // test/shared/domain/healthCheck.service.spec.ts
@@ -115,7 +115,7 @@ describe("Health Check Domain Service", () => {
 });
 ```
 
-### **2. Unit Tests (Application Layer)**
+### **2. Tests Unitarios (Application Layer)**
 
 ```typescript
 // test/application/healthCheck/healthCheck.application.service.spec.ts
@@ -139,7 +139,7 @@ describe("HealthCheckApplicationService", () => {
 });
 ```
 
-### **3. Unit Tests (Infrastructure Layer)**
+### **3. Tests Unitarios (Infrastructure Layer)**
 
 ```typescript
 // test/infrastructure/healthCheck/healthCheck.adapter.spec.ts
@@ -160,7 +160,7 @@ describe("HealthCheckAdapter", () => {
 });
 ```
 
-### **4. Unit Tests (Interface Layer)**
+### **4. Tests Unitarios (Interface Layer)**
 
 ```typescript
 // test/interfaces/http/healthCheck/healthCheck.controller.spec.ts
@@ -184,111 +184,111 @@ describe("HealthCheckController", () => {
 });
 ```
 
-## Benefits of This Structure
+## Beneficios de esta Estructura
 
-### **1. Clarity**
+### **1. Claridad**
 
-- **AAA**: Clear separation of responsibilities in each test
-- **Given-When-Then**: Natural description of expected behavior
+- **AAA**: Separacion clara de responsabilidades en cada test
+- **Given-When-Then**: Descripcion natural del comportamiento esperado
 
-### **2. Maintainability**
+### **2. Mantenibilidad**
 
-- **Consistent structure**: Easy to navigate and understand
+- **Estructura consistente**: Facil de navegar y entender
 - **Descriptive names**: Self-documenting code
 
 ### **3. Debugging**
 
-- **Easy identification**: Problems are clearly identifiable
-- **Clear context**: Each test has its own context
+- **Facil identificacion**: Problemas claramente identificables
+- **Contexto claro**: Cada test tiene su propio contexto
 
-### **4. Collaboration**
+### **4. Colaboracion**
 
-- **Common language**: Team can understand tests easily
+- **Lenguaje comun**: Equipo puede entender tests facilmente
 - **Living documentation**: Tests as behavior specification
 
-## Running Tests
+## Ejecucion de Tests
 
-### **Unit Tests**
+### **Tests Unitarios**
 
 ```bash
-# Run all unit tests
+# Ejecutar todos los tests unitarios
 npm run test
 
-# Run all tests (alternative, no watch)
+# Ejecutar todos los tests (alternativa, sin watch)
 npx vitest run
 
-# Run specific tests
+# Ejecutar tests especificos
 npx vitest run test/shared/domain/healthCheck.service.spec.ts
 
-# Run tests with coverage
+# Ejecutar tests con coverage
 npm run test:cov
 ```
 
-### **End-to-End Tests**
+### **Tests End-to-End**
 
 ```bash
-# Run e2e tests
+# Ejecutar tests e2e
 npm run test:e2e
 
-# Run specific e2e tests
+# Ejecutar tests e2e especificos
 npx vitest run healthCheck.e2e-spec.ts
 ```
 
-### **Integration Tests**
+### **Tests de Integracion**
 
 ```bash
-# Run integration tests
+# Ejecutar tests de integracion
 npm run test:integration
 ```
 
-## Test Coverage
+## Cobertura de Tests
 
-### **Target Metrics**
+### **Metricas Objetivo**
 
 - **Statements**: > 80%
 - **Branches**: > 80%
 - **Functions**: > 80%
 - **Lines**: > 80%
 
-### **Reports**
+### **Reportes**
 
 ```bash
-# Generate HTML report
+# Generar reporte HTML
 npm run test:cov
 
-# Open in browser
+# Ver en navegador
 open coverage/lcov-report/index.html
 ```
 
-## Best Practices
+## Mejores Practicas
 
-### **1. Organization**
+### **1. Organizacion**
 
-- **One test per behavior**: Each test should verify one thing
-- **Logical grouping**: Use `describe` to group related tests
-- **Execution order**: Tests should be independent of each other
+- **Un test por comportamiento**: Cada test debe verificar una cosa
+- **Agrupacion logica**: Usar `describe` para agrupar tests relacionados
+- **Orden de ejecucion**: Tests independientes entre si
 
-### **2. Mocks and Stubs**
+### **2. Mocks y Stubs**
 
-- **Realistic mocks**: Simulate real dependency behavior
-- **Cleanup**: Restore state after each test
-- **Verification**: Verify that mocks were called correctly
+- **Mocks realistas**: Simular comportamiento real de dependencias
+- **Cleanup**: Restaurar estado despues de cada test
+- **Verificacion**: Verificar que mocks fueron llamados correctamente
 
-### **3. Test Data**
+### **3. Datos de Test**
 
-- **Representative data**: Use data that reflects real cases
-- **Edge cases**: Include boundary and error cases
-- **Consistency**: Maintain consistent data across tests
+- **Datos representativos**: Usar datos que reflejen casos reales
+- **Casos edge**: Incluir casos limite y de error
+- **Consistencia**: Mantener datos consistentes entre tests
 
 ### **4. Naming**
 
-- **Descriptive**: Names that explain what is being tested
-- **Consistent**: Follow established conventions
-- **Readable**: Easy for other developers to understand
+- **Descriptivo**: Nombres que expliquen que se esta probando
+- **Consistente**: Seguir convenciones establecidas
+- **Legible**: Facil de entender para otros desarrolladores
 
-## Complete Examples
+## Ejemplos Completos
 
-### **Complete Domain Test**
+### **Test Completo de Dominio**
 
 ```typescript
 describe("Health Check Domain Service", () => {
@@ -319,7 +319,7 @@ describe("Health Check Domain Service", () => {
 });
 ```
 
-### **Complete Application Test**
+### **Test Completo de Aplicacion**
 
 ```typescript
 describe("HealthCheckApplicationService", () => {
@@ -343,12 +343,12 @@ describe("HealthCheckApplicationService", () => {
 
 ## Conclusion
 
-This test structure provides:
+Esta estructura de tests proporciona:
 
-1. **Clarity**: Tests that are easy to understand and maintain
-2. **Consistency**: Uniform structure across the entire project
-3. **Maintainability**: Easy to modify and extend
-4. **Collaboration**: Team can work efficiently
-5. **Quality**: Tests as living documentation of the system
+1. **Claridad**: Tests faciles de entender y mantener
+2. **Consistencia**: Estructura uniforme en todo el proyecto
+3. **Mantenibilidad**: Facil de modificar y extender
+4. **Colaboracion**: Equipo puede trabajar eficientemente
+5. **Calidad**: Tests como documentacion viva del sistema
 
-By following these patterns, the test suite becomes a powerful tool for ensuring code quality and stability.
+Siguiendo estos patrones, el sistema de tests se convierte en una herramienta poderosa para garantizar la calidad y estabilidad del codigo.

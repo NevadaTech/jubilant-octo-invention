@@ -1,3 +1,5 @@
+> **[English](./README.md)** | [Espanol](./README.es.md)
+
 <p align="center">
   <img src="https://nextjs.org/api/docs-og?title=Nevada%20Inventory%20System" width="400" alt="Nevada Inventory System" />
 </p>
@@ -5,7 +7,7 @@
 <h1 align="center">Nevada Inventory System - Frontend</h1>
 
 <p align="center">
-  Aplicacion web para gestion de inventarios multi-tenant construida con <strong>Next.js 16</strong>, <strong>React 19</strong> y <strong>TypeScript</strong>, siguiendo principios de <strong>Clean Architecture</strong> y <strong>Arquitectura Hexagonal</strong>.
+  Multi-tenant inventory management web application built with <strong>Next.js 16</strong>, <strong>React 19</strong>, and <strong>TypeScript</strong>, following <strong>Clean Architecture</strong> and <strong>Hexagonal Architecture</strong> principles.
 </p>
 
 <p align="center">
@@ -18,92 +20,116 @@
 
 ---
 
-## Tabla de Contenidos
+## Table of Contents
 
-- [Descripcion](#descripcion)
-- [Caracteristicas](#caracteristicas)
+- [Description](#description)
+- [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Quick Start](#quick-start)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Modulos](#modulos)
-- [Scripts Disponibles](#scripts-disponibles)
-- [Variables de Entorno](#variables-de-entorno)
-- [Documentacion Adicional](#documentacion-adicional)
-- [Contribucion](#contribucion)
-- [Licencia](#licencia)
+- [Project Structure](#project-structure)
+- [Module Architecture](#module-architecture)
+- [Modules](#modules)
+- [Available Scripts](#available-scripts)
+- [Environment Variables](#environment-variables)
+- [Additional Documentation](#additional-documentation)
+- [Backend Relationship](#backend-relationship)
+- [Security](#security)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## Descripcion
+## Description
 
-Frontend del **Nevada Inventory System**, un sistema de gestion de inventarios multi-tenant que permite controlar productos, bodegas, movimientos de stock, ventas, devoluciones, reportes y mas. Se conecta al backend NestJS ([improved-parakeet](https://github.com/your-username/improved-parakeet)) via API REST.
+Frontend for the **Nevada Inventory System**, a multi-tenant inventory management system that allows you to manage products, warehouses, stock movements, sales, returns, reports, and more. It connects to the NestJS backend ([improved-parakeet](https://github.com/your-username/improved-parakeet)) via REST API.
 
-### Objetivos
+### Goals
 
-| Objetivo              | Descripcion                                        |
-| --------------------- | -------------------------------------------------- |
-| **Interfaz moderna**  | UI responsiva con shadcn/ui + Tailwind CSS         |
-| **Tipo seguro**       | TypeScript estricto end-to-end con Zod validation  |
-| **Multi-idioma**      | Soporte completo para ingles y espanol (next-intl) |
-| **Control de acceso** | RBAC con 80+ permisos granulares                   |
-| **Reportes**          | 17 tipos de reportes con exportacion a Excel       |
-| **Tiempo real**       | Dashboard con metricas y graficos actualizados     |
+| Goal                  | Description                                          |
+| --------------------- | ---------------------------------------------------- |
+| **Modern interface**  | Responsive UI with shadcn/ui + Tailwind CSS          |
+| **Type safe**         | Strict TypeScript end-to-end with Zod validation     |
+| **Multi-language**    | Full support for English and Spanish (next-intl)     |
+| **Access control**    | RBAC with 80+ granular permissions                   |
+| **Reports**           | 17 report types with Excel export                    |
+| **Real-time data**    | Dashboard with live metrics and updated charts       |
 
 ---
 
-## Caracteristicas
+## Features
 
-### Autenticacion y Seguridad
+### Authentication and Security
 
-- Login con JWT (access + refresh tokens)
-- Renovacion automatica de tokens en 401
-- Control de sesion con expiracion y logout forzado
-- RBAC con `<PermissionGate>` y `<RequirePermission>` components
-- Sidebar filtrado por permisos del usuario
+- JWT-based login (access + refresh tokens)
+- Automatic token renewal on 401 responses
+- RBAC with 80+ granular permissions
+- HttpOnly / Secure / SameSite=Strict cookies via BFF API routes
+- Session timeout with idle detection (15 min idle, 2 min warning dialog)
+- `<PermissionGate>` and `<RequirePermission>` components for UI-level access control
+- Sidebar navigation filtered by user permissions
 
-### Gestion de Inventario
+### Inventory Management
 
-- **Productos**: CRUD con SKU, categorias, precios, metricas de rotacion
-- **Bodegas**: Gestion de ubicaciones de almacenamiento
-- **Stock**: Niveles de inventario en tiempo real por producto/bodega
-- **Movimientos**: Entradas/salidas con workflow DRAFT → POSTED → VOID
-- **Transferencias**: Entre bodegas con estados (DRAFT → IN_TRANSIT → RECEIVED)
+- **Products**: CRUD with SKU, categories, pricing, rotation metrics
+- **Warehouses**: Storage location management
+- **Stock**: Real-time inventory levels per product/warehouse
+- **Movements**: Inbound/outbound with workflow DRAFT -> POSTED -> VOID
+- **Transfers**: Between warehouses with states (DRAFT -> IN_TRANSIT -> RECEIVED)
 
-### Ventas y Devoluciones
+### Sales and Returns
 
-- **Ventas**: Workflow completo DRAFT → CONFIRMED → PICKING → SHIPPED → COMPLETED
-- **Devoluciones**: De clientes y a proveedores con tracking de precios originales
-- **Timeline**: Visualizacion del ciclo de vida de cada venta
+- **Sales**: Full workflow DRAFT -> CONFIRMED -> PICKING -> SHIPPED -> COMPLETED
+- **Returns**: Customer returns and supplier returns with original price tracking
+- **Timeline**: Lifecycle visualization for each sale
 
-### Reportes y Analisis
+### Contacts
 
-- 17 tipos de reportes (inventario, ventas, devoluciones)
-- Analisis ABC (clasificacion Pareto)
-- Stock muerto (productos sin ventas en N dias)
-- Exportacion a Excel via SheetJS
-- Filtros dinamicos por tipo de reporte
+- **Customers and Suppliers**: Unified contact management with type (CUSTOMER | SUPPLIER | BOTH)
+- **Fields**: Name, identification (unique per org), email, phone, address, notes
+- **Sales integration**: Optional contact linking on sales records
+
+### Integrations
+
+- **VTEX e-commerce**: Connect your VTEX store to sync orders and products
+- **Extensible architecture**: Provider-based design ready for additional platforms (e.g., MercadoLibre)
+- **Sync options**: Webhook, polling, or both; inbound, outbound, or bidirectional
+- **Management**: SKU mapping, sync logs, failed sync retry
+
+### Reports and Analysis
+
+- 17 report types (inventory, sales, returns)
+- ABC Analysis (Pareto classification)
+- Dead Stock detection (products without sales in N days)
+- Excel export via ExcelJS
+- Dynamic filters per report type
 
 ### Dashboard
 
-- 4 tarjetas de metricas principales
-- Tendencia de ventas (7 dias) con AreaChart
-- Top 5 productos por ingresos con BarChart
-- Distribucion de stock por bodega con PieChart
-- Feed de actividad reciente
+- 4 main metric cards
+- Sales trend (7 days) with AreaChart
+- Top 5 products by revenue with BarChart
+- Stock distribution by warehouse with PieChart
+- Recent activity feed
 
 ### Multi-Company
 
-- Gestion de empresas/lineas de negocio por organizacion
-- Selector global en header (filtra productos, stock, ventas, devoluciones, movimientos, reportes, dashboard)
-- Toggle de habilitacion en configuracion (admin-only)
-- Product swap entre empresas (ADJUST_IN/ADJUST_OUT)
+- Business unit / company management per organization
+- Global selector in header (filters products, stock, sales, returns, movements, reports, dashboard)
+- Enable/disable toggle in settings (admin-only)
+- Product swap between companies (ADJUST_IN / ADJUST_OUT)
 
-### Administracion
+### Data Import
 
-- **Usuarios**: CRUD con estados (ACTIVE/INACTIVE/LOCKED)
-- **Roles**: Sistema y personalizados, gestion de permisos (80+ permisos granulares)
-- **Audit Log**: Historial de actividad con filtros avanzados y exportacion Excel
-- **Configuracion**: Perfil de usuario y alertas de stock configurables
+- Excel and CSV file import for bulk data loading
+- Template download for correct formatting
+- Validation and error reporting during import
+
+### Administration
+
+- **Users**: CRUD with status management (ACTIVE / INACTIVE / LOCKED)
+- **Roles**: System and custom roles, permission management (80+ granular permissions)
+- **Audit Log**: Activity history with advanced filters and Excel export
+- **Settings**: User profile and configurable stock alerts
 
 ---
 
@@ -111,206 +137,218 @@ Frontend del **Nevada Inventory System**, un sistema de gestion de inventarios m
 
 ### Core
 
-| Tecnologia       | Version | Proposito                |
-| ---------------- | ------- | ------------------------ |
-| **Next.js**      | 16.1    | Framework con App Router |
-| **React**        | 19.2    | Biblioteca UI            |
-| **TypeScript**   | 5.9+    | Tipado estatico estricto |
-| **Tailwind CSS** | 4.2     | Estilos utility-first    |
+| Technology       | Version | Purpose                          |
+| ---------------- | ------- | -------------------------------- |
+| **Next.js**      | 16.1    | Framework with App Router        |
+| **React**        | 19.2    | UI library                       |
+| **TypeScript**   | 5.9+    | Strict static typing             |
+| **Tailwind CSS** | 4.2     | Utility-first styling            |
 
-### Estado y Datos
+### State and Data
 
-| Tecnologia          | Proposito                                   |
+| Technology          | Purpose                                     |
 | ------------------- | ------------------------------------------- |
 | **TanStack Query**  | Server state (cache, refetch, invalidation) |
-| **Zustand**         | Client state (filtros, modals, auth)        |
-| **Axios**           | HTTP client con interceptores               |
-| **Zod**             | Validacion de schemas y formularios         |
-| **React Hook Form** | Gestion de formularios                      |
+| **Zustand**         | Client state (filters, modals, auth)        |
+| **Axios**           | HTTP client with interceptors               |
+| **Zod**             | Schema validation and forms                 |
+| **React Hook Form** | Form management                             |
 
 ### UI
 
-| Tecnologia         | Proposito                                        |
+| Technology         | Purpose                                          |
 | ------------------ | ------------------------------------------------ |
-| **Radix UI**       | Primitivos accesibles (Dialog, Select, Dropdown) |
-| **shadcn/ui**      | Componentes estilizados                          |
-| **Recharts**       | Graficos (Area, Bar, Pie)                        |
-| **Lucide React**   | Iconos                                           |
-| **Boring Avatars** | Avatares deterministas                           |
-| **Framer Motion**  | Animaciones                                      |
+| **Radix UI**       | Accessible primitives (Dialog, Select, Dropdown) |
+| **shadcn/ui**      | Styled component library                         |
+| **Recharts**       | Charts (Area, Bar, Pie)                          |
+| **Lucide React**   | Icons                                            |
+| **Framer Motion**  | Animations                                       |
 | **Sonner**         | Toast notifications                              |
 
-### Herramientas
+### Tools
 
-| Tecnologia            | Proposito                    |
-| --------------------- | ---------------------------- |
-| **next-intl**         | Internacionalizacion (en/es) |
-| **SheetJS (xlsx)**    | Exportacion Excel            |
-| **Vitest**            | Unit testing                 |
-| **Playwright**        | E2E testing                  |
-| **ESLint + Prettier** | Linting y formateo           |
-| **Sentry**            | Error monitoring (opcional)  |
+| Technology            | Purpose                          |
+| --------------------- | -------------------------------- |
+| **next-intl**         | Internationalization (en/es)     |
+| **ExcelJS**           | Excel export                     |
+| **Vitest**            | Unit testing                     |
+| **Playwright**        | E2E testing                      |
+| **ESLint + Prettier** | Linting and formatting           |
 
 ---
 
 ## Quick Start
 
 ```bash
-# 1. Clonar el repositorio
+# 1. Clone the repository
 git clone https://github.com/your-username/jubilant-octo-invention.git
 cd jubilant-octo-invention
 
-# 2. Instalar dependencias
+# 2. Install dependencies
 npm install
 
-# 3. Configurar variables de entorno
+# 3. Configure environment variables
 cp .env.example .env.local
-# Editar .env.local con la URL del backend
+# Edit .env.local with the backend URL
 
-# 4. Iniciar en desarrollo
+# 4. Start development server
 npm run dev
 
-# Abrir http://localhost:3000
+# Open http://localhost:3000
 ```
 
-### Prerrequisitos
+### Prerequisites
 
-| Herramienta       | Version | Requerido                        |
-| ----------------- | ------- | -------------------------------- |
-| Node.js           | 18+     | Si                               |
-| npm / yarn / pnpm | -       | Si                               |
-| Backend API       | -       | Si (improved-parakeet corriendo) |
+| Tool              | Version | Required                                    |
+| ----------------- | ------- | ------------------------------------------- |
+| Node.js           | 18+     | Yes                                         |
+| npm / yarn / pnpm | -       | Yes                                         |
+| Backend API       | -       | Yes (improved-parakeet must be running)     |
 
 ---
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 src/
 ├── app/                          # Next.js 16 App Router
-│   └── [locale]/
-│       ├── (auth)/login/         # Pagina de login
-│       └── (dashboard)/dashboard/
-│           ├── inventory/        # Productos, Categorias, Bodegas, Stock, Movimientos, Transferencias, Empresas
-│           ├── sales/            # Ventas CRUD + workflow
-│           ├── returns/          # Devoluciones CRUD + workflow
-│           ├── reports/          # Catalogo + visor de reportes
-│           ├── users/            # Gestion de usuarios
-│           ├── roles/            # Gestion de roles y permisos
-│           ├── audit/            # Log de auditoria
-│           └── settings/         # Configuracion
+│   ├── [locale]/
+│   │   ├── (auth)/login/         # Login page
+│   │   └── (dashboard)/dashboard/
+│   │       ├── inventory/        # Products, Categories, Warehouses, Stock, Movements, Transfers, Companies
+│   │       ├── sales/            # Sales CRUD + workflow
+│   │       ├── returns/          # Returns CRUD + workflow
+│   │       ├── contacts/         # Customers and suppliers
+│   │       ├── integrations/     # VTEX and provider connections
+│   │       ├── reports/          # Report catalog + viewer
+│   │       ├── imports/          # Data import (Excel/CSV)
+│   │       ├── users/            # User management
+│   │       ├── roles/            # Role and permission management
+│   │       ├── audit/            # Audit log
+│   │       └── settings/         # Settings
+│   └── api/                      # BFF API routes (auth cookies)
 │
-├── modules/                      # Modulos de negocio (Hexagonal Architecture)
-│   ├── authentication/           # Login, tokens, sesion
-│   ├── inventory/                # Productos, bodegas, stock, movimientos, transferencias
-│   ├── sales/                    # Ventas con workflow completo
-│   ├── returns/                  # Devoluciones
-│   ├── dashboard/                # Metricas y graficos
-│   ├── reports/                  # 17 tipos de reportes
-│   ├── users/                    # Administracion de usuarios
-│   ├── roles/                    # Roles y permisos
-│   ├── audit/                    # Auditoria
-│   ├── companies/                # Empresas (multi-company)
-│   └── settings/                 # Perfil y alertas
+├── modules/                      # Business modules (Hexagonal Architecture)
+│   ├── authentication/           # Login, tokens, session
+│   ├── dashboard/                # Metrics and charts
+│   ├── inventory/                # Products, warehouses, stock, movements, transfers
+│   ├── sales/                    # Sales with full workflow
+│   ├── returns/                  # Returns
+│   ├── contacts/                 # Customers and suppliers
+│   ├── integrations/             # VTEX e-commerce integration
+│   ├── reports/                  # 17 report types
+│   ├── imports/                  # Data import
+│   ├── users/                    # User administration
+│   ├── roles/                    # Roles and permissions
+│   ├── audit/                    # Audit log
+│   ├── companies/                # Companies (multi-company)
+│   └── settings/                 # Profile and alerts
 │
-├── shared/                       # Codigo compartido
+├── shared/                       # Shared code
 │   ├── domain/                   # Entity, AggregateRoot, ValueObject, Permissions
 │   ├── application/              # HttpClientPort, PaginatedResult
-│   ├── infrastructure/           # AxiosHttpClient con interceptores
+│   ├── infrastructure/           # AxiosHttpClient with interceptors
 │   └── presentation/             # PermissionGate, RequirePermission, AccessDenied
 │
-├── ui/                           # Componentes UI reutilizables
+├── ui/                           # Reusable UI components
 │   ├── components/               # Button, Input, Dialog, Table, Badge, etc.
 │   ├── layout/                   # Sidebar, Header, DashboardShell
 │   └── lib/                      # cn() utility
 │
 ├── config/                       # Env validation + DI container
-├── i18n/                         # Configuracion next-intl
-├── lib/messages/                 # Traducciones en.json, es.json
+├── i18n/                         # next-intl configuration
+├── lib/messages/                 # Translations en.json, es.json
 └── hooks/                        # useDebounce, useLocalStorage, useMediaQuery
 ```
 
-### Arquitectura por Modulo
+---
 
-Cada modulo en `src/modules/` sigue la misma estructura hexagonal:
+## Module Architecture
+
+Each module in `src/modules/` follows the same hexagonal structure:
 
 ```
-modules/{nombre}/
+modules/{name}/
 ├── domain/
-│   ├── entities/         # Clases de dominio
-│   └── ports/            # Interfaces de repositorio
+│   ├── entities/         # Domain classes
+│   └── ports/            # Repository interfaces
 ├── application/
 │   ├── dto/              # Data Transfer Objects
-│   ├── mappers/          # API ↔ Domain conversion
-│   └── use-cases/        # Logica de negocio
+│   ├── mappers/          # API <-> Domain conversion
+│   └── use-cases/        # Business logic
 ├── infrastructure/
-│   ├── adapters/         # Implementacion API (Axios)
-│   └── store/            # Zustand stores (filtros)
+│   ├── adapters/         # API implementation (Axios)
+│   └── store/            # Zustand stores (filters)
 └── presentation/
     ├── hooks/            # React Query hooks
-    ├── schemas/          # Validacion Zod
-    └── components/       # Componentes React
+    ├── schemas/          # Zod validation
+    └── components/       # React components
 ```
 
+This architecture ensures a clear separation of concerns: the domain layer has no external dependencies, the application layer orchestrates use cases, the infrastructure layer handles API communication, and the presentation layer manages UI components and state.
+
 ---
 
-## Modulos
+## Modules
 
-| Modulo             | Descripcion                                                        | Ruta                             |
+| Module             | Description                                                        | Route                            |
 | ------------------ | ------------------------------------------------------------------ | -------------------------------- |
-| **Authentication** | Login, tokens, sesion, permisos                                    | `/login`                         |
-| **Dashboard**      | Metricas, graficos, actividad reciente                             | `/dashboard`                     |
-| **Inventory**      | Productos, categorias, bodegas, stock, movimientos, transferencias | `/dashboard/inventory/*`         |
-| **Sales**          | Ventas con workflow completo (5 estados)                           | `/dashboard/sales/*`             |
-| **Returns**        | Devoluciones de clientes y a proveedores                           | `/dashboard/returns/*`           |
-| **Reports**        | 17 tipos de reportes con filtros y exportacion                     | `/dashboard/reports/*`           |
-| **Users**          | CRUD de usuarios con gestion de estados                            | `/dashboard/users/*`             |
-| **Roles**          | Roles del sistema y personalizados, permisos                       | `/dashboard/roles/*`             |
-| **Audit**          | Log de auditoria con filtros y exportacion                         | `/dashboard/audit`               |
-| **Companies**      | Empresas/lineas de negocio (multi-company)                         | `/dashboard/inventory/companies` |
-| **Settings**       | Perfil de usuario y configuracion de alertas                       | `/dashboard/settings`            |
+| **Authentication** | Login, tokens, session, permissions                                | `/login`                         |
+| **Dashboard**      | Metrics, charts, recent activity                                   | `/dashboard`                     |
+| **Inventory**      | Products, categories, warehouses, stock, movements, transfers      | `/dashboard/inventory/*`         |
+| **Sales**          | Sales with full workflow (5 states)                                | `/dashboard/sales/*`             |
+| **Returns**        | Customer returns and supplier returns                              | `/dashboard/returns/*`           |
+| **Contacts**       | Customer and supplier management                                   | `/dashboard/contacts/*`          |
+| **Integrations**   | VTEX e-commerce connection, sync logs, SKU mapping                 | `/dashboard/integrations/*`      |
+| **Reports**        | 17 report types with filters and export                            | `/dashboard/reports/*`           |
+| **Imports**        | Bulk data import from Excel/CSV                                    | `/dashboard/imports/*`           |
+| **Users**          | User CRUD with status management                                   | `/dashboard/users/*`             |
+| **Roles**          | System and custom roles, permissions                               | `/dashboard/roles/*`             |
+| **Audit**          | Audit log with filters and export                                  | `/dashboard/audit`               |
+| **Companies**      | Business units / lines of business (multi-company)                 | `/dashboard/inventory/companies` |
+| **Settings**       | User profile and alert configuration                               | `/dashboard/settings`            |
 
-> Para documentacion detallada de cada modulo, ver [docs/modules.md](docs/modules.md)
+> For detailed documentation on each module, see [docs/modules.md](docs/modules.md).
 
 ---
 
-## Scripts Disponibles
+## Available Scripts
 
 ```bash
-# Desarrollo
-npm run dev              # Servidor de desarrollo con Turbopack
-npm run build            # Build de produccion
-npm run start            # Servidor de produccion
+# Development
+npm run dev              # Development server with Turbopack
+npm run build            # Production build
+npm run start            # Production server
 
-# Calidad de Codigo
+# Code Quality
 npm run lint             # ESLint
-npm run lint:fix         # ESLint con auto-fix
+npm run lint:fix         # ESLint with auto-fix
 npm run format           # Prettier format
-npm run format:check     # Verificar formato
+npm run format:check     # Check formatting
 npm run type-check       # TypeScript check
 npm run quality          # type-check + lint + format:check
 
-# Testing
-npm run test             # Vitest (unit tests) — 208 suites, 1,799 tests
+# Testing (~227 suites, ~1,921 tests)
+npm run test             # Vitest (unit tests) with coverage
 npm run test:run         # Vitest single run
-npm run test:coverage    # Vitest con cobertura
+npm run test:watch       # Vitest in watch mode
 npm run test:e2e         # Playwright E2E
-npm run test:e2e:ui      # Playwright con UI
-npm run test:e2e:headed  # Playwright con navegador visible
+npm run test:e2e:ui      # Playwright with UI
+npm run test:e2e:headed  # Playwright with visible browser
 ```
 
 ---
 
-## Variables de Entorno
+## Environment Variables
 
-Crear `.env.local` basado en `.env.example`:
+Create `.env.local` based on `.env.example`:
 
 ```env
-# URL de la aplicacion
+# Application URL
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_APP_NAME=Nevada Inventory System
 
-# API Backend
+# Backend API
 NEXT_PUBLIC_API_URL=http://localhost:8080
 NEXT_PUBLIC_API_TIMEOUT=30000
 
@@ -318,31 +356,30 @@ NEXT_PUBLIC_API_TIMEOUT=30000
 NEXT_PUBLIC_AUTH_COOKIE_NAME=nevada_auth_token
 NEXT_PUBLIC_REFRESH_COOKIE_NAME=nevada_refresh_token
 
-# Mock API (desarrollo)
+# Mock API (development)
 NEXT_PUBLIC_ENABLE_MOCK_API=false
 
-# Sentry (opcional)
-SENTRY_DSN=
+# Sentry (optional)
+NEXT_PUBLIC_SENTRY_DSN=
 SENTRY_AUTH_TOKEN=
 ```
 
 ---
 
-## Documentacion Adicional
+## Additional Documentation
 
-| Documento                                        | Descripcion                                         |
-| ------------------------------------------------ | --------------------------------------------------- |
-| [Arquitectura](docs/architecture.md)             | Clean/Hexagonal Architecture, estado, auth flow, DI |
-| [Modulos](docs/modules.md)                       | Guia detallada de los 11 modulos de negocio         |
-| [Plan de Trabajo](docs/front-end_work-plan.md)   | Roadmap original del frontend                       |
-| [Coleccion Postman](docs/postman/)               | Documentacion de API y colecciones                  |
-| [Estructura de Tests](docs/testing-structure.md) | Convencion de testing                               |
+| Document                  | Description                                | Links                                                                   |
+| ------------------------- | ------------------------------------------ | ----------------------------------------------------------------------- |
+| **Architecture**          | Clean/Hexagonal Architecture, state, auth  | [EN](docs/architecture.md) / [ES](docs/architecture.md)                |
+| **Modules**               | Detailed guide for all 14 business modules | [EN](docs/modules.md) / [ES](docs/modules.md)                          |
+| **Testing Structure**     | Testing conventions and organization       | [EN](docs/testing-structure.md) / [ES](docs/testing-structure.md)      |
+| **Integrations**          | VTEX integration and extensibility guide   | [EN](docs/integrations.md) / [ES](docs/integrations.md)                |
 
 ---
 
-## Relacion con el Backend
+## Backend Relationship
 
-Este frontend consume la API REST del backend **improved-parakeet**:
+This frontend consumes the REST API from the **improved-parakeet** backend:
 
 ```
 ┌─────────────────────┐         ┌─────────────────────┐
@@ -358,47 +395,62 @@ Este frontend consume la API REST del backend **improved-parakeet**:
 └─────────────────────┘         └─────────────────────┘
 ```
 
-### Headers Requeridos
+### Required Headers
 
-Todas las peticiones autenticadas incluyen:
+All authenticated requests include the following headers:
 
-| Header                | Descripcion                    |
-| --------------------- | ------------------------------ |
-| `Authorization`       | `Bearer {accessToken}`         |
-| `X-Organization-Slug` | Slug de la organizacion activa |
-| `X-Organization-ID`   | ID de la organizacion activa   |
-| `X-User-ID`           | ID del usuario autenticado     |
-
----
-
-## Contribucion
-
-1. Fork el repositorio
-2. Crea una rama: `git checkout -b feature/nueva-funcionalidad`
-3. Desarrolla siguiendo las convenciones del proyecto
-4. Ejecuta quality checks: `npm run quality`
-5. Commit con conventional commits: `feat(inventory): add stock alerts`
-6. Crea un Pull Request
-
-### Convenciones
-
-| Aspecto          | Convencion                                    |
-| ---------------- | --------------------------------------------- |
-| **Codigo**       | Ingles (variables, funciones, componentes)    |
-| **Componentes**  | PascalCase (`ProductList.tsx`)                |
-| **Hooks**        | `use` prefix (`useProducts.ts`)               |
-| **Stores**       | `.store.ts` suffix                            |
-| **Schemas**      | `.schema.ts` suffix                           |
-| **Traducciones** | Namespace dotted (`inventory.products.title`) |
+| Header                | Description                        |
+| --------------------- | ---------------------------------- |
+| `Authorization`       | `Bearer {accessToken}`             |
+| `X-Organization-Slug` | Slug of the active organization    |
+| `X-Organization-ID`   | ID of the active organization      |
+| `X-User-ID`           | ID of the authenticated user       |
 
 ---
 
-## Licencia
+## Security
+
+The application implements multiple layers of security:
+
+| Layer                     | Implementation                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| **Token storage**         | HttpOnly / Secure / SameSite=Strict cookies -- no tokens in JavaScript         |
+| **BFF routes**            | `src/app/api/auth/{login,refresh,logout}/route.ts` proxy authentication calls  |
+| **Content Security Policy** | `strict-dynamic` for scripts, `unsafe-inline` for styles (Tailwind)          |
+| **Session timeout**       | 15-minute idle detection with 2-minute warning dialog before forced logout     |
+| **Permission gates**      | `<PermissionGate>` and `<RequirePermission>` components enforce RBAC in the UI |
+| **Error suppression**     | Production logger suppresses error details to prevent information leakage      |
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a branch: `git checkout -b feature/new-feature`
+3. Develop following the project conventions
+4. Run quality checks: `npm run quality`
+5. Commit with conventional commits: `feat(inventory): add stock alerts`
+6. Create a Pull Request
+
+### Conventions
+
+| Aspect             | Convention                                    |
+| ------------------ | --------------------------------------------- |
+| **Code**           | English (variables, functions, components)    |
+| **Components**     | PascalCase (`ProductList.tsx`)                |
+| **Hooks**          | `use` prefix (`useProducts.ts`)               |
+| **Stores**         | `.store.ts` suffix                            |
+| **Schemas**        | `.schema.ts` suffix                           |
+| **Translations**   | Namespace dotted (`inventory.products.title`) |
+
+---
+
+## License
 
 MIT License - Copyright (c) 2025 Cesar Javier Ortiz Montero
 
 ---
 
 <p align="center">
-  <sub>Construido con Next.js 16 + React 19 + TypeScript</sub>
+  <sub>Built with Next.js 16 + React 19 + TypeScript</sub>
 </p>
