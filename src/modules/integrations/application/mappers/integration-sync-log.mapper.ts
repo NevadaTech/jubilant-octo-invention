@@ -10,6 +10,7 @@ export class IntegrationSyncLogMapper {
       externalOrderId: dto.externalOrderId,
       action: dto.action as SyncAction,
       saleId: dto.saleId ?? null,
+      saleNumber: dto.saleNumber ?? null,
       contactId: dto.contactId ?? null,
       errorMessage: dto.errorMessage ?? null,
       rawPayload: null,

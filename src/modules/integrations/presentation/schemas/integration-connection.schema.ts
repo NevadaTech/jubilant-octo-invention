@@ -70,6 +70,36 @@ export function toUpdateConnectionDto(
   };
 }
 
+export const meliConnectionSchema = z.object({
+  storeName: z.string().min(1, "Store name is required").max(200),
+  clientId: z.string().min(1, "Client ID (App ID) is required"),
+  clientSecret: z.string().min(1, "Client Secret is required"),
+  syncStrategy: z.enum(["WEBHOOK", "POLLING", "BOTH"]),
+  syncDirection: z.literal("INBOUND"),
+  defaultWarehouseId: z.string().min(1, "Warehouse is required"),
+  defaultContactId: z.string().optional(),
+  companyId: z.string().optional(),
+});
+
+export type MeliConnectionFormData = z.infer<typeof meliConnectionSchema>;
+
+export function toMeliCreateConnectionDto(
+  data: MeliConnectionFormData,
+): CreateIntegrationConnectionDto {
+  return {
+    provider: "MERCADOLIBRE",
+    accountName: `meli-${Date.now()}`,
+    storeName: data.storeName,
+    appKey: data.clientId,
+    appToken: data.clientSecret,
+    syncStrategy: data.syncStrategy,
+    syncDirection: "INBOUND",
+    defaultWarehouseId: data.defaultWarehouseId,
+    defaultContactId: data.defaultContactId || undefined,
+    companyId: data.companyId || undefined,
+  };
+}
+
 export const skuMappingSchema = z.object({
   externalSku: z.string().min(1, "External SKU is required"),
   productId: z.string().min(1, "Product is required"),

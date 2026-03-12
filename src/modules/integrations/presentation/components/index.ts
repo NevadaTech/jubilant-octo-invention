@@ -12,4 +12,7 @@ export { SyncLogTable } from "./sync-log-table";
 export { SkuMappingTable } from "./sku-mapping-table";
 export { SkuMappingForm } from "./sku-mapping-form";
 export { UnmatchedSkusAlert } from "./unmatched-skus-alert";
-export { FailedSyncsTab } from "./failed-syncs-tab";
+export { MeliProviderHeader } from "./meli-provider-header";
+export { MeliConnectionForm } from "./meli-connection-form";
+export { MeliConnectionDetail } from "./meli-connection-detail";
+export { IntegrationDetailRouter } from "./integration-detail-router";

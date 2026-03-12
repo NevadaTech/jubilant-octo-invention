@@ -1800,7 +1800,15 @@
     "REORDER_RULE_CONFLICT": "A reorder rule already exists for this product and warehouse.",
     "REORDER_RULE_CREATION_ERROR": "Failed to create reorder rule.",
     "REORDER_RULE_UPDATE_ERROR": "Failed to update reorder rule.",
-    "REORDER_RULE_DELETE_ERROR": "Failed to delete reorder rule."
+    "REORDER_RULE_DELETE_ERROR": "Failed to delete reorder rule.",
+
+    "INTEGRATION_CONNECTION_NOT_FOUND": "Integration connection not found.",
+    "INTEGRATION_CONNECTION_ALREADY_EXISTS": "An integration connection already exists for this account.",
+    "INTEGRATION_TEST_FAILED": "Connection test failed. Please check your credentials.",
+    "INTEGRATION_SYNC_FAILED": "Synchronization failed. Please try again.",
+    "SYNC_LOG_NOT_FOUND": "Sync log entry not found.",
+    "SKU_MAPPING_NOT_FOUND": "SKU mapping not found.",
+    "SKU_MAPPING_ALREADY_EXISTS": "A mapping for this external SKU already exists."
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -2247,7 +2255,8 @@
       "lastSync": "Last Sync",
       "syncedOrders": "Synced Orders",
       "connectedAt": "Connected Since",
-      "lastError": "Last Error"
+      "lastError": "Last Error",
+      "webhookSecret": "Webhook Secret"
     },
     "form": {
       "createTitle": "Connect VTEX Store",
@@ -2273,6 +2282,11 @@
       "defaultContactPlaceholder": "Select fallback contact (optional)",
       "company": "Company",
       "companyPlaceholder": "Select company (optional)"
+    },
+    "syncStrategy": {
+      "WEBHOOK": "Webhook",
+      "POLLING": "Polling",
+      "BOTH": "Webhook + Polling"
     },
     "syncDirection": {
       "inbound": "Inbound (VTEX → Nevada)",
@@ -2307,12 +2321,14 @@
     "detail": {
       "info": "Connection Details",
       "notFound": "Connection Not Found",
-      "notFoundDescription": "The integration you are looking for does not exist or has been removed."
+      "notFoundDescription": "The integration you are looking for does not exist or has been removed.",
+      "webhookSecretCopied": "Webhook secret copied to clipboard"
     },
     "syncLogs": {
       "title": "Sync Log",
       "allActions": "All actions",
       "empty": "No sync logs yet",
+      "error": "Could not load sync logs. Please try again.",
       "columns": {
         "orderId": "Order ID",
         "action": "Action",
@@ -2322,12 +2338,23 @@
         "actions": ""
       },
       "actions": {
-        "CREATED": "Created",
-        "UPDATED": "Updated",
-        "SKIPPED": "Skipped",
+        "SYNCED": "Synced",
         "FAILED": "Failed",
-        "OUTBOUND_OK": "Outbound OK",
-        "OUTBOUND_FAILED": "Outbound Failed"
+        "ALREADY_SYNCED": "Already Synced"
+      },
+      "detail": {
+        "title": "Sync Log Detail",
+        "externalOrderId": "External Order ID",
+        "action": "Action",
+        "sale": "Associated Sale",
+        "contact": "Associated Contact",
+        "errorMessage": "Error Message",
+        "processedAt": "Processed At",
+        "viewSale": "View Sale",
+        "noSale": "No associated sale",
+        "noContact": "No associated contact",
+        "noError": "No error",
+        "retry": "Retry Sync"
       }
     },
     "skuMapping": {
@@ -2342,6 +2369,11 @@
       "empty": "No SKU mappings configured",
       "externalSkuPlaceholder": "VTEX SKU or RefId",
       "productIdPlaceholder": "Internal Product ID",
+      "selectProduct": "Select product...",
+      "searchProduct": "Search by name or SKU...",
+      "noProductsFound": "No products found",
+      "externalSkuRequired": "External SKU is required",
+      "productRequired": "Product is required",
       "unmatchedAlert": "Unmatched SKUs",
       "unmatchedDescription": "These SKUs from VTEX could not be matched to internal products. Map them to enable order synchronization.",
       "mapThis": "Map"
@@ -2370,15 +2402,34 @@
       },
       "mercadolibre": {
         "name": "MercadoLibre",
-        "description": "Integrate with MercadoLibre to sync product listings and orders.",
-        "comingSoon": "Coming Soon",
-        "comingSoonDescription": "MercadoLibre integration is under development. Stay tuned for updates."
+        "description": "Integrate with MercadoLibre to sync orders automatically.",
+        "addConnection": "Add MercadoLibre Connection",
+        "formDescription": "Enter your MercadoLibre App credentials. After saving, you will need to authorize access via OAuth.",
+        "connectButton": "Connect with MercadoLibre",
+        "reauthRequired": "Re-authentication Required",
+        "reauthDescription": "Your MercadoLibre authentication has expired. Please re-authenticate to resume synchronization.",
+        "reauthAction": "Re-authenticate",
+        "inboundOnly": "MercadoLibre only supports inbound sync (MeLi → Nevada)",
+        "tokenStatusLabel": "Token Status",
+        "tokenStatus": {
+          "VALID": "Valid",
+          "REFRESHING": "Refreshing",
+          "EXPIRED": "Expired",
+          "REAUTH_REQUIRED": "Re-auth Required"
+        },
+        "form": {
+          "clientId": "Client ID (App ID)",
+          "clientIdPlaceholder": "Enter MercadoLibre App ID",
+          "clientSecret": "Client Secret",
+          "clientSecretPlaceholder": "Enter MercadoLibre App Secret"
+        }
       }
     },
     "stats": {
       "totalConnections": "{count, plural, =0 {No connections} =1 {1 connection} other {# connections}}",
       "connected": "{count} connected",
-      "withErrors": "{count} with errors"
+      "withErrors": "{count} with errors",
+      "needsReauth": "{count} needs re-auth"
     },
     "enabledBanner": {
       "enabled": "Integrations are enabled for your organization.",

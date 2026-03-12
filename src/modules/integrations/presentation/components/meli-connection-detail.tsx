@@ -5,11 +5,12 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import {
   ArrowLeft,
-  Pencil,
   Trash2,
   TestTube,
   RefreshCw,
   Loader2,
+  AlertTriangle,
+  ExternalLink,
   Eye,
   EyeOff,
   Copy,
@@ -36,22 +37,44 @@ import { SyncLogTable } from "./sync-log-table";
 import { SkuMappingTable } from "./sku-mapping-table";
 import { SkuMappingForm } from "./sku-mapping-form";
 import { UnmatchedSkusAlert } from "./unmatched-skus-alert";
-import { VtexConnectionForm } from "./vtex-connection-form";
 import {
   useIntegration,
   useDeleteIntegration,
   useTestIntegration,
   useTriggerSync,
+  useGetMeliAuthUrl,
 } from "@/modules/integrations/presentation/hooks/use-integrations";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 
-interface VtexConnectionDetailProps {
+interface MeliConnectionDetailProps {
   connectionId: string;
 }
 
-export function VtexConnectionDetail({
+function TokenStatusBadge({ status }: { status: string | null }) {
+  const t = useTranslations("integrations");
+
+  if (!status) return null;
+
+  const variants: Record<
+    string,
+    "success" | "warning" | "destructive" | "secondary"
+  > = {
+    VALID: "success",
+    REFRESHING: "secondary",
+    EXPIRED: "warning",
+    REAUTH_REQUIRED: "destructive",
+  };
+
+  return (
+    <Badge variant={variants[status] ?? "secondary"}>
+      {t(`providers.mercadolibre.tokenStatus.${status}` as never)}
+    </Badge>
+  );
+}
+
+export function MeliConnectionDetail({
   connectionId,
-}: VtexConnectionDetailProps) {
+}: MeliConnectionDetailProps) {
   const locale = useLocale();
   const t = useTranslations("integrations");
   const tCommon = useTranslations("common");
@@ -60,11 +83,11 @@ export function VtexConnectionDetail({
   const deleteIntegration = useDeleteIntegration();
   const testIntegration = useTestIntegration();
   const triggerSync = useTriggerSync();
+  const getMeliAuthUrl = useGetMeliAuthUrl();
   const { data: warehousesResult } = useWarehouses();
   const warehouses = warehousesResult?.data ?? [];
   const [activeTab, setActiveTab] = useState("logs");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editFormOpen, setEditFormOpen] = useState(false);
   const [showSecret, setShowSecret] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -80,6 +103,17 @@ export function VtexConnectionDetail({
     await deleteIntegration.mutateAsync(connectionId);
     setDeleteDialogOpen(false);
     router.push("/dashboard/integrations");
+  };
+
+  const handleReauth = async () => {
+    const currentUrl = window.location.href;
+    const result = await getMeliAuthUrl.mutateAsync({
+      connectionId,
+      redirectUri: currentUrl,
+    });
+    if (result.data?.authUrl) {
+      window.location.href = result.data.authUrl;
+    }
   };
 
   if (isLoading) {
@@ -119,12 +153,6 @@ export function VtexConnectionDetail({
     BOTH: t("syncStrategy.BOTH"),
   };
 
-  const syncDirectionLabels: Record<string, string> = {
-    INBOUND: t("syncDirection.inbound"),
-    OUTBOUND: t("syncDirection.outbound"),
-    BIDIRECTIONAL: t("syncDirection.bidirectional"),
-  };
-
   const warehouseName =
     warehouses.find((w) => w.id === connection.defaultWarehouseId)?.name ??
     connection.warehouseName ??
@@ -141,6 +169,35 @@ export function VtexConnectionDetail({
 
   return (
     <div className="space-y-6">
+      {/* Re-auth Banner */}
+      {connection.needsReauth && (
+        <Card className="border-warning bg-warning/5">
+          <CardContent className="flex items-center gap-4 p-4">
+            <AlertTriangle className="h-5 w-5 text-warning" />
+            <div className="flex-1">
+              <p className="font-medium text-warning">
+                {t("providers.mercadolibre.reauthRequired")}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {t("providers.mercadolibre.reauthDescription")}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              onClick={handleReauth}
+              disabled={getMeliAuthUrl.isPending}
+            >
+              {getMeliAuthUrl.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <ExternalLink className="mr-2 h-4 w-4" />
+              )}
+              {t("providers.mercadolibre.reauthAction")}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -183,10 +240,20 @@ export function VtexConnectionDetail({
             )}
             {t("actions.sync")}
           </Button>
-          <Button variant="outline" onClick={() => setEditFormOpen(true)}>
-            <Pencil className="mr-2 h-4 w-4" />
-            {t("actions.edit")}
-          </Button>
+          {!connection.isConnected && !connection.needsReauth && (
+            <Button
+              variant="default"
+              onClick={handleReauth}
+              disabled={getMeliAuthUrl.isPending}
+            >
+              {getMeliAuthUrl.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <ExternalLink className="mr-2 h-4 w-4" />
+              )}
+              {t("providers.mercadolibre.connectButton")}
+            </Button>
+          )}
           <Button
             variant="destructive"
             onClick={() => setDeleteDialogOpen(true)}
@@ -214,6 +281,14 @@ export function VtexConnectionDetail({
             </div>
             <div>
               <dt className="text-sm font-medium text-muted-foreground">
+                {t("providers.mercadolibre.tokenStatusLabel")}
+              </dt>
+              <dd className="mt-1">
+                <TokenStatusBadge status={connection.tokenStatus} />
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
                 {t("form.syncStrategy")}
               </dt>
               <dd className="mt-1 text-sm">
@@ -228,10 +303,7 @@ export function VtexConnectionDetail({
                 {t("form.syncDirection")}
               </dt>
               <dd className="mt-1 text-sm">
-                <Badge variant="info">
-                  {syncDirectionLabels[connection.syncDirection] ??
-                    connection.syncDirection}
-                </Badge>
+                <Badge variant="info">{t("syncDirection.inbound")}</Badge>
               </dd>
             </div>
             <div>
@@ -347,16 +419,6 @@ export function VtexConnectionDetail({
           </TabsContent>
         )}
       </Tabs>
-
-      {/* Edit Form Dialog - only mount when open to avoid unnecessary API calls */}
-      {editFormOpen && (
-        <VtexConnectionForm
-          open={editFormOpen}
-          onOpenChange={setEditFormOpen}
-          mode="edit"
-          connection={connection}
-        />
-      )}
 
       {/* Delete Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

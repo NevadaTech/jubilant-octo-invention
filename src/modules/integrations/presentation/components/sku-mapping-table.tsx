@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
@@ -17,6 +18,7 @@ export function SkuMappingTable({ connectionId }: SkuMappingTableProps) {
   const t = useTranslations("integrations.skuMapping");
   const { data: mappings, isLoading } = useSkuMappings(connectionId);
   const deleteMapping = useDeleteSkuMapping(connectionId);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   if (isLoading) {
     return <Skeleton className="h-32" />;
@@ -61,10 +63,15 @@ export function SkuMappingTable({ connectionId }: SkuMappingTableProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => deleteMapping.mutate(mapping.id)}
-                  disabled={deleteMapping.isPending}
+                  onClick={() => {
+                    setDeletingId(mapping.id);
+                    deleteMapping.mutate(mapping.id, {
+                      onSettled: () => setDeletingId(null),
+                    });
+                  }}
+                  disabled={deletingId !== null}
                 >
-                  {deleteMapping.isPending ? (
+                  {deletingId === mapping.id ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
                   ) : (
                     <Trash2 className="h-3 w-3 text-destructive" />

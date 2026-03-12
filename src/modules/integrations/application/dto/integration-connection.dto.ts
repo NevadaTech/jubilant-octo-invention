@@ -23,6 +23,9 @@ export interface IntegrationConnectionResponseDto {
   lastSyncAt?: string | null;
   lastSyncError?: string | null;
   syncedOrdersCount: number;
+  webhookSecret?: string | null;
+  tokenStatus?: string | null;
+  meliUserId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -79,5 +82,12 @@ export interface TestConnectionResponseDto {
 export interface TriggerSyncResponseDto {
   success: boolean;
   message: string;
+  timestamp: string;
+}
+
+export interface MeliAuthUrlResponseDto {
+  success: boolean;
+  message: string;
+  data: { authUrl: string };
   timestamp: string;
 }

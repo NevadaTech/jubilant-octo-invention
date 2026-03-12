@@ -121,14 +121,6 @@ export function ConnectionCard({
             </span>
             <span className="text-sm">{formatDate(connection.lastSyncAt)}</span>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
-              {t("fields.syncedOrders")}
-            </span>
-            <span className="text-sm font-medium">
-              {connection.syncedOrdersCount}
-            </span>
-          </div>
           {connection.lastSyncError && (
             <p className="text-xs text-destructive truncate">
               {connection.lastSyncError}

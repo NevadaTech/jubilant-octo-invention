@@ -1800,7 +1800,15 @@
     "REORDER_RULE_CONFLICT": "Ya existe una regla de reorden para este producto y almacén.",
     "REORDER_RULE_CREATION_ERROR": "Error al crear la regla de reorden.",
     "REORDER_RULE_UPDATE_ERROR": "Error al actualizar la regla de reorden.",
-    "REORDER_RULE_DELETE_ERROR": "Error al eliminar la regla de reorden."
+    "REORDER_RULE_DELETE_ERROR": "Error al eliminar la regla de reorden.",
+
+    "INTEGRATION_CONNECTION_NOT_FOUND": "Conexión de integración no encontrada.",
+    "INTEGRATION_CONNECTION_ALREADY_EXISTS": "Ya existe una conexión de integración para esta cuenta.",
+    "INTEGRATION_TEST_FAILED": "La prueba de conexión falló. Verifica tus credenciales.",
+    "INTEGRATION_SYNC_FAILED": "La sincronización falló. Intenta de nuevo.",
+    "SYNC_LOG_NOT_FOUND": "Registro de sincronización no encontrado.",
+    "SKU_MAPPING_NOT_FOUND": "Mapeo de SKU no encontrado.",
+    "SKU_MAPPING_ALREADY_EXISTS": "Ya existe un mapeo para este SKU externo."
   },
   "navigation": {
     "dashboard": "Panel",
@@ -2247,7 +2255,8 @@
       "lastSync": "Última sincronización",
       "syncedOrders": "Órdenes sincronizadas",
       "connectedAt": "Conectado desde",
-      "lastError": "Último error"
+      "lastError": "Último error",
+      "webhookSecret": "Webhook Secret"
     },
     "form": {
       "createTitle": "Conectar tienda VTEX",
@@ -2273,6 +2282,11 @@
       "defaultContactPlaceholder": "Seleccionar contacto de respaldo (opcional)",
       "company": "Empresa",
       "companyPlaceholder": "Seleccionar empresa (opcional)"
+    },
+    "syncStrategy": {
+      "WEBHOOK": "Webhook",
+      "POLLING": "Polling",
+      "BOTH": "Webhook + Polling"
     },
     "syncDirection": {
       "inbound": "Entrada (VTEX → Nevada)",
@@ -2307,12 +2321,14 @@
     "detail": {
       "info": "Detalles de conexión",
       "notFound": "Conexión no encontrada",
-      "notFoundDescription": "La integración que buscas no existe o ha sido eliminada."
+      "notFoundDescription": "La integración que buscas no existe o ha sido eliminada.",
+      "webhookSecretCopied": "Webhook secret copiado al portapapeles"
     },
     "syncLogs": {
       "title": "Registro de sincronización",
       "allActions": "Todas las acciones",
       "empty": "Sin registros de sincronización",
+      "error": "No se pudieron cargar los registros. Intenta de nuevo.",
       "columns": {
         "orderId": "ID de orden",
         "action": "Acción",
@@ -2322,12 +2338,23 @@
         "actions": ""
       },
       "actions": {
-        "CREATED": "Creado",
-        "UPDATED": "Actualizado",
-        "SKIPPED": "Omitido",
+        "SYNCED": "Sincronizado",
         "FAILED": "Fallido",
-        "OUTBOUND_OK": "Salida OK",
-        "OUTBOUND_FAILED": "Salida fallida"
+        "ALREADY_SYNCED": "Ya sincronizado"
+      },
+      "detail": {
+        "title": "Detalle del registro",
+        "externalOrderId": "ID de orden externa",
+        "action": "Acción",
+        "sale": "Venta asociada",
+        "contact": "Contacto asociado",
+        "errorMessage": "Mensaje de error",
+        "processedAt": "Procesado el",
+        "viewSale": "Ver venta",
+        "noSale": "Sin venta asociada",
+        "noContact": "Sin contacto asociado",
+        "noError": "Sin error",
+        "retry": "Reintentar sincronización"
       }
     },
     "skuMapping": {
@@ -2342,6 +2369,11 @@
       "empty": "Sin mapeos de SKU configurados",
       "externalSkuPlaceholder": "SKU o RefId de VTEX",
       "productIdPlaceholder": "ID de producto interno",
+      "selectProduct": "Seleccionar producto...",
+      "searchProduct": "Buscar por nombre o SKU...",
+      "noProductsFound": "No se encontraron productos",
+      "externalSkuRequired": "El SKU externo es requerido",
+      "productRequired": "El producto es requerido",
       "unmatchedAlert": "SKUs sin coincidencia",
       "unmatchedDescription": "Estos SKUs de VTEX no pudieron coincidir con productos internos. Mapéalos para habilitar la sincronización de órdenes.",
       "mapThis": "Mapear"
@@ -2370,15 +2402,34 @@
       },
       "mercadolibre": {
         "name": "MercadoLibre",
-        "description": "Integra con MercadoLibre para sincronizar publicaciones y órdenes.",
-        "comingSoon": "Próximamente",
-        "comingSoonDescription": "La integración con MercadoLibre está en desarrollo. Mantente atento a las novedades."
+        "description": "Integra con MercadoLibre para sincronizar órdenes automáticamente.",
+        "addConnection": "Agregar conexión MercadoLibre",
+        "formDescription": "Ingresa las credenciales de tu App de MercadoLibre. Después de guardar, deberás autorizar el acceso vía OAuth.",
+        "connectButton": "Conectar con MercadoLibre",
+        "reauthRequired": "Re-autenticación requerida",
+        "reauthDescription": "Tu autenticación de MercadoLibre ha expirado. Por favor re-autentícate para reanudar la sincronización.",
+        "reauthAction": "Re-autenticar",
+        "inboundOnly": "MercadoLibre solo soporta sincronización de entrada (MeLi → Nevada)",
+        "tokenStatusLabel": "Estado del token",
+        "tokenStatus": {
+          "VALID": "Válido",
+          "REFRESHING": "Actualizando",
+          "EXPIRED": "Expirado",
+          "REAUTH_REQUIRED": "Requiere re-auth"
+        },
+        "form": {
+          "clientId": "Client ID (App ID)",
+          "clientIdPlaceholder": "Ingrese el App ID de MercadoLibre",
+          "clientSecret": "Client Secret",
+          "clientSecretPlaceholder": "Ingrese el App Secret de MercadoLibre"
+        }
       }
     },
     "stats": {
       "totalConnections": "{count, plural, =0 {Sin conexiones} =1 {1 conexión} other {# conexiones}}",
       "connected": "{count} conectadas",
-      "withErrors": "{count} con errores"
+      "withErrors": "{count} con errores",
+      "needsReauth": "{count} requiere re-auth"
     },
     "enabledBanner": {
       "enabled": "Las integraciones están habilitadas para tu organización.",

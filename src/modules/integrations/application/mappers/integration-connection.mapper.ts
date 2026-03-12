@@ -5,6 +5,7 @@ import type {
   ConnectionStatus,
   SyncStrategy,
   SyncDirection,
+  TokenStatus,
 } from "@/modules/integrations/domain/entities/integration-connection.entity";
 
 export class IntegrationConnectionMapper {
@@ -29,6 +30,9 @@ export class IntegrationConnectionMapper {
       lastSyncAt: dto.lastSyncAt ? new Date(dto.lastSyncAt) : null,
       lastSyncError: dto.lastSyncError ?? null,
       syncedOrdersCount: dto.syncedOrdersCount ?? 0,
+      webhookSecret: dto.webhookSecret ?? null,
+      tokenStatus: (dto.tokenStatus as TokenStatus) ?? null,
+      meliUserId: dto.meliUserId ?? null,
       createdAt: new Date(dto.createdAt),
       updatedAt: new Date(dto.updatedAt),
     });

@@ -4,6 +4,11 @@ export type IntegrationProvider = "VTEX" | "MERCADOLIBRE";
 export type ConnectionStatus = "CONNECTED" | "DISCONNECTED" | "ERROR";
 export type SyncStrategy = "WEBHOOK" | "POLLING" | "BOTH";
 export type SyncDirection = "INBOUND" | "OUTBOUND" | "BIDIRECTIONAL";
+export type TokenStatus =
+  | "VALID"
+  | "REFRESHING"
+  | "EXPIRED"
+  | "REAUTH_REQUIRED";
 
 export interface IntegrationConnectionProps {
   id: string;
@@ -23,6 +28,9 @@ export interface IntegrationConnectionProps {
   lastSyncAt: Date | null;
   lastSyncError: string | null;
   syncedOrdersCount: number;
+  webhookSecret: string | null;
+  tokenStatus: TokenStatus | null;
+  meliUserId: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -56,6 +64,9 @@ export class IntegrationConnection extends Entity<string> {
       lastSyncAt: props.lastSyncAt,
       lastSyncError: props.lastSyncError,
       syncedOrdersCount: props.syncedOrdersCount,
+      webhookSecret: props.webhookSecret,
+      tokenStatus: props.tokenStatus,
+      meliUserId: props.meliUserId,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
     });
@@ -116,10 +127,23 @@ export class IntegrationConnection extends Entity<string> {
     return this.props.updatedAt;
   }
 
+  get webhookSecret(): string | null {
+    return this.props.webhookSecret;
+  }
+  get tokenStatus(): TokenStatus | null {
+    return this.props.tokenStatus;
+  }
+  get meliUserId(): string | null {
+    return this.props.meliUserId;
+  }
+
   get isConnected(): boolean {
     return this.props.status === "CONNECTED";
   }
   get hasError(): boolean {
     return this.props.status === "ERROR";
+  }
+  get needsReauth(): boolean {
+    return this.props.tokenStatus === "REAUTH_REQUIRED";
   }
 }

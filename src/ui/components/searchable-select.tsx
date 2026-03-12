@@ -47,7 +47,12 @@ const SearchableSelect = forwardRef<HTMLButtonElement, SearchableSelectProps>(
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [mounted, setMounted] = useState(false);
-    const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
+    const [coords, setCoords] = useState({
+      top: 0,
+      left: 0,
+      width: 0,
+      openAbove: false,
+    });
     const triggerRef = useRef<HTMLButtonElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -89,10 +94,17 @@ const SearchableSelect = forwardRef<HTMLButtonElement, SearchableSelectProps>(
     const updateCoords = useCallback(() => {
       if (triggerRef.current) {
         const rect = triggerRef.current.getBoundingClientRect();
+        const dropdownHeight = 284; // max-h-60 (240px) + search input (~44px)
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const spaceAbove = rect.top;
+        const openAbove =
+          spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+
         setCoords({
-          top: rect.bottom + 4,
+          top: openAbove ? rect.top - 4 : rect.bottom + 4,
           left: rect.left,
           width: rect.width,
+          openAbove,
         });
       }
     }, []);
@@ -161,12 +173,16 @@ const SearchableSelect = forwardRef<HTMLButtonElement, SearchableSelectProps>(
           createPortal(
             <div
               ref={contentRef}
-              className="z-50 rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
+              className={cn(
+                "z-50 rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
+                coords.openAbove && "flex flex-col-reverse",
+              )}
               style={{
                 position: "fixed",
                 top: coords.top,
                 left: coords.left,
                 width: Math.max(coords.width, 280),
+                ...(coords.openAbove ? { transform: "translateY(-100%)" } : {}),
               }}
             >
               <div className="flex items-center border-b px-3">

@@ -115,6 +115,7 @@ export class TokenService {
 
       // Clear non-auth cookies
       document.cookie = `nevada_must_change_pwd=; path=/; max-age=0; SameSite=Strict${secureCookieFlag()}`;
+      document.cookie = `nevada_org_slug=; path=/; max-age=0; SameSite=Strict${secureCookieFlag()}`;
     } catch (error) {
       logger.error("Failed to clear session:", error);
     }
@@ -160,6 +161,8 @@ export class TokenService {
 
     try {
       localStorage.setItem(ORG_SLUG_KEY, slug);
+      // Sync to cookie for server-side access (RSC prefetching)
+      document.cookie = `nevada_org_slug=${encodeURIComponent(slug)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Strict${secureCookieFlag()}`;
     } catch (error) {
       logger.error("Failed to store organization slug:", error);
     }

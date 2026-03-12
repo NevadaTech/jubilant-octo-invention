@@ -18,7 +18,9 @@ import {
 } from "@/ui/components/alert-dialog";
 import { ConnectionCard } from "./connection-card";
 import { VtexProviderHeader } from "./vtex-provider-header";
+import { MeliProviderHeader } from "./meli-provider-header";
 import { VtexConnectionForm } from "./vtex-connection-form";
+import { MeliConnectionForm } from "./meli-connection-form";
 import {
   useIntegrations,
   useDeleteIntegration,
@@ -77,9 +79,12 @@ export function ProviderTabContent({ provider }: ProviderTabContentProps) {
   const filteredConnections = connections ?? [];
   const providerKey = provider.toLowerCase();
 
+  const ProviderHeader =
+    provider === "MERCADOLIBRE" ? MeliProviderHeader : VtexProviderHeader;
+
   return (
     <div className="space-y-4">
-      <VtexProviderHeader connections={filteredConnections} />
+      <ProviderHeader connections={filteredConnections} />
 
       {filteredConnections.length === 0 ? (
         <Card>
@@ -97,6 +102,16 @@ export function ProviderTabContent({ provider }: ProviderTabContentProps) {
         </Card>
       ) : (
         <>
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowForm(true)}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              {t(`providers.${providerKey}.addConnection` as never)}
+            </Button>
+          </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredConnections.map((conn) => (
               <ConnectionCard
@@ -108,21 +123,19 @@ export function ProviderTabContent({ provider }: ProviderTabContentProps) {
               />
             ))}
           </div>
-
-          <div className="flex justify-center">
-            <Button variant="outline" onClick={() => setShowForm(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t(`providers.${providerKey}.addConnection` as never)}
-            </Button>
-          </div>
         </>
       )}
 
-      <VtexConnectionForm
-        open={showForm}
-        onOpenChange={setShowForm}
-        mode="create"
-      />
+      {showForm &&
+        (provider === "MERCADOLIBRE" ? (
+          <MeliConnectionForm open={showForm} onOpenChange={setShowForm} />
+        ) : (
+          <VtexConnectionForm
+            open={showForm}
+            onOpenChange={setShowForm}
+            mode="create"
+          />
+        ))}
 
       <AlertDialog
         open={!!deleteId}

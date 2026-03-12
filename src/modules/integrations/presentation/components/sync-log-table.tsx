@@ -3,10 +3,17 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { RefreshCw, Loader2 } from "lucide-react";
+import { RefreshCw, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Badge } from "@/ui/components/badge";
 import { Skeleton } from "@/ui/components/skeleton";
+import { TablePagination } from "@/ui/components/table-pagination";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/ui/components/dialog";
 import {
   Select,
   SelectContent,
@@ -18,18 +25,24 @@ import {
   useSyncLogs,
   useRetrySyncLog,
 } from "@/modules/integrations/presentation/hooks/use-integrations";
-import type { SyncAction } from "@/modules/integrations/domain/entities/integration-sync-log.entity";
+import type {
+  SyncAction,
+  IntegrationSyncLog,
+} from "@/modules/integrations/domain/entities/integration-sync-log.entity";
+
+/** saleId is a real CUID only when it doesn't start with a provider prefix */
+function isRealSaleId(saleId: string | null): saleId is string {
+  if (!saleId) return false;
+  return !saleId.startsWith("vtex-") && !saleId.startsWith("meli-");
+}
 
 const actionVariantMap: Record<
   SyncAction,
-  "success" | "destructive" | "secondary" | "warning" | "info"
+  "success" | "destructive" | "secondary"
 > = {
-  CREATED: "success",
-  UPDATED: "info",
-  SKIPPED: "secondary",
+  SYNCED: "success",
   FAILED: "destructive",
-  OUTBOUND_OK: "success",
-  OUTBOUND_FAILED: "warning",
+  ALREADY_SYNCED: "secondary",
 };
 
 interface SyncLogTableProps {
@@ -41,12 +54,34 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
   const t = useTranslations("integrations.syncLogs");
   const tCommon = useTranslations("common");
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
   const [actionFilter, setActionFilter] = useState<string>("ALL");
-  const retrySyncLog = useRetrySyncLog(connectionId);
+  const [selectedLog, setSelectedLog] = useState<IntegrationSyncLog | null>(
+    null,
+  );
 
-  const { data: result, isLoading } = useSyncLogs(connectionId, {
+  const handleFilterChange = (value: string) => {
+    setActionFilter(value);
+    setPage(1);
+  };
+  const retrySyncLog = useRetrySyncLog(connectionId);
+  const [retryingLogId, setRetryingLogId] = useState<string | null>(null);
+
+  const handleRetry = (logId: string) => {
+    setRetryingLogId(logId);
+    retrySyncLog.mutate(logId, {
+      onSettled: () => setRetryingLogId(null),
+    });
+  };
+
+  const {
+    data: result,
+    isLoading,
+    isFetching,
+    isError,
+  } = useSyncLogs(connectionId, {
     page,
-    limit: 20,
+    limit,
     action: actionFilter === "ALL" ? undefined : (actionFilter as SyncAction),
   });
 
@@ -57,8 +92,28 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
     }).format(date);
   };
 
+  const formatDateLong = (date: Date) => {
+    return new Intl.DateTimeFormat(locale, {
+      dateStyle: "full",
+      timeStyle: "medium",
+    }).format(date);
+  };
+
   if (isLoading) {
     return <Skeleton className="h-64" />;
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">{t("title")}</h3>
+        </div>
+        <p className="py-8 text-center text-sm text-destructive">
+          {t("error")}
+        </p>
+      </div>
+    );
   }
 
   const logs = result?.data ?? [];
@@ -67,22 +122,26 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">{t("title")}</h3>
-        <Select value={actionFilter} onValueChange={setActionFilter}>
+        <h3 className="flex items-center gap-2 text-lg font-semibold">
+          {t("title")}
+          {isFetching && !isLoading && (
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          )}
+        </h3>
+        <Select value={actionFilter} onValueChange={handleFilterChange}>
           <SelectTrigger className="w-40">
-            <SelectValue />
+            <SelectValue>
+              {actionFilter === "ALL"
+                ? t("allActions")
+                : t(`actions.${actionFilter}` as never)}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">{t("allActions")}</SelectItem>
-            <SelectItem value="CREATED">{t("actions.CREATED")}</SelectItem>
-            <SelectItem value="UPDATED">{t("actions.UPDATED")}</SelectItem>
+            <SelectItem value="SYNCED">{t("actions.SYNCED")}</SelectItem>
             <SelectItem value="FAILED">{t("actions.FAILED")}</SelectItem>
-            <SelectItem value="SKIPPED">{t("actions.SKIPPED")}</SelectItem>
-            <SelectItem value="OUTBOUND_OK">
-              {t("actions.OUTBOUND_OK")}
-            </SelectItem>
-            <SelectItem value="OUTBOUND_FAILED">
-              {t("actions.OUTBOUND_FAILED")}
+            <SelectItem value="ALREADY_SYNCED">
+              {t("actions.ALREADY_SYNCED")}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -119,25 +178,34 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
             </thead>
             <tbody>
               {logs.map((log) => (
-                <tr key={log.id} className="border-b">
+                <tr
+                  key={log.id}
+                  className="border-b cursor-pointer transition-colors hover:bg-muted/50"
+                  onClick={() => setSelectedLog(log)}
+                >
                   <td className="py-2 font-mono text-xs">
                     {log.externalOrderId}
                   </td>
                   <td className="py-2">
-                    <Badge variant={actionVariantMap[log.action]}>
-                      {log.action}
+                    <Badge
+                      variant={actionVariantMap[log.action] ?? "secondary"}
+                    >
+                      {t(`actions.${log.action}` as never)}
                     </Badge>
                   </td>
                   <td className="py-2">
-                    {log.saleId ? (
+                    {isRealSaleId(log.saleId) ? (
                       <Link
                         href={`/dashboard/sales/${log.saleId}`}
                         className="text-primary-600 hover:underline"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        {log.saleId.slice(0, 8)}...
+                        {log.saleNumber || log.saleId.slice(0, 8)}
                       </Link>
                     ) : (
-                      "-"
+                      <span className="text-xs text-muted-foreground">
+                        {t("detail.noSale")}
+                      </span>
                     )}
                   </td>
                   <td className="py-2 max-w-48 truncate text-xs text-destructive">
@@ -151,10 +219,13 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => retrySyncLog.mutate(log.id)}
-                        disabled={retrySyncLog.isPending}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRetry(log.id);
+                        }}
+                        disabled={retryingLogId !== null}
                       >
-                        {retrySyncLog.isPending ? (
+                        {retryingLogId === log.id ? (
                           <Loader2 className="h-3 w-3 animate-spin" />
                         ) : (
                           <RefreshCw className="h-3 w-3" />
@@ -169,38 +240,143 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
         </div>
       )}
 
-      {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {tCommon("pagination.showing", {
-              from: (pagination.page - 1) * pagination.limit + 1,
-              to: Math.min(
-                pagination.page * pagination.limit,
-                pagination.total,
-              ),
-              total: pagination.total,
-            })}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!pagination.hasPrev}
-              onClick={() => setPage((p) => p - 1)}
-            >
-              {tCommon("previous")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!pagination.hasNext}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              {tCommon("next")}
-            </Button>
-          </div>
-        </div>
+      {pagination && (
+        <TablePagination
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          total={pagination.total}
+          limit={pagination.limit}
+          onPageChange={setPage}
+          onPageSizeChange={(size) => {
+            setLimit(size);
+            setPage(1);
+          }}
+          showingLabel={tCommon("pagination.showing", {
+            from: (pagination.page - 1) * pagination.limit + 1,
+            to: Math.min(pagination.page * pagination.limit, pagination.total),
+            total: pagination.total,
+          })}
+          perPageLabel={tCommon("pagination.perPage")}
+        />
       )}
+
+      {/* Sync Log Detail Dialog */}
+      <Dialog
+        open={selectedLog !== null}
+        onOpenChange={(open) => !open && setSelectedLog(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("detail.title")}</DialogTitle>
+          </DialogHeader>
+          {selectedLog && (
+            <dl className="space-y-4">
+              <div>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("detail.externalOrderId")}
+                </dt>
+                <dd className="mt-1 font-mono text-sm">
+                  {selectedLog.externalOrderId}
+                </dd>
+              </div>
+
+              <div>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("detail.action")}
+                </dt>
+                <dd className="mt-1">
+                  <Badge
+                    variant={
+                      actionVariantMap[selectedLog.action] ?? "secondary"
+                    }
+                  >
+                    {t(`actions.${selectedLog.action}` as never)}
+                  </Badge>
+                </dd>
+              </div>
+
+              <div>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("detail.processedAt")}
+                </dt>
+                <dd className="mt-1 text-sm">
+                  {formatDateLong(selectedLog.processedAt)}
+                </dd>
+              </div>
+
+              <div>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("detail.sale")}
+                </dt>
+                <dd className="mt-1 text-sm">
+                  {isRealSaleId(selectedLog.saleId) ? (
+                    <Link
+                      href={`/dashboard/sales/${selectedLog.saleId}`}
+                      className="inline-flex items-center gap-1 text-primary hover:underline"
+                    >
+                      <span className="font-mono">
+                        {selectedLog.saleNumber || selectedLog.saleId}
+                      </span>
+                      <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      {t("detail.noSale")}
+                    </span>
+                  )}
+                </dd>
+              </div>
+
+              <div>
+                <dt className="text-sm font-medium text-muted-foreground">
+                  {t("detail.contact")}
+                </dt>
+                <dd className="mt-1 text-sm">
+                  {selectedLog.contactId ? (
+                    <span className="font-mono">{selectedLog.contactId}</span>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      {t("detail.noContact")}
+                    </span>
+                  )}
+                </dd>
+              </div>
+
+              {selectedLog.isFailed && (
+                <div>
+                  <dt className="text-sm font-medium text-muted-foreground">
+                    {t("detail.errorMessage")}
+                  </dt>
+                  <dd className="mt-1 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                    {selectedLog.errorMessage || t("detail.noError")}
+                  </dd>
+                </div>
+              )}
+
+              {selectedLog.isFailed && (
+                <div className="pt-2">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => {
+                      handleRetry(selectedLog.id);
+                      setSelectedLog(null);
+                    }}
+                    disabled={retryingLogId !== null}
+                  >
+                    {retryingLogId === selectedLog.id ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                    )}
+                    {t("detail.retry")}
+                  </Button>
+                </div>
+              )}
+            </dl>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

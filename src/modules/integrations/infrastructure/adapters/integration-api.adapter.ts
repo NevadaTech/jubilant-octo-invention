@@ -13,6 +13,7 @@ import type {
   IntegrationConnectionFilters,
   TestConnectionResponseDto,
   TriggerSyncResponseDto,
+  MeliAuthUrlResponseDto,
 } from "@/modules/integrations/application/dto/integration-connection.dto";
 import type {
   IntegrationSyncLogListResponseDto,
@@ -24,6 +25,7 @@ import type {
   CreateSkuMappingDto,
   UnmatchedSkuDto,
   UnmatchedSkusResponseDto,
+  UnmatchedSkuRawDto,
 } from "@/modules/integrations/application/dto/integration-sku-mapping.dto";
 import { IntegrationConnectionMapper } from "@/modules/integrations/application/mappers/integration-connection.mapper";
 import { IntegrationSyncLogMapper } from "@/modules/integrations/application/mappers/integration-sync-log.mapper";
@@ -116,9 +118,18 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
       { params },
     );
 
+    const pag = response.data.pagination;
+
     return {
       data: response.data.data.map(IntegrationSyncLogMapper.toDomain),
-      pagination: response.data.pagination,
+      pagination: {
+        page: pag.page,
+        limit: pag.limit,
+        total: pag.total,
+        totalPages: pag.totalPages,
+        hasNext: pag.page < pag.totalPages,
+        hasPrev: pag.page > 1,
+      },
     };
   }
 
@@ -157,7 +168,16 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
     const response = await apiClient.get<UnmatchedSkusResponseDto>(
       `${this.basePath}/${connectionId}/unmatched`,
     );
-    return response.data.data;
+    return response.data.data.map((raw: UnmatchedSkuRawDto) => ({
+      ...raw,
+      externalSku: this.parseSkuFromError(raw.errorMessage),
+    }));
+  }
+
+  private parseSkuFromError(errorMessage?: string): string {
+    if (!errorMessage) return "";
+    const match = errorMessage.match(/Unmatched SKUs?:\s*(.+)/i);
+    return match?.[1]?.trim() ?? "";
   }
 
   async retrySyncLog(connectionId: string, logId: string): Promise<void> {
@@ -166,6 +186,17 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
 
   async retryAllFailed(connectionId: string): Promise<void> {
     await apiClient.post(`${this.basePath}/${connectionId}/retry-all`);
+  }
+
+  async getMeliAuthUrl(
+    connectionId: string,
+    redirectUri: string,
+  ): Promise<MeliAuthUrlResponseDto> {
+    const response = await apiClient.post<MeliAuthUrlResponseDto>(
+      "/integrations/meli/auth-url",
+      { connectionId, redirectUri },
+    );
+    return response.data;
   }
 
   private isNotFoundError(error: unknown): boolean {

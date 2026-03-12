@@ -1,6 +1,11 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
@@ -12,6 +17,7 @@ import type {
 } from "@/modules/integrations/application/dto/integration-connection.dto";
 import type { SyncLogFilters } from "@/modules/integrations/application/dto/integration-sync-log.dto";
 import type { CreateSkuMappingDto } from "@/modules/integrations/application/dto/integration-sku-mapping.dto";
+import type { IntegrationConnection } from "@/modules/integrations/domain/entities/integration-connection.entity";
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -41,12 +47,21 @@ export function useIntegrations(filters?: IntegrationConnectionFilters) {
   });
 }
 
-export function useIntegration(id: string) {
+export function useIntegration(
+  id: string,
+  options?: { initialData?: IntegrationConnection | null },
+) {
   return useQuery({
     queryKey: integrationKeys.detail(id),
     queryFn: () => getContainer().integrationRepository.findById(id),
     staleTime: STALE_TIME,
     enabled: Boolean(id),
+    ...(options?.initialData
+      ? {
+          initialData: options.initialData,
+          initialDataUpdatedAt: Date.now(),
+        }
+      : {}),
   });
 }
 
@@ -155,6 +170,8 @@ export function useSyncLogs(id: string, filters?: SyncLogFilters) {
       getContainer().integrationRepository.getSyncLogs(id, filters),
     staleTime: STALE_TIME,
     enabled: Boolean(id),
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -241,6 +258,27 @@ export function useRetrySyncLog(connectionId: string) {
       });
       toast.success(t("failedSyncs.retrySuccess"));
     },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
+    },
+  });
+}
+
+export function useGetMeliAuthUrl() {
+  const tErrors = useTranslations("apiErrors");
+
+  return useMutation({
+    mutationFn: ({
+      connectionId,
+      redirectUri,
+    }: {
+      connectionId: string;
+      redirectUri: string;
+    }) =>
+      getContainer().integrationRepository.getMeliAuthUrl(
+        connectionId,
+        redirectUri,
+      ),
     onError: (error) => {
       toast.error(getApiErrorMessage(error, tErrors));
     },

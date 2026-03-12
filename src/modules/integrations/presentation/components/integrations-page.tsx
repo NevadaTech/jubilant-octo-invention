@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/ui/components/tabs";
 import { ProviderTabContent } from "./provider-tab-content";
-import { ComingSoonProviderTab } from "./coming-soon-provider-tab";
 
 export function IntegrationsPage() {
   const t = useTranslations("integrations");
@@ -32,7 +31,7 @@ export function IntegrationsPage() {
         </TabsContent>
 
         <TabsContent value="mercadolibre">
-          <ComingSoonProviderTab providerKey="mercadolibre" />
+          <ProviderTabContent provider="MERCADOLIBRE" />
         </TabsContent>
       </Tabs>
     </div>

@@ -20,16 +20,24 @@ export interface CreateSkuMappingDto {
   productId: string;
 }
 
+export interface UnmatchedSkuRawDto {
+  id: string;
+  externalOrderId: string;
+  errorMessage?: string;
+  processedAt: string;
+}
+
 export interface UnmatchedSkuDto {
+  id: string;
   externalSku: string;
   externalOrderId: string;
-  errorMessage: string;
+  errorMessage?: string;
   processedAt: string;
 }
 
 export interface UnmatchedSkusResponseDto {
   success: boolean;
   message: string;
-  data: UnmatchedSkuDto[];
+  data: UnmatchedSkuRawDto[];
   timestamp: string;
 }

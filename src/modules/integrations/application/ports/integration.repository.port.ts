@@ -6,6 +6,7 @@ import type {
   IntegrationConnectionFilters,
   TestConnectionResponseDto,
   TriggerSyncResponseDto,
+  MeliAuthUrlResponseDto,
 } from "@/modules/integrations/application/dto/integration-connection.dto";
 import type { SyncLogFilters } from "@/modules/integrations/application/dto/integration-sync-log.dto";
 import type {
@@ -54,4 +55,8 @@ export interface IntegrationRepositoryPort {
   getUnmatchedSkus(connectionId: string): Promise<UnmatchedSkuDto[]>;
   retrySyncLog(connectionId: string, logId: string): Promise<void>;
   retryAllFailed(connectionId: string): Promise<void>;
+  getMeliAuthUrl(
+    connectionId: string,
+    redirectUri: string,
+  ): Promise<MeliAuthUrlResponseDto>;
 }

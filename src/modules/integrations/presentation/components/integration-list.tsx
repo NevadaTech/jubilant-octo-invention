@@ -179,14 +179,6 @@ export function IntegrationList() {
                   </span>
                   <span className="text-sm">{formatDate(conn.lastSyncAt)}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    {t("fields.syncedOrders")}
-                  </span>
-                  <span className="text-sm font-medium">
-                    {conn.syncedOrdersCount}
-                  </span>
-                </div>
                 {conn.lastSyncError && (
                   <p className="text-xs text-destructive truncate">
                     {conn.lastSyncError}

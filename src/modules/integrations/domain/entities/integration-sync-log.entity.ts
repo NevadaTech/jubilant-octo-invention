@@ -1,12 +1,6 @@
 import { Entity } from "@/shared/domain";
 
-export type SyncAction =
-  | "CREATED"
-  | "UPDATED"
-  | "SKIPPED"
-  | "FAILED"
-  | "OUTBOUND_OK"
-  | "OUTBOUND_FAILED";
+export type SyncAction = "SYNCED" | "FAILED" | "ALREADY_SYNCED";
 
 export interface IntegrationSyncLogProps {
   id: string;
@@ -14,6 +8,7 @@ export interface IntegrationSyncLogProps {
   externalOrderId: string;
   action: SyncAction;
   saleId: string | null;
+  saleNumber: string | null;
   contactId: string | null;
   errorMessage: string | null;
   rawPayload: unknown | null;
@@ -34,6 +29,7 @@ export class IntegrationSyncLog extends Entity<string> {
       externalOrderId: props.externalOrderId,
       action: props.action,
       saleId: props.saleId,
+      saleNumber: props.saleNumber,
       contactId: props.contactId,
       errorMessage: props.errorMessage,
       rawPayload: props.rawPayload,
@@ -53,6 +49,9 @@ export class IntegrationSyncLog extends Entity<string> {
   get saleId(): string | null {
     return this.props.saleId;
   }
+  get saleNumber(): string | null {
+    return this.props.saleNumber;
+  }
   get contactId(): string | null {
     return this.props.contactId;
   }
@@ -69,7 +68,7 @@ export class IntegrationSyncLog extends Entity<string> {
   get isFailed(): boolean {
     return this.props.action === "FAILED";
   }
-  get isOutboundFailed(): boolean {
-    return this.props.action === "OUTBOUND_FAILED";
+  get isSynced(): boolean {
+    return this.props.action === "SYNCED";
   }
 }

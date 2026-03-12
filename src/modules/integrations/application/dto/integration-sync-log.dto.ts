@@ -6,6 +6,7 @@ export interface IntegrationSyncLogResponseDto {
   externalOrderId: string;
   action: SyncAction;
   saleId?: string | null;
+  saleNumber?: string | null;
   contactId?: string | null;
   errorMessage?: string | null;
   processedAt: string;
@@ -20,8 +21,6 @@ export interface IntegrationSyncLogListResponseDto {
     limit: number;
     total: number;
     totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
   };
   timestamp: string;
 }
