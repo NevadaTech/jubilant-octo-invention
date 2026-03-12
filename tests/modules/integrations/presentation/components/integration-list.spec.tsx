@@ -145,11 +145,4 @@ describe("IntegrationList", () => {
     expect(screen.getByText(/myaccount/)).toBeInTheDocument();
     expect(screen.getByText(/otheraccount/)).toBeInTheDocument();
   });
-
-  it("Given: connections data When: rendering Then: should show synced orders count", () => {
-    render(<IntegrationList />);
-
-    expect(screen.getByText("42")).toBeInTheDocument();
-    expect(screen.getByText("0")).toBeInTheDocument();
-  });
 });

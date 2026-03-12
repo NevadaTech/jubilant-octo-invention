@@ -62,18 +62,22 @@ describe("IntegrationApiAdapter", () => {
     id: "log-001",
     connectionId: "conn-001",
     externalOrderId: "VTEX-ORD-12345",
-    action: "CREATED",
+    action: "SYNCED",
     saleId: "sale-001",
     contactId: "contact-001",
     errorMessage: null,
     processedAt: "2026-03-07T10:00:00.000Z",
   };
 
-  const mockPagination = {
+  const mockApiPagination = {
     page: 1,
     limit: 10,
     total: 1,
     totalPages: 1,
+  };
+
+  const mockExpectedPagination = {
+    ...mockApiPagination,
     hasNext: false,
     hasPrev: false,
   };
@@ -362,7 +366,7 @@ describe("IntegrationApiAdapter", () => {
           success: true,
           message: "Logs retrieved",
           data: [mockSyncLogDto],
-          pagination: mockPagination,
+          pagination: mockApiPagination,
           timestamp: new Date().toISOString(),
         },
       });
@@ -374,7 +378,7 @@ describe("IntegrationApiAdapter", () => {
         { params: {} },
       );
       expect(result.data).toHaveLength(1);
-      expect(result.pagination).toEqual(mockPagination);
+      expect(result.pagination).toEqual(mockExpectedPagination);
     });
 
     it("Given: action filter When: getSyncLogs is called Then: should pass action param", async () => {
@@ -383,7 +387,7 @@ describe("IntegrationApiAdapter", () => {
           success: true,
           message: "ok",
           data: [],
-          pagination: mockPagination,
+          pagination: mockApiPagination,
           timestamp: new Date().toISOString(),
         },
       });
@@ -402,7 +406,7 @@ describe("IntegrationApiAdapter", () => {
           success: true,
           message: "ok",
           data: [],
-          pagination: { ...mockPagination, page: 2, limit: 25 },
+          pagination: { ...mockApiPagination, page: 2, limit: 25 },
           timestamp: new Date().toISOString(),
         },
       });
@@ -492,12 +496,12 @@ describe("IntegrationApiAdapter", () => {
   });
 
   describe("getUnmatchedSkus", () => {
-    it("Given: a connection ID When: getUnmatchedSkus is called Then: should GET unmatched-skus", async () => {
+    it("Given: a connection ID When: getUnmatchedSkus is called Then: should parse externalSku from errorMessage", async () => {
       const mockUnmatched = [
         {
-          externalSku: "VTEX-SKU-999",
-          externalOrderId: "VTEX-ORD-456",
-          errorMessage: "No matching product found",
+          id: "log-001",
+          externalOrderId: "MKT-1480160891077-01",
+          errorMessage: "Unmatched SKUs: NLAB0005",
           processedAt: "2026-03-07T10:00:00.000Z",
         },
       ];
@@ -516,7 +520,31 @@ describe("IntegrationApiAdapter", () => {
         "/integrations/connections/conn-001/unmatched",
       );
       expect(result).toHaveLength(1);
-      expect(result[0].externalSku).toBe("VTEX-SKU-999");
+      expect(result[0].externalSku).toBe("NLAB0005");
+      expect(result[0].id).toBe("log-001");
+      expect(result[0].externalOrderId).toBe("MKT-1480160891077-01");
+    });
+
+    it("Given: no errorMessage When: getUnmatchedSkus is called Then: should return empty externalSku", async () => {
+      const mockUnmatched = [
+        {
+          id: "log-002",
+          externalOrderId: "MKT-123",
+          processedAt: "2026-03-07T10:00:00.000Z",
+        },
+      ];
+      vi.mocked(apiClient.get).mockResolvedValue({
+        data: {
+          success: true,
+          message: "ok",
+          data: mockUnmatched,
+          timestamp: new Date().toISOString(),
+        },
+      });
+
+      const result = await adapter.getUnmatchedSkus("conn-001");
+
+      expect(result[0].externalSku).toBe("");
     });
   });
 

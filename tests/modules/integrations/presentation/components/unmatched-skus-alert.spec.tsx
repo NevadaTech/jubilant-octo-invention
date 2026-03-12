@@ -22,9 +22,9 @@ vi.mock(
 );
 
 const mockUnmatchedSkus = [
-  { externalSku: "VTEX-UNKNOWN-1", externalOrderId: "ORD-500" },
-  { externalSku: "VTEX-UNKNOWN-2", externalOrderId: "ORD-501" },
-  { externalSku: "VTEX-UNKNOWN-3", externalOrderId: "ORD-502" },
+  { id: "log-1", externalSku: "VTEX-UNKNOWN-1", externalOrderId: "ORD-500" },
+  { id: "log-2", externalSku: "VTEX-UNKNOWN-2", externalOrderId: "ORD-501" },
+  { id: "log-3", externalSku: "VTEX-UNKNOWN-3", externalOrderId: "ORD-502" },
 ];
 
 let mockUnmatchedState: {

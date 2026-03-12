@@ -11,7 +11,7 @@ describe("IntegrationSyncLog Entity", () => {
     id: "log-001",
     connectionId: "conn-001",
     externalOrderId: "VTEX-ORD-12345",
-    action: "CREATED",
+    action: "SYNCED",
     saleId: "sale-001",
     contactId: "contact-001",
     errorMessage: null,
@@ -26,7 +26,7 @@ describe("IntegrationSyncLog Entity", () => {
       expect(entity.id).toBe("log-001");
       expect(entity.connectionId).toBe("conn-001");
       expect(entity.externalOrderId).toBe("VTEX-ORD-12345");
-      expect(entity.action).toBe("CREATED");
+      expect(entity.action).toBe("SYNCED");
       expect(entity.saleId).toBe("sale-001");
       expect(entity.contactId).toBe("contact-001");
       expect(entity.errorMessage).toBeNull();
@@ -69,48 +69,30 @@ describe("IntegrationSyncLog Entity", () => {
   });
 
   describe("getters", () => {
-    it("Given: CREATED action When: checking action Then: should return CREATED", () => {
+    it("Given: SYNCED action When: checking action Then: should return SYNCED", () => {
       const entity = IntegrationSyncLog.create(validProps);
 
-      expect(entity.action).toBe("CREATED");
+      expect(entity.action).toBe("SYNCED");
     });
 
-    it("Given: UPDATED action When: checking action Then: should return UPDATED", () => {
+    it("Given: ALREADY_SYNCED action When: checking action Then: should return ALREADY_SYNCED", () => {
       const entity = IntegrationSyncLog.create({
         ...validProps,
-        action: "UPDATED",
+        action: "ALREADY_SYNCED",
       });
 
-      expect(entity.action).toBe("UPDATED");
+      expect(entity.action).toBe("ALREADY_SYNCED");
     });
 
-    it("Given: SKIPPED action When: checking action Then: should return SKIPPED", () => {
+    it("Given: FAILED action When: checking action Then: should return FAILED", () => {
       const entity = IntegrationSyncLog.create({
         ...validProps,
-        action: "SKIPPED",
+        action: "FAILED",
+        errorMessage: "Connection timeout",
       });
 
-      expect(entity.action).toBe("SKIPPED");
-    });
-
-    it("Given: OUTBOUND_OK action When: checking action Then: should return OUTBOUND_OK", () => {
-      const entity = IntegrationSyncLog.create({
-        ...validProps,
-        action: "OUTBOUND_OK",
-      });
-
-      expect(entity.action).toBe("OUTBOUND_OK");
-    });
-
-    it("Given: OUTBOUND_FAILED action When: checking action Then: should return OUTBOUND_FAILED", () => {
-      const entity = IntegrationSyncLog.create({
-        ...validProps,
-        action: "OUTBOUND_FAILED",
-        errorMessage: "Failed to push stock to VTEX",
-      });
-
-      expect(entity.action).toBe("OUTBOUND_FAILED");
-      expect(entity.errorMessage).toBe("Failed to push stock to VTEX");
+      expect(entity.action).toBe("FAILED");
+      expect(entity.errorMessage).toBe("Connection timeout");
     });
   });
 
@@ -122,55 +104,53 @@ describe("IntegrationSyncLog Entity", () => {
       });
 
       expect(entity.isFailed).toBe(true);
-      expect(entity.isOutboundFailed).toBe(false);
     });
 
-    it("Given: CREATED action When: checking isFailed Then: should return false", () => {
+    it("Given: SYNCED action When: checking isFailed Then: should return false", () => {
       const entity = IntegrationSyncLog.create({
         ...validProps,
-        action: "CREATED",
+        action: "SYNCED",
       });
 
       expect(entity.isFailed).toBe(false);
     });
 
-    it("Given: OUTBOUND_FAILED action When: checking isFailed Then: should return false", () => {
+    it("Given: ALREADY_SYNCED action When: checking isFailed Then: should return false", () => {
       const entity = IntegrationSyncLog.create({
         ...validProps,
-        action: "OUTBOUND_FAILED",
+        action: "ALREADY_SYNCED",
       });
 
       expect(entity.isFailed).toBe(false);
     });
   });
 
-  describe("isOutboundFailed", () => {
-    it("Given: OUTBOUND_FAILED action When: checking isOutboundFailed Then: should return true", () => {
+  describe("isSynced", () => {
+    it("Given: SYNCED action When: checking isSynced Then: should return true", () => {
       const entity = IntegrationSyncLog.create({
         ...validProps,
-        action: "OUTBOUND_FAILED",
+        action: "SYNCED",
       });
 
-      expect(entity.isOutboundFailed).toBe(true);
-      expect(entity.isFailed).toBe(false);
+      expect(entity.isSynced).toBe(true);
     });
 
-    it("Given: OUTBOUND_OK action When: checking isOutboundFailed Then: should return false", () => {
-      const entity = IntegrationSyncLog.create({
-        ...validProps,
-        action: "OUTBOUND_OK",
-      });
-
-      expect(entity.isOutboundFailed).toBe(false);
-    });
-
-    it("Given: FAILED action When: checking isOutboundFailed Then: should return false", () => {
+    it("Given: FAILED action When: checking isSynced Then: should return false", () => {
       const entity = IntegrationSyncLog.create({
         ...validProps,
         action: "FAILED",
       });
 
-      expect(entity.isOutboundFailed).toBe(false);
+      expect(entity.isSynced).toBe(false);
+    });
+
+    it("Given: ALREADY_SYNCED action When: checking isSynced Then: should return false", () => {
+      const entity = IntegrationSyncLog.create({
+        ...validProps,
+        action: "ALREADY_SYNCED",
+      });
+
+      expect(entity.isSynced).toBe(false);
     });
   });
 });

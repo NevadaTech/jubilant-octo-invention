@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
@@ -17,14 +17,11 @@ vi.mock("@/i18n/navigation", () => ({
 vi.mock(
   "@/modules/integrations/presentation/components/provider-tab-content",
   () => ({
-    ProviderTabContent: () => <div data-testid="provider-tab" />,
-  }),
-);
-
-vi.mock(
-  "@/modules/integrations/presentation/components/coming-soon-provider-tab",
-  () => ({
-    ComingSoonProviderTab: () => <div data-testid="coming-soon" />,
+    ProviderTabContent: ({ provider }: { provider: string }) => (
+      <div data-testid={`provider-tab-${provider}`}>
+        ProviderTabContent-{provider}
+      </div>
+    ),
   }),
 );
 
@@ -55,9 +52,24 @@ describe("IntegrationsPage", () => {
     expect(screen.getByText("providers.mercadolibre.name")).toBeInTheDocument();
   });
 
-  it("Given: the integrations page When: rendering Then: should show provider tab content for VTEX", () => {
+  it("Given: the integrations page When: rendering Then: should show provider tab content for VTEX by default", () => {
     render(<IntegrationsPage />);
 
-    expect(screen.getByTestId("provider-tab")).toBeInTheDocument();
+    expect(screen.getByTestId("provider-tab-VTEX")).toBeInTheDocument();
+  });
+
+  it("Given: the integrations page When: clicking MercadoLibre tab Then: should show MercadoLibre ProviderTabContent", () => {
+    render(<IntegrationsPage />);
+
+    fireEvent.click(screen.getByText("providers.mercadolibre.name"));
+
+    expect(screen.getByTestId("provider-tab-MERCADOLIBRE")).toBeInTheDocument();
+  });
+
+  it("Given: the integrations page When: rendering Then: both tabs use ProviderTabContent (no ComingSoonProviderTab)", () => {
+    render(<IntegrationsPage />);
+
+    // VTEX tab is rendered by default
+    expect(screen.getByText("ProviderTabContent-VTEX")).toBeInTheDocument();
   });
 });

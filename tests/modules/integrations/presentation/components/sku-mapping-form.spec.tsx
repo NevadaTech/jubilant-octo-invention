@@ -23,6 +23,19 @@ vi.mock("@/modules/integrations/presentation/hooks/use-integrations", () => ({
   }),
 }));
 
+const mockProducts = [
+  { id: "prod-1", name: "Product Alpha", sku: "SKU-001" },
+  { id: "prod-2", name: "Product Beta", sku: "SKU-002" },
+  { id: "prod-3", name: "Product Gamma", sku: "SKU-003" },
+];
+
+vi.mock("@/modules/inventory/presentation/hooks/use-products", () => ({
+  useProducts: () => ({
+    data: { data: mockProducts },
+    isLoading: false,
+  }),
+}));
+
 import { SkuMappingForm } from "@/modules/integrations/presentation/components/sku-mapping-form";
 
 describe("SkuMappingForm", () => {
@@ -34,12 +47,11 @@ describe("SkuMappingForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("Given: the form When: rendering Then: should render product ID input", () => {
+  it("Given: the form When: rendering Then: should render product selector", () => {
     render(<SkuMappingForm connectionId="conn-1" />);
 
-    expect(
-      screen.getByPlaceholderText("productIdPlaceholder"),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    expect(screen.getByText("selectProduct")).toBeInTheDocument();
   });
 
   it("Given: the form When: rendering Then: should show add button", () => {

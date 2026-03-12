@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
@@ -19,14 +19,15 @@ const mockLogs = [
     id: "log-1",
     connectionId: "conn-1",
     externalOrderId: "VTEX-ORD-001",
-    action: "CREATED" as const,
+    action: "SYNCED" as const,
     saleId: "sale-abcd1234-efgh",
+    saleNumber: "S-0042",
     contactId: null,
     errorMessage: null,
     rawPayload: null,
     processedAt: new Date("2026-01-10T10:00:00"),
     isFailed: false,
-    isOutboundFailed: false,
+    isSynced: true,
   },
   {
     id: "log-2",
@@ -34,25 +35,27 @@ const mockLogs = [
     externalOrderId: "VTEX-ORD-002",
     action: "FAILED" as const,
     saleId: null,
+    saleNumber: null,
     contactId: null,
     errorMessage: "Product not found",
     rawPayload: null,
     processedAt: new Date("2026-01-11T14:30:00"),
     isFailed: true,
-    isOutboundFailed: false,
+    isSynced: false,
   },
   {
     id: "log-3",
     connectionId: "conn-1",
     externalOrderId: "VTEX-ORD-003",
-    action: "UPDATED" as const,
+    action: "ALREADY_SYNCED" as const,
     saleId: null,
+    saleNumber: null,
     contactId: null,
     errorMessage: null,
     rawPayload: null,
     processedAt: new Date("2026-01-12T09:00:00"),
     isFailed: false,
-    isOutboundFailed: false,
+    isSynced: false,
   },
 ];
 
@@ -71,6 +74,8 @@ let mockSyncLogsState: {
       }
     | undefined;
   isLoading: boolean;
+  isFetching: boolean;
+  isError: boolean;
 };
 
 const mockRetryMutate = vi.fn();
@@ -100,6 +105,8 @@ describe("SyncLogTable", () => {
         },
       },
       isLoading: false,
+      isFetching: false,
+      isError: false,
     };
     mockRetryMutate.mockClear();
   });
@@ -108,11 +115,26 @@ describe("SyncLogTable", () => {
     mockSyncLogsState = {
       data: undefined,
       isLoading: true,
+      isFetching: true,
+      isError: false,
     };
 
     const { container } = render(<SyncLogTable connectionId="conn-1" />);
 
     expect(container.querySelector(".h-64")).toBeInTheDocument();
+  });
+
+  it("Given: error state When: rendering Then: should show error message", () => {
+    mockSyncLogsState = {
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      isError: true,
+    };
+
+    render(<SyncLogTable connectionId="conn-1" />);
+
+    expect(screen.getByText("error")).toBeInTheDocument();
   });
 
   it("Given: empty logs When: rendering Then: should show empty message", () => {
@@ -129,6 +151,8 @@ describe("SyncLogTable", () => {
         },
       },
       isLoading: false,
+      isFetching: false,
+      isError: false,
     };
 
     render(<SyncLogTable connectionId="conn-1" />);
@@ -147,7 +171,7 @@ describe("SyncLogTable", () => {
   it("Given: log with saleId When: rendering Then: should show sale link", () => {
     render(<SyncLogTable connectionId="conn-1" />);
 
-    const saleLink = screen.getByText("sale-abc...");
+    const saleLink = screen.getByText("S-0042");
     expect(saleLink).toBeInTheDocument();
     expect(saleLink.closest("a")).toHaveAttribute(
       "href",
@@ -178,11 +202,49 @@ describe("SyncLogTable", () => {
     expect(screen.getByText("Product not found")).toBeInTheDocument();
   });
 
-  it("Given: log with action When: rendering Then: should show action badge", () => {
+  it("Given: log with action When: rendering Then: should show action badge with translation key", () => {
     render(<SyncLogTable connectionId="conn-1" />);
 
-    expect(screen.getByText("CREATED")).toBeInTheDocument();
-    expect(screen.getByText("FAILED")).toBeInTheDocument();
-    expect(screen.getByText("UPDATED")).toBeInTheDocument();
+    expect(screen.getByText("actions.SYNCED")).toBeInTheDocument();
+    expect(screen.getByText("actions.FAILED")).toBeInTheDocument();
+    expect(screen.getByText("actions.ALREADY_SYNCED")).toBeInTheDocument();
+  });
+
+  it("Given: log row When: clicking Then: should open detail dialog", () => {
+    render(<SyncLogTable connectionId="conn-1" />);
+
+    const row = screen.getByText("VTEX-ORD-001").closest("tr")!;
+    fireEvent.click(row);
+
+    expect(screen.getByText("detail.title")).toBeInTheDocument();
+    expect(screen.getByText("detail.externalOrderId")).toBeInTheDocument();
+    expect(screen.getByText("detail.processedAt")).toBeInTheDocument();
+  });
+
+  it("Given: failed log detail When: opening Then: should show error and retry button", () => {
+    render(<SyncLogTable connectionId="conn-1" />);
+
+    const row = screen.getByText("VTEX-ORD-002").closest("tr")!;
+    fireEvent.click(row);
+
+    expect(screen.getByText("detail.errorMessage")).toBeInTheDocument();
+    expect(screen.getByText("detail.retry")).toBeInTheDocument();
+  });
+
+  it("Given: synced log detail When: opening Then: should show sale link", () => {
+    render(<SyncLogTable connectionId="conn-1" />);
+
+    const row = screen.getByText("VTEX-ORD-001").closest("tr")!;
+    fireEvent.click(row);
+
+    expect(screen.getByText("detail.sale")).toBeInTheDocument();
+    const saleLinks = screen
+      .getAllByText("S-0042")
+      .filter((el) => el.closest("a"));
+    expect(saleLinks.length).toBeGreaterThanOrEqual(1);
+    expect(saleLinks[0].closest("a")).toHaveAttribute(
+      "href",
+      "/dashboard/sales/sale-abcd1234-efgh",
+    );
   });
 });

@@ -149,14 +149,6 @@ describe("ConnectionCard", () => {
     expect(screen.getByText("-")).toBeInTheDocument();
   });
 
-  it("Given: a connection When: rendering Then: should show syncedOrdersCount", () => {
-    const connection = createConnection({ syncedOrdersCount: 128 });
-
-    render(<ConnectionCard connection={connection} {...defaultCallbacks} />);
-
-    expect(screen.getByText("128")).toBeInTheDocument();
-  });
-
   it("Given: a connection with companyName When: rendering Then: should show companyName", () => {
     const connection = createConnection({ companyName: "Acme Corp" });
 

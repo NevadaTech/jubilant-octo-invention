@@ -7,7 +7,7 @@ describe("IntegrationSyncLogMapper", () => {
     id: "log-001",
     connectionId: "conn-001",
     externalOrderId: "VTEX-ORD-12345",
-    action: "CREATED",
+    action: "SYNCED",
     saleId: "sale-001",
     contactId: "contact-001",
     errorMessage: null,
@@ -21,7 +21,7 @@ describe("IntegrationSyncLogMapper", () => {
       expect(log.id).toBe("log-001");
       expect(log.connectionId).toBe("conn-001");
       expect(log.externalOrderId).toBe("VTEX-ORD-12345");
-      expect(log.action).toBe("CREATED");
+      expect(log.action).toBe("SYNCED");
       expect(log.saleId).toBe("sale-001");
       expect(log.contactId).toBe("contact-001");
       expect(log.errorMessage).toBeNull();
@@ -78,31 +78,25 @@ describe("IntegrationSyncLogMapper", () => {
       expect(log.errorMessage).toBe("SKU not found: VTEX-SKU-999");
     });
 
-    it("Given: OUTBOUND_FAILED action When: mapping Then: should map correctly", () => {
+    it("Given: ALREADY_SYNCED action When: mapping Then: should map correctly", () => {
       const dto: IntegrationSyncLogResponseDto = {
         ...mockDto,
-        action: "OUTBOUND_FAILED",
-        errorMessage: "Failed to push inventory to VTEX",
+        action: "ALREADY_SYNCED",
       };
 
       const log = IntegrationSyncLogMapper.toDomain(dto);
 
-      expect(log.action).toBe("OUTBOUND_FAILED");
-      expect(log.isOutboundFailed).toBe(true);
+      expect(log.action).toBe("ALREADY_SYNCED");
       expect(log.isFailed).toBe(false);
+      expect(log.isSynced).toBe(false);
     });
 
-    it("Given: SKIPPED action When: mapping Then: should map correctly", () => {
-      const dto: IntegrationSyncLogResponseDto = {
-        ...mockDto,
-        action: "SKIPPED",
-      };
+    it("Given: SYNCED action When: mapping Then: should have isSynced true", () => {
+      const log = IntegrationSyncLogMapper.toDomain(mockDto);
 
-      const log = IntegrationSyncLogMapper.toDomain(dto);
-
-      expect(log.action).toBe("SKIPPED");
+      expect(log.action).toBe("SYNCED");
+      expect(log.isSynced).toBe(true);
       expect(log.isFailed).toBe(false);
-      expect(log.isOutboundFailed).toBe(false);
     });
 
     it("Given: rawPayload is not in DTO When: mapping Then: should set rawPayload to null", () => {

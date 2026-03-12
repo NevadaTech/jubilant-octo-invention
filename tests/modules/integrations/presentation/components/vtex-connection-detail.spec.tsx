@@ -124,12 +124,6 @@ describe("VtexConnectionDetail", () => {
     expect(screen.getByText("actions.edit")).toBeInTheDocument();
   });
 
-  it("Given: connection data When: rendering Then: should show synced orders count", () => {
-    render(<VtexConnectionDetail connectionId="conn-1" />);
-
-    expect(screen.getByText("42")).toBeInTheDocument();
-  });
-
   it("Given: connection with companyName When: rendering Then: should show company", () => {
     render(<VtexConnectionDetail connectionId="conn-1" />);
 
