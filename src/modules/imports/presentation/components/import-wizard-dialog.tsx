@@ -12,9 +12,9 @@ import { Button } from "@/ui/components/button";
 import { FileDropzone } from "./file-dropzone";
 import { ImportPreviewResults } from "./import-preview-results";
 import { ImportProgress } from "./import-progress";
-import { usePreviewImport, useExecuteImport } from "../hooks/use-imports";
-import type { ImportType } from "../../domain/entities";
-import type { ImportPreview } from "../../domain/entities/import-preview.entity";
+import { usePreviewImport, useExecuteImport } from "@/modules/imports/presentation/hooks/use-imports";
+import type { ImportType } from "@/modules/imports/domain/entities";
+import type { ImportPreview } from "@/modules/imports/domain/entities/import-preview.entity";
 
 interface ImportWizardDialogProps {
   open: boolean;

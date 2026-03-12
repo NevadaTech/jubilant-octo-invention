@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { ImportType } from "../../domain/entities";
+import type { ImportType } from "@/modules/imports/domain/entities";
 
 export const IMPORT_TYPES: { value: ImportType; labelKey: string }[] = [
   { value: "PRODUCTS", labelKey: "imports.types.products" },

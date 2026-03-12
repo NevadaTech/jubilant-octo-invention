@@ -3,11 +3,11 @@ import type {
   ProfileResponseDto,
   UpdateAlertConfigurationDto,
   AlertConfigurationResponseDto,
-} from "../dto";
+} from "@/modules/settings/application/dto";
 import type {
   ChangePasswordDto,
   ChangePasswordResponseDto,
-} from "../dto/change-password.dto";
+} from "@/modules/settings/application/dto/change-password.dto";
 
 export interface PickingConfigDto {
   pickingMode: string;

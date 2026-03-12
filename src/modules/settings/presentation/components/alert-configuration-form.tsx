@@ -25,11 +25,11 @@ import {
 } from "@/ui/components/select";
 import { Switch } from "@/ui/components/switch";
 import { Skeleton } from "@/ui/components/skeleton";
-import { useAlertConfiguration, useUpdateAlertConfiguration } from "../hooks";
+import { useAlertConfiguration, useUpdateAlertConfiguration } from "@/modules/settings/presentation/hooks";
 import {
   alertConfigurationSchema,
   type AlertConfigurationFormValues,
-} from "../schemas";
+} from "@/modules/settings/presentation/schemas";
 
 const FREQUENCY_OPTIONS = [
   { value: "EVERY_HOUR", labelKey: "everyHour" },

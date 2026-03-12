@@ -5,7 +5,7 @@ import { ArrowLeftRight, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { Badge } from "@/ui/components/badge";
-import { useSaleSwapHistory } from "../hooks/use-sales";
+import { useSaleSwapHistory } from "@/modules/sales/presentation/hooks/use-sales";
 
 interface SaleSwapHistoryProps {
   saleId: string;

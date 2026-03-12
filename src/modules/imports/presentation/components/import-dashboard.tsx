@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { ImportTypeGrid } from "./import-type-grid";
 import { ImportWizardDialog } from "./import-wizard-dialog";
 import { ImportHistory } from "./import-history";
-import { useDownloadTemplate } from "../hooks/use-imports";
-import type { ImportType } from "../../domain/entities";
+import { useDownloadTemplate } from "@/modules/imports/presentation/hooks/use-imports";
+import type { ImportType } from "@/modules/imports/domain/entities";
 
 export function ImportDashboard() {
   const t = useTranslations("imports");

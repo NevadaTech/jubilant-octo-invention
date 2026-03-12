@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/ui/components/dialog";
-import { useCameraScanner } from "../hooks/use-camera-scanner";
+import { useCameraScanner } from "@/modules/sales/presentation/hooks/use-camera-scanner";
 
 interface CameraScannerDialogProps {
   open: boolean;

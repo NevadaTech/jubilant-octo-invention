@@ -57,7 +57,7 @@ import { SaleTimeline } from "./sale-timeline";
 import { SaleSwapDialog } from "./sale-swap-dialog";
 import { SaleSwapHistory } from "./sale-swap-history";
 import { PickingVerificationCard } from "./picking-verification-card";
-import { usePickingConfig } from "../hooks/use-picking-config";
+import { usePickingConfig } from "@/modules/sales/presentation/hooks/use-picking-config";
 import type { SaleLine } from "@/modules/sales/domain/entities/sale.entity";
 
 interface SaleDetailProps {

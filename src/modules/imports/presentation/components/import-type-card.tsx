@@ -18,8 +18,8 @@ import {
   Download,
   Upload,
 } from "lucide-react";
-import type { ImportType } from "../../domain/entities";
-import type { TemplateFormat } from "../../application/dto/import.dto";
+import type { ImportType } from "@/modules/imports/domain/entities";
+import type { TemplateFormat } from "@/modules/imports/application/dto/import.dto";
 
 const typeIconMap: Record<ImportType, React.ElementType> = {
   PRODUCTS: Package,

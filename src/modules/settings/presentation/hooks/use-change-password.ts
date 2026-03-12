@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
 import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
-import type { ChangePasswordDto } from "../../application/dto/change-password.dto";
+import type { ChangePasswordDto } from "@/modules/settings/application/dto/change-password.dto";
 
 const settingsRepository = getContainer().settingsRepository;
 

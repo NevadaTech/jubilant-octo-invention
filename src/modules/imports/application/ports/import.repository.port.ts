@@ -1,7 +1,7 @@
 import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
-import type { ImportBatch, ImportType } from "../../domain/entities";
-import type { ImportPreview } from "../../domain/entities/import-preview.entity";
-import type { ImportFilters, TemplateFormat } from "../dto/import.dto";
+import type { ImportBatch, ImportType } from "@/modules/imports/domain/entities";
+import type { ImportPreview } from "@/modules/imports/domain/entities/import-preview.entity";
+import type { ImportFilters, TemplateFormat } from "@/modules/imports/application/dto/import.dto";
 
 export type { PaginatedResult };
 

@@ -8,8 +8,8 @@ import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-me
 import type {
   ImportFilters,
   TemplateFormat,
-} from "../../application/dto/import.dto";
-import type { ImportType } from "../../domain/entities";
+} from "@/modules/imports/application/dto/import.dto";
+import type { ImportType } from "@/modules/imports/domain/entities";
 
 const importKeys = {
   all: ["imports"] as const,

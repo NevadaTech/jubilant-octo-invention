@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import { CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
-import type { ImportPreview } from "../../domain/entities/import-preview.entity";
+import type { ImportPreview } from "@/modules/imports/domain/entities/import-preview.entity";
 
 interface ImportPreviewResultsProps {
   preview: ImportPreview;

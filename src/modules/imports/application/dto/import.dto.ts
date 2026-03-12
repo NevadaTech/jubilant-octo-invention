@@ -1,4 +1,4 @@
-import type { ImportType, ImportStatus } from "../../domain/entities";
+import type { ImportType, ImportStatus } from "@/modules/imports/domain/entities";
 
 export interface ImportBatchApiDto {
   id: string;

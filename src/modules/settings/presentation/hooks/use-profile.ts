@@ -8,7 +8,7 @@ import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-me
 import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
 import { UserMapper } from "@/modules/authentication/infrastructure/mappers/user.mapper";
 import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
-import type { UpdateProfileDto } from "../../application/dto";
+import type { UpdateProfileDto } from "@/modules/settings/application/dto";
 
 const settingsRepository = getContainer().settingsRepository;
 

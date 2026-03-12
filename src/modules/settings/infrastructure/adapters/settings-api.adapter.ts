@@ -2,17 +2,17 @@ import { apiClient } from "@/shared/infrastructure/http/axios-http-client";
 import type {
   SettingsRepositoryPort,
   PickingConfigDto,
-} from "../../application/ports/settings.port";
+} from "@/modules/settings/application/ports/settings.port";
 import type {
   UpdateProfileDto,
   ProfileResponseDto,
   UpdateAlertConfigurationDto,
   AlertConfigurationResponseDto,
-} from "../../application/dto";
+} from "@/modules/settings/application/dto";
 import type {
   ChangePasswordDto,
   ChangePasswordResponseDto,
-} from "../../application/dto/change-password.dto";
+} from "@/modules/settings/application/dto/change-password.dto";
 
 export class SettingsApiAdapter implements SettingsRepositoryPort {
   async getProfile(): Promise<ProfileResponseDto> {

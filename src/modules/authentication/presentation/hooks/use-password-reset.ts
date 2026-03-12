@@ -6,7 +6,7 @@ import type {
   RequestPasswordResetDto,
   VerifyOtpDto,
   ResetPasswordDto,
-} from "../../application/dto/password-reset.dto";
+} from "@/modules/authentication/application/dto/password-reset.dto";
 
 const authRepository = getContainer().authRepository;
 

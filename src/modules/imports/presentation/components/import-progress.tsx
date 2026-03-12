@@ -6,8 +6,8 @@ import { Button } from "@/ui/components/button";
 import { Progress } from "@/ui/components/progress";
 import { Download, CheckCircle2, XCircle } from "lucide-react";
 import { ImportStatusBadge } from "./import-status-badge";
-import { useImportStatus, useDownloadErrors } from "../hooks/use-imports";
-import type { ImportBatch } from "../../domain/entities";
+import { useImportStatus, useDownloadErrors } from "@/modules/imports/presentation/hooks/use-imports";
+import type { ImportBatch } from "@/modules/imports/domain/entities";
 
 interface ImportProgressProps {
   batchId: string;

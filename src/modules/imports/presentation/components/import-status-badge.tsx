@@ -3,7 +3,7 @@
 import { Badge } from "@/ui/components/badge";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { ImportStatus } from "../../domain/entities";
+import type { ImportStatus } from "@/modules/imports/domain/entities";
 
 const statusVariantMap: Record<
   ImportStatus,

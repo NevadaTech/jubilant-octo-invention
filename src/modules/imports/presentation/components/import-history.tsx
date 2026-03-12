@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { ImportStatusBadge } from "./import-status-badge";
 import { ImportDetailSheet } from "./import-detail";
-import { useImports } from "../hooks/use-imports";
-import type { ImportFilters } from "../../application/dto/import.dto";
+import { useImports } from "@/modules/imports/presentation/hooks/use-imports";
+import type { ImportFilters } from "@/modules/imports/application/dto/import.dto";
 
 export function ImportHistory() {
   const t = useTranslations("imports");

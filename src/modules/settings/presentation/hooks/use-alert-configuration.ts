@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
 import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
-import type { UpdateAlertConfigurationDto } from "../../application/dto";
+import type { UpdateAlertConfigurationDto } from "@/modules/settings/application/dto";
 
 const settingsRepository = getContainer().settingsRepository;
 

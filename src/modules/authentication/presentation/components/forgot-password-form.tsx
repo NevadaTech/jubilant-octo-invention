@@ -18,12 +18,12 @@ import {
   type RequestResetFormValues,
   type VerifyOtpFormValues,
   type NewPasswordFormValues,
-} from "../schemas/password-reset.schema";
+} from "@/modules/authentication/presentation/schemas/password-reset.schema";
 import {
   useRequestPasswordReset,
   useVerifyOtp,
   useResetPassword,
-} from "../hooks/use-password-reset";
+} from "@/modules/authentication/presentation/hooks/use-password-reset";
 
 type Step = "email" | "otp" | "password" | "success";
 

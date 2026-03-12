@@ -12,8 +12,8 @@ import { FormField } from "@/ui/components/form-field";
 import {
   changePasswordSchema,
   type ChangePasswordFormValues,
-} from "../schemas/change-password.schema";
-import { useChangePassword } from "../hooks/use-change-password";
+} from "@/modules/settings/presentation/schemas/change-password.schema";
+import { useChangePassword } from "@/modules/settings/presentation/hooks/use-change-password";
 
 export function ChangePasswordForm() {
   const t = useTranslations("settings.password");

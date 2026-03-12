@@ -1,11 +1,11 @@
-import { ImportBatch } from "../../domain/entities/import-batch.entity";
-import { ImportPreview } from "../../domain/entities/import-preview.entity";
+import { ImportBatch } from "@/modules/imports/domain/entities/import-batch.entity";
+import { ImportPreview } from "@/modules/imports/domain/entities/import-preview.entity";
 import type {
   ImportBatchApiDto,
   ImportPreviewResponseDto,
   ImportStatusResponseDto,
-} from "../dto/import.dto";
-import type { ImportType, ImportStatus } from "../../domain/entities";
+} from "@/modules/imports/application/dto/import.dto";
+import type { ImportType, ImportStatus } from "@/modules/imports/domain/entities";
 
 export class ImportMapper {
   static toDomain(dto: ImportBatchApiDto): ImportBatch {

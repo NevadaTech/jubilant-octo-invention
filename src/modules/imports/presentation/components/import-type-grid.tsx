@@ -1,7 +1,7 @@
 "use client";
 
-import type { ImportType } from "../../domain/entities";
-import type { TemplateFormat } from "../../application/dto/import.dto";
+import type { ImportType } from "@/modules/imports/domain/entities";
+import type { TemplateFormat } from "@/modules/imports/application/dto/import.dto";
 import { ImportTypeCard } from "./import-type-card";
 
 const IMPORT_TYPES: ImportType[] = [

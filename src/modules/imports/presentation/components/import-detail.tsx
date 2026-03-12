@@ -12,8 +12,8 @@ import {
   SheetBody,
 } from "@/ui/components/sheet";
 import { ImportStatusBadge } from "./import-status-badge";
-import { useImportStatus } from "../hooks/use-imports";
-import type { ImportRowData } from "../../domain/entities/import-batch.entity";
+import { useImportStatus } from "@/modules/imports/presentation/hooks/use-imports";
+import type { ImportRowData } from "@/modules/imports/domain/entities/import-batch.entity";
 
 interface ImportDetailSheetProps {
   batchId: string | null;

@@ -1,6 +1,6 @@
 import { apiClient } from "@/shared/infrastructure/http";
 import type { PaginatedResult } from "@/shared/application/dto/pagination.dto";
-import type { ImportRepositoryPort } from "../../application/ports/import.repository.port";
+import type { ImportRepositoryPort } from "@/modules/imports/application/ports/import.repository.port";
 import type {
   ImportBatchApiDto,
   ImportBatchListResponseDto,
@@ -9,10 +9,10 @@ import type {
   ImportPreviewResponseDto,
   ImportStatusResponseDto,
   TemplateFormat,
-} from "../../application/dto/import.dto";
-import type { ImportBatch, ImportType } from "../../domain/entities";
-import type { ImportPreview } from "../../domain/entities/import-preview.entity";
-import { ImportMapper } from "../../application/mappers/import.mapper";
+} from "@/modules/imports/application/dto/import.dto";
+import type { ImportBatch, ImportType } from "@/modules/imports/domain/entities";
+import type { ImportPreview } from "@/modules/imports/domain/entities/import-preview.entity";
+import { ImportMapper } from "@/modules/imports/application/mappers/import.mapper";
 
 export class ImportApiAdapter implements ImportRepositoryPort {
   private readonly basePath = "/imports";
