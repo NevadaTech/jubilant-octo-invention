@@ -10,13 +10,7 @@ import type {
   UpdateRoleDto,
   AssignPermissionsDto,
 } from "@/modules/roles/application/dto/role.dto";
-
-const roleKeys = {
-  all: ["roles"] as const,
-  lists: () => [...roleKeys.all, "list"] as const,
-  detail: (id: string) => [...roleKeys.all, "detail", id] as const,
-  permissions: () => [...roleKeys.all, "permissions"] as const,
-};
+import { roleKeys } from "./role.keys";
 
 export function useRoles() {
   return useQuery({
@@ -118,3 +112,5 @@ export function useAssignPermissions() {
     },
   });
 }
+
+export { roleKeys } from "./role.keys";

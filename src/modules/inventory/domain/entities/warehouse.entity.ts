@@ -65,6 +65,10 @@ export class Warehouse extends Entity<string> {
     return this.props.statusChangedAt;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get displayName(): string {
     return `${this.props.code} - ${this.props.name}`;
   }

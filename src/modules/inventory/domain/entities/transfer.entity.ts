@@ -155,6 +155,14 @@ export class Transfer extends AggregateRoot<string> {
     return this.props.completedAt;
   }
 
+  toJSON() {
+    return {
+      id: this._id,
+      ...this.props,
+      lines: this.props.lines.map((l) => l.toJSON()),
+    };
+  }
+
   get isDraft(): boolean {
     return this.props.status === "DRAFT";
   }

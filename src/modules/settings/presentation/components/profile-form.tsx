@@ -26,8 +26,14 @@ import {
 import { Skeleton } from "@/ui/components/skeleton";
 import { Badge } from "@/ui/components/badge";
 import { UserAvatar } from "@/ui/components/user-avatar";
-import { useProfile, useUpdateProfile } from "@/modules/settings/presentation/hooks";
-import { profileSchema, type ProfileFormValues } from "@/modules/settings/presentation/schemas";
+import {
+  useProfile,
+  useUpdateProfile,
+} from "@/modules/settings/presentation/hooks";
+import {
+  profileSchema,
+  type ProfileFormValues,
+} from "@/modules/settings/presentation/schemas";
 
 const LANGUAGES = [
   { value: "en", label: "English" },

@@ -10,17 +10,11 @@ import type {
   CreateWarehouseDto,
   UpdateWarehouseDto,
 } from "@/modules/inventory/application/dto";
+import { warehouseKeys } from "./warehouse.keys";
+
+export { warehouseKeys } from "./warehouse.keys";
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
-
-export const warehouseKeys = {
-  all: ["warehouses"] as const,
-  lists: () => [...warehouseKeys.all, "list"] as const,
-  list: (filters?: WarehouseFilters) =>
-    [...warehouseKeys.lists(), filters] as const,
-  details: () => [...warehouseKeys.all, "detail"] as const,
-  detail: (id: string) => [...warehouseKeys.details(), id] as const,
-};
 
 export function useWarehouses(filters?: WarehouseFilters) {
   return useQuery({

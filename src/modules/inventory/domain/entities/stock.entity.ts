@@ -89,6 +89,10 @@ export class Stock extends Entity<string> {
     return this.props.lastMovementAt;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get hasReservedStock(): boolean {
     return this.props.reservedQuantity > 0;
   }

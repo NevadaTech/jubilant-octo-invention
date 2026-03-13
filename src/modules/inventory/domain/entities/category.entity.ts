@@ -65,6 +65,10 @@ export class Category extends Entity<string> {
     return this.props.updatedAt;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get hasParent(): boolean {
     return this.props.parentId !== null;
   }

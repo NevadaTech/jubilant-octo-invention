@@ -75,6 +75,10 @@ export class Contact extends Entity<string> {
     return this.props.updatedAt;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get isCustomer(): boolean {
     return this.props.type === "CUSTOMER";
   }

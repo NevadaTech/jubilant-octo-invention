@@ -27,6 +27,10 @@ export class ReorderRule extends Entity<string> {
     });
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get productId(): string {
     return this.props.productId;
   }

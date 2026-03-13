@@ -5,6 +5,10 @@ export abstract class ValueObject<T extends object> {
     this.props = Object.freeze(props);
   }
 
+  toJSON(): T {
+    return { ...this.props };
+  }
+
   equals(vo?: ValueObject<T>): boolean {
     if (vo === null || vo === undefined) {
       return false;

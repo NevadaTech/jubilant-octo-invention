@@ -187,6 +187,10 @@ export class Product extends Entity<string> {
     return this.props.companyName;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   isLowStock(currentQuantity: number): boolean {
     return currentQuantity <= this.props.minStock;
   }

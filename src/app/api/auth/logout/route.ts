@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAccessTokenFromCookie, clearAuthCookies } from "@/app/api/auth/cookies";
+import {
+  getAccessTokenFromCookie,
+  clearAuthCookies,
+} from "@/app/api/auth/cookies";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 

@@ -95,6 +95,10 @@ export class AuditLog extends Entity<string> {
     return this.props.createdAt;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get isSuccess(): boolean {
     return (
       this.props.httpStatusCode !== null &&

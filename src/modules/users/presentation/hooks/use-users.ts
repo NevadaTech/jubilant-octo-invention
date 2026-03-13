@@ -12,14 +12,7 @@ import type {
   ChangeUserStatusDto,
   AssignRoleDto,
 } from "@/modules/users/application/dto/user.dto";
-
-const userKeys = {
-  all: ["users"] as const,
-  lists: () => [...userKeys.all, "list"] as const,
-  list: (filters?: UserFilters) => [...userKeys.lists(), filters] as const,
-  details: () => [...userKeys.all, "detail"] as const,
-  detail: (id: string) => [...userKeys.details(), id] as const,
-};
+import { userKeys } from "./user.keys";
 
 export function useUsers(filters?: UserFilters) {
   return useQuery({
@@ -133,3 +126,5 @@ export function useRemoveRole() {
     },
   });
 }
+
+export { userKeys } from "./user.keys";

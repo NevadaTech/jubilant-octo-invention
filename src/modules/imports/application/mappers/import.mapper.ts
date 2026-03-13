@@ -5,7 +5,10 @@ import type {
   ImportPreviewResponseDto,
   ImportStatusResponseDto,
 } from "@/modules/imports/application/dto/import.dto";
-import type { ImportType, ImportStatus } from "@/modules/imports/domain/entities";
+import type {
+  ImportType,
+  ImportStatus,
+} from "@/modules/imports/domain/entities";
 
 export class ImportMapper {
   static toDomain(dto: ImportBatchApiDto): ImportBatch {

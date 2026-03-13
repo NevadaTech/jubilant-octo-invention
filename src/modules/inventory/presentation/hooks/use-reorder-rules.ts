@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { reorderRuleApiAdapter } from "@/modules/inventory/infrastructure/adapters/reorder-rule-api.adapter";
 import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
-import { stockKeys } from "./use-stock";
+import { stockKeys } from "./stock.keys";
 import type {
   CreateReorderRuleDto,
   UpdateReorderRuleDto,

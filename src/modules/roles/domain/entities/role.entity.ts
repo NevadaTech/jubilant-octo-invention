@@ -56,6 +56,10 @@ export class Role extends Entity<string> {
     return this.roleProps.updatedAt;
   }
 
+  toJSON() {
+    return { ...this.roleProps };
+  }
+
   get canEdit(): boolean {
     return !this.isSystem;
   }

@@ -17,27 +17,11 @@ import type {
 } from "@/modules/integrations/application/dto/integration-connection.dto";
 import type { SyncLogFilters } from "@/modules/integrations/application/dto/integration-sync-log.dto";
 import type { CreateSkuMappingDto } from "@/modules/integrations/application/dto/integration-sku-mapping.dto";
-import type { IntegrationConnection } from "@/modules/integrations/domain/entities/integration-connection.entity";
+import { integrationKeys } from "./integration.keys";
+
+export { integrationKeys } from "./integration.keys";
 
 const STALE_TIME = 5 * 60 * 1000;
-
-export const integrationKeys = {
-  all: ["integrations"] as const,
-  lists: () => [...integrationKeys.all, "list"] as const,
-  list: (filters?: IntegrationConnectionFilters) =>
-    [...integrationKeys.lists(), filters] as const,
-  details: () => [...integrationKeys.all, "detail"] as const,
-  detail: (id: string) => [...integrationKeys.details(), id] as const,
-  logs: (id: string) => [...integrationKeys.all, "logs", id] as const,
-  logList: (id: string, filters?: SyncLogFilters) =>
-    [...integrationKeys.logs(id), filters] as const,
-  skuMappings: (id: string) =>
-    [...integrationKeys.all, "sku-mappings", id] as const,
-  unmatchedSkus: (id: string) =>
-    [...integrationKeys.all, "unmatched-skus", id] as const,
-  failedSyncs: (id: string) =>
-    [...integrationKeys.all, "failed-syncs", id] as const,
-};
 
 export function useIntegrations(filters?: IntegrationConnectionFilters) {
   return useQuery({
@@ -47,21 +31,12 @@ export function useIntegrations(filters?: IntegrationConnectionFilters) {
   });
 }
 
-export function useIntegration(
-  id: string,
-  options?: { initialData?: IntegrationConnection | null },
-) {
+export function useIntegration(id: string) {
   return useQuery({
     queryKey: integrationKeys.detail(id),
     queryFn: () => getContainer().integrationRepository.findById(id),
     staleTime: STALE_TIME,
     enabled: Boolean(id),
-    ...(options?.initialData
-      ? {
-          initialData: options.initialData,
-          initialDataUpdatedAt: Date.now(),
-        }
-      : {}),
   });
 }
 

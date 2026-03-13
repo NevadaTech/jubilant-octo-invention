@@ -137,6 +137,10 @@ export class IntegrationConnection extends Entity<string> {
     return this.props.meliUserId;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get isConnected(): boolean {
     return this.props.status === "CONNECTED";
   }

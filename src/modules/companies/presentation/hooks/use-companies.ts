@@ -10,17 +10,11 @@ import type {
   CreateCompanyDto,
   UpdateCompanyDto,
 } from "@/modules/companies/application/dto/company.dto";
+import { companyKeys } from "./company.keys";
+
+export { companyKeys } from "./company.keys";
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
-
-export const companyKeys = {
-  all: ["companies"] as const,
-  lists: () => [...companyKeys.all, "list"] as const,
-  list: (filters?: CompanyFilters) =>
-    [...companyKeys.lists(), filters] as const,
-  details: () => [...companyKeys.all, "detail"] as const,
-  detail: (id: string) => [...companyKeys.details(), id] as const,
-};
 
 export function useCompanies(filters?: CompanyFilters) {
   return useQuery({

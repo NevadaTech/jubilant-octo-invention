@@ -10,18 +10,12 @@ import type {
   CreateStockMovementDto,
   UpdateStockMovementDto,
 } from "@/modules/inventory/application/dto/stock-movement.dto";
-import { stockKeys } from "./use-stock";
+import { stockKeys } from "./stock.keys";
+import { movementKeys } from "./movement.keys";
+
+export { movementKeys } from "./movement.keys";
 
 const STALE_TIME = 2 * 60 * 1000; // 2 minutes
-
-export const movementKeys = {
-  all: ["movements"] as const,
-  lists: () => [...movementKeys.all, "list"] as const,
-  list: (filters?: StockMovementFilters) =>
-    [...movementKeys.lists(), filters] as const,
-  details: () => [...movementKeys.all, "detail"] as const,
-  detail: (id: string) => [...movementKeys.details(), id] as const,
-};
 
 export function useMovements(filters?: StockMovementFilters) {
   return useQuery({

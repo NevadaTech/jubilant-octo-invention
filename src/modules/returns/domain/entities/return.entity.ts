@@ -196,6 +196,14 @@ export class Return extends AggregateRoot<string> {
     return this.props.cancelledAt;
   }
 
+  toJSON() {
+    return {
+      id: this._id,
+      ...this.props,
+      lines: this.props.lines.map((l) => l.toJSON()),
+    };
+  }
+
   // Type helpers
   get isCustomerReturn(): boolean {
     return this.props.type === "RETURN_CUSTOMER";

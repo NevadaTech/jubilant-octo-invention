@@ -10,14 +10,7 @@ import type {
   TemplateFormat,
 } from "@/modules/imports/application/dto/import.dto";
 import type { ImportType } from "@/modules/imports/domain/entities";
-
-const importKeys = {
-  all: ["imports"] as const,
-  lists: () => [...importKeys.all, "list"] as const,
-  list: (filters?: ImportFilters) => [...importKeys.lists(), filters] as const,
-  statuses: () => [...importKeys.all, "status"] as const,
-  status: (id: string) => [...importKeys.statuses(), id] as const,
-};
+import { importKeys } from "./import.keys";
 
 export function useImports(filters?: ImportFilters) {
   return useQuery({
@@ -165,3 +158,5 @@ export function useDownloadErrors() {
     },
   });
 }
+
+export { importKeys } from "./import.keys";

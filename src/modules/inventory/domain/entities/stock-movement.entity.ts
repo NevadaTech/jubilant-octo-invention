@@ -205,6 +205,14 @@ export class StockMovement extends AggregateRoot<string> {
     return this.props.returnedByName;
   }
 
+  toJSON() {
+    return {
+      id: this._id,
+      ...this.props,
+      lines: this.props.lines.map((l) => l.toJSON()),
+    };
+  }
+
   // Type helpers
   get isEntry(): boolean {
     return (

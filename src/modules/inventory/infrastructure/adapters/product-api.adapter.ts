@@ -21,7 +21,7 @@ interface ApiResponse<T> {
 }
 
 /** Convierte la respuesta real del API al DTO que espera el dominio */
-function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
+export function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
   const unit = raw.unit;
   const unitOfMeasure =
     raw.unitOfMeasure ??

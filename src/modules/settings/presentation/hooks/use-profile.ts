@@ -9,13 +9,9 @@ import { TokenService } from "@/modules/authentication/infrastructure/services/t
 import { UserMapper } from "@/modules/authentication/infrastructure/mappers/user.mapper";
 import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
 import type { UpdateProfileDto } from "@/modules/settings/application/dto";
+import { profileKeys } from "./profile.keys";
 
 const settingsRepository = getContainer().settingsRepository;
-
-const profileKeys = {
-  all: ["profile"] as const,
-  me: () => [...profileKeys.all, "me"] as const,
-};
 
 export function useProfile() {
   return useQuery({
@@ -63,3 +59,5 @@ export function useUpdateProfile() {
     },
   });
 }
+
+export { profileKeys } from "./profile.keys";

@@ -10,17 +10,11 @@ import type {
   CreateProductDto,
   UpdateProductDto,
 } from "@/modules/inventory/application/dto";
+import { productKeys } from "./product.keys";
+
+export { productKeys } from "./product.keys";
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
-
-export const productKeys = {
-  all: ["products"] as const,
-  lists: () => [...productKeys.all, "list"] as const,
-  list: (filters?: ProductFilters) =>
-    [...productKeys.lists(), filters] as const,
-  details: () => [...productKeys.all, "detail"] as const,
-  detail: (id: string) => [...productKeys.details(), id] as const,
-};
 
 export function useProducts(filters?: ProductFilters) {
   return useQuery({

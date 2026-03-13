@@ -59,6 +59,10 @@ export class Company extends Entity<string> {
     return this.props.updatedAt;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get hasProducts(): boolean {
     return this.props.productCount > 0;
   }

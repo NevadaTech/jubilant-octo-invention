@@ -6,13 +6,9 @@ import { toast } from "sonner";
 import { getContainer } from "@/config/di/container";
 import { getApiErrorMessage } from "@/shared/presentation/utils/get-api-error-message";
 import type { UpdateAlertConfigurationDto } from "@/modules/settings/application/dto";
+import { alertKeys } from "./alert.keys";
 
 const settingsRepository = getContainer().settingsRepository;
-
-const alertKeys = {
-  all: ["alert-configuration"] as const,
-  config: () => [...alertKeys.all, "config"] as const,
-};
 
 export function useAlertConfiguration() {
   return useQuery({
@@ -39,3 +35,5 @@ export function useUpdateAlertConfiguration() {
     },
   });
 }
+
+export { alertKeys } from "./alert.keys";

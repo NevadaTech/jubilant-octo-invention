@@ -68,6 +68,10 @@ export class User extends Entity<string> {
     return this.props.updatedAt;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get isActive(): boolean {
     return this.props.status === "ACTIVE";
   }

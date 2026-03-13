@@ -108,6 +108,10 @@ export class ImportBatch extends Entity<string> {
     return this.props.rows ?? [];
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get isTerminal(): boolean {
     return this.props.status === "COMPLETED" || this.props.status === "FAILED";
   }

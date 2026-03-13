@@ -10,7 +10,10 @@ import type {
   ImportStatusResponseDto,
   TemplateFormat,
 } from "@/modules/imports/application/dto/import.dto";
-import type { ImportBatch, ImportType } from "@/modules/imports/domain/entities";
+import type {
+  ImportBatch,
+  ImportType,
+} from "@/modules/imports/domain/entities";
 import type { ImportPreview } from "@/modules/imports/domain/entities/import-preview.entity";
 import { ImportMapper } from "@/modules/imports/application/mappers/import.mapper";
 

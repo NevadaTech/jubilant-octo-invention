@@ -65,6 +65,10 @@ export class IntegrationSyncLog extends Entity<string> {
     return this.props.processedAt;
   }
 
+  toJSON() {
+    return { id: this._id, ...this.props };
+  }
+
   get isFailed(): boolean {
     return this.props.action === "FAILED";
   }

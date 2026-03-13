@@ -3,15 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getContainer } from "@/config/di/container";
 import type { AuditLogFilters } from "@/modules/audit/application/dto/audit-log.dto";
+import { auditLogKeys } from "./audit-log.keys";
 
-const auditLogKeys = {
-  all: ["audit-logs"] as const,
-  lists: () => [...auditLogKeys.all, "list"] as const,
-  list: (filters?: AuditLogFilters) =>
-    [...auditLogKeys.lists(), filters] as const,
-  details: () => [...auditLogKeys.all, "detail"] as const,
-  detail: (id: string) => [...auditLogKeys.details(), id] as const,
-};
+export { auditLogKeys } from "./audit-log.keys";
 
 export function useAuditLogs(filters?: AuditLogFilters) {
   return useQuery({

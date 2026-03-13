@@ -11,14 +11,7 @@ import type {
   CreateReturnLineDto,
   UpdateReturnDto,
 } from "@/modules/returns/application/dto/return.dto";
-
-const returnKeys = {
-  all: ["returns"] as const,
-  lists: () => [...returnKeys.all, "list"] as const,
-  list: (filters?: ReturnFilters) => [...returnKeys.lists(), filters] as const,
-  details: () => [...returnKeys.all, "detail"] as const,
-  detail: (id: string) => [...returnKeys.details(), id] as const,
-};
+import { returnKeys } from "./return.keys";
 
 export function useReturns(filters?: ReturnFilters) {
   return useQuery({
@@ -150,3 +143,5 @@ export function useRemoveReturnLine() {
     },
   });
 }
+
+export { returnKeys } from "./return.keys";

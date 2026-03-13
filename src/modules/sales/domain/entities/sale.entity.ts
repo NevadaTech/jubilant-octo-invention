@@ -322,6 +322,14 @@ export class Sale extends AggregateRoot<string> {
     return this.props.pickingEnabled;
   }
 
+  toJSON() {
+    return {
+      id: this._id,
+      ...this.props,
+      lines: this.props.lines.map((l) => l.toJSON()),
+    };
+  }
+
   // Status helpers
   get isDraft(): boolean {
     return this.props.status === "DRAFT";

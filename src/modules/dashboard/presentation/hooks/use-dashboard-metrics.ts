@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { dashboardApiService } from "@/modules/dashboard/infrastructure/services/dashboard-api.service";
 import type { DashboardMetricsDto } from "@/modules/dashboard/application/dto/metrics.dto";
 import { useAuthStore } from "@/modules/authentication/presentation/store/auth.store";
+import { dashboardKeys } from "./dashboard.keys";
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 const REFETCH_INTERVAL = 5 * 60 * 1000; // 5 minutes
@@ -14,7 +15,7 @@ export function useDashboardMetrics(companyId?: string | null) {
   const canFetch = isHydrated && isAuthenticated;
 
   const query = useQuery<DashboardMetricsDto, Error>({
-    queryKey: ["dashboard", "metrics", companyId ?? "all"],
+    queryKey: dashboardKeys.metrics(companyId),
     queryFn: () => dashboardApiService.getMetrics(companyId),
     enabled: canFetch,
     staleTime: STALE_TIME,
@@ -32,3 +33,5 @@ export function useDashboardMetrics(companyId?: string | null) {
     refetch: query.refetch,
   };
 }
+
+export { dashboardKeys } from "./dashboard.keys";

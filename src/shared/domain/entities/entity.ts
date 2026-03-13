@@ -9,6 +9,10 @@ export abstract class Entity<T> {
     return this._id;
   }
 
+  toJSON(): Record<string, unknown> {
+    return { id: this._id };
+  }
+
   equals(entity?: Entity<T>): boolean {
     if (entity === null || entity === undefined) {
       return false;

@@ -10,17 +10,11 @@ import type {
   CreateContactDto,
   UpdateContactDto,
 } from "@/modules/contacts/application/dto/contact.dto";
+import { contactKeys } from "./contact.keys";
+
+export { contactKeys } from "./contact.keys";
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
-
-export const contactKeys = {
-  all: ["contacts"] as const,
-  lists: () => [...contactKeys.all, "list"] as const,
-  list: (filters?: ContactFilters) =>
-    [...contactKeys.lists(), filters] as const,
-  details: () => [...contactKeys.all, "detail"] as const,
-  detail: (id: string) => [...contactKeys.details(), id] as const,
-};
 
 export function useContacts(filters?: ContactFilters) {
   return useQuery({
