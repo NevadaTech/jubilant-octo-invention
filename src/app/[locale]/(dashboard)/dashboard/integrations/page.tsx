@@ -25,9 +25,9 @@ export default async function IntegrationsListPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: integrationKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: IntegrationConnectionResponseDto[] }>(
-          "/integrations/connections",
-        );
+        const res = await serverFetch<{
+          data: IntegrationConnectionResponseDto[];
+        }>("/integrations/connections");
         return res.data.map((item) =>
           IntegrationConnectionMapper.toDomain(item),
         );

@@ -26,9 +26,10 @@ export default async function ImportsPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: importKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: ImportBatchApiDto[]; pagination: Pagination }>(
-          "/imports",
-        );
+        const res = await serverFetch<{
+          data: ImportBatchApiDto[];
+          pagination: Pagination;
+        }>("/imports");
         return res.data.map((item) => ImportMapper.toDomain(item));
       },
     });

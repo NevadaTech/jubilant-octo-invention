@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
@@ -117,11 +117,16 @@ describe("VtexConnectionDetail", () => {
   });
 
   it("Given: connection data When: rendering Then: should show action buttons", () => {
-    render(<VtexConnectionDetail connectionId="conn-1" />);
+    const { container } = render(
+      <VtexConnectionDetail connectionId="conn-1" />,
+    );
 
     expect(screen.getByText("actions.test")).toBeInTheDocument();
     expect(screen.getByText("actions.sync")).toBeInTheDocument();
-    expect(screen.getByText("actions.edit")).toBeInTheDocument();
+
+    // Edit/Delete are inside a dropdown menu — verify the trigger exists
+    const menuTrigger = container.querySelector('[aria-haspopup="menu"]');
+    expect(menuTrigger).toBeInTheDocument();
   });
 
   it("Given: connection with companyName When: rendering Then: should show company", () => {

@@ -291,7 +291,7 @@ describe("MeliConnectionDetail", () => {
 
     fireEvent.click(screen.getByText("actions.sync"));
 
-    expect(mockSyncMutate).toHaveBeenCalledWith("conn-meli-1");
+    expect(mockSyncMutate).toHaveBeenCalledWith({ id: "conn-meli-1" });
   });
 
   it("Given: connection with companyName When: rendering Then: should show company", () => {
@@ -350,10 +350,14 @@ describe("MeliConnectionDetail", () => {
     expect(contactLabels).toHaveLength(0);
   });
 
-  it("Given: connection data When: rendering Then: should show delete button", () => {
-    render(<MeliConnectionDetail connectionId="conn-meli-1" />);
+  it("Given: connection data When: rendering Then: should show dropdown menu with delete action", () => {
+    const { container } = render(
+      <MeliConnectionDetail connectionId="conn-meli-1" />,
+    );
 
-    expect(screen.getByText("delete")).toBeInTheDocument();
+    // Delete is inside a dropdown menu — verify the trigger exists
+    const menuTrigger = container.querySelector('[aria-haspopup="menu"]');
+    expect(menuTrigger).toBeInTheDocument();
   });
 
   it("Given: connection data When: rendering Then: should show sync log tabs", () => {

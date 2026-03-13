@@ -104,7 +104,9 @@ export function CompanyList() {
             <Input
               placeholder={t("filters.search")}
               value={filters.search || ""}
-              onChange={(e) => updateFilters({ search: e.target.value, page: 1 })}
+              onChange={(e) =>
+                updateFilters({ search: e.target.value, page: 1 })
+              }
               className="max-w-sm"
             />
           </div>

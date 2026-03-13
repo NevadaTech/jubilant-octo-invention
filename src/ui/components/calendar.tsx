@@ -60,7 +60,7 @@ function CustomMonthCaption({
 }
 
 function EmptyNav() {
-  return null;
+  return <></>;
 }
 
 function Calendar({

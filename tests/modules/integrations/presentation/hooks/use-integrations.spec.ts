@@ -333,10 +333,10 @@ describe("use-integrations hooks", () => {
       });
 
       await act(async () => {
-        await result.current.mutateAsync("int-1");
+        await result.current.mutateAsync({ id: "int-1" });
       });
 
-      expect(mockTriggerSync).toHaveBeenCalledWith("int-1");
+      expect(mockTriggerSync).toHaveBeenCalledWith("int-1", undefined);
       expect(toast.success).toHaveBeenCalledWith("messages.syncStarted");
       expect(invalidateSpy).toHaveBeenCalledWith({
         queryKey: ["integrations", "detail", "int-1"],
@@ -356,7 +356,7 @@ describe("use-integrations hooks", () => {
 
       await act(async () => {
         try {
-          await result.current.mutateAsync("int-1");
+          await result.current.mutateAsync({ id: "int-1" });
         } catch {
           // expected
         }

@@ -27,9 +27,10 @@ export default async function ReturnsPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: returnKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: ReturnApiRawDto[]; pagination: Pagination }>(
-          "/returns",
-        );
+        const res = await serverFetch<{
+          data: ReturnApiRawDto[];
+          pagination: Pagination;
+        }>("/returns");
         return {
           data: res.data.map((item) => ReturnMapper.fromApiRaw(item)),
           pagination: res.pagination,

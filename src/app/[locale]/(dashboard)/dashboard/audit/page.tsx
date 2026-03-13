@@ -27,9 +27,10 @@ export default async function AuditPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: auditLogKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: AuditLogResponseDto[]; pagination: Pagination }>(
-          "/audit/logs",
-        );
+        const res = await serverFetch<{
+          data: AuditLogResponseDto[];
+          pagination: Pagination;
+        }>("/audit/logs");
         return {
           data: res.data.map((item) => AuditLogMapper.toDomain(item)),
           pagination: res.pagination,

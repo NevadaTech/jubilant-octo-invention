@@ -23,7 +23,9 @@ export default async function SaleDetailPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: saleKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: SaleResponseDto }>(`/sales/${id}`);
+        const res = await serverFetch<{ data: SaleResponseDto }>(
+          `/sales/${id}`,
+        );
         return SaleMapper.toDomain(res.data);
       },
     });

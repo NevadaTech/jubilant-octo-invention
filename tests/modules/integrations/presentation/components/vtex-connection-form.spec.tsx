@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
+  useLocale: () => "en",
 }));
 
 let mockMultiCompanyEnabled = false;
@@ -38,11 +39,39 @@ vi.mock("@/modules/integrations/presentation/hooks/use-integrations", () => ({
     isPending: false,
     mutateAsync: vi.fn(),
   }),
+  useTriggerSync: () => ({
+    isPending: false,
+    mutate: vi.fn(),
+  }),
 }));
 
 import { VtexConnectionForm } from "@/modules/integrations/presentation/components/vtex-connection-form";
 
 describe("VtexConnectionForm", () => {
+  const mockConnection = {
+    id: "conn-1",
+    provider: "VTEX" as const,
+    accountName: "mystore",
+    storeName: "My Store",
+    status: "CONNECTED" as const,
+    syncStrategy: "BOTH" as const,
+    syncDirection: "BIDIRECTIONAL" as const,
+    defaultWarehouseId: "wh-1",
+    warehouseName: "Main Warehouse",
+    defaultContactId: null,
+    defaultContactName: null,
+    companyId: null,
+    companyName: null,
+    connectedAt: new Date(),
+    lastSyncAt: null,
+    lastSyncError: null,
+    syncedOrdersCount: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    isConnected: true,
+    hasError: false,
+  };
+
   const defaultProps = {
     open: true,
     onOpenChange: vi.fn(),
@@ -61,7 +90,13 @@ describe("VtexConnectionForm", () => {
   });
 
   it("Given: edit mode When: rendering Then: should show edit title", () => {
-    render(<VtexConnectionForm {...defaultProps} mode="edit" />);
+    render(
+      <VtexConnectionForm
+        {...defaultProps}
+        mode="edit"
+        connection={mockConnection as never}
+      />,
+    );
 
     expect(screen.getByText("form.editTitle")).toBeInTheDocument();
   });
@@ -73,7 +108,13 @@ describe("VtexConnectionForm", () => {
   });
 
   it("Given: edit mode When: rendering Then: should hide accountName field", () => {
-    render(<VtexConnectionForm {...defaultProps} mode="edit" />);
+    render(
+      <VtexConnectionForm
+        {...defaultProps}
+        mode="edit"
+        connection={mockConnection as never}
+      />,
+    );
 
     expect(screen.queryByText("form.accountName *")).not.toBeInTheDocument();
   });
@@ -91,7 +132,13 @@ describe("VtexConnectionForm", () => {
   });
 
   it("Given: edit mode When: rendering Then: should show save button", () => {
-    render(<VtexConnectionForm {...defaultProps} mode="edit" />);
+    render(
+      <VtexConnectionForm
+        {...defaultProps}
+        mode="edit"
+        connection={mockConnection as never}
+      />,
+    );
 
     expect(screen.getByText("save")).toBeInTheDocument();
   });

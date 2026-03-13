@@ -39,10 +39,10 @@ export function ImportDetailSheet({
           {isLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 5 }, (_, i) => `skeleton-${i}`).map(
-              (key) => (
-                <Skeleton key={key} className="h-8 w-full" />
-              ),
-            )}
+                (key) => (
+                  <Skeleton key={key} className="h-8 w-full" />
+                ),
+              )}
             </div>
           ) : !batch ? (
             <p className="py-8 text-center text-neutral-500">

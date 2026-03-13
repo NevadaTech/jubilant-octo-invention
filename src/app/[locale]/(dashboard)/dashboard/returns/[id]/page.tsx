@@ -23,7 +23,9 @@ export default async function ReturnDetailPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: returnKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: ReturnResponseDto }>(`/returns/${id}`);
+        const res = await serverFetch<{ data: ReturnResponseDto }>(
+          `/returns/${id}`,
+        );
         return ReturnMapper.toDomain(res.data);
       },
     });

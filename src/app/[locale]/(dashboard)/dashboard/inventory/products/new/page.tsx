@@ -30,9 +30,10 @@ export default async function NewProductPage({ params }: Props) {
       queryClient.prefetchQuery({
         queryKey: categoryKeys.list(),
         queryFn: async () => {
-          const res = await serverFetch<{ data: CategoryResponseDto[]; pagination: Pagination }>(
-            "/inventory/categories",
-          );
+          const res = await serverFetch<{
+            data: CategoryResponseDto[];
+            pagination: Pagination;
+          }>("/inventory/categories");
           return {
             data: res.data.map((item) => CategoryMapper.toDomain(item)),
             pagination: res.pagination,
@@ -42,9 +43,10 @@ export default async function NewProductPage({ params }: Props) {
       queryClient.prefetchQuery({
         queryKey: warehouseKeys.list(),
         queryFn: async () => {
-          const res = await serverFetch<{ data: WarehouseResponseDto[]; pagination: Pagination }>(
-            "/inventory/warehouses",
-          );
+          const res = await serverFetch<{
+            data: WarehouseResponseDto[];
+            pagination: Pagination;
+          }>("/inventory/warehouses");
           return {
             data: res.data.map((item) => WarehouseMapper.toDomain(item)),
             pagination: res.pagination,

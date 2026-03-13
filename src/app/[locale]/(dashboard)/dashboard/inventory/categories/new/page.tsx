@@ -26,9 +26,10 @@ export default async function NewCategoryPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: categoryKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: CategoryResponseDto[]; pagination: Pagination }>(
-          "/inventory/categories",
-        );
+        const res = await serverFetch<{
+          data: CategoryResponseDto[];
+          pagination: Pagination;
+        }>("/inventory/categories");
         return {
           data: res.data.map((item) => CategoryMapper.toDomain(item)),
           pagination: res.pagination,

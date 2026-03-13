@@ -25,7 +25,9 @@ export default async function ContactDetailPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: contactKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: ContactResponseDto }>(`/contacts/${id}`);
+        const res = await serverFetch<{ data: ContactResponseDto }>(
+          `/contacts/${id}`,
+        );
         return ContactMapper.toDomain(res.data);
       },
     });

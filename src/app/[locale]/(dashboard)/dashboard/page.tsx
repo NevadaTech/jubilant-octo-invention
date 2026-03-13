@@ -23,7 +23,9 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     await queryClient.prefetchQuery({
       queryKey: dashboardKeys.metrics(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: DashboardMetricsDto }>("/dashboard/metrics");
+        const res = await serverFetch<{ data: DashboardMetricsDto }>(
+          "/dashboard/metrics",
+        );
         return res.data;
       },
     });

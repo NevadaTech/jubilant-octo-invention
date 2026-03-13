@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
@@ -203,11 +203,16 @@ describe("IntegrationDetailRouter", () => {
       isLoading: false,
     };
 
-    render(<IntegrationDetailRouter connectionId="conn-vtex-1" />);
+    const { container } = render(
+      <IntegrationDetailRouter connectionId="conn-vtex-1" />,
+    );
 
     expect(screen.getByText("actions.test")).toBeInTheDocument();
     expect(screen.getByText("actions.sync")).toBeInTheDocument();
-    expect(screen.getByText("actions.edit")).toBeInTheDocument();
+
+    // Edit/Delete are inside a dropdown menu — verify the trigger exists
+    const menuTrigger = container.querySelector('[aria-haspopup="menu"]');
+    expect(menuTrigger).toBeInTheDocument();
   });
 
   it("Given: MERCADOLIBRE provider When: rendering Then: should show MeLi-specific buttons without edit", () => {

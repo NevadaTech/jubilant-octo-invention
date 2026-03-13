@@ -27,9 +27,10 @@ export default async function ContactsPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: contactKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: ContactResponseDto[]; pagination: Pagination }>(
-          "/contacts",
-        );
+        const res = await serverFetch<{
+          data: ContactResponseDto[];
+          pagination: Pagination;
+        }>("/contacts");
         return {
           data: res.data.map((item) => ContactMapper.toDomain(item)),
           pagination: res.pagination,

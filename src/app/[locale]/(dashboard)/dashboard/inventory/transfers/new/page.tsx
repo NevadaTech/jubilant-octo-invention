@@ -26,9 +26,10 @@ export default async function NewTransferPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: warehouseKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: WarehouseResponseDto[]; pagination: Pagination }>(
-          "/inventory/warehouses",
-        );
+        const res = await serverFetch<{
+          data: WarehouseResponseDto[];
+          pagination: Pagination;
+        }>("/inventory/warehouses");
         return {
           data: res.data.map((item) => WarehouseMapper.toDomain(item)),
           pagination: res.pagination,

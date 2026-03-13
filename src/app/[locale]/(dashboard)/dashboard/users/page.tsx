@@ -26,9 +26,10 @@ export default async function UsersPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: userKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: UserResponseDto[]; pagination: Pagination }>(
-          "/users",
-        );
+        const res = await serverFetch<{
+          data: UserResponseDto[];
+          pagination: Pagination;
+        }>("/users");
         return {
           data: res.data.map((item) => UserMapper.toDomain(item)),
           pagination: res.pagination,

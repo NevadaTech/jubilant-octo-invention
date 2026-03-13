@@ -24,11 +24,9 @@ export function ImportHistory() {
       <Card>
         <CardContent className="p-6">
           <div className="space-y-3">
-            {Array.from({ length: 3 }, (_, i) => `skeleton-${i}`).map(
-              (key) => (
-                <Skeleton key={key} className="h-12 w-full" />
-              ),
-            )}
+            {Array.from({ length: 3 }, (_, i) => `skeleton-${i}`).map((key) => (
+              <Skeleton key={key} className="h-12 w-full" />
+            ))}
           </div>
         </CardContent>
       </Card>

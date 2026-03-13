@@ -34,9 +34,10 @@ export default async function NewSalePage({ params }: Props) {
       queryClient.prefetchQuery({
         queryKey: productKeys.list(),
         queryFn: async () => {
-          const res = await serverFetch<{ data: ProductApiRawDto[]; pagination: Pagination }>(
-            "/inventory/products",
-          );
+          const res = await serverFetch<{
+            data: ProductApiRawDto[];
+            pagination: Pagination;
+          }>("/inventory/products");
           return {
             data: res.data.map((item) =>
               ProductMapper.toDomain(mapApiProductToDto(item)),
@@ -48,9 +49,10 @@ export default async function NewSalePage({ params }: Props) {
       queryClient.prefetchQuery({
         queryKey: warehouseKeys.list(),
         queryFn: async () => {
-          const res = await serverFetch<{ data: WarehouseResponseDto[]; pagination: Pagination }>(
-            "/inventory/warehouses",
-          );
+          const res = await serverFetch<{
+            data: WarehouseResponseDto[];
+            pagination: Pagination;
+          }>("/inventory/warehouses");
           return {
             data: res.data.map((item) => WarehouseMapper.toDomain(item)),
             pagination: res.pagination,
@@ -60,9 +62,10 @@ export default async function NewSalePage({ params }: Props) {
       queryClient.prefetchQuery({
         queryKey: contactKeys.list(),
         queryFn: async () => {
-          const res = await serverFetch<{ data: ContactResponseDto[]; pagination: Pagination }>(
-            "/contacts",
-          );
+          const res = await serverFetch<{
+            data: ContactResponseDto[];
+            pagination: Pagination;
+          }>("/contacts");
           return {
             data: res.data.map((item) => ContactMapper.toDomain(item)),
             pagination: res.pagination,
