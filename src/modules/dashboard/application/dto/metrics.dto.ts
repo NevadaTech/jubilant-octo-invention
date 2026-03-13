@@ -32,6 +32,11 @@ export interface DashboardMetricsDto {
     quantity: number;
     value: number;
   }>;
+  stockByCompany?: Array<{
+    companyName: string;
+    quantity: number;
+    value: number;
+  }>;
   recentActivity: Array<{
     type: string;
     reference: string;

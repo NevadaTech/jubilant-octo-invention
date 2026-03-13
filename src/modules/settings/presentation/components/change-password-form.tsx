@@ -50,41 +50,43 @@ export function ChangePasswordForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-md">
-        <FormField error={errors.currentPassword?.message}>
-          <Label htmlFor="currentPassword">{t("currentPassword")}</Label>
-          <PasswordInput
-            id="currentPassword"
-            autoComplete="current-password"
-            {...register("currentPassword")}
-          />
-        </FormField>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <fieldset disabled={isPending} className="space-y-4 max-w-md">
+          <FormField error={errors.currentPassword?.message}>
+            <Label htmlFor="currentPassword">{t("currentPassword")}</Label>
+            <PasswordInput
+              id="currentPassword"
+              autoComplete="current-password"
+              {...register("currentPassword")}
+            />
+          </FormField>
 
-        <FormField error={errors.newPassword?.message}>
-          <Label htmlFor="newPassword">{t("newPassword")}</Label>
-          <PasswordInput
-            id="newPassword"
-            autoComplete="new-password"
-            {...register("newPassword")}
-          />
-          <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
-            {t("requirements")}
-          </p>
-        </FormField>
+          <FormField error={errors.newPassword?.message}>
+            <Label htmlFor="newPassword">{t("newPassword")}</Label>
+            <PasswordInput
+              id="newPassword"
+              autoComplete="new-password"
+              {...register("newPassword")}
+            />
+            <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+              {t("requirements")}
+            </p>
+          </FormField>
 
-        <FormField error={errors.confirmPassword?.message}>
-          <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
-          <PasswordInput
-            id="confirmPassword"
-            autoComplete="new-password"
-            {...register("confirmPassword")}
-          />
-        </FormField>
+          <FormField error={errors.confirmPassword?.message}>
+            <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
+            <PasswordInput
+              id="confirmPassword"
+              autoComplete="new-password"
+              {...register("confirmPassword")}
+            />
+          </FormField>
 
-        <Button type="submit" disabled={isPending}>
-          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {t("changePassword")}
-        </Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {t("changePassword")}
+          </Button>
+        </fieldset>
       </form>
     </Card>
   );

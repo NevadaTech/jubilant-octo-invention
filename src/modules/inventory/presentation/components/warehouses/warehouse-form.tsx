@@ -106,52 +106,54 @@ export function WarehouseForm() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
             </div>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {(createWarehouse.isError || updateWarehouse.isError) && (
-                <div className="rounded-md bg-error-100 p-3 text-sm text-error-700 dark:bg-error-900/20 dark:text-error-400">
-                  {t("form.error")}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <fieldset disabled={isSubmitting} className="space-y-4">
+                {(createWarehouse.isError || updateWarehouse.isError) && (
+                  <div className="rounded-md bg-error-100 p-3 text-sm text-error-700 dark:bg-error-900/20 dark:text-error-400">
+                    {t("form.error")}
+                  </div>
+                )}
+
+                <FormField error={errors.code?.message}>
+                  <Label htmlFor="code">{t("fields.code")}</Label>
+                  <Input
+                    id="code"
+                    placeholder={t("fields.codePlaceholder")}
+                    {...register("code")}
+                  />
+                </FormField>
+
+                <FormField error={errors.name?.message}>
+                  <Label htmlFor="name">{t("fields.name")}</Label>
+                  <Input
+                    id="name"
+                    placeholder={t("fields.namePlaceholder")}
+                    {...register("name")}
+                  />
+                </FormField>
+
+                <FormField error={errors.address?.message}>
+                  <Label htmlFor="address">{t("fields.address")}</Label>
+                  <Input
+                    id="address"
+                    placeholder={t("fields.addressPlaceholder")}
+                    {...register("address")}
+                  />
+                </FormField>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button type="button" variant="outline" onClick={handleClose}>
+                    {tCommon("cancel")}
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting
+                      ? tCommon("loading")
+                      : isEditing
+                        ? tCommon("save")
+                        : tCommon("create")}
+                  </Button>
                 </div>
-              )}
-
-              <FormField error={errors.code?.message}>
-                <Label htmlFor="code">{t("fields.code")}</Label>
-                <Input
-                  id="code"
-                  placeholder={t("fields.codePlaceholder")}
-                  {...register("code")}
-                />
-              </FormField>
-
-              <FormField error={errors.name?.message}>
-                <Label htmlFor="name">{t("fields.name")}</Label>
-                <Input
-                  id="name"
-                  placeholder={t("fields.namePlaceholder")}
-                  {...register("name")}
-                />
-              </FormField>
-
-              <FormField error={errors.address?.message}>
-                <Label htmlFor="address">{t("fields.address")}</Label>
-                <Input
-                  id="address"
-                  placeholder={t("fields.addressPlaceholder")}
-                  {...register("address")}
-                />
-              </FormField>
-
-              <div className="flex justify-end gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={handleClose}>
-                  {tCommon("cancel")}
-                </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting
-                    ? tCommon("loading")
-                    : isEditing
-                      ? tCommon("save")
-                      : tCommon("create")}
-                </Button>
-              </div>
+              </fieldset>
             </form>
           )}
         </CardContent>

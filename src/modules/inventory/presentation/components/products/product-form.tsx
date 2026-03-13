@@ -128,103 +128,105 @@ export function ProductForm() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
             </div>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {mutationError && (
-                <div className="rounded-md bg-error-100 p-3 text-sm text-error-700 dark:bg-error-900/20 dark:text-error-400">
-                  {(
-                    mutationError as Error & {
-                      response?: { data?: { message?: string } };
-                    }
-                  )?.response?.data?.message || t("form.error")}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <fieldset disabled={isSubmitting} className="space-y-4">
+                {mutationError && (
+                  <div className="rounded-md bg-error-100 p-3 text-sm text-error-700 dark:bg-error-900/20 dark:text-error-400">
+                    {(
+                      mutationError as Error & {
+                        response?: { data?: { message?: string } };
+                      }
+                    )?.response?.data?.message || t("form.error")}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField error={errors.sku?.message}>
+                    <Label htmlFor="sku">{t("fields.sku")} *</Label>
+                    <Input
+                      id="sku"
+                      placeholder={t("fields.skuPlaceholder")}
+                      disabled={isEditing}
+                      {...register("sku")}
+                    />
+                  </FormField>
+
+                  <FormField error={errors.name?.message}>
+                    <Label htmlFor="name">{t("fields.name")} *</Label>
+                    <Input
+                      id="name"
+                      placeholder={t("fields.namePlaceholder")}
+                      {...register("name")}
+                    />
+                  </FormField>
                 </div>
-              )}
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <FormField error={errors.sku?.message}>
-                  <Label htmlFor="sku">{t("fields.sku")} *</Label>
+                <FormField error={errors.description?.message}>
+                  <Label htmlFor="description">{t("fields.description")}</Label>
                   <Input
-                    id="sku"
-                    placeholder={t("fields.skuPlaceholder")}
-                    disabled={isEditing}
-                    {...register("sku")}
+                    id="description"
+                    placeholder={t("fields.descriptionPlaceholder")}
+                    {...register("description")}
                   />
                 </FormField>
 
-                <FormField error={errors.name?.message}>
-                  <Label htmlFor="name">{t("fields.name")} *</Label>
-                  <Input
-                    id="name"
-                    placeholder={t("fields.namePlaceholder")}
-                    {...register("name")}
-                  />
-                </FormField>
-              </div>
-
-              <FormField error={errors.description?.message}>
-                <Label htmlFor="description">{t("fields.description")}</Label>
-                <Input
-                  id="description"
-                  placeholder={t("fields.descriptionPlaceholder")}
-                  {...register("description")}
-                />
-              </FormField>
-
-              <FormField>
-                <Label>{t("fields.category")}</Label>
-                <CategoryMultiSelector
-                  value={selectedCategoryIds || []}
-                  onChange={(ids) => setValue("categoryIds", ids)}
-                />
-              </FormField>
-
-              {multiCompanyEnabled && (
                 <FormField>
-                  <Label>{t("fields.company")}</Label>
-                  <CompanySelector
-                    value={watch("companyId")}
-                    onChange={(v) => setValue("companyId", v)}
-                    allowClear
-                  />
-                </FormField>
-              )}
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <FormField error={errors.unitOfMeasure?.message}>
-                  <Label htmlFor="unitOfMeasure">
-                    {t("fields.unitOfMeasure")} *
-                  </Label>
-                  <Input
-                    id="unitOfMeasure"
-                    placeholder={t("fields.unitOfMeasurePlaceholder")}
-                    {...register("unitOfMeasure")}
+                  <Label>{t("fields.category")}</Label>
+                  <CategoryMultiSelector
+                    value={selectedCategoryIds || []}
+                    onChange={(ids) => setValue("categoryIds", ids)}
                   />
                 </FormField>
 
-                <FormField error={errors.price?.message}>
-                  <Label htmlFor="price">{t("fields.price")}</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    {...register("price", { valueAsNumber: true })}
-                  />
-                </FormField>
-              </div>
+                {multiCompanyEnabled && (
+                  <FormField>
+                    <Label>{t("fields.company")}</Label>
+                    <CompanySelector
+                      value={watch("companyId")}
+                      onChange={(v) => setValue("companyId", v)}
+                      allowClear
+                    />
+                  </FormField>
+                )}
 
-              <div className="flex justify-end gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={handleClose}>
-                  {tCommon("cancel")}
-                </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting
-                    ? tCommon("loading")
-                    : isEditing
-                      ? tCommon("save")
-                      : tCommon("create")}
-                </Button>
-              </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField error={errors.unitOfMeasure?.message}>
+                    <Label htmlFor="unitOfMeasure">
+                      {t("fields.unitOfMeasure")} *
+                    </Label>
+                    <Input
+                      id="unitOfMeasure"
+                      placeholder={t("fields.unitOfMeasurePlaceholder")}
+                      {...register("unitOfMeasure")}
+                    />
+                  </FormField>
+
+                  <FormField error={errors.price?.message}>
+                    <Label htmlFor="price">{t("fields.price")}</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      {...register("price", { valueAsNumber: true })}
+                    />
+                  </FormField>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button type="button" variant="outline" onClick={handleClose}>
+                    {tCommon("cancel")}
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting
+                      ? tCommon("loading")
+                      : isEditing
+                        ? tCommon("save")
+                        : tCommon("create")}
+                  </Button>
+                </div>
+              </fieldset>
             </form>
           )}
         </CardContent>

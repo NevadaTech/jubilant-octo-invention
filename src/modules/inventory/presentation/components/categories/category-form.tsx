@@ -127,67 +127,69 @@ export function CategoryForm() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
             </div>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {(createCategory.isError || updateCategory.isError) && (
-                <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
-                  {t("form.error")}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <fieldset disabled={isSubmitting} className="space-y-4">
+                {(createCategory.isError || updateCategory.isError) && (
+                  <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                    {t("form.error")}
+                  </div>
+                )}
+
+                <FormField error={errors.name?.message}>
+                  <Label htmlFor="name">{t("fields.name")}</Label>
+                  <Input
+                    id="name"
+                    placeholder={t("fields.namePlaceholder")}
+                    {...register("name")}
+                  />
+                </FormField>
+
+                <FormField error={errors.description?.message}>
+                  <Label htmlFor="description">{t("fields.description")}</Label>
+                  <Input
+                    id="description"
+                    placeholder={t("fields.descriptionPlaceholder")}
+                    {...register("description")}
+                  />
+                </FormField>
+
+                <FormField error={errors.parentId?.message}>
+                  <Label htmlFor="parentId">{t("fields.parent")}</Label>
+                  <Select
+                    value={selectedParentId || ""}
+                    onValueChange={(value) => setValue("parentId", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("fields.parentPlaceholder")}>
+                        {selectedParentId
+                          ? selectedParentName || selectedParentId
+                          : undefined}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">{t("fields.noParent")}</SelectItem>
+                      {parentOptions.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormField>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button type="button" variant="outline" onClick={handleClose}>
+                    {tCommon("cancel")}
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting
+                      ? tCommon("loading")
+                      : isEditing
+                        ? tCommon("save")
+                        : tCommon("create")}
+                  </Button>
                 </div>
-              )}
-
-              <FormField error={errors.name?.message}>
-                <Label htmlFor="name">{t("fields.name")}</Label>
-                <Input
-                  id="name"
-                  placeholder={t("fields.namePlaceholder")}
-                  {...register("name")}
-                />
-              </FormField>
-
-              <FormField error={errors.description?.message}>
-                <Label htmlFor="description">{t("fields.description")}</Label>
-                <Input
-                  id="description"
-                  placeholder={t("fields.descriptionPlaceholder")}
-                  {...register("description")}
-                />
-              </FormField>
-
-              <FormField error={errors.parentId?.message}>
-                <Label htmlFor="parentId">{t("fields.parent")}</Label>
-                <Select
-                  value={selectedParentId || ""}
-                  onValueChange={(value) => setValue("parentId", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("fields.parentPlaceholder")}>
-                      {selectedParentId
-                        ? selectedParentName || selectedParentId
-                        : undefined}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">{t("fields.noParent")}</SelectItem>
-                    {parentOptions.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormField>
-
-              <div className="flex justify-end gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={handleClose}>
-                  {tCommon("cancel")}
-                </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting
-                    ? tCommon("loading")
-                    : isEditing
-                      ? tCommon("save")
-                      : tCommon("create")}
-                </Button>
-              </div>
+              </fieldset>
             </form>
           )}
         </CardContent>

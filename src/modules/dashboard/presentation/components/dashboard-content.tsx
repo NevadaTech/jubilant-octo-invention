@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { RefreshCw } from "lucide-react";
 import { useDashboardMetrics } from "@/modules/dashboard/presentation/hooks/use-dashboard-metrics";
+import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 import { DashboardMetricsGrid } from "./dashboard-metrics-grid";
 import { StatCardSkeleton } from "./stat-card-skeleton";
 import { ChartSkeleton } from "./chart-skeleton";
@@ -24,6 +25,10 @@ const StockDistributionChart = dynamic(
     import("./stock-distribution-chart").then((m) => m.StockDistributionChart),
   { ssr: false, loading: () => <ChartSkeleton /> },
 );
+const StockByCompanyChart = dynamic(
+  () => import("./stock-by-company-chart").then((m) => m.StockByCompanyChart),
+  { ssr: false, loading: () => <ChartSkeleton /> },
+);
 const RecentActivityFeed = dynamic(
   () => import("./recent-activity-feed").then((m) => m.RecentActivityFeed),
   { ssr: false, loading: () => <ChartSkeleton /> },
@@ -32,6 +37,8 @@ const RecentActivityFeed = dynamic(
 export function DashboardContent() {
   const t = useTranslations("dashboard.metrics");
   const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
+  const { multiCompanyEnabled } = useOrgSettings();
+  const showStockByCompany = multiCompanyEnabled && !selectedCompanyId;
   const { metrics, isLoading, isError, refetch } =
     useDashboardMetrics(selectedCompanyId);
 
@@ -52,14 +59,28 @@ export function DashboardContent() {
             <ChartSkeleton />
           </div>
         </div>
-        <div className="grid gap-4 lg:grid-cols-7">
-          <div className="lg:col-span-3">
+        {showStockByCompany ? (
+          <>
+            <div className="grid gap-4 lg:grid-cols-7">
+              <div className="lg:col-span-3">
+                <ChartSkeleton />
+              </div>
+              <div className="lg:col-span-4">
+                <ChartSkeleton />
+              </div>
+            </div>
             <ChartSkeleton />
+          </>
+        ) : (
+          <div className="grid gap-4 lg:grid-cols-7">
+            <div className="lg:col-span-3">
+              <ChartSkeleton />
+            </div>
+            <div className="lg:col-span-4">
+              <ChartSkeleton />
+            </div>
           </div>
-          <div className="lg:col-span-4">
-            <ChartSkeleton />
-          </div>
-        </div>
+        )}
       </div>
     );
   }
@@ -103,7 +124,7 @@ export function DashboardContent() {
       {/* Stat Cards Row */}
       <DashboardMetricsGrid metrics={metrics} />
 
-      {/* Charts Row 1: Sales Trend + Stock Distribution */}
+      {/* Charts Row 1: Sales Trend + Stock by Warehouse */}
       <div className="grid gap-4 lg:grid-cols-7">
         <div className="lg:col-span-4">
           <SalesTrendChart
@@ -119,18 +140,41 @@ export function DashboardContent() {
         </div>
       </div>
 
-      {/* Charts Row 2: Top Products + Recent Activity */}
-      <div className="grid gap-4 lg:grid-cols-7">
-        <div className="lg:col-span-3">
-          <TopProductsChart
-            data={metrics.topProducts}
-            currency={metrics.sales.currency}
-          />
-        </div>
-        <div className="lg:col-span-4">
+      {showStockByCompany && metrics.stockByCompany ? (
+        <>
+          {/* Charts Row 2 (multi-company): Stock by Company + Top Products */}
+          <div className="grid gap-4 lg:grid-cols-7">
+            <div className="lg:col-span-3">
+              <StockByCompanyChart
+                data={metrics.stockByCompany}
+                currency={metrics.inventory.currency}
+              />
+            </div>
+            <div className="lg:col-span-4">
+              <TopProductsChart
+                data={metrics.topProducts}
+                currency={metrics.sales.currency}
+              />
+            </div>
+          </div>
+
+          {/* Charts Row 3 (multi-company): Recent Activity full width */}
           <RecentActivityFeed data={metrics.recentActivity} />
+        </>
+      ) : (
+        /* Charts Row 2 (single-company): Top Products + Recent Activity */
+        <div className="grid gap-4 lg:grid-cols-7">
+          <div className="lg:col-span-3">
+            <TopProductsChart
+              data={metrics.topProducts}
+              currency={metrics.sales.currency}
+            />
+          </div>
+          <div className="lg:col-span-4">
+            <RecentActivityFeed data={metrics.recentActivity} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -68,7 +68,7 @@ export function ImportTypeCard({
                 variant="outline"
                 size="sm"
                 disabled={isDownloading}
-                className="flex-1"
+                className="flex-1 p-1.5"
               >
                 <Download className="mr-1.5 h-3.5 w-3.5 shrink-0" />
                 <span className="truncate text-xs">{t("template.title")}</span>
@@ -85,7 +85,11 @@ export function ImportTypeCard({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button size="sm" onClick={() => onImport(type)} className="flex-1">
+          <Button
+            size="sm"
+            onClick={() => onImport(type)}
+            className="flex-1 p-1.5"
+          >
             <Upload className="mr-1.5 h-3.5 w-3.5 shrink-0" />
             <span className="text-xs">{t("startImport")}</span>
           </Button>

@@ -68,37 +68,41 @@ export function RoleForm({ open, onOpenChange }: RoleFormProps) {
           </Button>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {createRole.isError && (
-              <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
-                {t("form.error")}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <fieldset disabled={createRole.isPending} className="space-y-4">
+              {createRole.isError && (
+                <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                  {t("form.error")}
+                </div>
+              )}
+
+              <FormField error={errors.name?.message}>
+                <Label>{t("fields.name")} *</Label>
+                <Input
+                  placeholder={t("fields.namePlaceholder")}
+                  {...register("name")}
+                />
+              </FormField>
+
+              <FormField error={errors.description?.message}>
+                <Label>{t("fields.description")}</Label>
+                <Textarea
+                  placeholder={t("fields.descriptionPlaceholder")}
+                  {...register("description")}
+                />
+              </FormField>
+
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button type="button" variant="outline" onClick={handleClose}>
+                  {tCommon("cancel")}
+                </Button>
+                <Button type="submit" disabled={createRole.isPending}>
+                  {createRole.isPending
+                    ? tCommon("loading")
+                    : tCommon("create")}
+                </Button>
               </div>
-            )}
-
-            <FormField error={errors.name?.message}>
-              <Label>{t("fields.name")} *</Label>
-              <Input
-                placeholder={t("fields.namePlaceholder")}
-                {...register("name")}
-              />
-            </FormField>
-
-            <FormField error={errors.description?.message}>
-              <Label>{t("fields.description")}</Label>
-              <Textarea
-                placeholder={t("fields.descriptionPlaceholder")}
-                {...register("description")}
-              />
-            </FormField>
-
-            <div className="flex justify-end gap-3 pt-4 border-t">
-              <Button type="button" variant="outline" onClick={handleClose}>
-                {tCommon("cancel")}
-              </Button>
-              <Button type="submit" disabled={createRole.isPending}>
-                {createRole.isPending ? tCommon("loading") : tCommon("create")}
-              </Button>
-            </div>
+            </fieldset>
           </form>
         </CardContent>
       </Card>

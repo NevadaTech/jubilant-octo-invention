@@ -99,136 +99,116 @@ export function MeliConnectionForm({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
-          <FormField error={errors.storeName?.message}>
-            <Label htmlFor="meliStoreName">{t("form.storeName")} *</Label>
-            <Input
-              id="meliStoreName"
-              {...register("storeName")}
-              placeholder={t("form.storeNamePlaceholder")}
-            />
-          </FormField>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <fieldset
+            disabled={createIntegration.isPending}
+            className="space-y-4 py-4"
+          >
+            <FormField error={errors.storeName?.message}>
+              <Label htmlFor="meliStoreName">{t("form.storeName")} *</Label>
+              <Input
+                id="meliStoreName"
+                {...register("storeName")}
+                placeholder={t("form.storeNamePlaceholder")}
+              />
+            </FormField>
 
-          <FormField error={errors.clientId?.message}>
-            <Label htmlFor="meliClientId">
-              {t("providers.mercadolibre.form.clientId")} *
-            </Label>
-            <Input
-              id="meliClientId"
-              {...register("clientId")}
-              placeholder={t("providers.mercadolibre.form.clientIdPlaceholder")}
-            />
-          </FormField>
+            <FormField error={errors.clientId?.message}>
+              <Label htmlFor="meliClientId">
+                {t("providers.mercadolibre.form.clientId")} *
+              </Label>
+              <Input
+                id="meliClientId"
+                {...register("clientId")}
+                placeholder={t(
+                  "providers.mercadolibre.form.clientIdPlaceholder",
+                )}
+              />
+            </FormField>
 
-          <FormField error={errors.clientSecret?.message}>
-            <Label htmlFor="meliClientSecret">
-              {t("providers.mercadolibre.form.clientSecret")} *
-            </Label>
-            <Input
-              id="meliClientSecret"
-              type="password"
-              {...register("clientSecret")}
-              placeholder={t(
-                "providers.mercadolibre.form.clientSecretPlaceholder",
-              )}
-            />
-          </FormField>
+            <FormField error={errors.clientSecret?.message}>
+              <Label htmlFor="meliClientSecret">
+                {t("providers.mercadolibre.form.clientSecret")} *
+              </Label>
+              <Input
+                id="meliClientSecret"
+                type="password"
+                {...register("clientSecret")}
+                placeholder={t(
+                  "providers.mercadolibre.form.clientSecretPlaceholder",
+                )}
+              />
+            </FormField>
 
-          <FormField error={errors.syncStrategy?.message}>
-            <Label>{t("form.syncStrategy")} *</Label>
-            <Controller
-              name="syncStrategy"
-              control={control}
-              render={({ field }) => {
-                const strategyLabels: Record<string, string> = {
-                  WEBHOOK: "Webhook",
-                  POLLING: "Polling",
-                  BOTH: t("form.syncStrategyBoth"),
-                };
-                return (
+            <FormField error={errors.syncStrategy?.message}>
+              <Label>{t("form.syncStrategy")} *</Label>
+              <Controller
+                name="syncStrategy"
+                control={control}
+                render={({ field }) => {
+                  const strategyLabels: Record<string, string> = {
+                    WEBHOOK: "Webhook",
+                    POLLING: "Polling",
+                    BOTH: t("form.syncStrategyBoth"),
+                  };
+                  return (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue>{strategyLabels[field.value]}</SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="WEBHOOK">Webhook</SelectItem>
+                        <SelectItem value="POLLING">Polling</SelectItem>
+                        <SelectItem value="BOTH">
+                          {t("form.syncStrategyBoth")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  );
+                }}
+              />
+            </FormField>
+
+            <FormField>
+              <Label>{t("form.syncDirection")}</Label>
+              <Input
+                value={t("syncDirection.inbound")}
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-xs text-muted-foreground">
+                {t("providers.mercadolibre.inboundOnly")}
+              </p>
+            </FormField>
+
+            <FormField error={errors.defaultWarehouseId?.message}>
+              <Label>{t("form.warehouse")} *</Label>
+              <Controller
+                name="defaultWarehouseId"
+                control={control}
+                render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
-                      <SelectValue>{strategyLabels[field.value]}</SelectValue>
+                      <SelectValue
+                        placeholder={t("form.warehousePlaceholder")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="WEBHOOK">Webhook</SelectItem>
-                      <SelectItem value="POLLING">Polling</SelectItem>
-                      <SelectItem value="BOTH">
-                        {t("form.syncStrategyBoth")}
-                      </SelectItem>
+                      {warehouses.map((w) => (
+                        <SelectItem key={w.id} value={w.id}>
+                          {w.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
-                );
-              }}
-            />
-          </FormField>
+                )}
+              />
+            </FormField>
 
-          <FormField>
-            <Label>{t("form.syncDirection")}</Label>
-            <Input
-              value={t("syncDirection.inbound")}
-              disabled
-              className="bg-muted"
-            />
-            <p className="text-xs text-muted-foreground">
-              {t("providers.mercadolibre.inboundOnly")}
-            </p>
-          </FormField>
-
-          <FormField error={errors.defaultWarehouseId?.message}>
-            <Label>{t("form.warehouse")} *</Label>
-            <Controller
-              name="defaultWarehouseId"
-              control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("form.warehousePlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {warehouses.map((w) => (
-                      <SelectItem key={w.id} value={w.id}>
-                        {w.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </FormField>
-
-          <FormField>
-            <Label>{t("form.defaultContact")}</Label>
-            <Controller
-              name="defaultContactId"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value || ""}
-                  onValueChange={field.onChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={t("form.defaultContactPlaceholder")}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {contacts.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </FormField>
-
-          {multiCompanyEnabled && (
             <FormField>
-              <Label>{t("form.company")}</Label>
+              <Label>{t("form.defaultContact")}</Label>
               <Controller
-                name="companyId"
+                name="defaultContactId"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -236,10 +216,12 @@ export function MeliConnectionForm({
                     onValueChange={field.onChange}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t("form.companyPlaceholder")} />
+                      <SelectValue
+                        placeholder={t("form.defaultContactPlaceholder")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {companies.map((c) => (
+                      {contacts.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
                           {c.name}
                         </SelectItem>
@@ -249,25 +231,54 @@ export function MeliConnectionForm({
                 )}
               />
             </FormField>
-          )}
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              {tCommon("cancel")}
-            </Button>
-            <Button type="submit" disabled={createIntegration.isPending}>
-              {createIntegration.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              {createIntegration.isPending
-                ? tCommon("loading")
-                : tCommon("save")}
-            </Button>
-          </DialogFooter>
+            {multiCompanyEnabled && (
+              <FormField>
+                <Label>{t("form.company")}</Label>
+                <Controller
+                  name="companyId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || ""}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={t("form.companyPlaceholder")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {companies.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </FormField>
+            )}
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                {tCommon("cancel")}
+              </Button>
+              <Button type="submit" disabled={createIntegration.isPending}>
+                {createIntegration.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {createIntegration.isPending
+                  ? tCommon("loading")
+                  : tCommon("save")}
+              </Button>
+            </DialogFooter>
+          </fieldset>
         </form>
       </DialogContent>
     </Dialog>

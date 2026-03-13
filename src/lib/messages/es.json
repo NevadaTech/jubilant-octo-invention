@@ -141,6 +141,12 @@
         "value": "Valor",
         "units": "Unidades"
       },
+      "stockByCompany": {
+        "title": "Stock por Compañía",
+        "description": "Distribución del valor de inventario por compañía",
+        "value": "Valor",
+        "units": "Unidades"
+      },
       "recentActivity": {
         "title": "Actividad Reciente",
         "description": "Últimas transacciones en todos los módulos",

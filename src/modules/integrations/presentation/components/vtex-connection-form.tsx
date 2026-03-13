@@ -135,175 +135,152 @@ export function VtexConnectionForm({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
-          {!isEditing && (
-            <FormField error={errors.accountName?.message}>
-              <Label htmlFor="accountName">{t("form.accountName")} *</Label>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <fieldset disabled={isPending} className="space-y-4 py-4">
+            {!isEditing && (
+              <FormField error={errors.accountName?.message}>
+                <Label htmlFor="accountName">{t("form.accountName")} *</Label>
+                <Input
+                  id="accountName"
+                  {...register("accountName")}
+                  placeholder={t("form.accountNamePlaceholder")}
+                />
+              </FormField>
+            )}
+
+            <FormField error={errors.storeName?.message}>
+              <Label htmlFor="storeName">{t("form.storeName")} *</Label>
               <Input
-                id="accountName"
-                {...register("accountName")}
-                placeholder={t("form.accountNamePlaceholder")}
+                id="storeName"
+                {...register("storeName")}
+                placeholder={t("form.storeNamePlaceholder")}
               />
             </FormField>
-          )}
 
-          <FormField error={errors.storeName?.message}>
-            <Label htmlFor="storeName">{t("form.storeName")} *</Label>
-            <Input
-              id="storeName"
-              {...register("storeName")}
-              placeholder={t("form.storeNamePlaceholder")}
-            />
-          </FormField>
+            <FormField error={errors.appKey?.message}>
+              <Label htmlFor="appKey">
+                {t("form.appKey")} {!isEditing && "*"}
+              </Label>
+              <Input
+                id="appKey"
+                type="password"
+                {...register("appKey")}
+                placeholder={
+                  isEditing
+                    ? t("form.appKeyUpdatePlaceholder")
+                    : t("form.appKeyPlaceholder")
+                }
+              />
+            </FormField>
 
-          <FormField error={errors.appKey?.message}>
-            <Label htmlFor="appKey">
-              {t("form.appKey")} {!isEditing && "*"}
-            </Label>
-            <Input
-              id="appKey"
-              type="password"
-              {...register("appKey")}
-              placeholder={
-                isEditing
-                  ? t("form.appKeyUpdatePlaceholder")
-                  : t("form.appKeyPlaceholder")
-              }
-            />
-          </FormField>
+            <FormField error={errors.appToken?.message}>
+              <Label htmlFor="appToken">
+                {t("form.appToken")} {!isEditing && "*"}
+              </Label>
+              <Input
+                id="appToken"
+                type="password"
+                {...register("appToken")}
+                placeholder={
+                  isEditing
+                    ? t("form.appTokenUpdatePlaceholder")
+                    : t("form.appTokenPlaceholder")
+                }
+              />
+            </FormField>
 
-          <FormField error={errors.appToken?.message}>
-            <Label htmlFor="appToken">
-              {t("form.appToken")} {!isEditing && "*"}
-            </Label>
-            <Input
-              id="appToken"
-              type="password"
-              {...register("appToken")}
-              placeholder={
-                isEditing
-                  ? t("form.appTokenUpdatePlaceholder")
-                  : t("form.appTokenPlaceholder")
-              }
-            />
-          </FormField>
-
-          <FormField error={errors.syncStrategy?.message}>
-            <Label>{t("form.syncStrategy")} *</Label>
-            <Controller
-              name="syncStrategy"
-              control={control}
-              render={({ field }) => {
-                const strategyLabels: Record<string, string> = {
-                  WEBHOOK: "Webhook",
-                  POLLING: "Polling",
-                  BOTH: t("form.syncStrategyBoth"),
-                };
-                return (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue>{strategyLabels[field.value]}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="WEBHOOK">Webhook</SelectItem>
-                      <SelectItem value="POLLING">Polling</SelectItem>
-                      <SelectItem value="BOTH">
-                        {t("form.syncStrategyBoth")}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                );
-              }}
-            />
-          </FormField>
-
-          <FormField error={errors.syncDirection?.message}>
-            <Label>{t("form.syncDirection")} *</Label>
-            <Controller
-              name="syncDirection"
-              control={control}
-              render={({ field }) => {
-                const directionLabels: Record<string, string> = {
-                  INBOUND: t("syncDirection.inbound"),
-                  OUTBOUND: t("syncDirection.outbound"),
-                  BIDIRECTIONAL: t("syncDirection.bidirectional"),
-                };
-                return (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue>{directionLabels[field.value]}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="INBOUND">
-                        {t("syncDirection.inbound")}
-                      </SelectItem>
-                      <SelectItem value="OUTBOUND">
-                        {t("syncDirection.outbound")}
-                      </SelectItem>
-                      <SelectItem value="BIDIRECTIONAL">
-                        {t("syncDirection.bidirectional")}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                );
-              }}
-            />
-          </FormField>
-
-          <FormField error={errors.defaultWarehouseId?.message}>
-            <Label>{t("form.warehouse")} *</Label>
-            <Controller
-              name="defaultWarehouseId"
-              control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("form.warehousePlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {warehouses.map((w) => (
-                      <SelectItem key={w.id} value={w.id}>
-                        {w.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </FormField>
-
-          <FormField>
-            <Label>{t("form.defaultContact")}</Label>
-            <Controller
-              name="defaultContactId"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value || ""}
-                  onValueChange={field.onChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={t("form.defaultContactPlaceholder")}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {contacts.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </FormField>
-
-          {multiCompanyEnabled && (
-            <FormField>
-              <Label>{t("form.company")}</Label>
+            <FormField error={errors.syncStrategy?.message}>
+              <Label>{t("form.syncStrategy")} *</Label>
               <Controller
-                name="companyId"
+                name="syncStrategy"
+                control={control}
+                render={({ field }) => {
+                  const strategyLabels: Record<string, string> = {
+                    WEBHOOK: "Webhook",
+                    POLLING: "Polling",
+                    BOTH: t("form.syncStrategyBoth"),
+                  };
+                  return (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue>{strategyLabels[field.value]}</SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="WEBHOOK">Webhook</SelectItem>
+                        <SelectItem value="POLLING">Polling</SelectItem>
+                        <SelectItem value="BOTH">
+                          {t("form.syncStrategyBoth")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  );
+                }}
+              />
+            </FormField>
+
+            <FormField error={errors.syncDirection?.message}>
+              <Label>{t("form.syncDirection")} *</Label>
+              <Controller
+                name="syncDirection"
+                control={control}
+                render={({ field }) => {
+                  const directionLabels: Record<string, string> = {
+                    INBOUND: t("syncDirection.inbound"),
+                    OUTBOUND: t("syncDirection.outbound"),
+                    BIDIRECTIONAL: t("syncDirection.bidirectional"),
+                  };
+                  return (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue>
+                          {directionLabels[field.value]}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="INBOUND">
+                          {t("syncDirection.inbound")}
+                        </SelectItem>
+                        <SelectItem value="OUTBOUND">
+                          {t("syncDirection.outbound")}
+                        </SelectItem>
+                        <SelectItem value="BIDIRECTIONAL">
+                          {t("syncDirection.bidirectional")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  );
+                }}
+              />
+            </FormField>
+
+            <FormField error={errors.defaultWarehouseId?.message}>
+              <Label>{t("form.warehouse")} *</Label>
+              <Controller
+                name="defaultWarehouseId"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={t("form.warehousePlaceholder")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {warehouses.map((w) => (
+                        <SelectItem key={w.id} value={w.id}>
+                          {w.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </FormField>
+
+            <FormField>
+              <Label>{t("form.defaultContact")}</Label>
+              <Controller
+                name="defaultContactId"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -311,10 +288,12 @@ export function VtexConnectionForm({
                     onValueChange={field.onChange}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t("form.companyPlaceholder")} />
+                      <SelectValue
+                        placeholder={t("form.defaultContactPlaceholder")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {companies.map((c) => (
+                      {contacts.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
                           {c.name}
                         </SelectItem>
@@ -324,25 +303,54 @@ export function VtexConnectionForm({
                 )}
               />
             </FormField>
-          )}
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              {tCommon("cancel")}
-            </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isPending
-                ? tCommon("loading")
-                : isEditing
-                  ? tCommon("save")
-                  : t("actions.connect")}
-            </Button>
-          </DialogFooter>
+            {multiCompanyEnabled && (
+              <FormField>
+                <Label>{t("form.company")}</Label>
+                <Controller
+                  name="companyId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || ""}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={t("form.companyPlaceholder")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {companies.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </FormField>
+            )}
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                {tCommon("cancel")}
+              </Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isPending
+                  ? tCommon("loading")
+                  : isEditing
+                    ? tCommon("save")
+                    : t("actions.connect")}
+              </Button>
+            </DialogFooter>
+          </fieldset>
         </form>
       </DialogContent>
     </Dialog>

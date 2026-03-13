@@ -139,143 +139,145 @@ export function ContactFormPage({ mode, contactId }: ContactFormPageProps) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {isError && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            {t("form.error")}
-          </div>
-        )}
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("form.contactInfo")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <FormField error={errors.name?.message}>
-              <Label htmlFor="name">{t("fields.name")} *</Label>
-              <Input
-                id="name"
-                {...register("name")}
-                placeholder={t("form.namePlaceholder")}
-              />
-            </FormField>
-
-            <FormField error={errors.identification?.message}>
-              <Label htmlFor="identification">
-                {t("fields.identification")} *
-              </Label>
-              <Input
-                id="identification"
-                {...register("identification")}
-                placeholder={t("form.identificationPlaceholder")}
-              />
-            </FormField>
-
-            <FormField error={errors.type?.message}>
-              <Label>{t("fields.type")} *</Label>
-              <Controller
-                name="type"
-                control={control}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("form.typePlaceholder")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="CUSTOMER">
-                        {t("types.CUSTOMER")}
-                      </SelectItem>
-                      <SelectItem value="SUPPLIER">
-                        {t("types.SUPPLIER")}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </FormField>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField error={errors.email?.message}>
-                <Label htmlFor="email">{t("fields.email")}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...register("email")}
-                  placeholder={t("form.emailPlaceholder")}
-                />
-              </FormField>
-
-              <FormField error={errors.phone?.message}>
-                <Label htmlFor="phone">{t("fields.phone")}</Label>
-                <Input
-                  id="phone"
-                  {...register("phone")}
-                  placeholder={t("form.phonePlaceholder")}
-                />
-              </FormField>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <fieldset disabled={isPending} className="space-y-6">
+          {isError && (
+            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              {t("form.error")}
             </div>
+          )}
 
-            <FormField error={errors.address?.message}>
-              <Label htmlFor="address">{t("fields.address")}</Label>
-              <Textarea
-                id="address"
-                {...register("address")}
-                placeholder={t("form.addressPlaceholder")}
-                rows={2}
-              />
-            </FormField>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("form.contactInfo")}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField error={errors.name?.message}>
+                <Label htmlFor="name">{t("fields.name")} *</Label>
+                <Input
+                  id="name"
+                  {...register("name")}
+                  placeholder={t("form.namePlaceholder")}
+                />
+              </FormField>
 
-            <FormField error={errors.notes?.message}>
-              <Label htmlFor="notes">{t("fields.notes")}</Label>
-              <Textarea
-                id="notes"
-                {...register("notes")}
-                placeholder={t("form.notesPlaceholder")}
-                rows={3}
-              />
-            </FormField>
+              <FormField error={errors.identification?.message}>
+                <Label htmlFor="identification">
+                  {t("fields.identification")} *
+                </Label>
+                <Input
+                  id="identification"
+                  {...register("identification")}
+                  placeholder={t("form.identificationPlaceholder")}
+                />
+              </FormField>
 
-            {isEditing && (
-              <div className="flex items-center gap-3">
+              <FormField error={errors.type?.message}>
+                <Label>{t("fields.type")} *</Label>
                 <Controller
-                  name="isActive"
+                  name="type"
                   control={control}
                   render={({ field }) => (
-                    <Switch
-                      id="isActive"
-                      checked={field.value ?? true}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("form.typePlaceholder")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="CUSTOMER">
+                          {t("types.CUSTOMER")}
+                        </SelectItem>
+                        <SelectItem value="SUPPLIER">
+                          {t("types.SUPPLIER")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   )}
                 />
-                <Label htmlFor="isActive">{t("fields.isActive")}</Label>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              </FormField>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" asChild>
-            <Link
-              href={
-                isEditing && contactId
-                  ? `/dashboard/contacts/${contactId}`
-                  : "/dashboard/contacts"
-              }
-            >
-              {tCommon("cancel")}
-            </Link>
-          </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isPending
-              ? tCommon("loading")
-              : isEditing
-                ? tCommon("save")
-                : tCommon("create")}
-          </Button>
-        </div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <FormField error={errors.email?.message}>
+                  <Label htmlFor="email">{t("fields.email")}</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    {...register("email")}
+                    placeholder={t("form.emailPlaceholder")}
+                  />
+                </FormField>
+
+                <FormField error={errors.phone?.message}>
+                  <Label htmlFor="phone">{t("fields.phone")}</Label>
+                  <Input
+                    id="phone"
+                    {...register("phone")}
+                    placeholder={t("form.phonePlaceholder")}
+                  />
+                </FormField>
+              </div>
+
+              <FormField error={errors.address?.message}>
+                <Label htmlFor="address">{t("fields.address")}</Label>
+                <Textarea
+                  id="address"
+                  {...register("address")}
+                  placeholder={t("form.addressPlaceholder")}
+                  rows={2}
+                />
+              </FormField>
+
+              <FormField error={errors.notes?.message}>
+                <Label htmlFor="notes">{t("fields.notes")}</Label>
+                <Textarea
+                  id="notes"
+                  {...register("notes")}
+                  placeholder={t("form.notesPlaceholder")}
+                  rows={3}
+                />
+              </FormField>
+
+              {isEditing && (
+                <div className="flex items-center gap-3">
+                  <Controller
+                    name="isActive"
+                    control={control}
+                    render={({ field }) => (
+                      <Switch
+                        id="isActive"
+                        checked={field.value ?? true}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <Label htmlFor="isActive">{t("fields.isActive")}</Label>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" asChild>
+              <Link
+                href={
+                  isEditing && contactId
+                    ? `/dashboard/contacts/${contactId}`
+                    : "/dashboard/contacts"
+                }
+              >
+                {tCommon("cancel")}
+              </Link>
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isPending
+                ? tCommon("loading")
+                : isEditing
+                  ? tCommon("save")
+                  : tCommon("create")}
+            </Button>
+          </div>
+        </fieldset>
       </form>
     </div>
   );

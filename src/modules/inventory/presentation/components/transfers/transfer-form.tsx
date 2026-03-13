@@ -119,181 +119,191 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
           </Button>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {createTransfer.isError && (
-              <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
-                {t("form.error")}
-              </div>
-            )}
-
-            {/* Warehouses Selection */}
-            <div className="flex items-end gap-4">
-              <div className="flex-1">
-                <FormField error={errors.fromWarehouseId?.message}>
-                  <Label>{t("fields.from")}</Label>
-                  <Controller
-                    name="fromWarehouseId"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder={t("fields.fromPlaceholder")}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {warehousesData?.data.map((warehouse) => (
-                            <SelectItem key={warehouse.id} value={warehouse.id}>
-                              {warehouse.name} ({warehouse.code})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </FormField>
-              </div>
-
-              <ArrowRight className="mb-3 h-5 w-5 text-muted-foreground" />
-
-              <div className="flex-1">
-                <FormField error={errors.toWarehouseId?.message}>
-                  <Label>{t("fields.to")}</Label>
-                  <Controller
-                    name="toWarehouseId"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger disabled={!selectedFromWarehouse}>
-                          <SelectValue
-                            placeholder={t("fields.toPlaceholder")}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {toWarehouseOptions.map((warehouse) => (
-                            <SelectItem key={warehouse.id} value={warehouse.id}>
-                              {warehouse.name} ({warehouse.code})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </FormField>
-              </div>
-            </div>
-
-            {/* Products Lines */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label>{t("fields.products")}</Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddLine}
-                  className="gap-1"
-                >
-                  <Plus className="h-4 w-4" />
-                  {t("actions.addProduct")}
-                </Button>
-              </div>
-
-              {errors.lines?.message && (
-                <p className="text-sm text-destructive">
-                  {errors.lines.message}
-                </p>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <fieldset disabled={createTransfer.isPending} className="space-y-4">
+              {createTransfer.isError && (
+                <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                  {t("form.error")}
+                </div>
               )}
 
-              <div className="space-y-3 rounded-md border p-3">
-                {fields.map((field, index) => (
-                  <div key={field.id} className="flex items-start gap-3">
-                    <div className="flex-1">
-                      <FormField
-                        error={errors.lines?.[index]?.productId?.message}
-                      >
-                        <Controller
-                          name={`lines.${index}.productId`}
-                          control={control}
-                          render={({ field: selectField }) => (
-                            <Select
-                              value={selectField.value}
-                              onValueChange={selectField.onChange}
-                            >
-                              <SelectTrigger>
-                                <SelectValue
-                                  placeholder={t("fields.productPlaceholder")}
-                                />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {getAvailableProducts(index).map((product) => (
-                                  <SelectItem
-                                    key={product.id}
-                                    value={product.id}
-                                  >
-                                    {product.name} ({product.sku})
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          )}
-                        />
-                      </FormField>
-                    </div>
-                    <div className="w-24">
-                      <FormField
-                        error={errors.lines?.[index]?.quantity?.message}
-                      >
-                        <Input
-                          type="number"
-                          min="1"
-                          placeholder={t("fields.qty")}
-                          {...register(`lines.${index}.quantity`, {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormField>
-                    </div>
-                    {fields.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="mt-1"
-                        onClick={() => remove(index)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
+              {/* Warehouses Selection */}
+              <div className="flex items-end gap-4">
+                <div className="flex-1">
+                  <FormField error={errors.fromWarehouseId?.message}>
+                    <Label>{t("fields.from")}</Label>
+                    <Controller
+                      name="fromWarehouseId"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t("fields.fromPlaceholder")}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {warehousesData?.data.map((warehouse) => (
+                              <SelectItem
+                                key={warehouse.id}
+                                value={warehouse.id}
+                              >
+                                {warehouse.name} ({warehouse.code})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </FormField>
+                </div>
+
+                <ArrowRight className="mb-3 h-5 w-5 text-muted-foreground" />
+
+                <div className="flex-1">
+                  <FormField error={errors.toWarehouseId?.message}>
+                    <Label>{t("fields.to")}</Label>
+                    <Controller
+                      name="toWarehouseId"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger disabled={!selectedFromWarehouse}>
+                            <SelectValue
+                              placeholder={t("fields.toPlaceholder")}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {toWarehouseOptions.map((warehouse) => (
+                              <SelectItem
+                                key={warehouse.id}
+                                value={warehouse.id}
+                              >
+                                {warehouse.name} ({warehouse.code})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </FormField>
+                </div>
               </div>
-            </div>
 
-            <FormField error={errors.note?.message}>
-              <Label>{t("fields.notes")}</Label>
-              <Input
-                placeholder={t("fields.notesPlaceholder")}
-                {...register("note")}
-              />
-            </FormField>
+              {/* Products Lines */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label>{t("fields.products")}</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddLine}
+                    className="gap-1"
+                  >
+                    <Plus className="h-4 w-4" />
+                    {t("actions.addProduct")}
+                  </Button>
+                </div>
 
-            <div className="flex justify-end gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={handleClose}>
-                {tCommon("cancel")}
-              </Button>
-              <Button type="submit" disabled={createTransfer.isPending}>
-                {createTransfer.isPending
-                  ? tCommon("loading")
-                  : tCommon("create")}
-              </Button>
-            </div>
+                {errors.lines?.message && (
+                  <p className="text-sm text-destructive">
+                    {errors.lines.message}
+                  </p>
+                )}
+
+                <div className="space-y-3 rounded-md border p-3">
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="flex items-start gap-3">
+                      <div className="flex-1">
+                        <FormField
+                          error={errors.lines?.[index]?.productId?.message}
+                        >
+                          <Controller
+                            name={`lines.${index}.productId`}
+                            control={control}
+                            render={({ field: selectField }) => (
+                              <Select
+                                value={selectField.value}
+                                onValueChange={selectField.onChange}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue
+                                    placeholder={t("fields.productPlaceholder")}
+                                  />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {getAvailableProducts(index).map(
+                                    (product) => (
+                                      <SelectItem
+                                        key={product.id}
+                                        value={product.id}
+                                      >
+                                        {product.name} ({product.sku})
+                                      </SelectItem>
+                                    ),
+                                  )}
+                                </SelectContent>
+                              </Select>
+                            )}
+                          />
+                        </FormField>
+                      </div>
+                      <div className="w-24">
+                        <FormField
+                          error={errors.lines?.[index]?.quantity?.message}
+                        >
+                          <Input
+                            type="number"
+                            min="1"
+                            placeholder={t("fields.qty")}
+                            {...register(`lines.${index}.quantity`, {
+                              valueAsNumber: true,
+                            })}
+                          />
+                        </FormField>
+                      </div>
+                      {fields.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="mt-1"
+                          onClick={() => remove(index)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <FormField error={errors.note?.message}>
+                <Label>{t("fields.notes")}</Label>
+                <Input
+                  placeholder={t("fields.notesPlaceholder")}
+                  {...register("note")}
+                />
+              </FormField>
+
+              <div className="flex justify-end gap-3 pt-4">
+                <Button type="button" variant="outline" onClick={handleClose}>
+                  {tCommon("cancel")}
+                </Button>
+                <Button type="submit" disabled={createTransfer.isPending}>
+                  {createTransfer.isPending
+                    ? tCommon("loading")
+                    : tCommon("create")}
+                </Button>
+              </div>
+            </fieldset>
           </form>
         </CardContent>
       </Card>

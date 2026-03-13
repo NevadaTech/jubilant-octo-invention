@@ -71,55 +71,59 @@ export function UserForm({ open, onOpenChange }: UserFormProps) {
           </Button>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {createUser.isError && (
-              <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
-                {t("form.error")}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <fieldset disabled={createUser.isPending} className="space-y-4">
+              {createUser.isError && (
+                <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                  {t("form.error")}
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField error={errors.firstName?.message}>
+                  <Label>{t("fields.firstName")} *</Label>
+                  <Input placeholder="John" {...register("firstName")} />
+                </FormField>
+                <FormField error={errors.lastName?.message}>
+                  <Label>{t("fields.lastName")} *</Label>
+                  <Input placeholder="Doe" {...register("lastName")} />
+                </FormField>
               </div>
-            )}
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField error={errors.firstName?.message}>
-                <Label>{t("fields.firstName")} *</Label>
-                <Input placeholder="John" {...register("firstName")} />
+              <FormField error={errors.email?.message}>
+                <Label>{t("fields.email")} *</Label>
+                <Input
+                  type="email"
+                  placeholder="john@example.com"
+                  {...register("email")}
+                />
               </FormField>
-              <FormField error={errors.lastName?.message}>
-                <Label>{t("fields.lastName")} *</Label>
-                <Input placeholder="Doe" {...register("lastName")} />
+
+              <FormField error={errors.username?.message}>
+                <Label>{t("fields.username")} *</Label>
+                <Input placeholder="johndoe" {...register("username")} />
               </FormField>
-            </div>
 
-            <FormField error={errors.email?.message}>
-              <Label>{t("fields.email")} *</Label>
-              <Input
-                type="email"
-                placeholder="john@example.com"
-                {...register("email")}
-              />
-            </FormField>
+              <FormField error={errors.password?.message}>
+                <Label>{t("fields.password")} *</Label>
+                <PasswordInput
+                  placeholder="********"
+                  autoComplete="new-password"
+                  {...register("password")}
+                />
+              </FormField>
 
-            <FormField error={errors.username?.message}>
-              <Label>{t("fields.username")} *</Label>
-              <Input placeholder="johndoe" {...register("username")} />
-            </FormField>
-
-            <FormField error={errors.password?.message}>
-              <Label>{t("fields.password")} *</Label>
-              <PasswordInput
-                placeholder="********"
-                autoComplete="new-password"
-                {...register("password")}
-              />
-            </FormField>
-
-            <div className="flex justify-end gap-3 pt-4 border-t">
-              <Button type="button" variant="outline" onClick={handleClose}>
-                {tCommon("cancel")}
-              </Button>
-              <Button type="submit" disabled={createUser.isPending}>
-                {createUser.isPending ? tCommon("loading") : tCommon("create")}
-              </Button>
-            </div>
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button type="button" variant="outline" onClick={handleClose}>
+                  {tCommon("cancel")}
+                </Button>
+                <Button type="submit" disabled={createUser.isPending}>
+                  {createUser.isPending
+                    ? tCommon("loading")
+                    : tCommon("create")}
+                </Button>
+              </div>
+            </fieldset>
           </form>
         </CardContent>
       </Card>
