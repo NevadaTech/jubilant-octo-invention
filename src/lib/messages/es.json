@@ -2310,6 +2310,10 @@
     "actions": {
       "test": "Probar conexión",
       "sync": "Sincronizar ahora",
+      "syncFromDate": "Sincronizar desde",
+      "syncDialogTitle": "Sincronizar pedidos",
+      "syncDialogDescription": "Selecciona la fecha de inicio para sincronizar pedidos desde la plataforma.",
+      "syncDialogConfirm": "Iniciar sincronización",
       "edit": "Editar",
       "delete": "Eliminar",
       "connect": "Conectar"

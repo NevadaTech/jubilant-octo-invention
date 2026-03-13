@@ -10,6 +10,7 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { warehouseKeys } from "@/modules/inventory/presentation/hooks/warehouse.keys";
 import { WarehouseMapper } from "@/modules/inventory/application/mappers/warehouse.mapper";
+import type { WarehouseResponseDto } from "@/modules/inventory/application/dto/warehouse.dto";
 
 interface Props {
   params: Promise<{ locale: string; id: string }>;
@@ -24,7 +25,7 @@ export default async function EditWarehousePage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: warehouseKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any }>(
+        const res = await serverFetch<{ data: WarehouseResponseDto }>(
           `/inventory/warehouses/${id}`,
         );
         return WarehouseMapper.toDomain(res.data);

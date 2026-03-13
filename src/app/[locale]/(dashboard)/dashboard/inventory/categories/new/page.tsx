@@ -10,6 +10,8 @@ import { CategoryMapper } from "@/modules/inventory/application/mappers/category
 import { CategoryFormPage } from "@/modules/inventory/presentation/components/categories";
 import { RequirePermission } from "@/shared/presentation/components/require-permission";
 import { PERMISSIONS } from "@/shared/domain/permissions";
+import type { CategoryResponseDto } from "@/modules/inventory/application/dto/category.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -24,11 +26,11 @@ export default async function NewCategoryPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: categoryKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any[]; pagination: any }>(
+        const res = await serverFetch<{ data: CategoryResponseDto[]; pagination: Pagination }>(
           "/inventory/categories",
         );
         return {
-          data: res.data.map((item: any) => CategoryMapper.toDomain(item)),
+          data: res.data.map((item) => CategoryMapper.toDomain(item)),
           pagination: res.pagination,
         };
       },

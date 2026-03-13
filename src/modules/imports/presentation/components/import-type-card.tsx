@@ -49,8 +49,8 @@ export function ImportTypeCard({
     <Card className="transition-shadow hover:shadow-md">
       <CardContent className="flex flex-col gap-3 p-4">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-blue-50 p-2 dark:bg-blue-950">
-            <Icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <div className="rounded-lg bg-primary-50 p-2 dark:bg-primary-950">
+            <Icon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
           </div>
           <div className="min-w-0">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">

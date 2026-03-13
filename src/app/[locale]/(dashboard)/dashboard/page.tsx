@@ -7,6 +7,7 @@ import {
 } from "@/shared/infrastructure/prefetch/server-prefetch";
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { dashboardKeys } from "@/modules/dashboard/presentation/hooks/dashboard.keys";
+import type { DashboardMetricsDto } from "@/modules/dashboard/application/dto";
 
 interface DashboardPageProps {
   params: Promise<{ locale: string }>;
@@ -22,7 +23,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     await queryClient.prefetchQuery({
       queryKey: dashboardKeys.metrics(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any }>("/dashboard/metrics");
+        const res = await serverFetch<{ data: DashboardMetricsDto }>("/dashboard/metrics");
         return res.data;
       },
     });

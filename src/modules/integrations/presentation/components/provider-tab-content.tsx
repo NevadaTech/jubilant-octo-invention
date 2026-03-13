@@ -118,7 +118,7 @@ export function ProviderTabContent({ provider }: ProviderTabContentProps) {
                 key={conn.id}
                 connection={conn}
                 onTest={(id) => testIntegration.mutate(id)}
-                onSync={(id) => triggerSync.mutate(id)}
+                onSync={(id) => triggerSync.mutate({ id })}
                 onDelete={(id) => setDeleteId(id)}
               />
             ))}

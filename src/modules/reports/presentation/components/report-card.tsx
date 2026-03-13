@@ -65,7 +65,7 @@ const REPORT_ICONS: Record<ReportTypeValue, React.ElementType> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   inventory:
-    "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+    "bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-950 dark:text-primary-300 dark:border-primary-800",
   sales:
     "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800",
   returns:
@@ -73,7 +73,8 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const ICON_COLORS: Record<string, string> = {
-  inventory: "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400",
+  inventory:
+    "bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400",
   sales:
     "bg-emerald-100 text-emerald-600 dark:bg-emerald-900 dark:text-emerald-400",
   returns:

@@ -15,11 +15,18 @@ import {
   EyeOff,
   Copy,
   Check,
+  MoreVertical,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/ui/components/dropdown-menu";
 import { Skeleton } from "@/ui/components/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/components/tabs";
 import {
@@ -91,12 +98,14 @@ export function MeliConnectionDetail({
   const [showSecret, setShowSecret] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const formatDate = (date: Date | null) => {
+  const formatDate = (date: Date | string | null) => {
     if (!date) return "-";
+    const d = date instanceof Date ? date : new Date(date);
+    if (isNaN(d.getTime())) return "-";
     return new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
       timeStyle: "short",
-    }).format(date);
+    }).format(d);
   };
 
   const handleDelete = async () => {
@@ -199,68 +208,87 @@ export function MeliConnectionDetail({
       )}
 
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex items-center gap-3">
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="shrink-0 rounded-full"
+          >
             <Link href="/dashboard/integrations">
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-              {connection.storeName}
-            </h1>
-            <p className="text-sm text-muted-foreground">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5">
+              <h1 className="truncate text-2xl font-bold text-foreground">
+                {connection.storeName}
+              </h1>
+              <ConnectionStatusBadge status={connection.status} />
+            </div>
+            <p className="mt-0.5 text-sm text-muted-foreground">
               {connection.provider} &middot; {connection.accountName}
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => testIntegration.mutate(connectionId)}
-            disabled={testIntegration.isPending}
-          >
-            {testIntegration.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <TestTube className="mr-2 h-4 w-4" />
-            )}
-            {t("actions.test")}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => triggerSync.mutate(connectionId)}
-            disabled={!connection.isConnected || triggerSync.isPending}
-          >
-            {triggerSync.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="mr-2 h-4 w-4" />
-            )}
-            {t("actions.sync")}
-          </Button>
+        <div className="flex items-center gap-2">
           {!connection.isConnected && !connection.needsReauth && (
             <Button
-              variant="default"
+              size="sm"
               onClick={handleReauth}
               disabled={getMeliAuthUrl.isPending}
             >
               {getMeliAuthUrl.isPending ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
               ) : (
-                <ExternalLink className="mr-2 h-4 w-4" />
+                <ExternalLink className="mr-1.5 h-3.5 w-3.5" />
               )}
               {t("providers.mercadolibre.connectButton")}
             </Button>
           )}
           <Button
-            variant="destructive"
-            onClick={() => setDeleteDialogOpen(true)}
+            variant="outline"
+            size="sm"
+            onClick={() => testIntegration.mutate(connectionId)}
+            disabled={testIntegration.isPending}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
-            {tCommon("delete")}
+            {testIntegration.isPending ? (
+              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <TestTube className="mr-1.5 h-3.5 w-3.5" />
+            )}
+            {t("actions.test")}
           </Button>
+          <Button
+            size="sm"
+            onClick={() => triggerSync.mutate({ id: connectionId })}
+            disabled={!connection.isConnected || triggerSync.isPending}
+          >
+            {triggerSync.isPending ? (
+              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
+            )}
+            {t("actions.sync")}
+          </Button>
+          <div className="mx-0.5 h-6 w-px bg-border" />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => setDeleteDialogOpen(true)}
+                className="cursor-pointer gap-2 text-destructive focus:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+                {tCommon("delete")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

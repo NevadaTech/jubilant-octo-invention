@@ -80,9 +80,11 @@ export function PickingConfigForm() {
         <CardContent>
           {isLoading ? (
             <div className="space-y-3">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full rounded-lg" />
-              ))}
+              {Array.from({ length: 4 }, (_, i) => `skeleton-${i}`).map(
+                (key) => (
+                  <Skeleton key={key} className="h-16 w-full rounded-lg" />
+                ),
+              )}
             </div>
           ) : (
             <div className="space-y-3">

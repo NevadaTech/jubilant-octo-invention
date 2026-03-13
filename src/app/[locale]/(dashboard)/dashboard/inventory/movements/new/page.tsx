@@ -13,6 +13,9 @@ import { WarehouseMapper } from "@/modules/inventory/application/mappers/warehou
 import { MovementFormPage } from "@/modules/inventory/presentation/components";
 import { RequirePermission } from "@/shared/presentation/components/require-permission";
 import { PERMISSIONS } from "@/shared/domain/permissions";
+import type { ProductApiRawDto } from "@/modules/inventory/application/dto/product.dto";
+import type { WarehouseResponseDto } from "@/modules/inventory/application/dto/warehouse.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -28,11 +31,11 @@ export default async function NewMovementPage({ params }: Props) {
       queryClient.prefetchQuery({
         queryKey: productKeys.list(),
         queryFn: async () => {
-          const res = await serverFetch<{ data: any[]; pagination: any }>(
+          const res = await serverFetch<{ data: ProductApiRawDto[]; pagination: Pagination }>(
             "/inventory/products",
           );
           return {
-            data: res.data.map((item: any) =>
+            data: res.data.map((item) =>
               ProductMapper.toDomain(mapApiProductToDto(item)),
             ),
             pagination: res.pagination,
@@ -42,11 +45,11 @@ export default async function NewMovementPage({ params }: Props) {
       queryClient.prefetchQuery({
         queryKey: warehouseKeys.list(),
         queryFn: async () => {
-          const res = await serverFetch<{ data: any[]; pagination: any }>(
+          const res = await serverFetch<{ data: WarehouseResponseDto[]; pagination: Pagination }>(
             "/inventory/warehouses",
           );
           return {
-            data: res.data.map((item: any) => WarehouseMapper.toDomain(item)),
+            data: res.data.map((item) => WarehouseMapper.toDomain(item)),
             pagination: res.pagination,
           };
         },

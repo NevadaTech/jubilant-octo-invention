@@ -506,12 +506,12 @@ export function ReturnFormPage() {
           </CardHeader>
           <CardContent>
             {hasSaleLines && (
-              <div className="mb-4 rounded-md bg-blue-50 p-3 text-sm text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
+              <div className="mb-4 rounded-md bg-primary-50 p-3 text-sm text-primary-700 dark:bg-primary-900/20 dark:text-primary-400">
                 {t("form.saleProductsHint")}
               </div>
             )}
             {hasMovementLines && (
-              <div className="mb-4 rounded-md bg-blue-50 p-3 text-sm text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
+              <div className="mb-4 rounded-md bg-primary-50 p-3 text-sm text-primary-700 dark:bg-primary-900/20 dark:text-primary-400">
                 {t("form.movementProductsHint")}
               </div>
             )}

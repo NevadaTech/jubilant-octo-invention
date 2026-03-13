@@ -178,8 +178,8 @@ function StockSummaryCards({ items }: { items: Stock[] }) {
       label: t("summary.totalQuantity"),
       value: totalQuantity.toLocaleString(),
       icon: Boxes,
-      color: "text-blue-600 dark:text-blue-400",
-      bg: "bg-blue-100 dark:bg-blue-900/30",
+      color: "text-primary-600 dark:text-primary-400",
+      bg: "bg-primary-100 dark:bg-primary-900/30",
     },
     {
       label: t("summary.totalValue"),

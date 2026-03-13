@@ -8,6 +8,7 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { returnKeys } from "@/modules/returns/presentation/hooks/return.keys";
 import { ReturnMapper } from "@/modules/returns/application/mappers/return.mapper";
+import type { ReturnResponseDto } from "@/modules/returns/application/dto/return.dto";
 
 interface Props {
   params: Promise<{ locale: string; id: string }>;
@@ -22,7 +23,7 @@ export default async function ReturnDetailPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: returnKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any }>(`/returns/${id}`);
+        const res = await serverFetch<{ data: ReturnResponseDto }>(`/returns/${id}`);
         return ReturnMapper.toDomain(res.data);
       },
     });

@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { importKeys } from "@/modules/imports/presentation/hooks/import.keys";
 import { ImportMapper } from "@/modules/imports/application/mappers/import.mapper";
+import type { ImportBatchApiDto } from "@/modules/imports/application/dto/import.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -24,10 +26,10 @@ export default async function ImportsPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: importKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any[]; pagination: any }>(
+        const res = await serverFetch<{ data: ImportBatchApiDto[]; pagination: Pagination }>(
           "/imports",
         );
-        return res.data.map((item: any) => ImportMapper.toDomain(item));
+        return res.data.map((item) => ImportMapper.toDomain(item));
       },
     });
   } catch {

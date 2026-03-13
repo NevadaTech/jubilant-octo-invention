@@ -9,6 +9,7 @@ import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { productKeys } from "@/modules/inventory/presentation/hooks/product.keys";
 import { mapApiProductToDto } from "@/modules/inventory/infrastructure/adapters/product-api.adapter";
 import { ProductMapper } from "@/modules/inventory/application/mappers/product.mapper";
+import type { ProductApiRawDto } from "@/modules/inventory/application/dto/product.dto";
 
 interface Props {
   params: Promise<{ locale: string; id: string }>;
@@ -23,7 +24,7 @@ export default async function ProductDetailPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: productKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any }>(
+        const res = await serverFetch<{ data: ProductApiRawDto }>(
           `/inventory/products/${id}`,
         );
         return ProductMapper.toDomain(mapApiProductToDto(res.data));

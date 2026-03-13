@@ -8,6 +8,7 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { transferKeys } from "@/modules/inventory/presentation/hooks/transfer.keys";
 import { TransferMapper } from "@/modules/inventory/application/mappers/transfer.mapper";
+import type { TransferResponseDto } from "@/modules/inventory/application/dto/transfer.dto";
 
 interface Props {
   params: Promise<{ locale: string; id: string }>;
@@ -22,7 +23,7 @@ export default async function TransferDetailPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: transferKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any }>(
+        const res = await serverFetch<{ data: TransferResponseDto }>(
           `/inventory/transfers/${id}`,
         );
         return TransferMapper.toDomain(res.data);

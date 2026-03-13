@@ -66,7 +66,7 @@ export function ReportExportButton({
           {t("exportExcel")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => doExport("CSV")} className="gap-2">
-          <FileCode className="h-4 w-4 text-blue-500" />
+          <FileCode className="h-4 w-4 text-primary-500" />
           {t("exportCsv")}
         </DropdownMenuItem>
       </DropdownMenuContent>

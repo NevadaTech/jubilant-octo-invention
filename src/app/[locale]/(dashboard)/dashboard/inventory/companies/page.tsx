@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { companyKeys } from "@/modules/companies/presentation/hooks/company.keys";
 import { CompanyMapper } from "@/modules/companies/application/mappers/company.mapper";
+import type { CompanyResponseDto } from "@/modules/companies/application/dto/company.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -26,16 +28,11 @@ export default async function CompaniesPage({ params }: Props) {
       queryKey: companyKeys.list(),
       queryFn: async () => {
         const res = await serverFetch<{
-          data: any[];
-          pagination: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPages: number;
-          };
+          data: CompanyResponseDto[];
+          pagination: Pagination;
         }>("/inventory/companies");
         return {
-          data: res.data.map((item: any) => CompanyMapper.toDomain(item)),
+          data: res.data.map((item) => CompanyMapper.toDomain(item)),
           pagination: res.pagination,
         };
       },

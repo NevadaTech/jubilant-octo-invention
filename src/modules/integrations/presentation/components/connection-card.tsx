@@ -37,12 +37,14 @@ export function ConnectionCard({
   const locale = useLocale();
   const t = useTranslations("integrations");
 
-  const formatDate = (date: Date | null) => {
+  const formatDate = (date: Date | string | null) => {
     if (!date) return "-";
+    const d = date instanceof Date ? date : new Date(date);
+    if (isNaN(d.getTime())) return "-";
     return new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
       timeStyle: "short",
-    }).format(date);
+    }).format(d);
   };
 
   return (

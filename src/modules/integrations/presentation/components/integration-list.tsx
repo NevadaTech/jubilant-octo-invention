@@ -50,12 +50,14 @@ export function IntegrationList() {
   const triggerSync = useTriggerSync();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const formatDate = (date: Date | null) => {
+  const formatDate = (date: Date | string | null) => {
     if (!date) return "-";
+    const d = date instanceof Date ? date : new Date(date);
+    if (isNaN(d.getTime())) return "-";
     return new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
       timeStyle: "short",
-    }).format(date);
+    }).format(d);
   };
 
   const handleDelete = async () => {
@@ -135,7 +137,7 @@ export function IntegrationList() {
                       {t("actions.test")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => triggerSync.mutate(conn.id)}
+                      onClick={() => triggerSync.mutate({ id: conn.id })}
                       disabled={!conn.isConnected}
                     >
                       <RefreshCw className="mr-2 h-4 w-4" />

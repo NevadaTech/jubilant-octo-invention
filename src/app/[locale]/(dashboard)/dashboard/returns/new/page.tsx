@@ -7,6 +7,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { saleKeys } from "@/modules/sales/presentation/hooks/sale.keys";
 import { SaleMapper } from "@/modules/sales/application/mappers/sale.mapper";
+import type { SaleApiRawDto } from "@/modules/sales/application/dto/sale.dto";
+import type { Pagination } from "@/shared/application/dto";
 import { ReturnFormPage } from "@/modules/returns/presentation/components";
 import { RequirePermission } from "@/shared/presentation/components/require-permission";
 import { PERMISSIONS } from "@/shared/domain/permissions";
@@ -24,11 +26,11 @@ export default async function NewReturnPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: saleKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any[]; pagination: any }>(
+        const res = await serverFetch<{ data: SaleApiRawDto[]; pagination: Pagination }>(
           "/sales",
         );
         return {
-          data: res.data.map((item: any) => SaleMapper.fromApiRaw(item)),
+          data: res.data.map((item) => SaleMapper.fromApiRaw(item)),
           pagination: res.pagination,
         };
       },

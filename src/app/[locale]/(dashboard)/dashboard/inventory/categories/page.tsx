@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { categoryKeys } from "@/modules/inventory/presentation/hooks/category.keys";
 import { CategoryMapper } from "@/modules/inventory/application/mappers/category.mapper";
+import type { CategoryResponseDto } from "@/modules/inventory/application/dto/category.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -26,16 +28,11 @@ export default async function CategoriesPage({ params }: Props) {
       queryKey: categoryKeys.list(),
       queryFn: async () => {
         const res = await serverFetch<{
-          data: any[];
-          pagination: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPages: number;
-          };
+          data: CategoryResponseDto[];
+          pagination: Pagination;
         }>("/inventory/categories");
         return {
-          data: res.data.map((item: any) => CategoryMapper.toDomain(item)),
+          data: res.data.map((item) => CategoryMapper.toDomain(item)),
           pagination: res.pagination,
         };
       },

@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { transferKeys } from "@/modules/inventory/presentation/hooks/transfer.keys";
 import { TransferMapper } from "@/modules/inventory/application/mappers/transfer.mapper";
+import type { TransferApiRawDto } from "@/modules/inventory/application/dto/transfer.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -26,16 +28,11 @@ export default async function TransfersPage({ params }: Props) {
       queryKey: transferKeys.list(),
       queryFn: async () => {
         const res = await serverFetch<{
-          data: any[];
-          pagination: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPages: number;
-          };
+          data: TransferApiRawDto[];
+          pagination: Pagination;
         }>("/inventory/transfers");
         return {
-          data: res.data.map((item: any) => TransferMapper.fromApiRaw(item)),
+          data: res.data.map((item) => TransferMapper.fromApiRaw(item)),
           pagination: res.pagination,
         };
       },

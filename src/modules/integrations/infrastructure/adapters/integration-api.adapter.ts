@@ -97,9 +97,13 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
     return response.data;
   }
 
-  async triggerSync(id: string): Promise<TriggerSyncResponseDto> {
+  async triggerSync(
+    id: string,
+    fromDate?: string,
+  ): Promise<TriggerSyncResponseDto> {
+    const params = fromDate ? `?fromDate=${encodeURIComponent(fromDate)}` : "";
     const response = await apiClient.post<TriggerSyncResponseDto>(
-      `${this.basePath}/${id}/sync`,
+      `${this.basePath}/${id}/sync${params}`,
     );
     return response.data;
   }

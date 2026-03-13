@@ -2310,6 +2310,10 @@
     "actions": {
       "test": "Test Connection",
       "sync": "Sync Now",
+      "syncFromDate": "Sync from",
+      "syncDialogTitle": "Sync Orders",
+      "syncDialogDescription": "Select the start date to sync orders from the platform.",
+      "syncDialogConfirm": "Start Sync",
       "edit": "Edit",
       "delete": "Delete",
       "connect": "Connect"

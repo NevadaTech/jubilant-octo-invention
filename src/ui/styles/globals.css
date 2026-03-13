@@ -1,20 +1,21 @@
 @import "tailwindcss";
+@import "react-day-picker/style.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Primary - Teal */
-  --color-primary-50: oklch(97% 0.014 185);
-  --color-primary-100: oklch(93% 0.032 185);
-  --color-primary-200: oklch(86% 0.065 185);
-  --color-primary-300: oklch(76% 0.1 185);
-  --color-primary-400: oklch(65% 0.12 185);
-  --color-primary-500: oklch(55% 0.12 185);
-  --color-primary-600: oklch(47% 0.1 185);
-  --color-primary-700: oklch(40% 0.085 185);
-  --color-primary-800: oklch(34% 0.07 185);
-  --color-primary-900: oklch(28% 0.055 185);
-  --color-primary-950: oklch(20% 0.04 185);
+  /* Primary - Nevada Blue */
+  --color-primary-50: oklch(97% 0.014 255);
+  --color-primary-100: oklch(93% 0.032 255);
+  --color-primary-200: oklch(86% 0.065 255);
+  --color-primary-300: oklch(76% 0.1 255);
+  --color-primary-400: oklch(63% 0.14 255);
+  --color-primary-500: oklch(55% 0.14 255);
+  --color-primary-600: oklch(47% 0.13 255);
+  --color-primary-700: oklch(40% 0.11 255);
+  --color-primary-800: oklch(33% 0.085 255);
+  --color-primary-900: oklch(24% 0.055 255);
+  --color-primary-950: oklch(18% 0.04 255);
 
   /* Neutral - Slate Gray */
   --color-neutral-50: oklch(98% 0.004 250);
@@ -76,7 +77,7 @@
   --color-popover: oklch(100% 0 0);
   --color-popover-foreground: var(--color-neutral-900);
   --color-primary: var(--color-primary-600);
-  --color-primary-foreground: oklch(99% 0.005 185);
+  --color-primary-foreground: oklch(99% 0.005 255);
   --color-secondary: var(--color-neutral-100);
   --color-secondary-foreground: var(--color-neutral-800);
   --color-muted: var(--color-neutral-100);
@@ -104,7 +105,7 @@
   --color-ring: var(--color-primary-500);
 
   /* Chart Colors - Light Mode */
-  --color-chart-1: oklch(55% 0.12 185); /* Teal */
+  --color-chart-1: oklch(55% 0.12 255); /* Blue */
   --color-chart-2: oklch(55% 0.16 280); /* Violet */
   --color-chart-3: oklch(65% 0.16 55); /* Amber */
   --color-chart-4: oklch(60% 0.18 350); /* Rose */
@@ -145,6 +146,15 @@
   }
 }
 
+/* Calendar / DatePicker overrides */
+.rdp-root {
+  --rdp-accent-color: var(--color-primary);
+  --rdp-accent-background-color: var(--color-accent);
+  --rdp-day-height: 36px;
+  --rdp-day-width: 36px;
+  --rdp-selected-font: 500;
+}
+
 /* Dark mode semantic overrides */
 .dark {
   --color-background: oklch(16% 0.012 250);
@@ -154,13 +164,13 @@
   --color-popover: oklch(21% 0.014 250);
   --color-popover-foreground: oklch(93% 0.006 250);
   --color-primary: var(--color-primary-400);
-  --color-primary-foreground: oklch(16% 0.012 185);
+  --color-primary-foreground: oklch(16% 0.012 255);
   --color-secondary: oklch(26% 0.015 250);
   --color-secondary-foreground: oklch(91% 0.008 250);
   --color-muted: oklch(26% 0.015 250);
   --color-muted-foreground: oklch(65% 0.018 250);
-  --color-accent: oklch(26% 0.04 185);
-  --color-accent-foreground: oklch(86% 0.065 185);
+  --color-accent: oklch(26% 0.04 255);
+  --color-accent-foreground: oklch(86% 0.065 255);
   --color-destructive: oklch(60% 0.2 25);
   --color-destructive-foreground: oklch(93% 0.006 250);
   --color-border: oklch(30% 0.015 250);
@@ -168,7 +178,7 @@
   --color-ring: var(--color-primary-400);
 
   /* Chart Colors - Dark Mode (brighter for dark backgrounds) */
-  --color-chart-1: oklch(70% 0.14 185); /* Teal */
+  --color-chart-1: oklch(70% 0.14 255); /* Blue */
   --color-chart-2: oklch(70% 0.18 280); /* Violet */
   --color-chart-3: oklch(75% 0.16 55); /* Amber */
   --color-chart-4: oklch(72% 0.2 350); /* Rose */

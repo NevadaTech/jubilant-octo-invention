@@ -11,6 +11,8 @@ import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { productKeys } from "@/modules/inventory/presentation/hooks/product.keys";
 import { mapApiProductToDto } from "@/modules/inventory/infrastructure/adapters/product-api.adapter";
 import { ProductMapper } from "@/modules/inventory/application/mappers/product.mapper";
+import type { ProductApiRawDto } from "@/modules/inventory/application/dto/product.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -27,16 +29,11 @@ export default async function ProductsPage({ params }: Props) {
       queryKey: productKeys.list(),
       queryFn: async () => {
         const res = await serverFetch<{
-          data: any[];
-          pagination: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPages: number;
-          };
+          data: ProductApiRawDto[];
+          pagination: Pagination;
         }>("/inventory/products");
         return {
-          data: res.data.map((item: any) =>
+          data: res.data.map((item) =>
             ProductMapper.toDomain(mapApiProductToDto(item)),
           ),
           pagination: res.pagination,

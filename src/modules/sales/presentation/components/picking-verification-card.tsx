@@ -27,7 +27,7 @@ interface PickingVerificationCardProps {
 
 export function PickingVerificationCard({
   lines,
-  saleId,
+  saleId: _saleId,
   onVerificationChange,
 }: PickingVerificationCardProps) {
   const t = useTranslations("sales.picking");

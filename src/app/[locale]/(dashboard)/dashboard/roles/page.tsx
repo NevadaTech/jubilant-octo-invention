@@ -10,6 +10,7 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { roleKeys } from "@/modules/roles/presentation/hooks/role.keys";
 import { RoleMapper } from "@/modules/roles/application/mappers/role.mapper";
+import type { RoleResponseDto } from "@/modules/roles/application/dto/role.dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -24,8 +25,8 @@ export default async function RolesPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: roleKeys.lists(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any[] }>("/roles");
-        return res.data.map((item: any) => RoleMapper.toDomain(item));
+        const res = await serverFetch<{ data: RoleResponseDto[] }>("/roles");
+        return res.data.map((item) => RoleMapper.toDomain(item));
       },
     });
   } catch {

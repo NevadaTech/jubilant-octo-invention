@@ -8,6 +8,7 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { movementKeys } from "@/modules/inventory/presentation/hooks/movement.keys";
 import { StockMovementMapper } from "@/modules/inventory/application/mappers/stock-movement.mapper";
+import type { StockMovementResponseDto } from "@/modules/inventory/application/dto/stock-movement.dto";
 
 interface Props {
   params: Promise<{ locale: string; id: string }>;
@@ -22,7 +23,7 @@ export default async function MovementDetailPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: movementKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any }>(
+        const res = await serverFetch<{ data: StockMovementResponseDto }>(
           `/inventory/movements/${id}`,
         );
         return StockMovementMapper.toDomain(res.data);

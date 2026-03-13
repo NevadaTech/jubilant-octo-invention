@@ -10,6 +10,7 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { categoryKeys } from "@/modules/inventory/presentation/hooks/category.keys";
 import { CategoryMapper } from "@/modules/inventory/application/mappers/category.mapper";
+import type { CategoryResponseDto } from "@/modules/inventory/application/dto/category.dto";
 
 interface Props {
   params: Promise<{ locale: string; id: string }>;
@@ -24,7 +25,7 @@ export default async function EditCategoryPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: categoryKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any }>(
+        const res = await serverFetch<{ data: CategoryResponseDto }>(
           `/inventory/categories/${id}`,
         );
         return CategoryMapper.toDomain(res.data);

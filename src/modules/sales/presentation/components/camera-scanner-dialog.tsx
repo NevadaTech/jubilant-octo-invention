@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Camera, XCircle, Check, X } from "lucide-react";
+import { Camera, XCircle, Check } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import {
   Dialog,

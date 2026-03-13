@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { returnKeys } from "@/modules/returns/presentation/hooks/return.keys";
 import { ReturnMapper } from "@/modules/returns/application/mappers/return.mapper";
+import type { ReturnApiRawDto } from "@/modules/returns/application/dto/return.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -25,11 +27,11 @@ export default async function ReturnsPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: returnKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any[]; pagination: any }>(
+        const res = await serverFetch<{ data: ReturnApiRawDto[]; pagination: Pagination }>(
           "/returns",
         );
         return {
-          data: res.data.map((item: any) => ReturnMapper.fromApiRaw(item)),
+          data: res.data.map((item) => ReturnMapper.fromApiRaw(item)),
           pagination: res.pagination,
         };
       },

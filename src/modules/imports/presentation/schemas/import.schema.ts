@@ -10,11 +10,6 @@ export const IMPORT_TYPES: { value: ImportType; labelKey: string }[] = [
 ];
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ACCEPTED_FILE_TYPES = [
-  "text/csv",
-  "application/vnd.ms-excel",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-];
 const ACCEPTED_EXTENSIONS = [".csv", ".xlsx", ".xls"];
 
 export const importFileSchema = z.object({

@@ -10,6 +10,7 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { integrationKeys } from "@/modules/integrations/presentation/hooks/integration.keys";
 import { IntegrationConnectionMapper } from "@/modules/integrations/application/mappers/integration-connection.mapper";
+import type { IntegrationConnectionResponseDto } from "@/modules/integrations/application/dto/integration-connection.dto";
 
 interface Props {
   params: Promise<{ locale: string; id: string }>;
@@ -24,7 +25,7 @@ export default async function IntegrationDetailPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: integrationKeys.detail(id),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any }>(
+        const res = await serverFetch<{ data: IntegrationConnectionResponseDto }>(
           `/integrations/connections/${id}`,
         );
         return IntegrationConnectionMapper.toDomain(res.data);

@@ -38,9 +38,11 @@ export function ImportDetailSheet({
         <SheetBody>
           {isLoading ? (
             <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-full" />
-              ))}
+              {Array.from({ length: 5 }, (_, i) => `skeleton-${i}`).map(
+              (key) => (
+                <Skeleton key={key} className="h-8 w-full" />
+              ),
+            )}
             </div>
           ) : !batch ? (
             <p className="py-8 text-center text-neutral-500">
@@ -182,8 +184,8 @@ function ImportRowCard({
             {t("detail.errors")}:
           </p>
           <ul className="ml-3 list-disc text-xs text-red-600">
-            {row.errors.map((error, i) => (
-              <li key={i}>{error}</li>
+            {row.errors.map((error) => (
+              <li key={error}>{error}</li>
             ))}
           </ul>
         </div>
@@ -196,8 +198,8 @@ function ImportRowCard({
             {t("detail.warnings")}:
           </p>
           <ul className="ml-3 list-disc text-xs text-amber-600">
-            {row.warnings.map((warning, i) => (
-              <li key={i}>{warning}</li>
+            {row.warnings.map((warning) => (
+              <li key={warning}>{warning}</li>
             ))}
           </ul>
         </div>

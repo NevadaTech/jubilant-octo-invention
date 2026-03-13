@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { stockKeys } from "@/modules/inventory/presentation/hooks/stock.keys";
 import { StockMapper } from "@/modules/inventory/application/mappers/stock.mapper";
+import type { StockApiRawDto } from "@/modules/inventory/application/dto/stock.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -26,16 +28,11 @@ export default async function StockPage({ params }: Props) {
       queryKey: stockKeys.list(),
       queryFn: async () => {
         const res = await serverFetch<{
-          data: any[];
-          pagination: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPages: number;
-          };
+          data: StockApiRawDto[];
+          pagination: Pagination;
         }>("/inventory/stock");
         return {
-          data: res.data.map((item: any, index: number) =>
+          data: res.data.map((item, index) =>
             StockMapper.toDomain(item, index),
           ),
           pagination: res.pagination,

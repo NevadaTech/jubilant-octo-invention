@@ -37,7 +37,7 @@ export function CompanyList() {
   const t = useTranslations("inventory.companies");
   const tCommon = useTranslations("common");
 
-  const [filters, setFiltersState] = useState<CompanyFilters>({
+  const [filters, setFilters] = useState<CompanyFilters>({
     page: 1,
     limit: 10,
   });
@@ -49,12 +49,12 @@ export function CompanyList() {
   const { data, isLoading, isError } = useCompanies(filters);
   const deleteCompany = useDeleteCompany();
 
-  const setFilters = (patch: Partial<CompanyFilters>) => {
-    setFiltersState((prev) => ({ ...prev, ...patch }));
+  const updateFilters = (patch: Partial<CompanyFilters>) => {
+    setFilters((prev) => ({ ...prev, ...patch }));
   };
 
   const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
-    setFilters({
+    updateFilters({
       sortBy: order ? (field as CompanyFilters["sortBy"]) : undefined,
       sortOrder: order,
       page: 1,
@@ -104,7 +104,7 @@ export function CompanyList() {
             <Input
               placeholder={t("filters.search")}
               value={filters.search || ""}
-              onChange={(e) => setFilters({ search: e.target.value, page: 1 })}
+              onChange={(e) => updateFilters({ search: e.target.value, page: 1 })}
               className="max-w-sm"
             />
           </div>
@@ -112,9 +112,11 @@ export function CompanyList() {
         <CardContent>
           {isLoading ? (
             <div className="space-y-3">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={`skel-${i}`} className="h-16 w-full" />
-              ))}
+              {Array.from({ length: 5 }, (_, i) => `skeleton-${i}`).map(
+                (key) => (
+                  <Skeleton key={key} className="h-16 w-full" />
+                ),
+              )}
             </div>
           ) : !data?.data.length ? (
             <div className="py-10 text-center">
@@ -232,9 +234,9 @@ export function CompanyList() {
                 totalPages={data.pagination.totalPages}
                 total={data.pagination.total}
                 limit={data.pagination.limit}
-                onPageChange={(p) => setFilters({ page: p })}
+                onPageChange={(p) => updateFilters({ page: p })}
                 onPageSizeChange={(size) =>
-                  setFilters({ limit: size, page: 1 })
+                  updateFilters({ limit: size, page: 1 })
                 }
                 showingLabel={tCommon("pagination.showing", {
                   from: (data.pagination.page - 1) * data.pagination.limit + 1,

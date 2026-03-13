@@ -10,6 +10,8 @@ import { WarehouseMapper } from "@/modules/inventory/application/mappers/warehou
 import { TransferFormPage } from "@/modules/inventory/presentation/components";
 import { RequirePermission } from "@/shared/presentation/components/require-permission";
 import { PERMISSIONS } from "@/shared/domain/permissions";
+import type { WarehouseResponseDto } from "@/modules/inventory/application/dto/warehouse.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -24,11 +26,11 @@ export default async function NewTransferPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: warehouseKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any[]; pagination: any }>(
+        const res = await serverFetch<{ data: WarehouseResponseDto[]; pagination: Pagination }>(
           "/inventory/warehouses",
         );
         return {
-          data: res.data.map((item: any) => WarehouseMapper.toDomain(item)),
+          data: res.data.map((item) => WarehouseMapper.toDomain(item)),
           pagination: res.pagination,
         };
       },

@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { auditLogKeys } from "@/modules/audit/presentation/hooks/audit-log.keys";
 import { AuditLogMapper } from "@/modules/audit/application/mappers/audit-log.mapper";
+import type { AuditLogResponseDto } from "@/modules/audit/application/dto/audit-log.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -25,11 +27,11 @@ export default async function AuditPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: auditLogKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any[]; pagination: any }>(
+        const res = await serverFetch<{ data: AuditLogResponseDto[]; pagination: Pagination }>(
           "/audit/logs",
         );
         return {
-          data: res.data.map((item: any) => AuditLogMapper.toDomain(item)),
+          data: res.data.map((item) => AuditLogMapper.toDomain(item)),
           pagination: res.pagination,
         };
       },

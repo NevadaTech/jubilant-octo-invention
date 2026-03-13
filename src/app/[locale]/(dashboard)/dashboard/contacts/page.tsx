@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { contactKeys } from "@/modules/contacts/presentation/hooks/contact.keys";
 import { ContactMapper } from "@/modules/contacts/application/mappers/contact.mapper";
+import type { ContactResponseDto } from "@/modules/contacts/application/dto/contact.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -25,11 +27,11 @@ export default async function ContactsPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: contactKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any[]; pagination: any }>(
+        const res = await serverFetch<{ data: ContactResponseDto[]; pagination: Pagination }>(
           "/contacts",
         );
         return {
-          data: res.data.map((item: any) => ContactMapper.toDomain(item)),
+          data: res.data.map((item) => ContactMapper.toDomain(item)),
           pagination: res.pagination,
         };
       },

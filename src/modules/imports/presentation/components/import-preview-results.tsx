@@ -61,8 +61,8 @@ export function ImportPreviewResults({ preview }: ImportPreviewResultsProps) {
               {t("structureErrors")}
             </h4>
             <ul className="space-y-1">
-              {preview.structureErrors.map((err, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
+              {preview.structureErrors.map((err) => (
+                <li key={err.message} className="flex items-start gap-2 text-sm">
                   <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
                   {err.message}
                 </li>
@@ -90,8 +90,8 @@ export function ImportPreviewResults({ preview }: ImportPreviewResultsProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {preview.rowErrors.map((err, i) => (
-                    <tr key={i} className="border-b last:border-0">
+                  {preview.rowErrors.map((err) => (
+                    <tr key={`${err.rowNumber}-${err.column ?? ""}-${err.error}`} className="border-b last:border-0">
                       <td className="py-1.5 pr-4">{err.rowNumber}</td>
                       <td className="py-1.5 pr-4">{err.column ?? "-"}</td>
                       <td className="py-1.5 pr-4">{err.error}</td>
@@ -122,9 +122,9 @@ export function ImportPreviewResults({ preview }: ImportPreviewResultsProps) {
               {t("warnings")}
             </h4>
             <ul className="space-y-1">
-              {preview.warnings.map((warning, i) => (
+              {preview.warnings.map((warning) => (
                 <li
-                  key={i}
+                  key={warning}
                   className="text-sm text-amber-700 dark:text-amber-300"
                 >
                   {warning}

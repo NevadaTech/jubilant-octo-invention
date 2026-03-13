@@ -97,7 +97,7 @@ export function ImportWizardDialog({
               <div
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
                   i <= currentStepIndex
-                    ? "bg-blue-600 text-white"
+                    ? "bg-primary-600 text-white"
                     : "bg-neutral-200 text-neutral-500 dark:bg-neutral-700"
                 }`}
               >

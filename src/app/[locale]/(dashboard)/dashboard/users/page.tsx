@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { userKeys } from "@/modules/users/presentation/hooks/user.keys";
 import { UserMapper } from "@/modules/users/application/mappers/user.mapper";
+import type { UserResponseDto } from "@/modules/users/application/dto/user.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -24,11 +26,11 @@ export default async function UsersPage({ params }: Props) {
     await queryClient.prefetchQuery({
       queryKey: userKeys.list(),
       queryFn: async () => {
-        const res = await serverFetch<{ data: any[]; pagination: any }>(
+        const res = await serverFetch<{ data: UserResponseDto[]; pagination: Pagination }>(
           "/users",
         );
         return {
-          data: res.data.map((item: any) => UserMapper.toDomain(item)),
+          data: res.data.map((item) => UserMapper.toDomain(item)),
           pagination: res.pagination,
         };
       },

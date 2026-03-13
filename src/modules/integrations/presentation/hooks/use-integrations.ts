@@ -125,9 +125,9 @@ export function useTriggerSync() {
   const tErrors = useTranslations("apiErrors");
 
   return useMutation({
-    mutationFn: (id: string) =>
-      getContainer().integrationRepository.triggerSync(id),
-    onSuccess: (_, id) => {
+    mutationFn: ({ id, fromDate }: { id: string; fromDate?: string }) =>
+      getContainer().integrationRepository.triggerSync(id, fromDate),
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: integrationKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: integrationKeys.logs(id) });
       toast.success(t("messages.syncStarted"));

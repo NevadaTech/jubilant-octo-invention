@@ -10,6 +10,8 @@ import {
 import { serverFetch } from "@/shared/infrastructure/http/server-fetch";
 import { warehouseKeys } from "@/modules/inventory/presentation/hooks/warehouse.keys";
 import { WarehouseMapper } from "@/modules/inventory/application/mappers/warehouse.mapper";
+import type { WarehouseResponseDto } from "@/modules/inventory/application/dto/warehouse.dto";
+import type { Pagination } from "@/shared/application/dto";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -26,16 +28,11 @@ export default async function WarehousesPage({ params }: Props) {
       queryKey: warehouseKeys.list(),
       queryFn: async () => {
         const res = await serverFetch<{
-          data: any[];
-          pagination: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPages: number;
-          };
+          data: WarehouseResponseDto[];
+          pagination: Pagination;
         }>("/inventory/warehouses");
         return {
-          data: res.data.map((item: any) => WarehouseMapper.toDomain(item)),
+          data: res.data.map((item) => WarehouseMapper.toDomain(item)),
           pagination: res.pagination,
         };
       },

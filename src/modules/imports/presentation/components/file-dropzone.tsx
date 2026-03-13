@@ -93,7 +93,7 @@ export function FileDropzone({
       <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <File className="h-8 w-8 text-blue-600" />
+            <File className="h-8 w-8 text-primary-600" />
             <div>
               <p className="font-medium text-neutral-900 dark:text-neutral-100">
                 {selectedFile.name}
@@ -124,7 +124,7 @@ export function FileDropzone({
         onDragLeave={handleDragLeave}
         className={`flex cursor-pointer flex-col items-center gap-3 rounded-lg border-2 border-dashed p-8 transition-colors ${
           isDragOver
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
+            ? "border-primary-500 bg-primary-50 dark:bg-primary-950"
             : "border-neutral-300 bg-neutral-50 hover:border-neutral-400 dark:border-neutral-600 dark:bg-neutral-800"
         } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
       >
