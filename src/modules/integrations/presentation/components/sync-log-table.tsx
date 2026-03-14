@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeShort, formatDateTimeFull } from "@/lib/date";
 import { Link } from "@/i18n/navigation";
 import { RefreshCw, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/ui/components/button";
@@ -11,6 +12,7 @@ import { TablePagination } from "@/ui/components/table-pagination";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/ui/components/dialog";
@@ -28,6 +30,7 @@ import {
 import type {
   SyncAction,
   IntegrationSyncLog,
+  SyncLogOrderItem,
 } from "@/modules/integrations/domain/entities/integration-sync-log.entity";
 
 /** saleId is a real CUID only when it doesn't start with a provider prefix */
@@ -43,6 +46,25 @@ const actionVariantMap: Record<
   SYNCED: "success",
   FAILED: "destructive",
   ALREADY_SYNCED: "secondary",
+};
+
+const externalStatusVariant: Record<
+  string,
+  "success" | "info" | "warning" | "destructive" | "secondary"
+> = {
+  // VTEX
+  "payment-approved": "success",
+  "ready-for-handling": "info",
+  handling: "info",
+  invoiced: "secondary",
+  "payment-pending": "warning",
+  canceled: "destructive",
+  // MeLi
+  paid: "success",
+  confirmed: "info",
+  payment_required: "warning",
+  partially_paid: "warning",
+  cancelled: "destructive",
 };
 
 interface SyncLogTableProps {
@@ -84,20 +106,6 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
     limit,
     action: actionFilter === "ALL" ? undefined : (actionFilter as SyncAction),
   });
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: "short",
-      timeStyle: "short",
-    }).format(date);
-  };
-
-  const formatDateLong = (date: Date) => {
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: "full",
-      timeStyle: "medium",
-    }).format(date);
-  };
 
   if (isLoading) {
     return <Skeleton className="h-64" />;
@@ -163,6 +171,9 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                   {t("columns.action")}
                 </th>
                 <th className="pb-2 font-medium text-muted-foreground">
+                  {t("columns.orderStatus")}
+                </th>
+                <th className="pb-2 font-medium text-muted-foreground">
                   {t("columns.saleId")}
                 </th>
                 <th className="pb-2 font-medium text-muted-foreground">
@@ -194,6 +205,20 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                     </Badge>
                   </td>
                   <td className="py-2">
+                    {log.externalOrderStatus ? (
+                      <Badge
+                        variant={
+                          externalStatusVariant[log.externalOrderStatus] ??
+                          "secondary"
+                        }
+                      >
+                        {t(`orderStatuses.${log.externalOrderStatus}` as never)}
+                      </Badge>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">-</span>
+                    )}
+                  </td>
+                  <td className="py-2">
                     {isRealSaleId(log.saleId) ? (
                       <Link
                         href={`/dashboard/sales/${log.saleId}`}
@@ -212,7 +237,7 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                     {log.errorMessage || "-"}
                   </td>
                   <td className="py-2 text-xs">
-                    {formatDate(log.processedAt)}
+                    {formatDateTimeShort(log.processedAt, locale)}
                   </td>
                   <td className="py-2">
                     {log.isFailed && (
@@ -265,99 +290,246 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
         open={selectedLog !== null}
         onOpenChange={(open) => !open && setSelectedLog(null)}
       >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t("detail.title")}</DialogTitle>
-          </DialogHeader>
-          {selectedLog && (
-            <dl className="space-y-4">
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("detail.externalOrderId")}
-                </dt>
-                <dd className="mt-1 font-mono text-sm">
-                  {selectedLog.externalOrderId}
-                </dd>
-              </div>
-
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("detail.action")}
-                </dt>
-                <dd className="mt-1">
-                  <Badge
-                    variant={
-                      actionVariantMap[selectedLog.action] ?? "secondary"
-                    }
-                  >
-                    {t(`actions.${selectedLog.action}` as never)}
-                  </Badge>
-                </dd>
-              </div>
-
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("detail.processedAt")}
-                </dt>
-                <dd className="mt-1 text-sm">
-                  {formatDateLong(selectedLog.processedAt)}
-                </dd>
-              </div>
-
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("detail.sale")}
-                </dt>
-                <dd className="mt-1 text-sm">
-                  {isRealSaleId(selectedLog.saleId) ? (
-                    <Link
-                      href={`/dashboard/sales/${selectedLog.saleId}`}
-                      className="inline-flex items-center gap-1 text-primary hover:underline"
-                    >
-                      <span className="font-mono">
-                        {selectedLog.saleNumber || selectedLog.saleId}
-                      </span>
-                      <ExternalLink className="h-3 w-3" />
-                    </Link>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      {t("detail.noSale")}
-                    </span>
-                  )}
-                </dd>
-              </div>
-
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("detail.contact")}
-                </dt>
-                <dd className="mt-1 text-sm">
-                  {selectedLog.contactId ? (
-                    <span className="font-mono">{selectedLog.contactId}</span>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      {t("detail.noContact")}
-                    </span>
-                  )}
-                </dd>
-              </div>
-
-              {selectedLog.isFailed && (
-                <div>
-                  <dt className="text-sm font-medium text-muted-foreground">
-                    {t("detail.errorMessage")}
-                  </dt>
-                  <dd className="mt-1 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                    {selectedLog.errorMessage || t("detail.noError")}
-                  </dd>
-                </div>
+        <DialogContent className="flex max-h-[90vh] flex-col gap-0 p-0 sm:max-w-2xl">
+          <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6">
+            <DialogTitle className="flex flex-wrap items-center gap-2">
+              {t("detail.title")}
+              {selectedLog && (
+                <Badge
+                  variant={actionVariantMap[selectedLog.action] ?? "secondary"}
+                >
+                  {t(`actions.${selectedLog.action}` as never)}
+                </Badge>
               )}
+            </DialogTitle>
+          </DialogHeader>
 
+          {selectedLog && (
+            <>
+              <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6">
+                <div className="space-y-5 py-4">
+                  {/* Section: Order Info */}
+                  <div>
+                    <p className="mb-3 border-b pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {t("detail.sectionOrderInfo")}
+                    </p>
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+                      <dl className="space-y-0.5">
+                        <dt className="text-xs font-medium text-muted-foreground">
+                          {t("detail.externalOrderId")}
+                        </dt>
+                        <dd className="break-all font-mono text-sm">
+                          {selectedLog.externalOrderId}
+                        </dd>
+                      </dl>
+
+                      <dl className="space-y-0.5">
+                        <dt className="text-xs font-medium text-muted-foreground">
+                          {t("detail.orderStatus")}
+                        </dt>
+                        <dd>
+                          {selectedLog.externalOrderStatus ? (
+                            <Badge
+                              variant={
+                                externalStatusVariant[
+                                  selectedLog.externalOrderStatus
+                                ] ?? "secondary"
+                              }
+                            >
+                              {t(
+                                `orderStatuses.${selectedLog.externalOrderStatus}` as never,
+                              )}
+                            </Badge>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">
+                              {t("detail.noOrderStatus")}
+                            </span>
+                          )}
+                        </dd>
+                      </dl>
+
+                      <dl className="space-y-0.5">
+                        <dt className="text-xs font-medium text-muted-foreground">
+                          {t("detail.externalOrderDate")}
+                        </dt>
+                        <dd className="text-sm">
+                          {selectedLog.externalOrderDate ? (
+                            formatDateTimeShort(
+                              selectedLog.externalOrderDate,
+                              locale,
+                            )
+                          ) : (
+                            <span className="text-muted-foreground">
+                              {t("detail.noOrderDate")}
+                            </span>
+                          )}
+                        </dd>
+                      </dl>
+
+                      <dl className="space-y-0.5">
+                        <dt className="text-xs font-medium text-muted-foreground">
+                          {t("detail.processedAt")}
+                        </dt>
+                        <dd className="text-sm">
+                          {formatDateTimeFull(selectedLog.processedAt, locale)}
+                        </dd>
+                      </dl>
+
+                      <dl className="space-y-0.5">
+                        <dt className="text-xs font-medium text-muted-foreground">
+                          {t("detail.sale")}
+                        </dt>
+                        <dd className="text-sm">
+                          {isRealSaleId(selectedLog.saleId) ? (
+                            <Link
+                              href={`/dashboard/sales/${selectedLog.saleId}`}
+                              className="inline-flex items-center gap-1 text-primary hover:underline"
+                            >
+                              <span className="font-mono">
+                                {selectedLog.saleNumber || selectedLog.saleId}
+                              </span>
+                              <ExternalLink className="h-3 w-3" />
+                            </Link>
+                          ) : (
+                            <span className="text-muted-foreground">
+                              {t("detail.noSale")}
+                            </span>
+                          )}
+                        </dd>
+                      </dl>
+
+                      <dl className="space-y-0.5">
+                        <dt className="text-xs font-medium text-muted-foreground">
+                          {t("detail.contact")}
+                        </dt>
+                        <dd className="text-sm">
+                          {selectedLog.contactId ? (
+                            <span className="break-all">
+                              {selectedLog.contactName ?? selectedLog.contactId}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">
+                              {t("detail.noContact")}
+                            </span>
+                          )}
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+
+                  {/* Section: Order Items */}
+                  <div>
+                    <p className="mb-3 border-b pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {t("detail.orderItems")}
+                    </p>
+                    {(selectedLog.orderItems?.length ?? 0) > 0 ? (
+                      <>
+                        {/* Desktop table */}
+                        <div className="hidden rounded-md border sm:block">
+                          <table className="w-full table-fixed text-sm">
+                            <thead>
+                              <tr className="border-b bg-muted/40 text-left text-xs text-muted-foreground">
+                                <th className="px-3 py-1.5 font-medium">
+                                  {t("detail.orderItems")}
+                                </th>
+                                <th className="w-16 px-3 py-1.5 text-right font-medium">
+                                  {t("detail.itemQty")}
+                                </th>
+                                <th className="w-24 px-3 py-1.5 text-right font-medium">
+                                  {t("detail.itemPrice")}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {selectedLog.orderItems!.map(
+                                (item: SyncLogOrderItem, idx: number) => (
+                                  <tr
+                                    key={idx}
+                                    className="border-b last:border-0"
+                                  >
+                                    <td className="px-3 py-2">
+                                      <p
+                                        className="truncate font-medium"
+                                        title={item.name}
+                                      >
+                                        {item.name}
+                                      </p>
+                                      {item.sku && (
+                                        <p className="text-xs text-muted-foreground">
+                                          {t("detail.itemSku")}: {item.sku}
+                                        </p>
+                                      )}
+                                    </td>
+                                    <td className="px-3 py-2 text-right tabular-nums">
+                                      {item.quantity}
+                                    </td>
+                                    <td className="px-3 py-2 text-right font-mono tabular-nums">
+                                      ${item.price.toFixed(2)}
+                                    </td>
+                                  </tr>
+                                ),
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Mobile cards */}
+                        <div className="space-y-2 sm:hidden">
+                          {selectedLog.orderItems!.map(
+                            (item: SyncLogOrderItem, idx: number) => (
+                              <div
+                                key={idx}
+                                className="rounded-md border px-3 py-2"
+                              >
+                                <p className="text-sm font-medium leading-snug">
+                                  {item.name}
+                                </p>
+                                <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+                                  <span>
+                                    {item.sku && (
+                                      <>
+                                        {t("detail.itemSku")}: {item.sku}
+                                        {" · "}
+                                      </>
+                                    )}
+                                    {t("detail.itemQty")}: {item.quantity}
+                                  </span>
+                                  <span className="font-mono font-medium text-foreground">
+                                    ${item.price.toFixed(2)}
+                                  </span>
+                                </div>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <p className="py-3 text-center text-sm text-muted-foreground">
+                        {t("detail.noItems")}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Section: Error */}
+                  {selectedLog.isFailed && (
+                    <div>
+                      <p className="mb-3 border-b pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        {t("detail.sectionError")}
+                      </p>
+                      <div className="break-words rounded-md bg-destructive/10 px-3 py-2.5 text-sm text-destructive">
+                        {selectedLog.errorMessage || t("detail.noError")}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Sticky footer with retry */}
               {selectedLog.isFailed && (
-                <div className="pt-2">
+                <DialogFooter className="gap-2 border-t px-4 py-4 sm:px-6">
                   <Button
                     variant="outline"
-                    className="w-full"
+                    className="w-full sm:w-auto"
                     onClick={() => {
                       handleRetry(selectedLog.id);
                       setSelectedLog(null);
@@ -371,9 +543,9 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                     )}
                     {t("detail.retry")}
                   </Button>
-                </div>
+                </DialogFooter>
               )}
-            </dl>
+            </>
           )}
         </DialogContent>
       </Dialog>

@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { formatDateTimeMedium } from "@/lib/date";
 import {
   ArrowLeft,
   ArrowLeftRight,
@@ -89,13 +90,6 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [shippingCarrier, setShippingCarrier] = useState("");
   const [shippingNotes, setShippingNotes] = useState("");
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
-  };
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat(locale, {
@@ -201,7 +195,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
               <SaleStatusBadge status={sale.status} />
             </div>
             <p className="text-sm text-muted-foreground">
-              {t("detail.createdAt", { date: formatDate(sale.createdAt) })}
+              {t("detail.createdAt", {
+                date: formatDateTimeMedium(sale.createdAt, locale),
+              })}
             </p>
           </div>
         </div>
@@ -626,7 +622,8 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
       <Card>
         <CardHeader>
           <CardTitle>
-            {t("detail.lines")} ({sale.totalItems})
+            {t("detail.lines")}
+            {sale.totalItems > 0 && ` (${sale.totalItems})`}
           </CardTitle>
         </CardHeader>
         <CardContent>

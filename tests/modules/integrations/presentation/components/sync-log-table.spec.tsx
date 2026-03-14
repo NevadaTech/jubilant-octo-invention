@@ -227,7 +227,7 @@ describe("SyncLogTable", () => {
     const row = screen.getByText("VTEX-ORD-002").closest("tr")!;
     fireEvent.click(row);
 
-    expect(screen.getByText("detail.errorMessage")).toBeInTheDocument();
+    expect(screen.getByText("detail.sectionError")).toBeInTheDocument();
     expect(screen.getByText("detail.retry")).toBeInTheDocument();
   });
 

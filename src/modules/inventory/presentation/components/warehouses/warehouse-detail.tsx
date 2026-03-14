@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   Warehouse as WarehouseIcon,
@@ -31,6 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
+import { formatDate } from "@/lib/date";
 import {
   useWarehouse,
   useToggleWarehouseStatus,
@@ -40,14 +41,6 @@ import { useState, useMemo } from "react";
 
 interface WarehouseDetailProps {
   warehouseId: string;
-}
-
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
 }
 
 function formatCurrency(value: number, currency: string): string {
@@ -102,6 +95,7 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
   const t = useTranslations("inventory.warehouses");
   const tStock = useTranslations("inventory.stock");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const [search, setSearch] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [sortBy, setSortBy] = useState<string | undefined>();
@@ -310,7 +304,7 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
                 <DetailItem
                   icon={Calendar}
                   label={t("detail.statusChangedAt")}
-                  value={formatDate(new Date(warehouse.statusChangedAt))}
+                  value={formatDate(warehouse.statusChangedAt, locale)}
                 />
               )}
             </CardContent>
@@ -332,12 +326,12 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
             <DetailItem
               icon={Calendar}
               label={t("detail.createdAt")}
-              value={formatDate(warehouse.createdAt)}
+              value={formatDate(warehouse.createdAt, locale)}
             />
             <DetailItem
               icon={Calendar}
               label={t("detail.updatedAt")}
-              value={formatDate(warehouse.updatedAt)}
+              value={formatDate(warehouse.updatedAt, locale)}
             />
           </CardContent>
         </Card>

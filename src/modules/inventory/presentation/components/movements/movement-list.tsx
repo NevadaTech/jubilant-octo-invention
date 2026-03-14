@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   Plus,
@@ -42,6 +42,7 @@ import {
   useVoidMovement,
   useDeleteMovement,
 } from "@/modules/inventory/presentation/hooks/use-movements";
+import { formatDateTimeMedium } from "@/lib/date";
 import { MovementTypeBadge } from "./movement-type-badge";
 import { MovementStatusBadge } from "./movement-status-badge";
 import { MovementFilters } from "./movement-filters";
@@ -53,6 +54,7 @@ import { useCompanyStore } from "@/modules/companies/infrastructure/store/compan
 export function MovementList() {
   const t = useTranslations("inventory.movements");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const [filters, setFilters] = useState<StockMovementFilters>({
     page: 1,
     limit: 10,
@@ -88,13 +90,6 @@ export function MovementList() {
       sortOrder: order,
       page: 1,
     }));
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
   };
 
   const handlePost = async () => {
@@ -259,11 +254,11 @@ export function MovementList() {
                           )}
                         </td>
                         <td className="py-4 pr-4 text-sm text-muted-foreground">
-                          {formatDate(movement.createdAt)}
+                          {formatDateTimeMedium(movement.createdAt, locale)}
                         </td>
                         <td className="py-4 pr-4 text-sm text-muted-foreground">
                           {movement.postedAt ? (
-                            formatDate(movement.postedAt)
+                            formatDateTimeMedium(movement.postedAt, locale)
                           ) : (
                             <span className="text-muted-foreground">-</span>
                           )}

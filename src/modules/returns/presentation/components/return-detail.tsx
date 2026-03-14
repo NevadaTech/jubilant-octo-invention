@@ -1,6 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDateTimeMedium } from "@/lib/date";
 import { Link } from "@/i18n/navigation";
 import {
   ArrowLeft,
@@ -38,16 +39,10 @@ interface ReturnDetailProps {
 export function ReturnDetail({ returnId }: ReturnDetailProps) {
   const t = useTranslations("returns");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const { data: returnData, isLoading, isError } = useReturn(returnId);
   const confirmReturn = useConfirmReturn();
   const cancelReturn = useCancelReturn();
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
-  };
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat("en-US", {
@@ -120,7 +115,7 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
             </div>
             <p className="text-sm text-muted-foreground">
               {t("detail.createdAt", {
-                date: formatDate(returnData.createdAt),
+                date: formatDateTimeMedium(returnData.createdAt, locale),
               })}
             </p>
           </div>
@@ -253,7 +248,9 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                 <dt className="text-sm font-medium text-muted-foreground">
                   {t("fields.confirmedAt")}
                 </dt>
-                <dd className="mt-1">{formatDate(returnData.confirmedAt)}</dd>
+                <dd className="mt-1">
+                  {formatDateTimeMedium(returnData.confirmedAt, locale)}
+                </dd>
               </div>
             )}
             {returnData.cancelledAt && (
@@ -261,7 +258,9 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                 <dt className="text-sm font-medium text-muted-foreground">
                   {t("fields.cancelledAt")}
                 </dt>
-                <dd className="mt-1">{formatDate(returnData.cancelledAt)}</dd>
+                <dd className="mt-1">
+                  {formatDateTimeMedium(returnData.cancelledAt, locale)}
+                </dd>
               </div>
             )}
             {returnData.note && (
@@ -280,7 +279,8 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
       <Card>
         <CardHeader>
           <CardTitle>
-            {t("detail.lines")} ({returnData.totalItems})
+            {t("detail.lines")}
+            {returnData.totalItems > 0 && ` (${returnData.totalItems})`}
           </CardTitle>
         </CardHeader>
         <CardContent>

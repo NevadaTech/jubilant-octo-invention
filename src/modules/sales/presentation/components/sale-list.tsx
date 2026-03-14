@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeShort } from "@/lib/date";
 import {
   Plus,
   ShoppingCart,
@@ -48,6 +49,7 @@ import type { Sale } from "@/modules/sales/domain/entities/sale.entity";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 export function SaleList() {
+  const locale = useLocale();
   const t = useTranslations("sales");
   const tCommon = useTranslations("common");
   const [filters, setFilters] = useState<SaleFilters>({
@@ -81,13 +83,6 @@ export function SaleList() {
       sortOrder: order,
       page: 1,
     }));
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
   };
 
   const formatCurrency = (amount: number, currency: string) => {
@@ -256,13 +251,15 @@ export function SaleList() {
                           )}
                         </td>
                         <td className="hidden py-4 pr-4 lg:table-cell">
-                          <span className="font-medium">{sale.totalItems}</span>
+                          <span className="font-medium">
+                            {sale.totalItems || "-"}
+                          </span>
                         </td>
                         <td className="py-4 pr-4 font-medium">
                           {formatCurrency(sale.totalAmount, sale.currency)}
                         </td>
                         <td className="hidden py-4 pr-4 text-sm text-muted-foreground lg:table-cell">
-                          {formatDate(sale.createdAt)}
+                          {formatDateTimeShort(sale.createdAt, locale)}
                         </td>
                         <td className="py-4 text-right">
                           <DropdownMenu>

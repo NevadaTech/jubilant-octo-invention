@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   Package,
@@ -51,6 +51,7 @@ import {
 } from "@/modules/inventory/presentation/hooks/use-products";
 import { useReorderRules } from "@/modules/inventory/presentation/hooks/use-reorder-rules";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
+import { formatDate } from "@/lib/date";
 import { ReorderRuleDialog } from "@/modules/inventory/presentation/components/stock/reorder-rule-dialog";
 import type { Warehouse as WarehouseEntity } from "@/modules/inventory/domain/entities/warehouse.entity";
 
@@ -63,14 +64,6 @@ function formatCurrency(amount: number, currency = "USD"): string {
     style: "currency",
     currency,
   }).format(amount);
-}
-
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
 }
 
 function DetailItem({
@@ -128,6 +121,7 @@ function ProductDetailSkeleton() {
 export function ProductDetail({ productId }: ProductDetailProps) {
   const t = useTranslations("inventory.products");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const { data: product, isLoading, isError, error } = useProduct(productId);
   const toggleStatus = useToggleProductStatus();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -307,7 +301,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                 <DetailItem
                   icon={Calendar}
                   label={t("detail.statusChangedAt")}
-                  value={formatDate(new Date(product.statusChangedAt))}
+                  value={formatDate(product.statusChangedAt, locale)}
                 />
               )}
             </CardContent>
@@ -412,12 +406,12 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             <DetailItem
               icon={Calendar}
               label={t("detail.createdAt")}
-              value={formatDate(product.createdAt)}
+              value={formatDate(product.createdAt, locale)}
             />
             <DetailItem
               icon={Calendar}
               label={t("detail.updatedAt")}
-              value={formatDate(product.updatedAt)}
+              value={formatDate(product.updatedAt, locale)}
             />
           </CardContent>
         </Card>
@@ -466,7 +460,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               label={t("detail.lastMovementDate")}
               value={
                 lastMovementDate
-                  ? formatDate(new Date(lastMovementDate))
+                  ? formatDate(lastMovementDate, locale)
                   : t("detail.noMovements")
               }
             />

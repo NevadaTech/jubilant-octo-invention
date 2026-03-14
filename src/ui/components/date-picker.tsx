@@ -75,7 +75,6 @@ function DatePicker({
           disabled={disabledMatcher.length > 0 ? disabledMatcher : undefined}
           defaultMonth={value}
           locale={dateLocale}
-          animate
         />
       </PopoverContent>
     </Popover>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeMedium } from "@/lib/date";
 import {
   Check,
   FileEdit,
@@ -63,6 +64,7 @@ export function SaleTimeline({
   returnedAt,
   returnedByName,
 }: SaleTimelineProps) {
+  const locale = useLocale();
   const t = useTranslations("sales");
 
   const statusOrder: SaleStatus[] = pickingEnabled
@@ -191,14 +193,6 @@ export function SaleTimeline({
     return <div className="h-2 w-2 rounded-full bg-current" />;
   };
 
-  const formatDate = (date: Date | null | undefined) => {
-    if (!date) return null;
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
-  };
-
   return (
     <div className="relative">
       <div className="space-y-6">
@@ -278,7 +272,7 @@ export function SaleTimeline({
                   </h4>
                   {step.date && (
                     <span className="text-sm text-muted-foreground">
-                      {formatDate(step.date)}
+                      {formatDateTimeMedium(step.date, locale)}
                     </span>
                   )}
                 </div>

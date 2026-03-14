@@ -2287,7 +2287,9 @@
       "defaultContact": "Contacto por defecto",
       "defaultContactPlaceholder": "Seleccionar contacto de respaldo (opcional)",
       "company": "Empresa",
-      "companyPlaceholder": "Seleccionar empresa (opcional)"
+      "companyPlaceholder": "Seleccionar empresa (opcional)",
+      "sectionCredentials": "Credenciales",
+      "sectionSync": "Configuración de sync"
     },
     "syncStrategy": {
       "WEBHOOK": "Webhook",
@@ -2342,6 +2344,7 @@
       "columns": {
         "orderId": "ID de orden",
         "action": "Acción",
+        "orderStatus": "Estado de orden",
         "saleId": "Venta",
         "error": "Error",
         "date": "Fecha",
@@ -2354,6 +2357,8 @@
       },
       "detail": {
         "title": "Detalle del registro",
+        "sectionOrderInfo": "Información del pedido",
+        "sectionError": "Error",
         "externalOrderId": "ID de orden externa",
         "action": "Acción",
         "sale": "Venta asociada",
@@ -2364,7 +2369,29 @@
         "noSale": "Sin venta asociada",
         "noContact": "Sin contacto asociado",
         "noError": "Sin error",
-        "retry": "Reintentar sincronización"
+        "retry": "Reintentar sincronización",
+        "orderStatus": "Estado de orden",
+        "noOrderStatus": "No disponible",
+        "externalOrderDate": "Fecha de orden (externa)",
+        "noOrderDate": "No disponible",
+        "orderItems": "Productos",
+        "noItems": "Sin detalle de productos",
+        "itemSku": "SKU",
+        "itemQty": "Cant.",
+        "itemPrice": "Precio"
+      },
+      "orderStatuses": {
+        "payment-approved": "Pago aprobado",
+        "ready-for-handling": "Listo para preparación",
+        "handling": "En preparación",
+        "invoiced": "Facturado",
+        "payment-pending": "Pago pendiente",
+        "canceled": "Cancelado",
+        "paid": "Pagado",
+        "confirmed": "Confirmado",
+        "payment_required": "Pago requerido",
+        "partially_paid": "Parcialmente pagado",
+        "cancelled": "Cancelado"
       }
     },
     "skuMapping": {
@@ -2445,6 +2472,66 @@
       "enabled": "Las integraciones están habilitadas para tu organización.",
       "disabled": "Las integraciones están deshabilitadas. Habilítalas en Configuración para conectar plataformas externas.",
       "goToSettings": "Gestionar en Configuración"
+    },
+    "initialSync": {
+      "title": "Sincronización inicial",
+      "description": "Elige qué estados de orden importar en esta primera sincronización. Después del sync inicial, el polling usará los estados por defecto automáticamente.",
+      "warningBanner": "Las órdenes ya enviadas o facturadas pueden haber salido de tu inventario. Importarlas podría causar doble salida de stock. Selecciona solo los estados que necesites.",
+      "selectStates": "Estados de orden a importar",
+      "selectAll": "Seleccionar todos",
+      "deselectAll": "Deseleccionar todos",
+      "startSync": "Iniciar sincronización",
+      "inventoryWarning": "Riesgo",
+      "states": {
+        "vtex": {
+          "payment-approved": {
+            "label": "Pago aprobado",
+            "desc": "Pago confirmado, seguro para importar"
+          },
+          "ready-for-handling": {
+            "label": "Listo para preparación",
+            "desc": "Listo para preparar, seguro para importar"
+          },
+          "handling": {
+            "label": "En preparación",
+            "desc": "En preparación, seguro para importar"
+          },
+          "invoiced": {
+            "label": "Facturado",
+            "desc": "Ya salió del inventario, puede causar doble salida de stock"
+          },
+          "payment-pending": {
+            "label": "Pago pendiente",
+            "desc": "Pago no confirmado, la orden podría no concretarse"
+          },
+          "canceled": {
+            "label": "Cancelado",
+            "desc": "Orden cancelada, no debería generar movimiento de inventario"
+          }
+        },
+        "meli": {
+          "paid": {
+            "label": "Pagado",
+            "desc": "Pago recibido, seguro para importar"
+          },
+          "confirmed": {
+            "label": "Confirmado",
+            "desc": "Orden confirmada, seguro para importar"
+          },
+          "payment_required": {
+            "label": "Pago requerido",
+            "desc": "Pago no confirmado, la orden podría no concretarse"
+          },
+          "partially_paid": {
+            "label": "Parcialmente pagado",
+            "desc": "Pago parcial, la orden podría no completarse"
+          },
+          "cancelled": {
+            "label": "Cancelado",
+            "desc": "Orden cancelada, no debería generar movimiento de inventario"
+          }
+        }
+      }
     }
   }
 }

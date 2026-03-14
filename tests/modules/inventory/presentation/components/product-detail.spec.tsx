@@ -6,6 +6,7 @@ import { Product } from "@/modules/inventory/domain/entities/product.entity";
 // --- Mocks ---
 
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => (key: string, params?: Record<string, unknown>) =>
     params ? `${key}:${JSON.stringify(params)}` : key,
 }));

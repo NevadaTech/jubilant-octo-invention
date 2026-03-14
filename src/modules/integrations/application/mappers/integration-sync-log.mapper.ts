@@ -8,12 +8,18 @@ export class IntegrationSyncLogMapper {
       id: dto.id,
       connectionId: dto.connectionId,
       externalOrderId: dto.externalOrderId,
+      externalOrderStatus: dto.externalOrderStatus ?? null,
       action: dto.action as SyncAction,
       saleId: dto.saleId ?? null,
       saleNumber: dto.saleNumber ?? null,
       contactId: dto.contactId ?? null,
+      contactName: dto.contactName ?? null,
       errorMessage: dto.errorMessage ?? null,
       rawPayload: null,
+      externalOrderDate: dto.externalOrderDate
+        ? new Date(dto.externalOrderDate)
+        : null,
+      orderItems: dto.orderItems ?? [],
       processedAt: new Date(dto.processedAt),
     });
   }

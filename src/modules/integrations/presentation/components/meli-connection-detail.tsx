@@ -44,6 +44,7 @@ import { SyncLogTable } from "./sync-log-table";
 import { SkuMappingTable } from "./sku-mapping-table";
 import { SkuMappingForm } from "./sku-mapping-form";
 import { UnmatchedSkusAlert } from "./unmatched-skus-alert";
+import { InitialSyncStatePicker } from "./initial-sync-state-picker";
 import {
   useIntegration,
   useDeleteIntegration,
@@ -95,6 +96,7 @@ export function MeliConnectionDetail({
   const warehouses = warehousesResult?.data ?? [];
   const [activeTab, setActiveTab] = useState("logs");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [initialSyncOpen, setInitialSyncOpen] = useState(false);
   const [showSecret, setShowSecret] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -262,7 +264,13 @@ export function MeliConnectionDetail({
           </Button>
           <Button
             size="sm"
-            onClick={() => triggerSync.mutate({ id: connectionId })}
+            onClick={() => {
+              if (!connection.lastSyncAt) {
+                setInitialSyncOpen(true);
+              } else {
+                triggerSync.mutate({ id: connectionId });
+              }
+            }}
             disabled={!connection.isConnected || triggerSync.isPending}
           >
             {triggerSync.isPending ? (
@@ -447,6 +455,18 @@ export function MeliConnectionDetail({
           </TabsContent>
         )}
       </Tabs>
+
+      {/* Initial Sync State Picker */}
+      <InitialSyncStatePicker
+        open={initialSyncOpen}
+        onOpenChange={setInitialSyncOpen}
+        provider="MERCADOLIBRE"
+        isPending={triggerSync.isPending}
+        onConfirm={(statuses) => {
+          setInitialSyncOpen(false);
+          triggerSync.mutate({ id: connectionId, statuses });
+        }}
+      />
 
       {/* Delete Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

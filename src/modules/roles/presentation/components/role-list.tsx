@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeMedium } from "@/lib/date";
 import {
   Plus,
   Search,
@@ -48,6 +49,7 @@ import { RolePermissionsDialog } from "./role-permissions-dialog";
 import type { Role } from "@/modules/roles/domain/entities/role.entity";
 
 export function RoleList() {
+  const locale = useLocale();
   const t = useTranslations("roles");
   const tCommon = useTranslations("common");
   const [searchValue, setSearchValue] = useState("");
@@ -88,12 +90,6 @@ export function RoleList() {
     } catch {
       // Error handled by mutation
     }
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
-      date,
-    );
   };
 
   if (isError) {
@@ -190,7 +186,7 @@ export function RoleList() {
                         </Badge>
                       </td>
                       <td className="hidden py-4 pr-4 text-sm text-muted-foreground lg:table-cell">
-                        {formatDate(role.createdAt)}
+                        {formatDateTimeMedium(role.createdAt, locale)}
                       </td>
                       <td className="py-4 text-right">
                         <DropdownMenu>

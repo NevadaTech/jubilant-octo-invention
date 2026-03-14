@@ -2,16 +2,27 @@ import { Entity } from "@/shared/domain";
 
 export type SyncAction = "SYNCED" | "FAILED" | "ALREADY_SYNCED";
 
+export interface SyncLogOrderItem {
+  name: string;
+  sku: string | null;
+  quantity: number;
+  price: number;
+}
+
 export interface IntegrationSyncLogProps {
   id: string;
   connectionId: string;
   externalOrderId: string;
+  externalOrderStatus: string | null;
   action: SyncAction;
   saleId: string | null;
   saleNumber: string | null;
   contactId: string | null;
+  contactName: string | null;
   errorMessage: string | null;
   rawPayload: unknown | null;
+  externalOrderDate: Date | null;
+  orderItems: SyncLogOrderItem[];
   processedAt: Date;
 }
 
@@ -27,12 +38,16 @@ export class IntegrationSyncLog extends Entity<string> {
     return new IntegrationSyncLog(props.id, {
       connectionId: props.connectionId,
       externalOrderId: props.externalOrderId,
+      externalOrderStatus: props.externalOrderStatus,
       action: props.action,
       saleId: props.saleId,
       saleNumber: props.saleNumber,
       contactId: props.contactId,
+      contactName: props.contactName,
       errorMessage: props.errorMessage,
       rawPayload: props.rawPayload,
+      externalOrderDate: props.externalOrderDate,
+      orderItems: props.orderItems,
       processedAt: props.processedAt,
     });
   }
@@ -42,6 +57,9 @@ export class IntegrationSyncLog extends Entity<string> {
   }
   get externalOrderId(): string {
     return this.props.externalOrderId;
+  }
+  get externalOrderStatus(): string | null {
+    return this.props.externalOrderStatus;
   }
   get action(): SyncAction {
     return this.props.action;
@@ -55,11 +73,20 @@ export class IntegrationSyncLog extends Entity<string> {
   get contactId(): string | null {
     return this.props.contactId;
   }
+  get contactName(): string | null {
+    return this.props.contactName;
+  }
   get errorMessage(): string | null {
     return this.props.errorMessage;
   }
   get rawPayload(): unknown | null {
     return this.props.rawPayload;
+  }
+  get externalOrderDate(): Date | null {
+    return this.props.externalOrderDate;
+  }
+  get orderItems(): SyncLogOrderItem[] {
+    return this.props.orderItems;
   }
   get processedAt(): Date {
     return this.props.processedAt;

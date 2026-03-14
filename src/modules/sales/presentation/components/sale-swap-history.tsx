@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeMedium } from "@/lib/date";
 import { ArrowLeftRight, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
@@ -15,13 +16,6 @@ export function SaleSwapHistory({ saleId }: SaleSwapHistoryProps) {
   const locale = useLocale();
   const t = useTranslations("sales.swapHistory");
   const { data: swaps, isLoading } = useSaleSwapHistory(saleId);
-
-  const formatDate = (dateStr: string) => {
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(new Date(dateStr));
-  };
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat(locale, {
@@ -125,7 +119,7 @@ export function SaleSwapHistory({ saleId }: SaleSwapHistoryProps) {
               {/* Row 4: Performed by + date */}
               <div className="text-sm text-muted-foreground pl-6">
                 {t("by")}: {swap.performedByName} &middot;{" "}
-                {formatDate(swap.createdAt)}
+                {formatDateTimeMedium(swap.createdAt, locale)}
               </div>
             </div>
           ))}

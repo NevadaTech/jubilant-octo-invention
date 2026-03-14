@@ -1,14 +1,25 @@
 import type { SyncAction } from "@/modules/integrations/domain/entities/integration-sync-log.entity";
 
+export interface SyncLogOrderItemDto {
+  name: string;
+  sku: string | null;
+  quantity: number;
+  price: number;
+}
+
 export interface IntegrationSyncLogResponseDto {
   id: string;
   connectionId: string;
   externalOrderId: string;
   action: SyncAction;
+  externalOrderStatus?: string | null;
   saleId?: string | null;
   saleNumber?: string | null;
   contactId?: string | null;
+  contactName?: string | null;
   errorMessage?: string | null;
+  externalOrderDate?: string | null;
+  orderItems?: SyncLogOrderItemDto[];
   processedAt: string;
 }
 

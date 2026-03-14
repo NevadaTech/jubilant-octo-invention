@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeShort } from "@/lib/date";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Badge } from "@/ui/components/badge";
@@ -26,13 +27,6 @@ export function FailedSyncsTab({ connectionId }: FailedSyncsTabProps) {
     action: "FAILED",
     limit: 50,
   });
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: "short",
-      timeStyle: "short",
-    }).format(date);
-  };
 
   const failedLogs = result?.data ?? [];
 
@@ -82,8 +76,16 @@ export function FailedSyncsTab({ connectionId }: FailedSyncsTabProps) {
                     <span className="font-mono text-sm">
                       {log.externalOrderId}
                     </span>
+                    {log.externalOrderStatus && (
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] px-1.5 py-0"
+                      >
+                        {log.externalOrderStatus}
+                      </Badge>
+                    )}
                     <span className="text-xs text-muted-foreground">
-                      {formatDate(log.processedAt)}
+                      {formatDateTimeShort(log.processedAt, locale)}
                     </span>
                   </div>
                   {log.errorMessage && (

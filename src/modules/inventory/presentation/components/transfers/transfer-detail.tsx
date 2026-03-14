@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   ArrowLeft,
@@ -21,6 +21,7 @@ import {
   useUpdateTransferStatus,
 } from "@/modules/inventory/presentation/hooks/use-transfers";
 import { useUser } from "@/modules/users/presentation/hooks/use-users";
+import { formatDateTimeMedium } from "@/lib/date";
 import { TransferStatusBadge } from "./transfer-status-badge";
 import { TransferTimeline } from "./transfer-timeline";
 import { TransferReceiveModal } from "./transfer-receive-modal";
@@ -47,6 +48,7 @@ function UserName({ userId }: { userId: string }) {
 
 export function TransferDetail({ transferId }: TransferDetailProps) {
   const t = useTranslations("inventory.transfers");
+  const locale = useLocale();
   const { data: transfer, isLoading, isError } = useTransfer(transferId);
   const updateStatus = useUpdateTransferStatus();
   const [receiveModalOpen, setReceiveModalOpen] = useState(false);
@@ -106,13 +108,6 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
       </div>
     );
   }
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: "long",
-      timeStyle: "short",
-    }).format(date);
-  };
 
   return (
     <div className="space-y-6">
@@ -273,7 +268,7 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("fields.createdAt")}
                 </p>
-                <p>{formatDate(transfer.createdAt)}</p>
+                <p>{formatDateTimeMedium(transfer.createdAt, locale)}</p>
               </div>
             </div>
           </CardContent>

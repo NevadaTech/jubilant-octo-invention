@@ -1,6 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeMedium } from "@/lib/date";
 import { Clock, Globe, Monitor, Link2, Hash, Timer } from "lucide-react";
 import {
   Dialog,
@@ -26,16 +27,10 @@ export function AuditLogDetailDialog({
   open,
   onOpenChange,
 }: Props) {
+  const locale = useLocale();
   const t = useTranslations("audit");
 
   if (!auditLog) return null;
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "medium",
-      timeStyle: "medium",
-    }).format(date);
-  };
 
   const metadataEntries = Object.entries(auditLog.metadata).filter(
     ([, v]) => v !== null && v !== undefined,
@@ -81,7 +76,7 @@ export function AuditLogDetailDialog({
           {/* Timestamp */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock className="h-4 w-4" />
-            <span>{formatDate(auditLog.createdAt)}</span>
+            <span>{formatDateTimeMedium(auditLog.createdAt, locale)}</span>
           </div>
 
           {/* HTTP Details */}

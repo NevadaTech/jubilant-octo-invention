@@ -100,10 +100,15 @@ export class IntegrationApiAdapter implements IntegrationRepositoryPort {
   async triggerSync(
     id: string,
     fromDate?: string,
+    statuses?: string[],
   ): Promise<TriggerSyncResponseDto> {
-    const params = fromDate ? `?fromDate=${encodeURIComponent(fromDate)}` : "";
+    const queryParts: string[] = [];
+    if (fromDate) queryParts.push(`fromDate=${encodeURIComponent(fromDate)}`);
+    if (statuses?.length)
+      queryParts.push(`statuses=${encodeURIComponent(statuses.join(","))}`);
+    const qs = queryParts.length ? `?${queryParts.join("&")}` : "";
     const response = await apiClient.post<TriggerSyncResponseDto>(
-      `${this.basePath}/${id}/sync${params}`,
+      `${this.basePath}/${id}/sync${qs}`,
     );
     return response.data;
   }

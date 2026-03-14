@@ -39,7 +39,11 @@ export interface IntegrationRepositoryPort {
   ): Promise<IntegrationConnection>;
   delete(id: string): Promise<void>;
   testConnection(id: string): Promise<TestConnectionResponseDto>;
-  triggerSync(id: string, fromDate?: string): Promise<TriggerSyncResponseDto>;
+  triggerSync(
+    id: string,
+    fromDate?: string,
+    statuses?: string[],
+  ): Promise<TriggerSyncResponseDto>;
   getSyncLogs(
     id: string,
     filters?: SyncLogFilters,

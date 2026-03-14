@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Plus,
   ArrowRightLeft,
@@ -28,6 +28,7 @@ import {
   useTransfers,
   useUpdateTransferStatus,
 } from "@/modules/inventory/presentation/hooks/use-transfers";
+import { formatDateTimeMedium } from "@/lib/date";
 import { TransferStatusBadge } from "./transfer-status-badge";
 import { TransferFiltersComponent } from "./transfer-filters";
 import { TransferForm } from "./transfer-form";
@@ -37,6 +38,7 @@ import type { TransferStatus } from "@/modules/inventory/domain/entities/transfe
 export function TransferList() {
   const t = useTranslations("inventory.transfers");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const [filters, setFilters] = useState<TransferFilters>({
     page: 1,
     limit: 10,
@@ -60,13 +62,6 @@ export function TransferList() {
 
   const handleUpdateStatus = async (id: string, status: TransferStatus) => {
     await updateStatus.mutateAsync({ id, status });
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
   };
 
   if (isError) {
@@ -174,7 +169,7 @@ export function TransferList() {
                           {transfer.totalQuantity}
                         </td>
                         <td className="py-4 pr-4 text-sm text-muted-foreground">
-                          {formatDate(transfer.createdAt)}
+                          {formatDateTimeMedium(transfer.createdAt, locale)}
                         </td>
                         <td className="py-4 text-right">
                           <div className="flex items-center justify-end gap-1">

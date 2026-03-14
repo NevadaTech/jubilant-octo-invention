@@ -1,7 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Check, FileEdit, Truck, XCircle, Package, Ban } from "lucide-react";
+import { formatDateTimeMedium } from "@/lib/date";
 import { cn } from "@/ui/lib/utils";
 import type { TransferStatus } from "@/modules/inventory/domain/entities/transfer.entity";
 
@@ -28,6 +29,7 @@ export function TransferTimeline({
   completedAt,
 }: TransferTimelineProps) {
   const t = useTranslations("inventory.transfers");
+  const locale = useLocale();
 
   const getSteps = (): TimelineStep[] => {
     const isCanceled = status === "CANCELED";
@@ -122,14 +124,6 @@ export function TransferTimeline({
     return <div className="h-2 w-2 rounded-full bg-current" />;
   };
 
-  const formatDate = (date: Date | null | undefined) => {
-    if (!date) return null;
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
-  };
-
   return (
     <div className="relative">
       <div className="space-y-6">
@@ -184,7 +178,7 @@ export function TransferTimeline({
                 </h4>
                 {step.date && (
                   <span className="text-sm text-muted-foreground">
-                    {formatDate(step.date)}
+                    {formatDateTimeMedium(step.date, locale)}
                   </span>
                 )}
               </div>

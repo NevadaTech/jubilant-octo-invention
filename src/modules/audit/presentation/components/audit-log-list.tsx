@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeShort } from "@/lib/date";
 import { ClipboardList, Eye, Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/ui/components/button";
@@ -23,6 +24,7 @@ import type { AuditLogFilters } from "@/modules/audit/application/dto/audit-log.
 import type { AuditLog } from "@/modules/audit/domain/entities/audit-log.entity";
 
 export function AuditLogList() {
+  const locale = useLocale();
   const t = useTranslations("audit");
   const tCommon = useTranslations("common");
   const [filters, setFilters] = useState<AuditLogFilters>({
@@ -123,13 +125,6 @@ export function AuditLogList() {
       setIsExporting(false);
     }
   }, [filters, t, userNameMap]);
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "short",
-      timeStyle: "medium",
-    }).format(date);
-  };
 
   if (isError) {
     return (
@@ -240,7 +235,7 @@ export function AuditLogList() {
                         onClick={() => setSelectedLog(log)}
                       >
                         <td className="py-3 pr-4 text-sm whitespace-nowrap">
-                          {formatDate(log.createdAt)}
+                          {formatDateTimeShort(log.createdAt, locale)}
                         </td>
                         <td className="py-3 pr-4">
                           <AuditActionBadge action={log.action} />

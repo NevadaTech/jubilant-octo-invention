@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   ArrowLeft,
@@ -36,6 +36,7 @@ import {
   usePostMovement,
   useVoidMovement,
 } from "@/modules/inventory/presentation/hooks/use-movements";
+import { formatDateTimeMedium } from "@/lib/date";
 import { MovementTypeBadge } from "./movement-type-badge";
 import { MovementStatusBadge } from "./movement-status-badge";
 
@@ -46,17 +47,12 @@ interface MovementDetailProps {
 export function MovementDetail({ movementId }: MovementDetailProps) {
   const t = useTranslations("inventory.movements");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const { data: movement, isLoading, isError } = useMovement(movementId);
   const postMovement = usePostMovement();
   const voidMovement = useVoidMovement();
   const [postConfirm, setPostConfirm] = useState(false);
   const [voidConfirm, setVoidConfirm] = useState(false);
-
-  const formatDate = (date: Date) =>
-    new Intl.DateTimeFormat(undefined, {
-      dateStyle: "long",
-      timeStyle: "short",
-    }).format(date);
 
   const formatCurrency = (value: number | null, currency?: string | null) => {
     if (value === null) return "-";
@@ -265,7 +261,7 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
                     <p className="text-sm font-medium text-muted-foreground">
                       {t("fields.createdAt")}
                     </p>
-                    <p>{formatDate(movement.createdAt)}</p>
+                    <p>{formatDateTimeMedium(movement.createdAt, locale)}</p>
                   </div>
                 </div>
 
@@ -290,7 +286,7 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
                       <p className="text-sm font-medium text-muted-foreground">
                         {t("fields.postedAt")}
                       </p>
-                      <p>{formatDate(movement.postedAt)}</p>
+                      <p>{formatDateTimeMedium(movement.postedAt, locale)}</p>
                     </div>
                   </div>
                 )}
@@ -316,7 +312,7 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
                       <p className="text-sm font-medium text-muted-foreground">
                         {t("fields.returnedAt")}
                       </p>
-                      <p>{formatDate(movement.returnedAt)}</p>
+                      <p>{formatDateTimeMedium(movement.returnedAt, locale)}</p>
                     </div>
                   </div>
                 )}

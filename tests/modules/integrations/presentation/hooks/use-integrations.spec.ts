@@ -336,7 +336,11 @@ describe("use-integrations hooks", () => {
         await result.current.mutateAsync({ id: "int-1" });
       });
 
-      expect(mockTriggerSync).toHaveBeenCalledWith("int-1", undefined);
+      expect(mockTriggerSync).toHaveBeenCalledWith(
+        "int-1",
+        undefined,
+        undefined,
+      );
       expect(toast.success).toHaveBeenCalledWith("messages.syncStarted");
       expect(invalidateSpy).toHaveBeenCalledWith({
         queryKey: ["integrations", "detail", "int-1"],

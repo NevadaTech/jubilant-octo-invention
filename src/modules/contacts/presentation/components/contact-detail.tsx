@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeMedium } from "@/lib/date";
 import { Link, useRouter } from "@/i18n/navigation";
 import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
@@ -36,13 +37,6 @@ export function ContactDetail({ contactId }: ContactDetailProps) {
   const { data: contact, isLoading, isError } = useContact(contactId);
   const deleteContact = useDeleteContact();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
-  };
 
   const handleDelete = async () => {
     await deleteContact.mutateAsync(contactId);
@@ -195,13 +189,17 @@ export function ContactDetail({ contactId }: ContactDetailProps) {
               <dt className="text-sm font-medium text-muted-foreground">
                 {t("fields.createdAt")}
               </dt>
-              <dd className="mt-1 text-sm">{formatDate(contact.createdAt)}</dd>
+              <dd className="mt-1 text-sm">
+                {formatDateTimeMedium(contact.createdAt, locale)}
+              </dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-muted-foreground">
                 {t("fields.updatedAt")}
               </dt>
-              <dd className="mt-1 text-sm">{formatDate(contact.updatedAt)}</dd>
+              <dd className="mt-1 text-sm">
+                {formatDateTimeMedium(contact.updatedAt, locale)}
+              </dd>
             </div>
           </dl>
         </CardContent>

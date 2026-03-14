@@ -100,6 +100,7 @@ export function useDeleteIntegration() {
 }
 
 export function useTestIntegration() {
+  const queryClient = useQueryClient();
   const t = useTranslations("integrations");
   const tErrors = useTranslations("apiErrors");
 
@@ -112,6 +113,7 @@ export function useTestIntegration() {
       } else {
         toast.error(t("messages.testFailed"));
       }
+      queryClient.invalidateQueries({ queryKey: integrationKeys.all });
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, tErrors));
@@ -125,8 +127,16 @@ export function useTriggerSync() {
   const tErrors = useTranslations("apiErrors");
 
   return useMutation({
-    mutationFn: ({ id, fromDate }: { id: string; fromDate?: string }) =>
-      getContainer().integrationRepository.triggerSync(id, fromDate),
+    mutationFn: ({
+      id,
+      fromDate,
+      statuses,
+    }: {
+      id: string;
+      fromDate?: string;
+      statuses?: string[];
+    }) =>
+      getContainer().integrationRepository.triggerSync(id, fromDate, statuses),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: integrationKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: integrationKeys.logs(id) });

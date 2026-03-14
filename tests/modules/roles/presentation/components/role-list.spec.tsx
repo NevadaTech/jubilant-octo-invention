@@ -6,6 +6,7 @@ import { Role } from "@/modules/roles/domain/entities/role.entity";
 // --- Mocks ---
 
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => {
     const t = (key: string, params?: Record<string, unknown>) =>
       params ? `${key}:${JSON.stringify(params)}` : key;

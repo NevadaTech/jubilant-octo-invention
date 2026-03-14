@@ -6,6 +6,7 @@ import { User } from "@/modules/users/domain/entities/user.entity";
 // --- Mocks ---
 
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => (key: string, params?: Record<string, unknown>) =>
     params ? `${key}:${JSON.stringify(params)}` : key,
 }));

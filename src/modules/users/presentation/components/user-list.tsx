@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDateTimeMedium } from "@/lib/date";
 import {
   Plus,
   Users,
@@ -41,6 +42,7 @@ import type {
 } from "@/modules/users/domain/entities/user.entity";
 
 export function UserList() {
+  const locale = useLocale();
   const t = useTranslations("users");
   const tCommon = useTranslations("common");
   const [filters, setFilters] = useState<UserFilters>({ page: 1, limit: 10 });
@@ -70,12 +72,6 @@ export function UserList() {
     } catch {
       // Error handled by mutation
     }
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
-      date,
-    );
   };
 
   if (isError) {
@@ -196,11 +192,11 @@ export function UserList() {
                         </td>
                         <td className="hidden py-4 pr-4 text-sm text-muted-foreground lg:table-cell">
                           {user.lastLoginAt
-                            ? formatDate(user.lastLoginAt)
+                            ? formatDateTimeMedium(user.lastLoginAt, locale)
                             : "-"}
                         </td>
                         <td className="hidden py-4 pr-4 text-sm text-muted-foreground md:table-cell">
-                          {formatDate(user.createdAt)}
+                          {formatDateTimeMedium(user.createdAt, locale)}
                         </td>
                         <td className="py-4 text-right">
                           <DropdownMenu>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDateTimeMedium } from "@/lib/date";
 import {
   Plus,
   RotateCcw,
@@ -51,6 +52,7 @@ import { useCompanyStore } from "@/modules/companies/infrastructure/store/compan
 export function ReturnList() {
   const t = useTranslations("returns");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const [filters, setFilters] = useState<ReturnFilters>({
     page: 1,
     limit: 10,
@@ -82,13 +84,6 @@ export function ReturnList() {
       sortOrder: order,
       page: 1,
     }));
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
   };
 
   const formatCurrency = (amount: number, currency: string) => {
@@ -257,13 +252,15 @@ export function ReturnList() {
                           {ret.warehouseName}
                         </td>
                         <td className="hidden py-4 pr-4 lg:table-cell">
-                          <span className="font-medium">{ret.totalItems}</span>
+                          <span className="font-medium">
+                            {ret.totalItems || "-"}
+                          </span>
                         </td>
                         <td className="py-4 pr-4 font-medium">
                           {formatCurrency(ret.totalAmount, ret.currency)}
                         </td>
                         <td className="hidden py-4 pr-4 text-sm text-muted-foreground lg:table-cell">
-                          {formatDate(ret.createdAt)}
+                          {formatDateTimeMedium(ret.createdAt, locale)}
                         </td>
                         <td className="py-4 text-right">
                           <DropdownMenu>
