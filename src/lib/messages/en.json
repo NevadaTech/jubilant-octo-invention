@@ -7,6 +7,7 @@
     "edit": "Edit",
     "create": "Create",
     "search": "Search",
+    "noResults": "No results found",
     "filter": "Filter",
     "export": "Export",
     "import": "Import",
@@ -2316,6 +2317,7 @@
       "syncDialogTitle": "Sync Orders",
       "syncDialogDescription": "Select the start date to sync orders from the platform.",
       "syncDialogConfirm": "Start Sync",
+      "syncDialogDateHelper": "Only orders created from this date will be included.",
       "edit": "Edit",
       "delete": "Delete",
       "connect": "Connect"
@@ -2353,6 +2355,7 @@
       "actions": {
         "SYNCED": "Synced",
         "FAILED": "Failed",
+        "PARTIAL": "Partial",
         "ALREADY_SYNCED": "Already Synced"
       },
       "detail": {

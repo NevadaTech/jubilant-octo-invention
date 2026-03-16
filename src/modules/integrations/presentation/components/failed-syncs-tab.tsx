@@ -23,12 +23,27 @@ export function FailedSyncsTab({ connectionId }: FailedSyncsTabProps) {
   const retrySyncLog = useRetrySyncLog(connectionId);
   const retryAll = useRetryAllFailed(connectionId);
 
-  const { data: result, isLoading } = useSyncLogs(connectionId, {
-    action: "FAILED",
-    limit: 50,
-  });
+  const { data: failedResult, isLoading: isLoadingFailed } = useSyncLogs(
+    connectionId,
+    {
+      action: "FAILED",
+      limit: 50,
+    },
+  );
 
-  const failedLogs = result?.data ?? [];
+  const { data: partialResult, isLoading: isLoadingPartial } = useSyncLogs(
+    connectionId,
+    {
+      action: "PARTIAL",
+      limit: 50,
+    },
+  );
+
+  const isLoading = isLoadingFailed || isLoadingPartial;
+  const failedLogs = [
+    ...(failedResult?.data ?? []),
+    ...(partialResult?.data ?? []),
+  ];
 
   return (
     <Card>

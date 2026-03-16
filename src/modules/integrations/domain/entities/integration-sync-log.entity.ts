@@ -1,6 +1,6 @@
 import { Entity } from "@/shared/domain";
 
-export type SyncAction = "SYNCED" | "FAILED" | "ALREADY_SYNCED";
+export type SyncAction = "SYNCED" | "FAILED" | "PARTIAL" | "ALREADY_SYNCED";
 
 export interface SyncLogOrderItem {
   name: string;
@@ -98,6 +98,12 @@ export class IntegrationSyncLog extends Entity<string> {
 
   get isFailed(): boolean {
     return this.props.action === "FAILED";
+  }
+  get isPartial(): boolean {
+    return this.props.action === "PARTIAL";
+  }
+  get isRetriable(): boolean {
+    return this.props.action === "FAILED" || this.props.action === "PARTIAL";
   }
   get isSynced(): boolean {
     return this.props.action === "SYNCED";

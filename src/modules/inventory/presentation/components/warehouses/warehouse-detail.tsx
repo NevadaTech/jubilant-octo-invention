@@ -37,6 +37,7 @@ import {
   useToggleWarehouseStatus,
 } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useStock } from "@/modules/inventory/presentation/hooks/use-stock";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import { useState, useMemo } from "react";
 
 interface WarehouseDetailProps {
@@ -101,6 +102,7 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
   const [sortBy, setSortBy] = useState<string | undefined>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>();
   const toggleStatus = useToggleWarehouseStatus();
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
 
   const {
     data: warehouse,
@@ -108,11 +110,18 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
     isError,
     error,
   } = useWarehouse(warehouseId);
-  const { data: stockData, isLoading: isLoadingStock } = useStock({
-    warehouseIds: [warehouseId],
-    search: search || undefined,
-    limit: 100,
-  });
+
+  const stockFilters = useMemo(
+    () => ({
+      warehouseIds: [warehouseId],
+      search: search || undefined,
+      limit: 100,
+      ...(selectedCompanyId ? { companyId: selectedCompanyId } : {}),
+    }),
+    [warehouseId, search, selectedCompanyId],
+  );
+
+  const { data: stockData, isLoading: isLoadingStock } = useStock(stockFilters);
 
   const warehouseMetrics = useMemo(() => {
     if (!stockData?.data.length)

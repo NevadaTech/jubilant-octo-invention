@@ -327,6 +327,25 @@ export class Sale extends AggregateRoot<string> {
       id: this._id,
       ...this.props,
       lines: this.props.lines.map((l) => l.toJSON()),
+      // Computed properties — included so they survive SSR hydration
+      // (dehydrateState serializes class instances to plain objects)
+      canConfirm: this.canConfirm,
+      canStartPicking: this.canStartPicking,
+      canShip: this.canShip,
+      canComplete: this.canComplete,
+      canCancel: this.canCancel,
+      canEdit: this.canEdit,
+      canAddLines: this.canAddLines,
+      canSwapLine: this.canSwapLine,
+      totalItems: this.totalItems,
+      totalQuantity: this.totalQuantity,
+      isDraft: this.isDraft,
+      isConfirmed: this.isConfirmed,
+      isPicking: this.isPicking,
+      isShipped: this.isShipped,
+      isCompleted: this.isCompleted,
+      isCancelled: this.isCancelled,
+      isReturned: this.isReturned,
     };
   }
 

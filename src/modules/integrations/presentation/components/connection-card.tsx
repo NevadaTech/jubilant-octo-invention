@@ -2,14 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import {
-  MoreHorizontal,
-  Plug,
-  RefreshCw,
-  TestTube,
-  Trash2,
-  Pencil,
-} from "lucide-react";
+import { MoreHorizontal, Plug, TestTube, Trash2, Pencil } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent } from "@/ui/components/card";
 import {
@@ -24,14 +17,12 @@ import type { IntegrationConnection } from "@/modules/integrations/domain/entiti
 interface ConnectionCardProps {
   connection: IntegrationConnection;
   onTest: (id: string) => void;
-  onSync: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
 export function ConnectionCard({
   connection,
   onTest,
-  onSync,
   onDelete,
 }: ConnectionCardProps) {
   const locale = useLocale();
@@ -77,13 +68,6 @@ export function ConnectionCard({
               <DropdownMenuItem onClick={() => onTest(connection.id)}>
                 <TestTube className="mr-2 h-4 w-4" />
                 {t("actions.test")}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onSync(connection.id)}
-                disabled={!connection.isConnected}
-              >
-                <RefreshCw className="mr-2 h-4 w-4" />
-                {t("actions.sync")}
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`/dashboard/integrations/${connection.id}`}>

@@ -55,6 +55,8 @@ export interface CreateIntegrationConnectionDto {
   defaultWarehouseId: string;
   defaultContactId?: string;
   companyId?: string;
+  syncFromDate?: string;
+  orderStatuses?: string;
 }
 
 export interface UpdateIntegrationConnectionDto {

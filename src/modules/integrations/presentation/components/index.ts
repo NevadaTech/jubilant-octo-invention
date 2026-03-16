@@ -18,3 +18,4 @@ export { MeliConnectionDetail } from "./meli-connection-detail";
 export { IntegrationDetailRouter } from "./integration-detail-router";
 export { InitialSyncStatePicker } from "./initial-sync-state-picker";
 export { SyncStatusCheckboxList } from "./sync-status-checkbox-list";
+export { SyncConfigurationDialog } from "./sync-configuration-dialog";

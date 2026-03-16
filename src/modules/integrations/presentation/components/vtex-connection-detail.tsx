@@ -45,6 +45,7 @@ import { SkuMappingTable } from "./sku-mapping-table";
 import { SkuMappingForm } from "./sku-mapping-form";
 import { UnmatchedSkusAlert } from "./unmatched-skus-alert";
 import { VtexConnectionForm } from "./vtex-connection-form";
+import { SyncConfigurationDialog } from "./sync-configuration-dialog";
 import {
   useIntegration,
   useDeleteIntegration,
@@ -75,6 +76,7 @@ export function VtexConnectionDetail({
   const [editFormOpen, setEditFormOpen] = useState(false);
   const [showSecret, setShowSecret] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [syncDialogOpen, setSyncDialogOpen] = useState(false);
 
   const formatDate = (date: Date | string | null) => {
     if (!date) return "-";
@@ -192,7 +194,7 @@ export function VtexConnectionDetail({
           </Button>
           <Button
             size="sm"
-            onClick={() => triggerSync.mutate({ id: connectionId })}
+            onClick={() => setSyncDialogOpen(true)}
             disabled={!connection.isConnected || triggerSync.isPending}
           >
             {triggerSync.isPending ? (
@@ -390,6 +392,19 @@ export function VtexConnectionDetail({
           connection={connection}
         />
       )}
+
+      {/* Sync Configuration Dialog */}
+      <SyncConfigurationDialog
+        open={syncDialogOpen}
+        onOpenChange={setSyncDialogOpen}
+        provider="VTEX"
+        lastSyncAt={connection.lastSyncAt}
+        onConfirm={({ fromDate, statuses }) => {
+          setSyncDialogOpen(false);
+          triggerSync.mutate({ id: connectionId, fromDate, statuses });
+        }}
+        isPending={triggerSync.isPending}
+      />
 
       {/* Delete Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

@@ -25,7 +25,6 @@ import {
   useIntegrations,
   useDeleteIntegration,
   useTestIntegration,
-  useTriggerSync,
 } from "@/modules/integrations/presentation/hooks/use-integrations";
 import type { IntegrationProvider } from "@/modules/integrations/domain/entities/integration-connection.entity";
 
@@ -43,7 +42,6 @@ export function ProviderTabContent({ provider }: ProviderTabContentProps) {
   } = useIntegrations({ provider });
   const deleteIntegration = useDeleteIntegration();
   const testIntegration = useTestIntegration();
-  const triggerSync = useTriggerSync();
   const [showForm, setShowForm] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -118,7 +116,6 @@ export function ProviderTabContent({ provider }: ProviderTabContentProps) {
                 key={conn.id}
                 connection={conn}
                 onTest={(id) => testIntegration.mutate(id)}
-                onSync={(id) => triggerSync.mutate({ id })}
                 onDelete={(id) => setDeleteId(id)}
               />
             ))}

@@ -32,10 +32,15 @@ let mockSyncLogsData:
   | undefined;
 let mockIsLoading = false;
 
+const emptyResult = {
+  data: [] as typeof mockFailedLogs,
+  pagination: { page: 1, limit: 50, total: 0, totalPages: 0 },
+};
+
 vi.mock("@/modules/integrations/presentation/hooks/use-integrations", () => ({
-  useSyncLogs: () => ({
-    data: mockSyncLogsData,
-    isLoading: mockIsLoading,
+  useSyncLogs: (_connId: string, opts?: { action?: string }) => ({
+    data: opts?.action === "PARTIAL" ? emptyResult : mockSyncLogsData,
+    isLoading: opts?.action === "PARTIAL" ? false : mockIsLoading,
   }),
   useRetrySyncLog: () => ({
     isPending: false,

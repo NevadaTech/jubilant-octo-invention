@@ -41,10 +41,11 @@ function isRealSaleId(saleId: string | null): saleId is string {
 
 const actionVariantMap: Record<
   SyncAction,
-  "success" | "destructive" | "secondary"
+  "success" | "destructive" | "secondary" | "warning"
 > = {
   SYNCED: "success",
   FAILED: "destructive",
+  PARTIAL: "warning",
   ALREADY_SYNCED: "secondary",
 };
 
@@ -148,6 +149,7 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
             <SelectItem value="ALL">{t("allActions")}</SelectItem>
             <SelectItem value="SYNCED">{t("actions.SYNCED")}</SelectItem>
             <SelectItem value="FAILED">{t("actions.FAILED")}</SelectItem>
+            <SelectItem value="PARTIAL">{t("actions.PARTIAL")}</SelectItem>
             <SelectItem value="ALREADY_SYNCED">
               {t("actions.ALREADY_SYNCED")}
             </SelectItem>
@@ -240,7 +242,7 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                     {formatDateTimeShort(log.processedAt, locale)}
                   </td>
                   <td className="py-2">
-                    {log.isFailed && (
+                    {log.isRetriable && (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -511,7 +513,7 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                   </div>
 
                   {/* Section: Error */}
-                  {selectedLog.isFailed && (
+                  {(selectedLog.isFailed || selectedLog.isPartial) && (
                     <div>
                       <p className="mb-3 border-b pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         {t("detail.sectionError")}
@@ -525,7 +527,7 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
               </div>
 
               {/* Sticky footer with retry */}
-              {selectedLog.isFailed && (
+              {selectedLog.isRetriable && (
                 <DialogFooter className="gap-2 border-t px-4 py-4 sm:px-6">
                   <Button
                     variant="outline"

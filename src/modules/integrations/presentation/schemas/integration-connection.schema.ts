@@ -27,6 +27,8 @@ export type VtexConnectionFormData = z.infer<typeof vtexConnectionSchema>;
 
 export function toCreateConnectionDto(
   data: VtexConnectionFormData,
+  syncFromDate?: string,
+  statuses?: string[],
 ): CreateIntegrationConnectionDto {
   return {
     provider: "VTEX",
@@ -39,6 +41,10 @@ export function toCreateConnectionDto(
     defaultWarehouseId: data.defaultWarehouseId,
     defaultContactId: data.defaultContactId || undefined,
     companyId: data.companyId || undefined,
+    syncFromDate: syncFromDate
+      ? new Date(syncFromDate + "T00:00:00Z").toISOString()
+      : undefined,
+    orderStatuses: statuses?.length ? statuses.join(",") : undefined,
   };
 }
 

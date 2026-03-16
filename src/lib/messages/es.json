@@ -7,6 +7,7 @@
     "edit": "Editar",
     "create": "Crear",
     "search": "Buscar",
+    "noResults": "No se encontraron resultados",
     "filter": "Filtrar",
     "export": "Exportar",
     "import": "Importar",
@@ -2316,6 +2317,7 @@
       "syncDialogTitle": "Sincronizar pedidos",
       "syncDialogDescription": "Selecciona la fecha de inicio para sincronizar pedidos desde la plataforma.",
       "syncDialogConfirm": "Iniciar sincronización",
+      "syncDialogDateHelper": "Solo se incluirán pedidos creados a partir de esta fecha.",
       "edit": "Editar",
       "delete": "Eliminar",
       "connect": "Conectar"
@@ -2353,6 +2355,7 @@
       "actions": {
         "SYNCED": "Sincronizado",
         "FAILED": "Fallido",
+        "PARTIAL": "Parcial",
         "ALREADY_SYNCED": "Ya sincronizado"
       },
       "detail": {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
@@ -18,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/select";
+import { SearchableSelect } from "@/ui/components/searchable-select";
 import { Textarea } from "@/ui/components/textarea";
 import {
   createSaleSchema,
@@ -50,6 +52,15 @@ export function SaleFormPage() {
     type: "CUSTOMER",
     isActive: true,
   });
+
+  const productOptions = useMemo(() => {
+    if (!productsData?.data) return [];
+    return productsData.data.map((p) => ({
+      value: p.id,
+      label: p.name,
+      description: p.sku,
+    }));
+  }, [productsData]);
 
   const isSubmitting = createSale.isPending;
 
@@ -241,26 +252,14 @@ export function SaleFormPage() {
                           name={`lines.${index}.productId`}
                           control={control}
                           render={({ field: selectField }) => (
-                            <Select
+                            <SearchableSelect
+                              options={productOptions}
                               value={selectField.value}
                               onValueChange={selectField.onChange}
-                            >
-                              <SelectTrigger>
-                                <SelectValue
-                                  placeholder={t("fields.productPlaceholder")}
-                                />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {productsData?.data.map((product) => (
-                                  <SelectItem
-                                    key={product.id}
-                                    value={product.id}
-                                  >
-                                    {product.name} ({product.sku})
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              placeholder={t("fields.productPlaceholder")}
+                              searchPlaceholder={tCommon("search")}
+                              emptyMessage={tCommon("noResults")}
+                            />
                           )}
                         />
                       </FormField>

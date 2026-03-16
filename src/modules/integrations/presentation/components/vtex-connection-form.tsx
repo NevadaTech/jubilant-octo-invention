@@ -32,7 +32,6 @@ import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 import {
   useCreateIntegration,
   useUpdateIntegration,
-  useTriggerSync,
 } from "@/modules/integrations/presentation/hooks/use-integrations";
 import {
   vtexConnectionSchema,
@@ -78,7 +77,6 @@ export function VtexConnectionForm({
 
   const createIntegration = useCreateIntegration();
   const updateIntegration = useUpdateIntegration();
-  const triggerSync = useTriggerSync();
 
   const isPending = createIntegration.isPending || updateIntegration.isPending;
 
@@ -95,18 +93,12 @@ export function VtexConnectionForm({
         contacts={contacts}
         companies={companies}
         isPending={isPending}
-        onSubmit={async (data, syncFromDate) => {
+        onSubmit={async (data) => {
           const dto = toUpdateConnectionDto(data);
           await updateIntegration.mutateAsync({
             id: connection!.id,
             data: dto,
           });
-          if (syncFromDate) {
-            triggerSync.mutate({
-              id: connection!.id,
-              fromDate: new Date(syncFromDate + "T00:00:00Z").toISOString(),
-            });
-          }
           onOpenChange(false);
         }}
       />
@@ -125,15 +117,8 @@ export function VtexConnectionForm({
       companies={companies}
       isPending={isPending}
       onSubmit={async (data, syncFromDate, statuses) => {
-        const dto = toCreateConnectionDto(data);
-        const created = await createIntegration.mutateAsync(dto);
-        if (syncFromDate) {
-          triggerSync.mutate({
-            id: created.id,
-            fromDate: new Date(syncFromDate + "T00:00:00Z").toISOString(),
-            statuses: statuses?.length ? statuses : undefined,
-          });
-        }
+        const dto = toCreateConnectionDto(data, syncFromDate, statuses);
+        await createIntegration.mutateAsync(dto);
         onOpenChange(false);
       }}
     />
@@ -781,10 +766,7 @@ interface VtexEditFormProps {
   contacts: { id: string; name: string }[];
   companies: { id: string; name: string }[];
   isPending: boolean;
-  onSubmit: (
-    data: UpdateConnectionFormData,
-    syncFromDate?: string,
-  ) => Promise<void>;
+  onSubmit: (data: UpdateConnectionFormData) => Promise<void>;
 }
 
 function VtexEditForm({
@@ -800,9 +782,6 @@ function VtexEditForm({
   isPending,
   onSubmit,
 }: VtexEditFormProps) {
-  const today = new Date();
-  const [syncFromDate, setSyncFromDate] = useState<Date | undefined>();
-
   const {
     register,
     handleSubmit,
@@ -825,10 +804,7 @@ function VtexEditForm({
 
   const handleFormSubmit = async (data: UpdateConnectionFormData) => {
     try {
-      const dateStr = syncFromDate
-        ? syncFromDate.toISOString().split("T")[0]
-        : undefined;
-      await onSubmit(data, dateStr);
+      await onSubmit(data);
       reset();
     } catch {
       // handled by mutation
@@ -860,20 +836,6 @@ function VtexEditForm({
                 contacts={contacts}
                 companies={companies}
               />
-
-              <FormField>
-                <Label>{t("actions.syncFromDate")}</Label>
-                <DatePicker
-                  value={syncFromDate}
-                  onChange={setSyncFromDate}
-                  maxDate={today}
-                  placeholder={t("actions.syncFromDate")}
-                  disabled={isPending}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t("actions.syncDialogDescription")}
-                </p>
-              </FormField>
             </fieldset>
           </div>
 

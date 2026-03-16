@@ -201,6 +201,19 @@ export class Return extends AggregateRoot<string> {
       id: this._id,
       ...this.props,
       lines: this.props.lines.map((l) => l.toJSON()),
+      // Computed properties — included so they survive SSR hydration
+      // (dehydrateState serializes class instances to plain objects)
+      canConfirm: this.canConfirm,
+      canCancel: this.canCancel,
+      canEdit: this.canEdit,
+      totalItems: this.totalItems,
+      totalQuantity: this.totalQuantity,
+      lineCount: this.lineCount,
+      isDraft: this.isDraft,
+      isConfirmed: this.isConfirmed,
+      isCancelled: this.isCancelled,
+      isCustomerReturn: this.isCustomerReturn,
+      isSupplierReturn: this.isSupplierReturn,
     };
   }
 
