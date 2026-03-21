@@ -112,6 +112,15 @@
         "title": "Monthly Sales",
         "description": "{count, plural, =0 {No sales} =1 {1 order} other {# orders}} this month"
       },
+      "activeCombos": {
+        "title": "Active Combos",
+        "description": "{count, plural, =0 {No combos configured} =1 {1 combo available} other {# combos available}}"
+      },
+      "combosOutOfStock": {
+        "title": "Combos Out of Stock",
+        "descriptionAlert": "Combos without available inventory",
+        "descriptionOk": "All combos have available stock"
+      },
       "error": {
         "title": "Unable to load metrics",
         "description": "There was an error loading the dashboard data.",
@@ -147,6 +156,14 @@
         "description": "Inventory value distribution across companies",
         "value": "Value",
         "units": "Units"
+      },
+      "topCombos": {
+        "title": "Top Combos",
+        "description": "Best selling combos by revenue",
+        "revenue": "Revenue",
+        "sold": "Units sold",
+        "sku": "SKU",
+        "name": "Name"
       },
       "recentActivity": {
         "title": "Recent Activity",
@@ -816,6 +833,124 @@
         "error": "An error occurred. Please try again."
       }
     },
+    "combos": {
+      "title": "Combos",
+      "description": "Manage product combos and bundles",
+      "fields": {
+        "sku": "SKU",
+        "name": "Name",
+        "description": "Description",
+        "price": "Price",
+        "currency": "Currency",
+        "items": "Items",
+        "status": "Status",
+        "createdAt": "Created At",
+        "quantity": "Quantity",
+        "productName": "Product",
+        "productSku": "Product SKU",
+        "warehouse": "Warehouse",
+        "available": "Available"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "new": "New Combo",
+        "view": "View",
+        "edit": "Edit",
+        "deactivate": "Deactivate"
+      },
+      "list": {
+        "title": "Combos List"
+      },
+      "search": {
+        "placeholder": "Search combos...",
+        "namePlaceholder": "Search by name...",
+        "skuPlaceholder": "Search by SKU..."
+      },
+      "filter": "Filters",
+      "filters": {
+        "allStatuses": "All statuses",
+        "allWarehouses": "All warehouses"
+      },
+      "pagination": {
+        "showing": "Showing {from} to {to} of {total} combos"
+      },
+      "empty": {
+        "title": "No combos yet",
+        "description": "Get started by creating your first combo."
+      },
+      "error": {
+        "loading": "Failed to load combos"
+      },
+      "confirm": {
+        "deactivate": {
+          "title": "Deactivate combo?",
+          "description": "The combo will become inactive and won't be available for new sales. This action can be reversed."
+        }
+      },
+      "form": {
+        "createTitle": "Create Combo",
+        "editTitle": "Edit Combo",
+        "error": "An error occurred while saving the combo. Please try again.",
+        "skuPlaceholder": "Enter combo SKU (e.g., COMBO-001)",
+        "namePlaceholder": "Enter combo name",
+        "descriptionPlaceholder": "Enter combo description (optional)",
+        "pricePlaceholder": "Enter combo price",
+        "itemsSection": "Combo Items",
+        "addItem": "Add Item",
+        "removeItem": "Remove Item",
+        "selectProduct": "Select product",
+        "searchProduct": "Search product...",
+        "noProducts": "No products found",
+        "noItems": "No items added yet"
+      },
+      "detail": {
+        "notFound": "Combo not found",
+        "backToList": "Back to list",
+        "description": "Description",
+        "pricing": "Pricing",
+        "dates": "Dates",
+        "createdAt": "Created At",
+        "updatedAt": "Last Updated",
+        "items": "Combo Items",
+        "availability": "Availability",
+        "noAvailability": "No availability data for this combo."
+      },
+      "availability": {
+        "title": "Combo Availability",
+        "empty": "No availability data found."
+      },
+      "reports": {
+        "dateFrom": "From",
+        "dateTo": "To",
+        "selectDate": "Select date",
+        "comboFilter": "Combo",
+        "allCombos": "All combos",
+        "sales": {
+          "title": "Combo Sales Report",
+          "empty": "No sales data found for the selected period.",
+          "unitsSold": "Units Sold",
+          "revenue": "Revenue",
+          "salesCount": "Sales Count"
+        },
+        "stockImpact": {
+          "title": "Combo Stock Impact",
+          "empty": "No stock impact data for the selected period.",
+          "directSales": "Direct Sales",
+          "comboSales": "Combo Sales",
+          "total": "Total",
+          "breakdown": "Breakdown by Combo",
+          "unitsConsumed": "Units Consumed"
+        }
+      },
+      "messages": {
+        "created": "Combo created successfully",
+        "updated": "Combo updated successfully",
+        "deactivated": "Combo deactivated successfully"
+      }
+    },
     "common": {
       "confirmDelete": "Are you sure?",
       "confirmDeleteDesc": "This action cannot be undone.",
@@ -852,6 +987,8 @@
       "externalReferencePlaceholder": "Invoice or order number (optional)",
       "product": "Product",
       "productPlaceholder": "Select a product",
+      "combo": "Combo",
+      "comboPlaceholder": "Select a combo",
       "quantity": "Quantity",
       "salePrice": "Unit Price",
       "lineTotal": "Total",
@@ -907,7 +1044,10 @@
       "saleInfo": "Sale Details",
       "linesSection": "Products",
       "noLines": "No products added yet",
-      "error": "An error occurred while creating the sale."
+      "error": "An error occurred while creating the sale.",
+      "lineType": "Type",
+      "lineTypeProduct": "Product",
+      "lineTypeCombo": "Combo"
     },
     "detail": {
       "info": "Sale Information",
@@ -916,7 +1056,9 @@
       "by": "by",
       "pickingShipping": "Picking & Shipping",
       "timeline": "Timeline",
-      "shippingDetails": "Shipping Details"
+      "shippingDetails": "Shipping Details",
+      "comboGroup": "Combo: {name}",
+      "fromCombo": "From combo"
     },
     "timeline": {
       "draft": "Draft",
@@ -1112,6 +1254,9 @@
       "noLines": "No products added yet",
       "saleProductsHint": "Products were loaded from the selected sale. You can adjust quantities and remove items you don't want to return.",
       "movementProductsHint": "Products were loaded from the selected movement. You can adjust quantities and remove items you don't want to return.",
+      "comboGroup": "Combo: {name}",
+      "standaloneProducts": "Individual Products",
+      "fromCombo": "From combo",
       "error": "An error occurred while creating the return."
     },
     "detail": {
@@ -1836,7 +1981,8 @@
     "users": "Users",
     "roles": "Roles",
     "audit": "Audit Log",
-    "settings": "Settings"
+    "settings": "Settings",
+    "combos": "Combos"
   },
   "pages": {
     "inventory": {
@@ -2414,6 +2560,15 @@
       "noProductsFound": "No products found",
       "externalSkuRequired": "External SKU is required",
       "productRequired": "Product is required",
+      "comboRequired": "Combo is required",
+      "mapToProduct": "Map to Product",
+      "mapToCombo": "Map to Combo",
+      "selectCombo": "Select combo...",
+      "searchCombo": "Search by name or SKU...",
+      "noCombosFound": "No combos found",
+      "type": "Type",
+      "typeProduct": "Product",
+      "typeCombo": "Combo",
       "unmatchedAlert": "Unmatched SKUs",
       "unmatchedDescription": "These SKUs from VTEX could not be matched to internal products. Map them to enable order synchronization.",
       "mapThis": "Map"

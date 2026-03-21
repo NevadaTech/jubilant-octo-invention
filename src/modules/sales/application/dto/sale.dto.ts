@@ -10,6 +10,7 @@ export interface SaleLineResponseDto {
   productName: string;
   productSku: string;
   productBarcode?: string | null;
+  comboId?: string | null;
   quantity: number;
   salePrice: number;
   currency: string;
@@ -119,7 +120,8 @@ export interface SaleListResponseDto {
 }
 
 export interface CreateSaleLineDto {
-  productId: string;
+  productId?: string;
+  comboId?: string;
   quantity: number;
   salePrice: number;
   currency?: string;

@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useMemo, useCallback } from "react";
+import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -28,6 +28,7 @@ import {
 } from "@/modules/sales/presentation/schemas/sale.schema";
 import { useCreateSale } from "@/modules/sales/presentation/hooks/use-sales";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
+import { useCombos } from "@/modules/inventory/presentation/hooks/use-combos";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useContacts } from "@/modules/contacts/presentation/hooks/use-contacts";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
@@ -43,6 +44,7 @@ export function SaleFormPage() {
     statuses: ["ACTIVE"],
     ...(selectedCompanyId && { companyId: selectedCompanyId }),
   });
+  const { data: combosData } = useCombos({ limit: 100, isActive: true });
   const { data: warehousesData } = useWarehouses({
     limit: 100,
     statuses: ["ACTIVE"],
@@ -62,12 +64,27 @@ export function SaleFormPage() {
     }));
   }, [productsData]);
 
+  const comboOptions = useMemo(() => {
+    if (!combosData?.data) return [];
+    return combosData.data.map((c) => ({
+      value: c.id,
+      label: c.name,
+      description: `${c.sku} - $${c.price}`,
+    }));
+  }, [combosData]);
+
+  const comboMap = useMemo(() => {
+    if (!combosData?.data) return new Map<string, number>();
+    return new Map(combosData.data.map((c) => [c.id, c.price]));
+  }, [combosData]);
+
   const isSubmitting = createSale.isPending;
 
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<CreateSaleFormData>({
     resolver: zodResolver(createSaleSchema),
@@ -77,7 +94,15 @@ export function SaleFormPage() {
       customerReference: "",
       externalReference: "",
       note: "",
-      lines: [{ productId: "", quantity: 1, salePrice: 0 }],
+      lines: [
+        {
+          lineType: "product",
+          productId: "",
+          comboId: "",
+          quantity: 1,
+          salePrice: 0,
+        },
+      ],
     },
   });
 
@@ -85,6 +110,19 @@ export function SaleFormPage() {
     control,
     name: "lines",
   });
+
+  const watchedLines = useWatch({ control, name: "lines" });
+
+  const handleComboChange = useCallback(
+    (index: number, comboId: string) => {
+      setValue(`lines.${index}.comboId`, comboId);
+      const price = comboMap.get(comboId);
+      if (price !== undefined) {
+        setValue(`lines.${index}.salePrice`, price);
+      }
+    },
+    [setValue, comboMap],
+  );
 
   const onSubmit = async (data: CreateSaleFormData) => {
     try {
@@ -97,7 +135,13 @@ export function SaleFormPage() {
   };
 
   const addLine = () => {
-    append({ productId: "", quantity: 1, salePrice: 0 });
+    append({
+      lineType: "product",
+      productId: "",
+      comboId: "",
+      quantity: 1,
+      salePrice: 0,
+    });
   };
 
   return (
@@ -238,74 +282,171 @@ export function SaleFormPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {fields.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="flex items-start gap-4 rounded-lg border p-4"
-                  >
-                    <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <FormField
-                        error={errors.lines?.[index]?.productId?.message}
-                      >
-                        <Label>{t("fields.product")} *</Label>
-                        <Controller
-                          name={`lines.${index}.productId`}
-                          control={control}
-                          render={({ field: selectField }) => (
-                            <SearchableSelect
-                              options={productOptions}
-                              value={selectField.value}
-                              onValueChange={selectField.onChange}
-                              placeholder={t("fields.productPlaceholder")}
-                              searchPlaceholder={tCommon("search")}
-                              emptyMessage={tCommon("noResults")}
-                            />
-                          )}
-                        />
-                      </FormField>
+                {fields.map((field, index) => {
+                  const lineType = watchedLines?.[index]?.lineType ?? "product";
+                  const isCombo = lineType === "combo";
 
-                      <FormField
-                        error={errors.lines?.[index]?.quantity?.message}
-                      >
-                        <Label>{t("fields.quantity")} *</Label>
-                        <Input
-                          type="number"
-                          min="1"
-                          {...register(`lines.${index}.quantity`, {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormField>
-
-                      <FormField
-                        error={errors.lines?.[index]?.salePrice?.message}
-                      >
-                        <Label>{t("fields.salePrice")} *</Label>
-                        <Controller
-                          name={`lines.${index}.salePrice`}
-                          control={control}
-                          render={({ field }) => (
-                            <CurrencyInput
-                              value={field.value}
-                              onChange={field.onChange}
-                            />
-                          )}
-                        />
-                      </FormField>
-                    </div>
-
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="mt-6"
-                      onClick={() => remove(index)}
-                      disabled={fields.length === 1}
+                  return (
+                    <div
+                      key={field.id}
+                      className="flex items-start gap-4 rounded-lg border p-4"
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                ))}
+                      <div className="flex-1 space-y-4">
+                        {/* Line type toggle */}
+                        <FormField>
+                          <Label>{t("form.lineType")}</Label>
+                          <Controller
+                            name={`lines.${index}.lineType`}
+                            control={control}
+                            render={({ field: typeField }) => (
+                              <Select
+                                value={typeField.value}
+                                onValueChange={(val) => {
+                                  typeField.onChange(val);
+                                  // Reset selection when switching types
+                                  setValue(`lines.${index}.productId`, "");
+                                  setValue(`lines.${index}.comboId`, "");
+                                  setValue(`lines.${index}.salePrice`, 0);
+                                }}
+                              >
+                                <SelectTrigger className="w-[180px]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="product">
+                                    {t("form.lineTypeProduct")}
+                                  </SelectItem>
+                                  <SelectItem value="combo">
+                                    {t("form.lineTypeCombo")}
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                          />
+                        </FormField>
+
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                          {isCombo ? (
+                            /* Combo selector */
+                            <FormField
+                              error={
+                                (
+                                  errors.lines?.[index] as
+                                    | Record<string, { message?: string }>
+                                    | undefined
+                                )?.comboId?.message
+                              }
+                            >
+                              <Label>{t("fields.combo")} *</Label>
+                              <Controller
+                                name={`lines.${index}.comboId`}
+                                control={control}
+                                render={({ field: selectField }) => (
+                                  <SearchableSelect
+                                    options={comboOptions}
+                                    value={selectField.value ?? ""}
+                                    onValueChange={(val) =>
+                                      handleComboChange(index, val)
+                                    }
+                                    placeholder={t("fields.comboPlaceholder")}
+                                    searchPlaceholder={tCommon("search")}
+                                    emptyMessage={tCommon("noResults")}
+                                  />
+                                )}
+                              />
+                            </FormField>
+                          ) : (
+                            /* Product selector */
+                            <FormField
+                              error={
+                                (
+                                  errors.lines?.[index] as
+                                    | Record<string, { message?: string }>
+                                    | undefined
+                                )?.productId?.message
+                              }
+                            >
+                              <Label>{t("fields.product")} *</Label>
+                              <Controller
+                                name={`lines.${index}.productId`}
+                                control={control}
+                                render={({ field: selectField }) => (
+                                  <SearchableSelect
+                                    options={productOptions}
+                                    value={selectField.value ?? ""}
+                                    onValueChange={selectField.onChange}
+                                    placeholder={t("fields.productPlaceholder")}
+                                    searchPlaceholder={tCommon("search")}
+                                    emptyMessage={tCommon("noResults")}
+                                  />
+                                )}
+                              />
+                            </FormField>
+                          )}
+
+                          <FormField
+                            error={errors.lines?.[index]?.quantity?.message}
+                          >
+                            <Label>{t("fields.quantity")} *</Label>
+                            <Input
+                              type="number"
+                              min="1"
+                              {...register(`lines.${index}.quantity`, {
+                                valueAsNumber: true,
+                              })}
+                            />
+                          </FormField>
+
+                          {isCombo ? (
+                            /* Combo price — readonly, auto-filled */
+                            <FormField>
+                              <Label>{t("fields.salePrice")}</Label>
+                              <Controller
+                                name={`lines.${index}.salePrice`}
+                                control={control}
+                                render={({ field: priceField }) => (
+                                  <CurrencyInput
+                                    value={priceField.value}
+                                    onChange={priceField.onChange}
+                                    disabled
+                                  />
+                                )}
+                              />
+                            </FormField>
+                          ) : (
+                            /* Product price — editable */
+                            <FormField
+                              error={errors.lines?.[index]?.salePrice?.message}
+                            >
+                              <Label>{t("fields.salePrice")} *</Label>
+                              <Controller
+                                name={`lines.${index}.salePrice`}
+                                control={control}
+                                render={({ field: priceField }) => (
+                                  <CurrencyInput
+                                    value={priceField.value}
+                                    onChange={priceField.onChange}
+                                  />
+                                )}
+                              />
+                            </FormField>
+                          )}
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="mt-6"
+                        onClick={() => remove(index)}
+                        disabled={fields.length === 1}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </CardContent>

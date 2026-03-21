@@ -66,3 +66,5 @@ playwright-report/
 .claude/**
 tsconfig.tsbuildinfo
 .playwright-mcp/**
+.vercel
+.env*.local

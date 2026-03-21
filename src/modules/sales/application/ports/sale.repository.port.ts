@@ -13,6 +13,11 @@ import type {
 
 export type { PaginatedResult };
 
+export interface SaleReturnLineSummary {
+  productId: string;
+  quantity: number;
+}
+
 export interface SaleReturnSummary {
   id: string;
   returnNumber: string;
@@ -21,6 +26,7 @@ export interface SaleReturnSummary {
   totalAmount: number;
   currency: string;
   createdAt: Date;
+  lines: SaleReturnLineSummary[];
 }
 
 export interface SaleRepositoryPort {

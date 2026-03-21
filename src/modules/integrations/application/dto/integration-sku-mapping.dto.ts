@@ -5,6 +5,9 @@ export interface IntegrationSkuMappingResponseDto {
   productId: string;
   productName?: string;
   productSku?: string;
+  comboId?: string;
+  comboName?: string;
+  comboSku?: string;
   createdAt: string;
 }
 

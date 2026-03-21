@@ -131,6 +131,10 @@ export class SaleApiAdapter implements SaleRepositoryPort {
   }
 
   async getReturns(saleId: string): Promise<SaleReturnSummary[]> {
+    interface ReturnLineRawDto {
+      productId: string;
+      quantity: number;
+    }
     interface ReturnRawDto {
       id: string;
       returnNumber: string;
@@ -139,6 +143,7 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       totalAmount: number;
       currency: string;
       createdAt: string;
+      lines?: ReturnLineRawDto[];
     }
     const raw = await apiClient.get<{ data: ReturnRawDto[] }>(
       `${this.basePath}/${saleId}/returns`,
@@ -152,6 +157,10 @@ export class SaleApiAdapter implements SaleRepositoryPort {
       totalAmount: r.totalAmount,
       currency: r.currency,
       createdAt: new Date(r.createdAt),
+      lines: (r.lines ?? []).map((l) => ({
+        productId: l.productId,
+        quantity: l.quantity,
+      })),
     }));
   }
 

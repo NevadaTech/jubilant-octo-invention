@@ -17,6 +17,7 @@ import type { SettingsRepositoryPort } from "@/modules/settings/application/port
 import type { ImportRepositoryPort } from "@/modules/imports/application/ports/import.repository.port";
 import type { ContactRepositoryPort } from "@/modules/contacts/application/ports/contact.repository.port";
 import type { IntegrationRepositoryPort } from "@/modules/integrations/application/ports/integration.repository.port";
+import type { ComboRepositoryPort } from "@/modules/inventory/application/ports/combo.repository.port";
 
 // ── Adapter implementations ─────────────────────────────────────────
 import { AuthApiAdapter } from "@/modules/authentication/infrastructure/adapters/auth-api.adapter";
@@ -37,6 +38,7 @@ import { SettingsApiAdapter } from "@/modules/settings/infrastructure/adapters/s
 import { ImportApiAdapter } from "@/modules/imports/infrastructure/adapters/import-api.adapter";
 import { ContactApiAdapter } from "@/modules/contacts/infrastructure/adapters/contact-api.adapter";
 import { IntegrationApiAdapter } from "@/modules/integrations/infrastructure/adapters/integration-api.adapter";
+import { ComboApiAdapter } from "@/modules/inventory/infrastructure/adapters/combo-api.adapter";
 
 // ── Use case implementations ────────────────────────────────────────
 import {
@@ -115,6 +117,9 @@ export interface Container {
 
   // Integrations
   integrationRepository: IntegrationRepositoryPort;
+
+  // Combos
+  comboRepository: ComboRepositoryPort;
 }
 
 // ── Factory ─────────────────────────────────────────────────────────
@@ -138,6 +143,7 @@ export function createContainer(): Container {
   const importRepository = new ImportApiAdapter();
   const contactRepository = new ContactApiAdapter();
   const integrationRepository = new IntegrationApiAdapter();
+  const comboRepository = new ComboApiAdapter();
 
   return {
     // Authentication
@@ -198,6 +204,9 @@ export function createContainer(): Container {
 
     // Integrations
     integrationRepository,
+
+    // Combos
+    comboRepository,
   };
 }
 

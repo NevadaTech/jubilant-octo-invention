@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { Fragment, useState, useCallback, useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { formatDateTimeMedium } from "@/lib/date";
@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
+import { Badge } from "@/ui/components/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
@@ -51,6 +52,7 @@ import {
   useShipSale,
   useCompleteSale,
 } from "@/modules/sales/presentation/hooks/use-sales";
+import { useCombos } from "@/modules/inventory/presentation/hooks/use-combos";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import { SaleStatusBadge } from "./sale-status-badge";
@@ -79,6 +81,56 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
   const completeSale = useCompleteSale();
 
   const { config: pickingConfig } = usePickingConfig();
+
+  // Combo grouping: resolve combo names for visual grouping
+  const hasComboLines = sale?.lines.some((l) => l.comboId) ?? false;
+  const { data: combosData } = useCombos({ limit: 100, isActive: true });
+
+  const comboNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const combo of combosData?.data ?? []) {
+      map.set(combo.id, combo.name);
+    }
+    return map;
+  }, [combosData]);
+
+  // Group sale lines by comboId for visual grouping
+  const groupedLines = useMemo(() => {
+    if (!sale || !hasComboLines) return null;
+
+    const groups: {
+      comboId: string | null;
+      comboName: string | null;
+      lines: typeof sale.lines;
+    }[] = [];
+    const groupMap = new Map<string, number>();
+
+    for (const line of sale.lines) {
+      const comboId = line.comboId ?? null;
+      const key = comboId ?? "__standalone__";
+
+      if (groupMap.has(key)) {
+        groups[groupMap.get(key)!].lines.push(line);
+      } else {
+        groupMap.set(key, groups.length);
+        groups.push({
+          comboId,
+          comboName: comboId ? (comboNameMap.get(comboId) ?? null) : null,
+          lines: [line],
+        });
+      }
+    }
+
+    // Sort: combos first, standalone last
+    groups.sort((a, b) => {
+      if (a.comboId && !b.comboId) return -1;
+      if (!a.comboId && b.comboId) return 1;
+      return 0;
+    });
+
+    return groups;
+  }, [sale, hasComboLines, comboNameMap]);
+
   const [pickingVerified, setPickingVerified] = useState(true);
 
   const handleVerificationChange = useCallback((canShip: boolean) => {
@@ -649,37 +701,108 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {sale.lines.map((line) => (
-                    <tr key={line.id} className="border-b">
-                      <td className="py-3 pr-4">
-                        <p className="font-medium">{line.productName}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {line.productSku}
-                        </p>
-                      </td>
-                      <td className="py-3 pr-4">{line.quantity}</td>
-                      <td className="py-3 pr-4">
-                        {formatCurrency(line.salePrice, line.currency)}
-                      </td>
-                      <td className="py-3 pr-4 text-right font-medium">
-                        {formatCurrency(line.totalPrice, line.currency)}
-                      </td>
-                      {sale.canSwapLine && (
-                        <td className="py-3 pl-4 text-right">
-                          <PermissionGate permission={PERMISSIONS.SALES_SWAP}>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setSwapLine(line)}
-                            >
-                              <ArrowLeftRight className="mr-1 h-4 w-4" />
-                              {t("actions.swapLine")}
-                            </Button>
-                          </PermissionGate>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
+                  {groupedLines
+                    ? groupedLines.map((group) => (
+                        <Fragment key={group.comboId ?? "__standalone__"}>
+                          {group.comboId && (
+                            <tr className="bg-primary-50/30 dark:bg-primary-900/10">
+                              <td
+                                colSpan={sale.canSwapLine ? 5 : 4}
+                                className="py-2 pr-4"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Package className="h-4 w-4 text-primary" />
+                                  <span className="text-sm font-semibold text-primary">
+                                    {t("detail.comboGroup", {
+                                      name: group.comboName ?? group.comboId,
+                                    })}
+                                  </span>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                          {group.lines.map((line) => (
+                            <tr key={line.id} className="border-b">
+                              <td className="py-3 pr-4">
+                                <div className="flex items-center gap-2">
+                                  <div>
+                                    <p className="font-medium">
+                                      {line.productName}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {line.productSku}
+                                    </p>
+                                  </div>
+                                  {group.comboId && (
+                                    <Badge
+                                      variant="info"
+                                      className="text-[10px] px-1.5 py-0"
+                                    >
+                                      {t("detail.fromCombo")}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-3 pr-4">{line.quantity}</td>
+                              <td className="py-3 pr-4">
+                                {formatCurrency(line.salePrice, line.currency)}
+                              </td>
+                              <td className="py-3 pr-4 text-right font-medium">
+                                {formatCurrency(line.totalPrice, line.currency)}
+                              </td>
+                              {sale.canSwapLine && (
+                                <td className="py-3 pl-4 text-right">
+                                  <PermissionGate
+                                    permission={PERMISSIONS.SALES_SWAP}
+                                  >
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setSwapLine(line)}
+                                    >
+                                      <ArrowLeftRight className="mr-1 h-4 w-4" />
+                                      {t("actions.swapLine")}
+                                    </Button>
+                                  </PermissionGate>
+                                </td>
+                              )}
+                            </tr>
+                          ))}
+                        </Fragment>
+                      ))
+                    : sale.lines.map((line) => (
+                        <tr key={line.id} className="border-b">
+                          <td className="py-3 pr-4">
+                            <p className="font-medium">{line.productName}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {line.productSku}
+                            </p>
+                          </td>
+                          <td className="py-3 pr-4">{line.quantity}</td>
+                          <td className="py-3 pr-4">
+                            {formatCurrency(line.salePrice, line.currency)}
+                          </td>
+                          <td className="py-3 pr-4 text-right font-medium">
+                            {formatCurrency(line.totalPrice, line.currency)}
+                          </td>
+                          {sale.canSwapLine && (
+                            <td className="py-3 pl-4 text-right">
+                              <PermissionGate
+                                permission={PERMISSIONS.SALES_SWAP}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setSwapLine(line)}
+                                >
+                                  <ArrowLeftRight className="mr-1 h-4 w-4" />
+                                  {t("actions.swapLine")}
+                                </Button>
+                              </PermissionGate>
+                            </td>
+                          )}
+                        </tr>
+                      ))}
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2">

@@ -47,6 +47,10 @@ vi.mock("@/modules/inventory/presentation/hooks/use-warehouses", () => ({
   }),
 }));
 
+vi.mock("@/modules/inventory/presentation/hooks/use-combos", () => ({
+  useCombos: () => ({ data: undefined, isLoading: false }),
+}));
+
 vi.mock("@/modules/contacts/presentation/hooks/use-contacts", () => ({
   useContacts: () => ({
     data: {

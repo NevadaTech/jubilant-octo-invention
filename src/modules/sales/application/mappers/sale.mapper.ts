@@ -13,6 +13,7 @@ export class SaleMapper {
       productName: dto.productName,
       productSku: dto.productSku,
       productBarcode: dto.productBarcode ?? null,
+      comboId: dto.comboId ?? null,
       quantity: dto.quantity,
       salePrice: dto.salePrice,
       currency: dto.currency,

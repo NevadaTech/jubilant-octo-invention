@@ -29,6 +29,10 @@ const mockProducts = [
   { id: "prod-3", name: "Product Gamma", sku: "SKU-003" },
 ];
 
+vi.mock("@/modules/inventory/presentation/hooks/use-combos", () => ({
+  useCombos: () => ({ data: undefined, isLoading: false }),
+}));
+
 vi.mock("@/modules/inventory/presentation/hooks/use-products", () => ({
   useProducts: () => ({
     data: { data: mockProducts },
@@ -50,7 +54,8 @@ describe("SkuMappingForm", () => {
   it("Given: the form When: rendering Then: should render product selector", () => {
     render(<SkuMappingForm connectionId="conn-1" />);
 
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    const comboboxes = screen.getAllByRole("combobox");
+    expect(comboboxes.length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("selectProduct")).toBeInTheDocument();
   });
 

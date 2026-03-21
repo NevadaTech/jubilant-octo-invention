@@ -5,12 +5,13 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Loader2, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Loader2, Package, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { CurrencyInput } from "@/ui/components/currency-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
+import { Badge } from "@/ui/components/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import {
   Select,
@@ -34,11 +35,13 @@ import { useCompanyStore } from "@/modules/companies/infrastructure/store/compan
 import {
   useSales,
   useSale,
+  useSaleReturns,
 } from "@/modules/sales/presentation/hooks/use-sales";
 import {
   useMovements,
   useMovement,
 } from "@/modules/inventory/presentation/hooks/use-movements";
+import { useCombos } from "@/modules/inventory/presentation/hooks/use-combos";
 
 export function ReturnFormPage() {
   const t = useTranslations("returns");
@@ -56,6 +59,7 @@ export function ReturnFormPage() {
     statuses: ["ACTIVE"],
   });
   const { data: salesData, isLoading: salesLoading } = useSales({ limit: 100 });
+  const { data: combosData } = useCombos({ limit: 100, isActive: true });
   const { data: movementsData, isLoading: movementsLoading } = useMovements({
     types: ["IN"],
     status: ["POSTED"],
@@ -123,21 +127,57 @@ export function ReturnFormPage() {
   // Fetch sale detail when a sale is selected
   const { data: selectedSale } = useSale(selectedSaleId || "");
 
+  // Fetch existing returns for this sale to calculate remaining returnable quantities
+  const { data: saleReturns } = useSaleReturns(
+    selectedSaleId || "",
+    !!selectedSaleId,
+  );
+
+  // Build a map of productId → total quantity already returned (only CONFIRMED returns)
+  const alreadyReturnedMap = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!saleReturns?.length) return map;
+    for (const ret of saleReturns) {
+      if (ret.status !== "CONFIRMED") continue;
+      for (const line of ret.lines) {
+        map.set(line.productId, (map.get(line.productId) ?? 0) + line.quantity);
+      }
+    }
+    return map;
+  }, [saleReturns]);
+
   // Fetch movement detail when a movement is selected
   const { data: selectedMovement } = useMovement(selectedMovementId || "");
 
-  // Build product options from the selected sale's lines
+  // Build a comboId → name map for quick lookup
+  const comboNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const combo of combosData?.data ?? []) {
+      map.set(combo.id, combo.name);
+    }
+    return map;
+  }, [combosData]);
+
+  // Build product options from the selected sale's lines, adjusted for already-returned quantities
   const saleLineProducts = useMemo(() => {
     if (!selectedSale?.lines?.length) return [];
-    return selectedSale.lines.map((line) => ({
-      productId: line.productId,
-      productName: line.productName,
-      productSku: line.productSku,
-      quantity: line.quantity,
-      salePrice: line.salePrice,
-      currency: line.currency,
-    }));
-  }, [selectedSale]);
+    return selectedSale.lines
+      .map((line) => {
+        const alreadyReturned = alreadyReturnedMap.get(line.productId) ?? 0;
+        const remainingQuantity = line.quantity - alreadyReturned;
+        return {
+          productId: line.productId,
+          productName: line.productName,
+          productSku: line.productSku,
+          quantity: remainingQuantity,
+          salePrice: line.salePrice,
+          currency: line.currency,
+          comboId: line.comboId ?? undefined,
+          comboName: line.comboId ? comboNameMap.get(line.comboId) : undefined,
+        };
+      })
+      .filter((line) => line.quantity > 0);
+  }, [selectedSale, comboNameMap, alreadyReturnedMap]);
 
   // Build product options from the selected movement's lines
   const movementLineProducts = useMemo(() => {
@@ -197,33 +237,61 @@ export function ReturnFormPage() {
     name: "lines",
   });
 
-  // When customer return sale changes, reset lines to match sale products
+  // When customer return sale changes, its lines load, or returns data loads, reset form lines
   const prevSaleIdRef = useRef(selectedSaleId);
+  const prevSaleLineCountRef = useRef(0);
+  const prevReturnedMapSizeRef = useRef(0);
   useEffect(() => {
-    if (prevSaleIdRef.current === selectedSaleId) return;
-    prevSaleIdRef.current = selectedSaleId;
+    if (returnType !== "RETURN_CUSTOMER") return;
+    // Wait until the sale detail has loaded (selectedSale exists) before replacing lines
+    if (!selectedSale) return;
 
-    if (returnType !== "RETURN_CUSTOMER" || !saleLineProducts.length) return;
+    const saleChanged = prevSaleIdRef.current !== selectedSaleId;
+    const linesCountChanged =
+      prevSaleLineCountRef.current !== saleLineProducts.length;
+    const returnsJustLoaded =
+      prevReturnedMapSizeRef.current === 0 && alreadyReturnedMap.size > 0;
+
+    prevSaleIdRef.current = selectedSaleId;
+    prevSaleLineCountRef.current = saleLineProducts.length;
+    prevReturnedMapSizeRef.current = alreadyReturnedMap.size;
+
+    if (!saleChanged && !linesCountChanged && !returnsJustLoaded) return;
 
     replace(
       saleLineProducts.map((line) => ({
         productId: line.productId,
+        comboId: line.comboId,
         quantity: line.quantity,
         maxQuantity: line.quantity,
         originalSalePrice: line.salePrice,
         originalUnitCost: undefined,
       })),
     );
-  }, [selectedSaleId, returnType, saleLineProducts, replace]);
+  }, [
+    selectedSaleId,
+    selectedSale,
+    returnType,
+    saleLineProducts,
+    alreadyReturnedMap,
+    replace,
+  ]);
 
-  // When supplier return movement changes, reset lines to match movement products
+  // When supplier return movement changes and its lines load, reset form lines to match movement products
   const prevMovementIdRef = useRef(selectedMovementId);
+  const prevMovementLineCountRef = useRef(0);
   useEffect(() => {
-    if (prevMovementIdRef.current === selectedMovementId) return;
-    prevMovementIdRef.current = selectedMovementId;
+    if (returnType !== "RETURN_SUPPLIER") return;
+    if (!movementLineProducts.length) return;
 
-    if (returnType !== "RETURN_SUPPLIER" || !movementLineProducts.length)
-      return;
+    const movementChanged = prevMovementIdRef.current !== selectedMovementId;
+    const linesJustLoaded =
+      prevMovementLineCountRef.current === 0 && movementLineProducts.length > 0;
+
+    prevMovementIdRef.current = selectedMovementId;
+    prevMovementLineCountRef.current = movementLineProducts.length;
+
+    if (!movementChanged && !linesJustLoaded) return;
 
     replace(
       movementLineProducts.map((line) => ({
@@ -291,6 +359,42 @@ export function ReturnFormPage() {
   const hasSaleLines = isCustomerReturn && saleLineProducts.length > 0;
   const hasMovementLines = isSupplierReturn && movementLineProducts.length > 0;
   const hasSourceLines = hasSaleLines || hasMovementLines;
+
+  // Group field indices by comboId for visual grouping
+  const comboGroups = useMemo(() => {
+    if (!hasSaleLines) return null;
+    const groups: {
+      comboId: string | null;
+      comboName: string | null;
+      indices: number[];
+    }[] = [];
+    const groupMap = new Map<string, number>(); // comboId → group index
+
+    fields.forEach((field, index) => {
+      const saleLine = saleLineProducts.find(
+        (l) => l.productId === field.productId,
+      );
+      const comboId = saleLine?.comboId ?? null;
+      const comboName = saleLine?.comboName ?? null;
+      const key = comboId ?? "__standalone__";
+
+      if (groupMap.has(key)) {
+        groups[groupMap.get(key)!].indices.push(index);
+      } else {
+        groupMap.set(key, groups.length);
+        groups.push({ comboId, comboName, indices: [index] });
+      }
+    });
+
+    // Sort: combos first, standalone last
+    groups.sort((a, b) => {
+      if (a.comboId && !b.comboId) return -1;
+      if (!a.comboId && b.comboId) return 1;
+      return 0;
+    });
+
+    return groups;
+  }, [fields, saleLineProducts, hasSaleLines]);
 
   // Loading skeleton for the form
   if (dataLoading) {
@@ -376,7 +480,13 @@ export function ReturnFormPage() {
                       disabled={isSubmitting}
                     >
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder={t("fields.type")}>
+                          {field.value === "RETURN_CUSTOMER"
+                            ? t("types.customer")
+                            : field.value === "RETURN_SUPPLIER"
+                              ? t("types.supplier")
+                              : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="RETURN_CUSTOMER">
@@ -405,7 +515,16 @@ export function ReturnFormPage() {
                       <SelectTrigger>
                         <SelectValue
                           placeholder={t("fields.warehousePlaceholder")}
-                        />
+                        >
+                          {(() => {
+                            const warehouse = warehousesData?.data.find(
+                              (w) => w.id === field.value,
+                            );
+                            return warehouse
+                              ? `${warehouse.name} (${warehouse.code})`
+                              : undefined;
+                          })()}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {warehousesData?.data.map((warehouse) => (
@@ -526,7 +645,169 @@ export function ReturnFormPage() {
               <div className="rounded-md border border-dashed p-8 text-center text-muted-foreground">
                 {t("form.noLines")}
               </div>
+            ) : comboGroups && comboGroups.some((g) => g.comboId) ? (
+              /* Combo-grouped rendering */
+              <div className="space-y-6">
+                {comboGroups.map((group) => (
+                  <div
+                    key={group.comboId ?? "__standalone__"}
+                    className={
+                      group.comboId
+                        ? "rounded-lg border border-primary/20 bg-primary-50/30 p-4 dark:bg-primary-900/10"
+                        : ""
+                    }
+                  >
+                    {group.comboId ? (
+                      <div className="mb-3 flex items-center gap-2">
+                        <Package className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-semibold text-primary">
+                          {t("form.comboGroup", {
+                            name: group.comboName ?? group.comboId,
+                          })}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="mb-3">
+                        <span className="text-sm font-semibold text-muted-foreground">
+                          {t("form.standaloneProducts")}
+                        </span>
+                      </div>
+                    )}
+                    <div className="space-y-4">
+                      {group.indices.map((index) => {
+                        const field = fields[index];
+                        return (
+                          <div
+                            key={field.id}
+                            className="flex items-start gap-4 rounded-lg border bg-background p-4"
+                          >
+                            <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                              <FormField
+                                error={
+                                  errors.lines?.[index]?.productId?.message
+                                }
+                              >
+                                <Label className="flex items-center gap-2">
+                                  {t("fields.product")} *
+                                  {group.comboId && (
+                                    <Badge
+                                      variant="info"
+                                      className="text-[10px] px-1.5 py-0"
+                                    >
+                                      {t("form.fromCombo")}
+                                    </Badge>
+                                  )}
+                                </Label>
+                                <Controller
+                                  name={`lines.${index}.productId`}
+                                  control={control}
+                                  render={({ field: selectField }) => (
+                                    <Select
+                                      value={selectField.value}
+                                      onValueChange={(val) =>
+                                        handleProductChange(index, val)
+                                      }
+                                      disabled={isSubmitting}
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue
+                                          placeholder={t(
+                                            "fields.productPlaceholder",
+                                          )}
+                                        >
+                                          {(() => {
+                                            const line = saleLineProducts.find(
+                                              (l) =>
+                                                l.productId ===
+                                                selectField.value,
+                                            );
+                                            return line
+                                              ? `${line.productName} (${line.productSku})`
+                                              : undefined;
+                                          })()}
+                                        </SelectValue>
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {saleLineProducts.map((line) => (
+                                          <SelectItem
+                                            key={line.productId}
+                                            value={line.productId}
+                                          >
+                                            {line.productName} (
+                                            {line.productSku})
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  )}
+                                />
+                              </FormField>
+
+                              <FormField
+                                error={errors.lines?.[index]?.quantity?.message}
+                              >
+                                <Label>
+                                  {t("fields.quantity")} *
+                                  {getMaxQuantity(field.productId) !==
+                                    undefined && (
+                                    <span className="ml-1 text-xs font-normal text-muted-foreground">
+                                      (max: {getMaxQuantity(field.productId)})
+                                    </span>
+                                  )}
+                                </Label>
+                                <Input
+                                  type="number"
+                                  min="1"
+                                  max={getMaxQuantity(field.productId)}
+                                  disabled={isSubmitting}
+                                  {...register(`lines.${index}.quantity`, {
+                                    valueAsNumber: true,
+                                  })}
+                                />
+                              </FormField>
+
+                              <FormField
+                                error={
+                                  errors.lines?.[index]?.originalSalePrice
+                                    ?.message
+                                }
+                              >
+                                <Label>{t("fields.originalPrice")}</Label>
+                                <Controller
+                                  name={`lines.${index}.originalSalePrice`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <CurrencyInput
+                                      value={field.value}
+                                      onChange={(val) =>
+                                        field.onChange(val || undefined)
+                                      }
+                                      disabled={hasSourceLines || isSubmitting}
+                                    />
+                                  )}
+                                />
+                              </FormField>
+                            </div>
+
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="mt-6 shrink-0"
+                              onClick={() => remove(index)}
+                              disabled={fields.length === 1 || isSubmitting}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
+              /* Flat rendering (no combos, or movement/manual lines) */
               <div className="space-y-4">
                 {fields.map((field, index) => (
                   <div
@@ -553,7 +834,17 @@ export function ReturnFormPage() {
                                 <SelectTrigger>
                                   <SelectValue
                                     placeholder={t("fields.productPlaceholder")}
-                                  />
+                                  >
+                                    {(() => {
+                                      const line = saleLineProducts.find(
+                                        (l) =>
+                                          l.productId === selectField.value,
+                                      );
+                                      return line
+                                        ? `${line.productName} (${line.productSku})`
+                                        : undefined;
+                                    })()}
+                                  </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                   {saleLineProducts.map((line) => (
@@ -577,7 +868,17 @@ export function ReturnFormPage() {
                                 <SelectTrigger>
                                   <SelectValue
                                     placeholder={t("fields.productPlaceholder")}
-                                  />
+                                  >
+                                    {(() => {
+                                      const line = movementLineProducts.find(
+                                        (l) =>
+                                          l.productId === selectField.value,
+                                      );
+                                      return line
+                                        ? `${line.productName} (${line.productSku})`
+                                        : undefined;
+                                    })()}
+                                  </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                   {movementLineProducts.map((line) => (
@@ -599,7 +900,16 @@ export function ReturnFormPage() {
                                 <SelectTrigger>
                                   <SelectValue
                                     placeholder={t("fields.productPlaceholder")}
-                                  />
+                                  >
+                                    {(() => {
+                                      const product = productsData?.data.find(
+                                        (p) => p.id === selectField.value,
+                                      );
+                                      return product
+                                        ? `${product.name} (${product.sku})`
+                                        : undefined;
+                                    })()}
+                                  </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                   {productsData?.data.map((product) => (

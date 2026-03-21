@@ -10,6 +10,7 @@ export interface ReturnLineProps {
   productId: string;
   productName: string;
   productSku: string;
+  comboId?: string | null;
   quantity: number;
   originalSalePrice: number | null;
   originalUnitCost: number | null;
@@ -40,6 +41,10 @@ export class ReturnLine extends ValueObject<ReturnLineProps> {
 
   get productSku(): string {
     return this.props.productSku;
+  }
+
+  get comboId(): string | null | undefined {
+    return this.props.comboId;
   }
 
   get quantity(): number {

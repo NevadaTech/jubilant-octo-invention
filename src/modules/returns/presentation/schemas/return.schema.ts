@@ -7,6 +7,7 @@ import type {
 export const returnLineSchema = z
   .object({
     productId: z.string().min(1, "Please select a product"),
+    comboId: z.string().optional(),
     quantity: z.number().min(1, "Quantity must be at least 1"),
     maxQuantity: z.number().optional(),
     originalSalePrice: z.number().min(0.01).optional(),
@@ -49,6 +50,7 @@ export type CreateReturnFormData = z.infer<typeof createReturnSchema>;
 export function toCreateReturnDto(data: CreateReturnFormData): CreateReturnDto {
   const lines: CreateReturnLineDto[] = data.lines.map((line) => ({
     productId: line.productId,
+    comboId: line.comboId,
     quantity: line.quantity,
     originalSalePrice: line.originalSalePrice,
     originalUnitCost: line.originalUnitCost,

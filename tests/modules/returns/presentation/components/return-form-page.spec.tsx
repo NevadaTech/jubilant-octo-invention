@@ -83,6 +83,7 @@ vi.mock("@/modules/sales/presentation/hooks/use-sales", () => ({
     isLoading: mockSalesLoading,
   }),
   useSale: () => ({ data: null }),
+  useSaleReturns: () => ({ data: undefined }),
 }));
 
 let mockMovementReference: string | null = "REF-001";
@@ -101,6 +102,10 @@ vi.mock("@/modules/inventory/presentation/hooks/use-movements", () => ({
     isLoading: mockMovementsLoading,
   }),
   useMovement: () => ({ data: null }),
+}));
+
+vi.mock("@/modules/inventory/presentation/hooks/use-combos", () => ({
+  useCombos: () => ({ data: undefined, isLoading: false }),
 }));
 
 vi.mock("@/modules/companies/infrastructure/store/company.store", () => ({

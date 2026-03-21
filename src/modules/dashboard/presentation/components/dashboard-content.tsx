@@ -33,6 +33,10 @@ const RecentActivityFeed = dynamic(
   () => import("./recent-activity-feed").then((m) => m.RecentActivityFeed),
   { ssr: false, loading: () => <ChartSkeleton /> },
 );
+const TopCombosTable = dynamic(
+  () => import("./top-combos-table").then((m) => m.TopCombosTable),
+  { ssr: false, loading: () => <ChartSkeleton /> },
+);
 
 export function DashboardContent() {
   const t = useTranslations("dashboard.metrics");
@@ -174,6 +178,14 @@ export function DashboardContent() {
             <RecentActivityFeed data={metrics.recentActivity} />
           </div>
         </div>
+      )}
+
+      {/* Combos Section */}
+      {metrics.combos?.topCombos && metrics.combos.topCombos.length > 0 && (
+        <TopCombosTable
+          data={metrics.combos.topCombos}
+          currency={metrics.sales.currency}
+        />
       )}
     </div>
   );

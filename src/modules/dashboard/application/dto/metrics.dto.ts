@@ -44,6 +44,16 @@ export interface DashboardMetricsDto {
     description: string;
     createdAt: string;
   }>;
+  combos?: {
+    totalActiveCombos: number;
+    combosWithZeroAvailability: number;
+    topCombos: Array<{
+      sku: string;
+      name: string;
+      totalComboUnitsSold: number;
+      totalRevenue: number;
+    }>;
+  };
 }
 
 /**

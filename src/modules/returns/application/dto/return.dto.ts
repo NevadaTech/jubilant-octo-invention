@@ -8,6 +8,7 @@ export interface ReturnLineResponseDto {
   productId: string;
   productName: string;
   productSku: string;
+  comboId?: string | null;
   quantity: number;
   originalSalePrice: number | null;
   originalUnitCost: number | null;
@@ -21,6 +22,7 @@ export interface ReturnLineApiRawDto {
   productId: string;
   productName?: string;
   productSku?: string;
+  comboId?: string | null;
   quantity: number;
   originalSalePrice: number | null;
   originalUnitCost?: number | null;
@@ -88,6 +90,7 @@ export interface ReturnListResponseDto {
 
 export interface CreateReturnLineDto {
   productId: string;
+  comboId?: string;
   quantity: number;
   originalSalePrice?: number;
   originalUnitCost?: number;

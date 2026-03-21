@@ -97,6 +97,10 @@ vi.mock("@/modules/sales/presentation/components/sale-swap-history", () => ({
   SaleSwapHistory: () => null,
 }));
 
+vi.mock("@/modules/inventory/presentation/hooks/use-combos", () => ({
+  useCombos: () => ({ data: undefined, isLoading: false }),
+}));
+
 vi.mock(
   "@/modules/sales/presentation/components/picking-verification-card",
   () => ({

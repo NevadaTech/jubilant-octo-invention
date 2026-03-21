@@ -12,6 +12,7 @@ describe("Sale Schema", () => {
     it("Given: valid line data When: validating Then: should pass validation", () => {
       // Arrange
       const validLine = {
+        lineType: "product" as const,
         productId: "prod-123",
         quantity: 3,
         salePrice: 29.99,
@@ -26,7 +27,12 @@ describe("Sale Schema", () => {
 
     it("Given: empty productId When: validating Then: should fail validation", () => {
       // Arrange
-      const invalidLine = { productId: "", quantity: 1, salePrice: 10 };
+      const invalidLine = {
+        lineType: "product" as const,
+        productId: "",
+        quantity: 1,
+        salePrice: 10,
+      };
 
       // Act
       const result = saleLineSchema.safeParse(invalidLine);
@@ -40,7 +46,12 @@ describe("Sale Schema", () => {
 
     it("Given: zero quantity When: validating Then: should fail validation", () => {
       // Arrange
-      const invalidLine = { productId: "prod-1", quantity: 0, salePrice: 10 };
+      const invalidLine = {
+        lineType: "product" as const,
+        productId: "prod-1",
+        quantity: 0,
+        salePrice: 10,
+      };
 
       // Act
       const result = saleLineSchema.safeParse(invalidLine);
@@ -56,7 +67,12 @@ describe("Sale Schema", () => {
 
     it("Given: zero salePrice When: validating Then: should fail validation", () => {
       // Arrange
-      const invalidLine = { productId: "prod-1", quantity: 1, salePrice: 0 };
+      const invalidLine = {
+        lineType: "product" as const,
+        productId: "prod-1",
+        quantity: 1,
+        salePrice: 0,
+      };
 
       // Act
       const result = saleLineSchema.safeParse(invalidLine);
@@ -73,6 +89,7 @@ describe("Sale Schema", () => {
     it("Given: optional currency When: validating Then: should pass validation", () => {
       // Arrange
       const validLine = {
+        lineType: "product" as const,
         productId: "prod-1",
         quantity: 2,
         salePrice: 15.0,
@@ -89,6 +106,7 @@ describe("Sale Schema", () => {
     it("Given: negative salePrice When: validating Then: should fail validation", () => {
       // Arrange
       const invalidLine = {
+        lineType: "product" as const,
         productId: "prod-1",
         quantity: 1,
         salePrice: -5.0,
@@ -106,7 +124,14 @@ describe("Sale Schema", () => {
     const validSale = {
       warehouseId: "wh-001",
       contactId: "contact-001",
-      lines: [{ productId: "prod-1", quantity: 2, salePrice: 25.0 }],
+      lines: [
+        {
+          lineType: "product" as const,
+          productId: "prod-1",
+          quantity: 2,
+          salePrice: 25.0,
+        },
+      ],
     };
 
     it("Given: valid sale data with required fields When: validating Then: should pass validation", () => {
@@ -200,12 +225,19 @@ describe("Sale Schema", () => {
       // Arrange
       const formData: CreateSaleFormData = {
         warehouseId: "wh-001",
+        contactId: "contact-001",
         customerReference: "CUST-001",
         externalReference: "EXT-123",
         note: "Important sale",
         lines: [
-          { productId: "prod-1", quantity: 3, salePrice: 25.0 },
           {
+            lineType: "product",
+            productId: "prod-1",
+            quantity: 3,
+            salePrice: 25.0,
+          },
+          {
+            lineType: "product",
             productId: "prod-2",
             quantity: 1,
             salePrice: 50.0,
@@ -233,10 +265,18 @@ describe("Sale Schema", () => {
       // Arrange
       const formData: CreateSaleFormData = {
         warehouseId: "wh-001",
+        contactId: "contact-001",
         customerReference: "",
         externalReference: "",
         note: "",
-        lines: [{ productId: "prod-1", quantity: 1, salePrice: 10.0 }],
+        lines: [
+          {
+            lineType: "product",
+            productId: "prod-1",
+            quantity: 1,
+            salePrice: 10.0,
+          },
+        ],
       };
 
       // Act
@@ -252,7 +292,15 @@ describe("Sale Schema", () => {
       // Arrange
       const formData: CreateSaleFormData = {
         warehouseId: "wh-001",
-        lines: [{ productId: "prod-1", quantity: 1, salePrice: 10.0 }],
+        contactId: "contact-001",
+        lines: [
+          {
+            lineType: "product",
+            productId: "prod-1",
+            quantity: 1,
+            salePrice: 10.0,
+          },
+        ],
       };
 
       // Act

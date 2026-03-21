@@ -84,6 +84,12 @@ export const PERMISSIONS = {
   INTEGRATIONS_DELETE: "INTEGRATIONS:DELETE",
   INTEGRATIONS_SYNC: "INTEGRATIONS:SYNC",
 
+  // Combos
+  COMBOS_CREATE: "COMBOS:CREATE",
+  COMBOS_READ: "COMBOS:READ",
+  COMBOS_UPDATE: "COMBOS:UPDATE",
+  COMBOS_DELETE: "COMBOS:DELETE",
+
   // Settings
   SETTINGS_MANAGE: "SETTINGS:MANAGE",
 } as const;
@@ -109,5 +115,6 @@ export const ROUTE_PERMISSIONS: Record<string, Permission[]> = {
   "/dashboard/roles": [PERMISSIONS.ROLES_READ],
   "/dashboard/audit": [PERMISSIONS.AUDIT_READ],
   "/dashboard/inventory/companies": [PERMISSIONS.COMPANIES_READ],
+  "/dashboard/inventory/combos": [PERMISSIONS.COMBOS_READ],
   "/dashboard/settings": [], // Always accessible
 };

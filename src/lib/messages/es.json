@@ -112,6 +112,15 @@
         "title": "Ventas del Mes",
         "description": "{count, plural, =0 {Sin ventas} =1 {1 pedido} other {# pedidos}} este mes"
       },
+      "activeCombos": {
+        "title": "Combos Activos",
+        "description": "{count, plural, =0 {Sin combos configurados} =1 {1 combo disponible} other {# combos disponibles}}"
+      },
+      "combosOutOfStock": {
+        "title": "Combos Sin Stock",
+        "descriptionAlert": "Combos sin inventario disponible",
+        "descriptionOk": "Todos los combos tienen stock disponible"
+      },
       "error": {
         "title": "Error al cargar métricas",
         "description": "Hubo un error al cargar los datos del panel.",
@@ -147,6 +156,14 @@
         "description": "Distribución del valor de inventario por compañía",
         "value": "Valor",
         "units": "Unidades"
+      },
+      "topCombos": {
+        "title": "Top Combos",
+        "description": "Combos más vendidos por ingresos",
+        "revenue": "Ingresos",
+        "sold": "Unidades vendidas",
+        "sku": "SKU",
+        "name": "Nombre"
       },
       "recentActivity": {
         "title": "Actividad Reciente",
@@ -816,6 +833,124 @@
         "error": "Ocurrió un error. Inténtalo de nuevo."
       }
     },
+    "combos": {
+      "title": "Combos",
+      "description": "Gestiona combos y paquetes de productos",
+      "fields": {
+        "sku": "SKU",
+        "name": "Nombre",
+        "description": "Descripción",
+        "price": "Precio",
+        "currency": "Moneda",
+        "items": "Artículos",
+        "status": "Estado",
+        "createdAt": "Fecha de creación",
+        "quantity": "Cantidad",
+        "productName": "Producto",
+        "productSku": "SKU del Producto",
+        "warehouse": "Bodega",
+        "available": "Disponible"
+      },
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "actions": {
+        "new": "Nuevo Combo",
+        "view": "Ver",
+        "edit": "Editar",
+        "deactivate": "Desactivar"
+      },
+      "list": {
+        "title": "Listado de Combos"
+      },
+      "search": {
+        "placeholder": "Buscar combos...",
+        "namePlaceholder": "Buscar por nombre...",
+        "skuPlaceholder": "Buscar por SKU..."
+      },
+      "filter": "Filtros",
+      "filters": {
+        "allStatuses": "Todos los estados",
+        "allWarehouses": "Todas las bodegas"
+      },
+      "pagination": {
+        "showing": "Mostrando {from} a {to} de {total} combos"
+      },
+      "empty": {
+        "title": "Sin combos aún",
+        "description": "Comienza creando tu primer combo."
+      },
+      "error": {
+        "loading": "Error al cargar combos"
+      },
+      "confirm": {
+        "deactivate": {
+          "title": "¿Desactivar combo?",
+          "description": "El combo quedará inactivo y no podrá ser utilizado en nuevas ventas. Esta acción se puede revertir."
+        }
+      },
+      "form": {
+        "createTitle": "Crear Combo",
+        "editTitle": "Editar Combo",
+        "error": "Ocurrió un error al guardar el combo. Inténtalo de nuevo.",
+        "skuPlaceholder": "Ingresa el SKU del combo (ej: COMBO-001)",
+        "namePlaceholder": "Ingresa el nombre del combo",
+        "descriptionPlaceholder": "Ingresa la descripción del combo (opcional)",
+        "pricePlaceholder": "Ingresa el precio del combo",
+        "itemsSection": "Artículos del Combo",
+        "addItem": "Agregar Artículo",
+        "removeItem": "Quitar Artículo",
+        "selectProduct": "Seleccionar producto",
+        "searchProduct": "Buscar producto...",
+        "noProducts": "No se encontraron productos",
+        "noItems": "No hay artículos agregados"
+      },
+      "detail": {
+        "notFound": "Combo no encontrado",
+        "backToList": "Volver al listado",
+        "description": "Descripción",
+        "pricing": "Precios",
+        "dates": "Fechas",
+        "createdAt": "Fecha de creación",
+        "updatedAt": "Última actualización",
+        "items": "Artículos del Combo",
+        "availability": "Disponibilidad",
+        "noAvailability": "No hay datos de disponibilidad para este combo."
+      },
+      "availability": {
+        "title": "Disponibilidad de Combos",
+        "empty": "No se encontraron datos de disponibilidad."
+      },
+      "reports": {
+        "dateFrom": "Desde",
+        "dateTo": "Hasta",
+        "selectDate": "Seleccionar fecha",
+        "comboFilter": "Combo",
+        "allCombos": "Todos los combos",
+        "sales": {
+          "title": "Reporte de Ventas de Combos",
+          "empty": "No se encontraron datos de ventas para el período seleccionado.",
+          "unitsSold": "Unidades Vendidas",
+          "revenue": "Ingresos",
+          "salesCount": "Cantidad de Ventas"
+        },
+        "stockImpact": {
+          "title": "Impacto en Inventario por Combos",
+          "empty": "No hay datos de impacto en inventario para el período seleccionado.",
+          "directSales": "Ventas Directas",
+          "comboSales": "Ventas por Combos",
+          "total": "Total",
+          "breakdown": "Desglose por Combo",
+          "unitsConsumed": "Unidades Consumidas"
+        }
+      },
+      "messages": {
+        "created": "Combo creado exitosamente",
+        "updated": "Combo actualizado exitosamente",
+        "deactivated": "Combo desactivado exitosamente"
+      }
+    },
     "common": {
       "confirmDelete": "¿Estás seguro?",
       "confirmDeleteDesc": "Esta acción no se puede deshacer.",
@@ -852,6 +987,8 @@
       "externalReferencePlaceholder": "Número de factura u orden (opcional)",
       "product": "Producto",
       "productPlaceholder": "Selecciona un producto",
+      "combo": "Combo",
+      "comboPlaceholder": "Seleccionar un combo",
       "quantity": "Cantidad",
       "salePrice": "Precio Unitario",
       "lineTotal": "Total",
@@ -907,7 +1044,10 @@
       "saleInfo": "Detalles de la Venta",
       "linesSection": "Productos",
       "noLines": "No hay productos agregados",
-      "error": "Ocurrió un error al crear la venta."
+      "error": "Ocurrió un error al crear la venta.",
+      "lineType": "Tipo",
+      "lineTypeProduct": "Producto",
+      "lineTypeCombo": "Combo"
     },
     "detail": {
       "info": "Información de la Venta",
@@ -916,7 +1056,9 @@
       "by": "por",
       "pickingShipping": "Picking y Envío",
       "timeline": "Línea de Tiempo",
-      "shippingDetails": "Detalles de Envío"
+      "shippingDetails": "Detalles de Envío",
+      "comboGroup": "Combo: {name}",
+      "fromCombo": "Del combo"
     },
     "timeline": {
       "draft": "Borrador",
@@ -1112,6 +1254,9 @@
       "noLines": "No hay productos agregados",
       "saleProductsHint": "Los productos fueron cargados de la venta seleccionada. Puedes ajustar cantidades y eliminar los que no deseas devolver.",
       "movementProductsHint": "Los productos fueron cargados del movimiento seleccionado. Puedes ajustar cantidades y eliminar los que no deseas devolver.",
+      "comboGroup": "Combo: {name}",
+      "standaloneProducts": "Productos Individuales",
+      "fromCombo": "Del combo",
       "error": "Ocurrió un error al crear la devolución."
     },
     "detail": {
@@ -1836,7 +1981,8 @@
     "users": "Usuarios",
     "roles": "Roles",
     "audit": "Auditoría",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "combos": "Combos"
   },
   "pages": {
     "inventory": {
@@ -2414,6 +2560,15 @@
       "noProductsFound": "No se encontraron productos",
       "externalSkuRequired": "El SKU externo es requerido",
       "productRequired": "El producto es requerido",
+      "comboRequired": "El combo es requerido",
+      "mapToProduct": "Mapear a Producto",
+      "mapToCombo": "Mapear a Combo",
+      "selectCombo": "Seleccionar combo...",
+      "searchCombo": "Buscar por nombre o SKU...",
+      "noCombosFound": "No se encontraron combos",
+      "type": "Tipo",
+      "typeProduct": "Producto",
+      "typeCombo": "Combo",
       "unmatchedAlert": "SKUs sin coincidencia",
       "unmatchedDescription": "Estos SKUs de VTEX no pudieron coincidir con productos internos. Mapéalos para habilitar la sincronización de órdenes.",
       "mapThis": "Mapear"
