@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Warehouse } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";

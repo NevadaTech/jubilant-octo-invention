@@ -60,7 +60,9 @@ import { SaleTimeline } from "./sale-timeline";
 import { SaleSwapDialog } from "./sale-swap-dialog";
 import { SaleSwapHistory } from "./sale-swap-history";
 import { PickingVerificationCard } from "./picking-verification-card";
+import { ContactTypeBadge } from "@/modules/contacts/presentation/components/contact-type-badge";
 import { usePickingConfig } from "@/modules/sales/presentation/hooks/use-picking-config";
+import type { ContactType } from "@/modules/contacts/domain/entities/contact.entity";
 import type { SaleLine } from "@/modules/sales/domain/entities/sale.entity";
 
 interface SaleDetailProps {
@@ -530,6 +532,30 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                   {formatCurrency(sale.totalAmount, sale.currency)}
                 </dd>
               </div>
+              {sale.contactType && (
+                <div>
+                  <dt className="text-sm font-medium text-muted-foreground">
+                    {t("fields.contactType")}
+                  </dt>
+                  <dd className="mt-1">
+                    <ContactTypeBadge type={sale.contactType as ContactType} />
+                  </dd>
+                </div>
+              )}
+              {sale.integrationProvider && (
+                <div>
+                  <dt className="text-sm font-medium text-muted-foreground">
+                    {t("fields.integrationProvider")}
+                  </dt>
+                  <dd className="mt-1">
+                    <Badge variant="outline">
+                      {sale.integrationProvider === "MERCADOLIBRE"
+                        ? "MercadoLibre"
+                        : sale.integrationProvider}
+                    </Badge>
+                  </dd>
+                </div>
+              )}
               {sale.note && (
                 <div className="sm:col-span-2">
                   <dt className="text-sm font-medium text-muted-foreground">

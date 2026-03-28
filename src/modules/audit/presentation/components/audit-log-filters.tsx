@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Search, X, Filter, Calendar } from "lucide-react";
+import { Search, X, Filter } from "lucide-react";
+import { format } from "date-fns";
 import { Input } from "@/ui/components/input";
 import { Button } from "@/ui/components/button";
 import { Label } from "@/ui/components/label";
+import { DateRangePicker } from "@/ui/components/date-range-picker";
 import {
   Select,
   SelectContent,
@@ -16,6 +18,7 @@ import {
 import { useDebounce } from "@/shared/presentation/hooks";
 import { useUsers } from "@/modules/users/presentation/hooks/use-users";
 import type { AuditLogFilters } from "@/modules/audit/application/dto/audit-log.dto";
+import type { DateRange } from "react-day-picker";
 
 const ENTITY_TYPES = [
   "System",
@@ -109,22 +112,17 @@ export function AuditLogFiltersBar({ filters, onFiltersChange }: Props) {
     });
   };
 
-  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    const startDate = range?.from
+      ? format(range.from, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
+      : undefined;
+    const endDate = range?.to
+      ? format(range.to, "yyyy-MM-dd'T'23:59:59.SSSxxx")
+      : undefined;
     onFiltersChange({
       ...filters,
-      startDate: e.target.value
-        ? new Date(e.target.value).toISOString()
-        : undefined,
-      page: 1,
-    });
-  };
-
-  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onFiltersChange({
-      ...filters,
-      endDate: e.target.value
-        ? new Date(e.target.value + "T23:59:59").toISOString()
-        : undefined,
+      startDate,
+      endDate,
       page: 1,
     });
   };
@@ -274,32 +272,26 @@ export function AuditLogFiltersBar({ filters, onFiltersChange }: Props) {
           </div>
 
           <div className="flex flex-wrap items-end gap-3">
-            <div className="min-w-[150px]">
+            <div className="min-w-[280px]">
               <Label className="mb-2 block text-sm">
-                {t("filters.startDate")}
+                {t("filters.dateRange")}
               </Label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  type="date"
-                  className="pl-9"
-                  onChange={handleStartDateChange}
-                />
-              </div>
-            </div>
-
-            <div className="min-w-[150px]">
-              <Label className="mb-2 block text-sm">
-                {t("filters.endDate")}
-              </Label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  type="date"
-                  className="pl-9"
-                  onChange={handleEndDateChange}
-                />
-              </div>
+              <DateRangePicker
+                value={
+                  filters.startDate || filters.endDate
+                    ? {
+                        from: filters.startDate
+                          ? new Date(filters.startDate)
+                          : undefined,
+                        to: filters.endDate
+                          ? new Date(filters.endDate)
+                          : undefined,
+                      }
+                    : undefined
+                }
+                onChange={handleDateRangeChange}
+                placeholder={t("filters.selectDateRange")}
+              />
             </div>
           </div>
         </div>

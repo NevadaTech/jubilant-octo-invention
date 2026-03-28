@@ -26,7 +26,10 @@ export class ReportApiAdapter implements ReportRepositoryPort {
     if (parameters.productId) params.productId = parameters.productId;
     if (parameters.categoryIds?.length)
       params.category = parameters.categoryIds.join(",");
+    if (parameters.brandIds?.length)
+      params.brandId = parameters.brandIds.join(",");
     if (parameters.status?.length) params.status = parameters.status.join(",");
+    if (parameters.contactType) params.contactType = parameters.contactType;
     if (parameters.returnTypes?.length)
       params.returnType = parameters.returnTypes.join(",");
     if (parameters.groupBy) params.groupBy = parameters.groupBy;

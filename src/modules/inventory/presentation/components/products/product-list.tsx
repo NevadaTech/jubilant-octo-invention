@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Package, Plus, Edit, Eye } from "lucide-react";
@@ -55,6 +55,15 @@ function ProductRow({ product }: { product: Product }) {
               </Badge>
             ))}
           </div>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        )}
+      </td>
+      <td className="hidden px-4 py-3 text-sm text-foreground lg:table-cell">
+        {product.brandName ? (
+          <Badge variant="secondary" className="text-xs">
+            {product.brandName}
+          </Badge>
         ) : (
           <span className="text-muted-foreground">—</span>
         )}
@@ -143,12 +152,29 @@ export function ProductList() {
   );
   const { data, isLoading, isError, error } = useProducts(filtersWithCompany);
 
+  // Debounce para evitar múltiples requests al cambiar filtros
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
   const handleFiltersChange = useCallback(
     (newFilters: ProductFiltersType) => {
-      setFilters(newFilters);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      debounceRef.current = setTimeout(() => {
+        setFilters(newFilters);
+      }, 300);
     },
     [setFilters],
   );
+
+  // Cleanup timeout al desmontar
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
 
   const handlePageChange = (newPage: number) => {
     setFilters({ page: newPage });
@@ -219,6 +245,9 @@ export function ProductList() {
                     />
                     <th className="hidden px-4 py-3 md:table-cell">
                       {t("fields.category")}
+                    </th>
+                    <th className="hidden px-4 py-3 lg:table-cell">
+                      {t("fields.brand")}
                     </th>
                     <SortableHeader
                       label={t("fields.price")}

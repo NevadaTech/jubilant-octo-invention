@@ -11,6 +11,7 @@ export type { PaginatedResult };
 export interface ProductRepositoryPort {
   findAll(filters?: ProductFilters): Promise<PaginatedResult<Product>>;
   findById(id: string): Promise<Product | null>;
+  lookupByCode(code: string): Promise<Product | null>;
   create(data: CreateProductDto): Promise<Product>;
   update(id: string, data: UpdateProductDto): Promise<Product>;
 }

@@ -404,6 +404,11 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               }
             />
             <DetailItem
+              icon={Tag}
+              label={t("fields.brand")}
+              value={product.brandName || "—"}
+            />
+            <DetailItem
               icon={Calendar}
               label={t("detail.createdAt")}
               value={formatDate(product.createdAt, locale)}

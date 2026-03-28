@@ -67,7 +67,8 @@ describe("CategorySelector", () => {
       />,
     );
     fireEvent.click(screen.getByRole("combobox"));
-    expect(screen.getByText("selector.all")).toBeInTheDocument();
+    // "selector.all" appears in both the trigger and dropdown option, use getAllByText
+    expect(screen.getAllByText("selector.all").length).toBeGreaterThan(0);
     expect(screen.getByText("Electronics")).toBeInTheDocument();
     expect(screen.getByText("Clothing")).toBeInTheDocument();
     expect(screen.getByText("Food")).toBeInTheDocument();

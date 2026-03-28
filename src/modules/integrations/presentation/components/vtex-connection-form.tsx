@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
@@ -394,10 +394,12 @@ function VtexCreateForm({
   isPending,
   onSubmit,
 }: VtexCreateFormProps) {
-  const today = new Date();
-  const [syncFromDate, setSyncFromDate] = useState<Date | undefined>(today);
+  const today = useMemo(() => new Date(), []);
+  const [syncFromDate, setSyncFromDate] = useState<Date | undefined>(
+    () => new Date(),
+  );
 
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(() =>
     getDefaultSelectedStatuses("VTEX"),
   );
 

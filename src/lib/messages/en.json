@@ -196,7 +196,8 @@
         "minStock": "Minimum Stock",
         "maxStock": "Maximum Stock",
         "status": "Status",
-        "company": "Company"
+        "company": "Company",
+        "brand": "Brand"
       },
       "status": {
         "active": "Active",
@@ -260,7 +261,10 @@
       "filters": {
         "allStatuses": "All Statuses",
         "category": "Category",
-        "allCategories": "All Categories"
+        "allCategories": "All Categories",
+        "brand": "Brand",
+        "allBrands": "All Brands",
+        "searchBrand": "Search brand..."
       },
       "pagination": {
         "showing": "Showing {from} to {to} of {total} products"
@@ -611,8 +615,8 @@
         "allStatuses": "All Statuses",
         "warehouse": "Warehouse",
         "allWarehouses": "All Warehouses",
-        "dateFrom": "From Date",
-        "dateTo": "To Date",
+        "dateRange": "Date Range",
+        "selectDateRange": "Select date range",
         "clear": "Clear Filters"
       },
       "messages": {
@@ -727,8 +731,8 @@
         "fromWarehouse": "From Warehouse",
         "toWarehouse": "To Warehouse",
         "allWarehouses": "All Warehouses",
-        "dateFrom": "From Date",
-        "dateTo": "To Date",
+        "dateRange": "Date Range",
+        "selectDateRange": "Select date range",
         "clear": "Clear Filters"
       },
       "search": {
@@ -828,6 +832,69 @@
         "created": "Company created successfully",
         "updated": "Company updated successfully",
         "deleted": "Company deleted successfully"
+      },
+      "toast": {
+        "error": "An error occurred. Please try again."
+      }
+    },
+    "brands": {
+      "title": "Brands",
+      "description": "Manage your product brands",
+      "list": {
+        "title": "Brands"
+      },
+      "filters": {
+        "search": "Search brands..."
+      },
+      "fields": {
+        "name": "Name",
+        "description": "Description",
+        "status": "Status"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "new": "New Brand",
+        "edit": "Edit",
+        "delete": "Delete",
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "search": {
+        "placeholder": "Search brands..."
+      },
+      "pagination": {
+        "showing": "Showing {from} to {to} of {total} brands"
+      },
+      "empty": {
+        "title": "No brands yet",
+        "description": "Get started by adding your first brand."
+      },
+      "error": {
+        "loading": "Failed to load brands"
+      },
+      "form": {
+        "createTitle": "Create Brand",
+        "editTitle": "Edit Brand",
+        "namePlaceholder": "Enter brand name",
+        "descriptionPlaceholder": "Enter brand description (optional)"
+      },
+      "delete": {
+        "title": "Delete Brand",
+        "description": "Are you sure you want to delete this brand? This action cannot be undone."
+      },
+      "selector": {
+        "label": "Select brand",
+        "placeholder": "Select a brand",
+        "all": "All Brands",
+        "loading": "Loading..."
+      },
+      "messages": {
+        "created": "Brand created successfully",
+        "updated": "Brand updated successfully",
+        "deleted": "Brand deleted successfully"
       },
       "toast": {
         "error": "An error occurred. Please try again."
@@ -1007,7 +1074,9 @@
       "shippingCarrier": "Carrier",
       "shippingCarrierPlaceholder": "Enter carrier name (optional)",
       "shippingNotes": "Shipping Notes",
-      "shippingNotesPlaceholder": "Enter shipping notes (optional)"
+      "shippingNotesPlaceholder": "Enter shipping notes (optional)",
+      "contactType": "Contact Type",
+      "integrationProvider": "Integration"
     },
     "actions": {
       "new": "New Sale",
@@ -1081,10 +1150,15 @@
       "allStatuses": "All Statuses",
       "warehouse": "Warehouse",
       "allWarehouses": "All Warehouses",
-      "dateFrom": "From Date",
-      "dateTo": "To Date",
+      "contactType": "Contact Type",
+      "allContactTypes": "All Contact Types",
+      "integrationProvider": "Integration",
+      "allIntegrations": "All Integrations",
+      "dateRange": "Date Range",
+      "selectDateRange": "Select date range",
       "clear": "Clear Filters"
     },
+    "integrationOrigin": "Integration Origin",
     "confirmSale": {
       "title": "Confirm Sale",
       "description": "Are you sure you want to confirm this sale? This will deduct the stock from the warehouse and cannot be undone."
@@ -1271,8 +1345,8 @@
       "allStatuses": "All Statuses",
       "warehouse": "Warehouse",
       "allWarehouses": "All Warehouses",
-      "dateFrom": "From Date",
-      "dateTo": "To Date",
+      "dateRange": "Date Range",
+      "selectDateRange": "Select date range",
       "clear": "Clear Filters"
     },
     "confirmReturn": {
@@ -1562,12 +1636,13 @@
       "apply": "Generate",
       "clear": "Clear",
       "dateRange": "Date Range",
-      "startDate": "Start Date",
-      "endDate": "End Date",
+      "selectDateRange": "Select date range",
       "warehouse": "Warehouse",
       "allWarehouses": "All Warehouses",
       "category": "Category",
       "allCategories": "All Categories",
+      "brand": "Brand",
+      "allBrands": "All Brands",
       "period": "Period",
       "selectPeriod": "Select period",
       "groupBy": "Group By",
@@ -1583,7 +1658,9 @@
       "includeInactive": "Include Inactive Products",
       "deadStockDays": "Days Without Sale",
       "company": "Company",
-      "allCompanies": "All Companies"
+      "allCompanies": "All Companies",
+      "contactType": "Sale Type",
+      "allContactTypes": "All Types"
     },
     "period": {
       "MONTHLY": "Monthly",
@@ -1610,6 +1687,10 @@
       "ADJUST_OUT": "Adjust Out",
       "TRANSFER_IN": "Transfer In",
       "TRANSFER_OUT": "Transfer Out"
+    },
+    "contactType": {
+      "CUSTOMER": "Customer",
+      "EMPLOYEE": "Employee"
     },
     "returnType": {
       "CUSTOMER": "Customer",
@@ -1670,6 +1751,7 @@
       "Type": "Type",
       "Status": "Status",
       "Category": "Category",
+      "Brand": "Brand",
       "Reference": "Reference",
       "Created By": "Created By",
       "Unit Cost": "Unit Cost",
@@ -1972,6 +2054,7 @@
     "transfers": "Transfers",
     "stock": "Stock",
     "companies": "Companies",
+    "brands": "Brands",
     "sales": "Sales",
     "returns": "Returns",
     "reports": "Reports",
@@ -2061,8 +2144,8 @@
     "filters": {
       "entityType": "Entity Type",
       "action": "Action",
-      "startDate": "Start Date",
-      "endDate": "End Date",
+      "dateRange": "Date Range",
+      "selectDateRange": "Select date range",
       "allTypes": "All types",
       "allActions": "All actions",
       "allMethods": "All methods",
@@ -2339,6 +2422,7 @@
     },
     "types": {
       "CUSTOMER": "Customer",
+      "EMPLOYEE": "Employee",
       "SUPPLIER": "Supplier"
     },
     "status": {
@@ -2360,7 +2444,7 @@
     },
     "form": {
       "createTitle": "Create Contact",
-      "createDescription": "Add a new customer or supplier",
+      "createDescription": "Add a new customer, supplier, or employee",
       "editTitle": "Edit Contact",
       "editDescription": "Update contact information",
       "contactInfo": "Contact Information",

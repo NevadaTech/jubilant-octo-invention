@@ -444,9 +444,9 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                             </thead>
                             <tbody>
                               {selectedLog.orderItems!.map(
-                                (item: SyncLogOrderItem, idx: number) => (
+                                (item: SyncLogOrderItem) => (
                                   <tr
-                                    key={idx}
+                                    key={`${item.sku ?? item.name}-${item.quantity}-${item.price}`}
                                     className="border-b last:border-0"
                                   >
                                     <td className="px-3 py-2">
@@ -478,9 +478,9 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                         {/* Mobile cards */}
                         <div className="space-y-2 sm:hidden">
                           {selectedLog.orderItems!.map(
-                            (item: SyncLogOrderItem, idx: number) => (
+                            (item: SyncLogOrderItem) => (
                               <div
-                                key={idx}
+                                key={`${item.sku ?? item.name}-${item.quantity}-${item.price}`}
                                 className="rounded-md border px-3 py-2"
                               >
                                 <p className="text-sm font-medium leading-snug">

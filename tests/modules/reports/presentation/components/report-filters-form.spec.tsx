@@ -6,11 +6,17 @@ import { ReportFiltersForm } from "@/modules/reports/presentation/components/rep
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
+  useLocale: () => "en",
 }));
 
 let mockWarehouses: Array<{ id: string; name: string }> = [];
 vi.mock("@/modules/inventory/presentation/hooks/use-warehouses", () => ({
   useWarehouses: () => ({ data: { data: mockWarehouses } }),
+}));
+
+let mockBrands: Array<{ id: string; name: string }> = [];
+vi.mock("@/modules/brands/presentation/hooks/use-brands", () => ({
+  useBrands: () => ({ data: { data: mockBrands } }),
 }));
 
 let mockCategories: Array<{ id: string; name: string }> = [];
@@ -54,6 +60,41 @@ vi.mock("@/ui/components/button", () => ({
 vi.mock("@/ui/components/input", () => ({
   Input: (props: React.InputHTMLAttributes<HTMLInputElement>) => (
     <input {...props} data-testid={`input-${props.type}`} />
+  ),
+}));
+
+vi.mock("@/ui/components/date-range-picker", () => ({
+  DateRangePicker: ({
+    onChange,
+    placeholder,
+  }: {
+    value?: { from?: Date; to?: Date };
+    onChange: (range: { from?: Date; to?: Date } | undefined) => void;
+    placeholder?: string;
+  }) => (
+    <div data-testid="date-range-picker">
+      <input
+        type="date"
+        data-testid="input-date"
+        placeholder={placeholder}
+        onChange={(e) => {
+          const val = e.target.value;
+          onChange(val ? { from: new Date(val + "T00:00:00") } : undefined);
+        }}
+      />
+      <input
+        type="date"
+        data-testid="input-date"
+        onChange={(e) => {
+          const val = e.target.value;
+          onChange(
+            val
+              ? { from: undefined, to: new Date(val + "T00:00:00") }
+              : undefined,
+          );
+        }}
+      />
+    </div>
   ),
 }));
 
@@ -188,6 +229,7 @@ describe("ReportFiltersForm", () => {
     vi.useFakeTimers();
     mockWarehouses = [{ id: "wh-1", name: "Main Warehouse" }];
     mockCategories = [{ id: "cat-1", name: "Electronics" }];
+    mockBrands = [];
     mockCompanies = [];
     mockGlobalCompanyId = null;
     mockMultiCompanyEnabled = false;
@@ -238,10 +280,9 @@ describe("ReportFiltersForm", () => {
   // --- Conditional filter fields based on config ---
 
   // dateRange
-  it("Given: SALES report (dateRange: true) When: rendering Then: should show startDate and endDate", () => {
+  it("Given: SALES report (dateRange: true) When: rendering Then: should show dateRange field", () => {
     render(<ReportFiltersForm type="SALES" onGenerate={mockOnGenerate} />);
-    expect(screen.getByText("filters.startDate")).toBeInTheDocument();
-    expect(screen.getByText("filters.endDate")).toBeInTheDocument();
+    expect(screen.getByText("filters.dateRange")).toBeInTheDocument();
   });
 
   it("Given: AVAILABLE_INVENTORY report (dateRange: false) When: rendering Then: should NOT show date fields", () => {
@@ -251,8 +292,7 @@ describe("ReportFiltersForm", () => {
         onGenerate={mockOnGenerate}
       />,
     );
-    expect(screen.queryByText("filters.startDate")).not.toBeInTheDocument();
-    expect(screen.queryByText("filters.endDate")).not.toBeInTheDocument();
+    expect(screen.queryByText("filters.dateRange")).not.toBeInTheDocument();
   });
 
   // warehouseIds
@@ -558,7 +598,7 @@ describe("ReportFiltersForm", () => {
         onGenerate={mockOnGenerate}
       />,
     );
-    expect(screen.queryByText("filters.startDate")).not.toBeInTheDocument();
+    expect(screen.queryByText("filters.dateRange")).not.toBeInTheDocument();
     expect(screen.getByText("filters.includeInactive")).toBeInTheDocument();
   });
 

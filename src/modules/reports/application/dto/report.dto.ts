@@ -41,12 +41,16 @@ export interface ReportDateRange {
   endDate?: string;
 }
 
+export type ContactTypeValue = "CUSTOMER" | "SUPPLIER" | "EMPLOYEE";
+
 export interface ReportParameters {
   dateRange?: ReportDateRange;
   warehouseIds?: string[];
   productId?: string;
   categoryIds?: string[];
+  brandIds?: string[];
   status?: string[];
+  contactType?: ContactTypeValue;
   returnTypes?: ("CUSTOMER" | "SUPPLIER")[];
   groupBy?: GroupByValue;
   period?: PeriodValue;
@@ -120,9 +124,11 @@ export interface ReportTypeConfig {
     dateRange?: boolean;
     warehouseIds?: boolean;
     categoryIds?: boolean;
+    brandIds?: boolean;
     period?: boolean;
     groupBy?: boolean;
     status?: boolean;
+    contactType?: boolean;
     returnTypes?: boolean;
     severities?: boolean;
     movementTypes?: boolean;
@@ -173,33 +179,49 @@ export const REPORT_FILTER_CONFIG: Record<
   ReportTypeConfig["filters"]
 > = {
   AVAILABLE_INVENTORY: {
+    dateRange: false,
     warehouseIds: true,
+    brandIds: true,
     companyId: true,
     includeInactive: true,
   },
   MOVEMENT_HISTORY: {
     dateRange: true,
     warehouseIds: true,
+    brandIds: true,
     companyId: true,
     movementTypes: true,
   },
-  VALUATION: { warehouseIds: true, categoryIds: true, companyId: true },
-  LOW_STOCK: { warehouseIds: true, severities: true, companyId: true },
+  VALUATION: {
+    warehouseIds: true,
+    categoryIds: true,
+    brandIds: true,
+    companyId: true,
+  },
+  LOW_STOCK: {
+    warehouseIds: true,
+    brandIds: true,
+    severities: true,
+    companyId: true,
+  },
   MOVEMENTS: {
     dateRange: true,
     warehouseIds: true,
+    brandIds: true,
     companyId: true,
     movementTypes: true,
   },
   FINANCIAL: {
     dateRange: true,
     warehouseIds: true,
+    brandIds: true,
     companyId: true,
     categoryIds: true,
   },
   TURNOVER: {
     dateRange: true,
     warehouseIds: true,
+    brandIds: true,
     companyId: true,
     categoryIds: true,
   },
@@ -208,15 +230,28 @@ export const REPORT_FILTER_CONFIG: Record<
     warehouseIds: true,
     companyId: true,
     status: true,
+    contactType: true,
   },
   SALES_BY_PRODUCT: {
     dateRange: true,
     warehouseIds: true,
+    brandIds: true,
     companyId: true,
     categoryIds: true,
+    contactType: true,
   },
-  SALES_BY_WAREHOUSE: { dateRange: true, warehouseIds: true, companyId: true },
-  SALES_BY_CLIENT: { dateRange: true, warehouseIds: true, companyId: true },
+  SALES_BY_WAREHOUSE: {
+    dateRange: true,
+    warehouseIds: true,
+    companyId: true,
+    contactType: true,
+  },
+  SALES_BY_CLIENT: {
+    dateRange: true,
+    warehouseIds: true,
+    companyId: true,
+    contactType: true,
+  },
   RETURNS: {
     dateRange: true,
     warehouseIds: true,
@@ -252,11 +287,13 @@ export const REPORT_FILTER_CONFIG: Record<
   ABC_ANALYSIS: {
     dateRange: true,
     warehouseIds: true,
+    brandIds: true,
     companyId: true,
     categoryIds: true,
   },
   DEAD_STOCK: {
     warehouseIds: true,
+    brandIds: true,
     companyId: true,
     categoryIds: true,
     deadStockDays: true,

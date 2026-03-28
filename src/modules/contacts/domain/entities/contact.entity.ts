@@ -1,6 +1,6 @@
 import { Entity } from "@/shared/domain";
 
-export type ContactType = "CUSTOMER" | "SUPPLIER";
+export type ContactType = "CUSTOMER" | "SUPPLIER" | "EMPLOYEE";
 
 export interface ContactProps {
   id: string;
@@ -84,5 +84,8 @@ export class Contact extends Entity<string> {
   }
   get isSupplier(): boolean {
     return this.props.type === "SUPPLIER";
+  }
+  get isEmployee(): boolean {
+    return this.props.type === "EMPLOYEE";
   }
 }

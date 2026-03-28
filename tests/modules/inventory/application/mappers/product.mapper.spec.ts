@@ -35,6 +35,8 @@ describe("ProductMapper", () => {
     statusChangedAt: null,
     companyId: null,
     companyName: null,
+    brandId: null,
+    brandName: null,
   };
 
   describe("toDomain", () => {

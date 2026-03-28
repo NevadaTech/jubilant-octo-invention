@@ -223,9 +223,12 @@ function Calendar({
           ),
           day_button: cn(
             buttonVariants({ variant: "ghost" }),
-            "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
+            "h-9 w-9 p-0 font-normal aria-selected:opacity-100 aria-selected:bg-transparent aria-selected:text-inherit",
           ),
-          range_end: "day-range-end",
+          range_start:
+            "day-range-start rounded-md bg-primary text-primary-foreground",
+          range_end:
+            "day-range-end rounded-md bg-primary text-primary-foreground",
           selected:
             "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-md",
           today: "bg-accent text-accent-foreground rounded-md",

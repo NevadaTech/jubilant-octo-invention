@@ -167,11 +167,14 @@ interface SelectValueProps {
 }
 
 function SelectValue({ placeholder, children }: SelectValueProps) {
-  const { value, displayText } = useSelectContext();
+  const { value: _value, displayText } = useSelectContext();
   if (children) {
     return <span>{children}</span>;
   }
-  return <span>{(value ? displayText || value : null) || placeholder}</span>;
+  // Show displayText when available, otherwise fall back to placeholder.
+  // Never show the raw value string (e.g. "all") — SelectItems only mount
+  // when the dropdown opens, so displayText may not be set yet.
+  return <span>{displayText || placeholder}</span>;
 }
 
 interface SelectContentProps extends HTMLAttributes<HTMLDivElement> {

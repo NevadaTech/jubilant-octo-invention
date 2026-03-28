@@ -61,6 +61,8 @@ export function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
     statusChangedAt: raw.statusChangedAt ?? null,
     companyId: raw.companyId ?? null,
     companyName: raw.companyName ?? null,
+    brandId: raw.brandId ?? null,
+    brandName: raw.brandName ?? null,
   };
 }
 
@@ -78,6 +80,7 @@ function toCreateApiDto(data: CreateProductDto): CreateProductApiDto {
     categoryIds: data.categoryIds,
     price: data.price || undefined,
     companyId: data.companyId || undefined,
+    brandId: data.brandId || undefined,
   };
 }
 
@@ -101,6 +104,7 @@ function toUpdateApiDto(data: UpdateProductDto): UpdateProductApiDto {
     dto.status = data.isActive ? "ACTIVE" : "INACTIVE";
   }
   if (data.companyId !== undefined) dto.companyId = data.companyId || undefined;
+  if (data.brandId !== undefined) dto.brandId = data.brandId || undefined;
 
   return dto;
 }
@@ -133,6 +137,22 @@ export class ProductApiAdapter implements ProductRepositoryPort {
       return ProductMapper.toDomain(dto);
     } catch (error) {
       // Return null if product not found (404)
+      if (this.isNotFoundError(error)) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async lookupByCode(code: string): Promise<Product | null> {
+    try {
+      const response = await apiClient.get<ApiResponse<ProductApiRawDto>>(
+        `${this.basePath}/lookup`,
+        { params: { code } },
+      );
+      const dto = mapApiProductToDto(response.data.data);
+      return ProductMapper.toDomain(dto);
+    } catch (error) {
       if (this.isNotFoundError(error)) {
         return null;
       }
@@ -176,6 +196,9 @@ export class ProductApiAdapter implements ProductRepositoryPort {
     }
     if (filters.statuses?.length === 1) {
       params.status = filters.statuses[0];
+    }
+    if (filters.brandIds?.length) {
+      params.brandIds = filters.brandIds.join(",");
     }
     if (filters.sortBy) params.sortBy = filters.sortBy;
     if (filters.sortOrder) params.sortOrder = filters.sortOrder;

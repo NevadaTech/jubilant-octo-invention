@@ -13,6 +13,7 @@ import type { RoleRepositoryPort } from "@/modules/roles/application/ports/role.
 import type { AuditLogRepositoryPort } from "@/modules/audit/application/ports/audit-log.repository.port";
 import type { ReportRepositoryPort } from "@/modules/reports/application/ports/report.repository.port";
 import type { CompanyRepositoryPort } from "@/modules/companies/application/ports/company.repository.port";
+import type { BrandRepositoryPort } from "@/modules/brands/application/ports/brand.repository.port";
 import type { SettingsRepositoryPort } from "@/modules/settings/application/ports/settings.port";
 import type { ImportRepositoryPort } from "@/modules/imports/application/ports/import.repository.port";
 import type { ContactRepositoryPort } from "@/modules/contacts/application/ports/contact.repository.port";
@@ -34,6 +35,7 @@ import { RoleApiAdapter } from "@/modules/roles/infrastructure/adapters/role-api
 import { AuditLogApiAdapter } from "@/modules/audit/infrastructure/adapters/audit-log-api.adapter";
 import { ReportApiAdapter } from "@/modules/reports/infrastructure/adapters/report-api.adapter";
 import { CompanyApiAdapter } from "@/modules/companies/infrastructure/adapters/company-api.adapter";
+import { BrandApiAdapter } from "@/modules/brands/infrastructure/adapters/brand-api.adapter";
 import { SettingsApiAdapter } from "@/modules/settings/infrastructure/adapters/settings-api.adapter";
 import { ImportApiAdapter } from "@/modules/imports/infrastructure/adapters/import-api.adapter";
 import { ContactApiAdapter } from "@/modules/contacts/infrastructure/adapters/contact-api.adapter";
@@ -106,6 +108,9 @@ export interface Container {
   // Companies
   companyRepository: CompanyRepositoryPort;
 
+  // Brands
+  brandRepository: BrandRepositoryPort;
+
   // Settings
   settingsRepository: SettingsRepositoryPort;
 
@@ -139,6 +144,7 @@ export function createContainer(): Container {
   const auditLogRepository = new AuditLogApiAdapter();
   const reportRepository = new ReportApiAdapter();
   const companyRepository = new CompanyApiAdapter();
+  const brandRepository = new BrandApiAdapter();
   const settingsRepository = new SettingsApiAdapter();
   const importRepository = new ImportApiAdapter();
   const contactRepository = new ContactApiAdapter();
@@ -192,6 +198,9 @@ export function createContainer(): Container {
 
     // Companies
     companyRepository,
+
+    // Brands
+    brandRepository,
 
     // Settings
     settingsRepository,

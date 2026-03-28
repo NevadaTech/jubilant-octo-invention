@@ -3,14 +3,18 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Search, X, Filter } from "lucide-react";
+import { format } from "date-fns";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { MultiSelect } from "@/ui/components/multi-select";
+import { DateRangePicker } from "@/ui/components/date-range-picker";
 import { useDebounce } from "@/shared/presentation/hooks";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks";
 import type { SaleFilters } from "@/modules/sales/application/dto/sale.dto";
 import type { SaleStatus } from "@/modules/sales/domain/entities/sale.entity";
+import type { ContactType } from "@/modules/contacts/domain/entities/contact.entity";
+import type { DateRange } from "react-day-picker";
 
 interface SaleFiltersProps {
   filters: SaleFilters;
@@ -27,12 +31,16 @@ const SALE_STATUSES: SaleStatus[] = [
   "RETURNED",
 ];
 
+const CONTACT_TYPES: ContactType[] = ["CUSTOMER", "SUPPLIER", "EMPLOYEE"];
+const INTEGRATION_PROVIDERS = ["VTEX", "MERCADOLIBRE"] as const;
+
 export function SaleFiltersComponent({
   filters,
   onFiltersChange,
 }: SaleFiltersProps) {
   const t = useTranslations("sales");
   const tCommon = useTranslations("common");
+  const tContacts = useTranslations("contacts");
   const [searchValue, setSearchValue] = useState(filters.search || "");
   const [showFilters, setShowFilters] = useState(false);
   const debouncedSearch = useDebounce(searchValue, 300);
@@ -74,18 +82,31 @@ export function SaleFiltersComponent({
     });
   };
 
-  const handleDateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleContactTypeChange = (values: string[]) => {
     onFiltersChange({
       ...filters,
-      startDate: e.target.value || undefined,
+      contactType: values.length === 1 ? values[0] : undefined,
       page: 1,
     });
   };
 
-  const handleDateToChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIntegrationProviderChange = (values: string[]) => {
     onFiltersChange({
       ...filters,
-      endDate: e.target.value || undefined,
+      integrationProvider: values.length === 1 ? values[0] : undefined,
+      page: 1,
+    });
+  };
+
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    const startDate = range?.from
+      ? format(range.from, "yyyy-MM-dd")
+      : undefined;
+    const endDate = range?.to ? format(range.to, "yyyy-MM-dd") : undefined;
+    onFiltersChange({
+      ...filters,
+      startDate,
+      endDate,
       page: 1,
     });
   };
@@ -101,6 +122,8 @@ export function SaleFiltersComponent({
   const hasActiveFilters =
     (filters.status?.length ?? 0) > 0 ||
     (filters.warehouseIds?.length ?? 0) > 0 ||
+    filters.contactType ||
+    filters.integrationProvider ||
     filters.startDate ||
     filters.endDate ||
     filters.search;
@@ -108,6 +131,16 @@ export function SaleFiltersComponent({
   const statusOptions = SALE_STATUSES.map((s) => ({
     value: s,
     label: t(`status.${s.toLowerCase()}`),
+  }));
+
+  const contactTypeOptions = CONTACT_TYPES.map((ct) => ({
+    value: ct,
+    label: tContacts(`types.${ct}`),
+  }));
+
+  const integrationProviderOptions = INTEGRATION_PROVIDERS.map((ip) => ({
+    value: ip,
+    label: ip === "MERCADOLIBRE" ? "MercadoLibre" : ip,
   }));
 
   return (
@@ -172,25 +205,53 @@ export function SaleFiltersComponent({
             />
           </div>
 
-          <div className="min-w-[150px]">
+          <div className="min-w-[200px]">
             <Label className="mb-2 block text-sm">
-              {t("filters.dateFrom")}
+              {t("filters.contactType")}
             </Label>
-            <Input
-              type="date"
-              value={filters.startDate || ""}
-              onChange={handleDateFromChange}
-              className="w-auto"
+            <MultiSelect
+              value={filters.contactType ? [filters.contactType] : []}
+              onValueChange={handleContactTypeChange}
+              options={contactTypeOptions}
+              allLabel={t("filters.allContactTypes")}
+              selectedLabel={t("filters.contactType")}
             />
           </div>
 
-          <div className="min-w-[150px]">
-            <Label className="mb-2 block text-sm">{t("filters.dateTo")}</Label>
-            <Input
-              type="date"
-              value={filters.endDate || ""}
-              onChange={handleDateToChange}
-              className="w-auto"
+          <div className="min-w-[200px]">
+            <Label className="mb-2 block text-sm">
+              {t("filters.integrationProvider")}
+            </Label>
+            <MultiSelect
+              value={
+                filters.integrationProvider ? [filters.integrationProvider] : []
+              }
+              onValueChange={handleIntegrationProviderChange}
+              options={integrationProviderOptions}
+              allLabel={t("filters.allIntegrations")}
+              selectedLabel={t("filters.integrationProvider")}
+            />
+          </div>
+
+          <div className="min-w-[280px]">
+            <Label className="mb-2 block text-sm">
+              {t("filters.dateRange")}
+            </Label>
+            <DateRangePicker
+              value={
+                filters.startDate || filters.endDate
+                  ? {
+                      from: filters.startDate
+                        ? new Date(filters.startDate + "T00:00:00")
+                        : undefined,
+                      to: filters.endDate
+                        ? new Date(filters.endDate + "T00:00:00")
+                        : undefined,
+                    }
+                  : undefined
+              }
+              onChange={handleDateRangeChange}
+              placeholder={t("filters.selectDateRange")}
             />
           </div>
         </div>

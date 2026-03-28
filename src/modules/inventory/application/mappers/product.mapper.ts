@@ -33,6 +33,8 @@ export class ProductMapper {
       statusChangedAt: dto.statusChangedAt ?? null,
       companyId: dto.companyId ?? null,
       companyName: dto.companyName ?? null,
+      brandId: dto.brandId ?? null,
+      brandName: dto.brandName ?? null,
     });
   }
 
@@ -67,6 +69,8 @@ export class ProductMapper {
       statusChangedAt: entity.statusChangedAt ?? null,
       companyId: entity.companyId ?? null,
       companyName: entity.companyName ?? null,
+      brandId: entity.brandId ?? null,
+      brandName: entity.brandName ?? null,
     };
   }
 }

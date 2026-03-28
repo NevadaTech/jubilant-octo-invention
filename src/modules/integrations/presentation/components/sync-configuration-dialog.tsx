@@ -48,10 +48,10 @@ export function SyncConfigurationDialog({
   );
   const providerKey = getProviderKey(provider);
 
-  const [syncFromDate, setSyncFromDate] = useState<Date | undefined>(
+  const [syncFromDate, setSyncFromDate] = useState<Date | undefined>(() =>
     lastSyncAt ? new Date(lastSyncAt) : new Date(),
   );
-  const [selected, setSelected] = useState<string[]>(defaultSelected);
+  const [selected, setSelected] = useState<string[]>(() => defaultSelected);
 
   useEffect(() => {
     if (open) {

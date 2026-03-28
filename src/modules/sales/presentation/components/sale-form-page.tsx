@@ -51,7 +51,6 @@ export function SaleFormPage() {
   });
   const { data: contactsData } = useContacts({
     limit: 100,
-    type: "CUSTOMER",
     isActive: true,
   });
 

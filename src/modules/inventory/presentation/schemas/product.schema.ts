@@ -25,6 +25,7 @@ export const createProductSchema = z.object({
   unitOfMeasure: z.string().min(1, "Unit of measure is required"),
   price: z.number().min(0, "Price cannot be negative"),
   companyId: z.string().optional(),
+  brandId: z.string().optional(),
 });
 
 export const updateProductSchema = createProductSchema.partial().extend({
@@ -40,6 +41,7 @@ export interface CreateProductFormData {
   unitOfMeasure: string;
   price: number;
   companyId?: string;
+  brandId?: string;
 }
 
 export interface UpdateProductFormData extends Partial<CreateProductFormData> {
@@ -61,6 +63,7 @@ export function toCreateProductDto(
     minStock: 0,
     maxStock: 0,
     companyId: data.companyId || undefined,
+    brandId: data.brandId || undefined,
   };
 }
 
@@ -77,6 +80,7 @@ export function toUpdateProductDto(
   if (data.price !== undefined) dto.price = data.price;
   if (data.isActive !== undefined) dto.isActive = data.isActive;
   if (data.companyId !== undefined) dto.companyId = data.companyId || undefined;
+  if (data.brandId !== undefined) dto.brandId = data.brandId || undefined;
 
   return dto;
 }

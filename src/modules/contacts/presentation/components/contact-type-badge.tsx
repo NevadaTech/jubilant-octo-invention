@@ -11,9 +11,10 @@ interface ContactTypeBadgeProps {
 export function ContactTypeBadge({ type }: ContactTypeBadgeProps) {
   const t = useTranslations("contacts");
 
-  const variants: Record<ContactType, "info" | "warning"> = {
+  const variants: Record<ContactType, "info" | "warning" | "secondary"> = {
     CUSTOMER: "info",
     SUPPLIER: "warning",
+    EMPLOYEE: "secondary",
   };
 
   return <Badge variant={variants[type]}>{t(`types.${type}`)}</Badge>;

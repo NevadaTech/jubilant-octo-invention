@@ -1,0 +1,254 @@
+"use client";
+
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { Plus, MoreHorizontal, Pencil, Trash2, Tag } from "lucide-react";
+import { Button } from "@/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { Badge } from "@/ui/components/badge";
+import { Skeleton } from "@/ui/components/skeleton";
+import { Input } from "@/ui/components/input";
+import { TablePagination } from "@/ui/components/table-pagination";
+import { SortableHeader } from "@/ui/components/sortable-header";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/ui/components/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/ui/components/alert-dialog";
+import {
+  useBrands,
+  useDeleteBrand,
+} from "@/modules/brands/presentation/hooks/use-brands";
+import type { BrandFilters } from "@/modules/brands/application/dto/brand.dto";
+import { BrandForm } from "./brand-form";
+
+export function BrandList() {
+  const t = useTranslations("inventory.brands");
+  const tCommon = useTranslations("common");
+
+  const [filters, setFilters] = useState<BrandFilters>({
+    page: 1,
+    limit: 10,
+  });
+  const [formOpen, setFormOpen] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [brandToDelete, setBrandToDelete] = useState<string | null>(null);
+
+  const { data, isLoading, isError } = useBrands(filters);
+  const deleteBrand = useDeleteBrand();
+
+  const updateFilters = (patch: Partial<BrandFilters>) => {
+    setFilters((prev) => ({ ...prev, ...patch }));
+  };
+
+  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
+    updateFilters({
+      sortBy: order ? (field as BrandFilters["sortBy"]) : undefined,
+      sortOrder: order,
+      page: 1,
+    });
+  };
+
+  const handleDelete = async () => {
+    if (brandToDelete) {
+      await deleteBrand.mutateAsync(brandToDelete);
+      setDeleteDialogOpen(false);
+      setBrandToDelete(null);
+    }
+  };
+
+  const openEdit = (id: string) => {
+    setEditId(id);
+    setFormOpen(true);
+  };
+
+  const openCreate = () => {
+    setEditId(null);
+    setFormOpen(true);
+  };
+
+  if (isError) {
+    return (
+      <Card>
+        <CardContent className="py-10 text-center">
+          <p className="text-destructive">{t("error.loading")}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle>{t("list.title")}</CardTitle>
+            <Button onClick={openCreate}>
+              <Plus className="mr-2 h-4 w-4" />
+              {t("actions.new")}
+            </Button>
+          </div>
+          <div className="mt-2">
+            <Input
+              placeholder={t("filters.search")}
+              value={filters.search || ""}
+              onChange={(e) =>
+                updateFilters({ search: e.target.value, page: 1 })
+              }
+              className="max-w-sm"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }, (_, i) => `skeleton-${i}`).map(
+                (key) => (
+                  <Skeleton key={key} className="h-16 w-full" />
+                ),
+              )}
+            </div>
+          ) : !data?.data.length ? (
+            <div className="py-10 text-center">
+              <Tag className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-4 text-lg font-semibold">{t("empty.title")}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {t("empty.description")}
+              </p>
+              <Button className="mt-4" onClick={openCreate}>
+                <Plus className="mr-2 h-4 w-4" />
+                {t("actions.new")}
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b text-left text-sm font-medium text-muted-foreground">
+                      <SortableHeader
+                        label={t("fields.name")}
+                        field="name"
+                        currentSortBy={filters.sortBy}
+                        currentSortOrder={filters.sortOrder}
+                        onSort={handleSort}
+                      />
+                      <th className="pb-3 text-left">{t("fields.status")}</th>
+                      <th className="pb-3 text-right">{tCommon("actions")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.data.map((brand) => (
+                      <tr key={brand.id} className="border-b">
+                        <td className="py-4 pr-4">
+                          <div>
+                            <p className="font-medium">{brand.name}</p>
+                            {brand.description && (
+                              <p className="text-sm text-muted-foreground truncate max-w-xs">
+                                {brand.description}
+                              </p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-4 pr-4">
+                          <Badge
+                            variant={brand.isActive ? "success" : "secondary"}
+                          >
+                            {brand.isActive
+                              ? t("status.active")
+                              : t("status.inactive")}
+                          </Badge>
+                        </td>
+                        <td className="py-4 text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                onClick={() => openEdit(brand.id)}
+                              >
+                                <Pencil className="mr-2 h-4 w-4" />
+                                {t("actions.edit")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setBrandToDelete(brand.id);
+                                  setDeleteDialogOpen(true);
+                                }}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                {tCommon("delete")}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <TablePagination
+                page={data.pagination.page}
+                totalPages={data.pagination.totalPages}
+                total={data.pagination.total}
+                limit={data.pagination.limit}
+                onPageChange={(p) => updateFilters({ page: p })}
+                onPageSizeChange={(size) =>
+                  updateFilters({ limit: size, page: 1 })
+                }
+                showingLabel={tCommon("pagination.showing", {
+                  from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                  to: Math.min(
+                    data.pagination.page * data.pagination.limit,
+                    data.pagination.total,
+                  ),
+                  total: data.pagination.total,
+                })}
+                perPageLabel={tCommon("pagination.perPage")}
+              />
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      <BrandForm open={formOpen} onOpenChange={setFormOpen} editId={editId} />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("delete.title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("delete.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteBrand.isPending ? tCommon("loading") : tCommon("delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}

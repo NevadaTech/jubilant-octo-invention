@@ -6,8 +6,9 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  useMemo,
 } from "react";
-import { Check, ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown, X, Search } from "lucide-react";
 import { createPortal } from "react-dom";
 import { cn } from "@/ui/lib/utils";
 
@@ -25,6 +26,8 @@ interface MultiSelectProps {
   selectedLabel?: string;
   className?: string;
   disabled?: boolean;
+  searchable?: boolean;
+  searchPlaceholder?: string;
 }
 
 function computePosition(
@@ -66,12 +69,21 @@ export function MultiSelect({
   selectedLabel,
   className,
   disabled = false,
+  searchable = false,
+  searchPlaceholder = "Search...",
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
+  const [search, setSearch] = useState("");
   const triggerRef = useRef<HTMLButtonElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const filteredOptions = useMemo(() => {
+    if (!searchable || !search) return options;
+    const lower = search.toLowerCase();
+    return options.filter((o) => o.label.toLowerCase().includes(lower));
+  }, [options, search, searchable]);
 
   useEffect(() => {
     setMounted(true);
@@ -109,6 +121,12 @@ export function MultiSelect({
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
     };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      setSearch("");
+    }
   }, [open]);
 
   const toggleValue = (val: string) => {
@@ -180,8 +198,20 @@ export function MultiSelect({
               width: coords.width,
             }}
           >
+            {searchable && (
+              <div className="flex items-center border-b px-3">
+                <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                <input
+                  type="text"
+                  className="flex h-10 w-full rounded-md bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
+                  placeholder={searchPlaceholder}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+            )}
             <div className="p-1 overflow-y-auto max-h-80">
-              {options.map((option) => {
+              {filteredOptions.map((option) => {
                 const isSelected = value.includes(option.value);
                 return (
                   <div

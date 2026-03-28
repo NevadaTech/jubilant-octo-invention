@@ -75,6 +75,9 @@ export class SaleMapper {
       returnedBy: raw.returnedBy ?? null,
       returnedByName: raw.returnedByName ?? null,
       pickingEnabled: raw.pickingEnabled ?? false,
+      contactType: raw.contactType ?? null,
+      integrationConnectionId: raw.integrationConnectionId ?? null,
+      integrationProvider: raw.integrationProvider ?? null,
     });
   }
 
@@ -131,6 +134,9 @@ export class SaleMapper {
       returnedBy: dto.returnedBy ?? null,
       returnedByName: dto.returnedByName ?? null,
       pickingEnabled: dto.pickingEnabled ?? false,
+      contactType: dto.contactType ?? null,
+      integrationConnectionId: dto.integrationConnectionId ?? null,
+      integrationProvider: dto.integrationProvider ?? null,
     });
   }
 }

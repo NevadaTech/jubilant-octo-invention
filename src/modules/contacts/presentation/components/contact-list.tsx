@@ -118,6 +118,7 @@ export function ContactList() {
               options={[
                 { value: "CUSTOMER", label: t("types.CUSTOMER") },
                 { value: "SUPPLIER", label: t("types.SUPPLIER") },
+                { value: "EMPLOYEE", label: t("types.EMPLOYEE") },
               ]}
               placeholder={t("filters.type")}
               allLabel={t("filters.allTypes")}

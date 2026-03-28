@@ -189,6 +189,9 @@ export function ContactFormPage({ mode, contactId }: ContactFormPageProps) {
                         <SelectItem value="SUPPLIER">
                           {t("types.SUPPLIER")}
                         </SelectItem>
+                        <SelectItem value="EMPLOYEE">
+                          {t("types.EMPLOYEE")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   )}

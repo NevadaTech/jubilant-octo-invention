@@ -32,6 +32,8 @@ export interface ProductProps {
   statusChangedAt?: string | null;
   companyId?: string | null;
   companyName?: string | null;
+  brandId?: string | null;
+  brandName?: string | null;
 }
 
 export class Product extends Entity<string> {
@@ -72,6 +74,8 @@ export class Product extends Entity<string> {
       statusChangedAt: props.statusChangedAt,
       companyId: props.companyId,
       companyName: props.companyName,
+      brandId: props.brandId,
+      brandName: props.brandName,
     });
   }
 
@@ -185,6 +189,14 @@ export class Product extends Entity<string> {
 
   get companyName(): string | null | undefined {
     return this.props.companyName;
+  }
+
+  get brandId(): string | null | undefined {
+    return this.props.brandId;
+  }
+
+  get brandName(): string | null | undefined {
+    return this.props.brandName;
   }
 
   toJSON() {

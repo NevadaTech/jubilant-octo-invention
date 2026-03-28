@@ -12,6 +12,7 @@ import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { CategoryMultiSelector } from "@/modules/inventory/presentation/components/categories/category-multi-selector";
 import { CompanySelector } from "@/modules/companies/presentation/components/company-selector";
+import { BrandSelector } from "@/modules/brands/presentation/components/brand-selector";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 import {
   createProductSchema,
@@ -58,6 +59,7 @@ export function ProductForm() {
       unitOfMeasure: "unit",
       price: 0,
       companyId: undefined,
+      brandId: undefined,
     },
   });
 
@@ -74,6 +76,7 @@ export function ProductForm() {
         unitOfMeasure: existingProduct.unitOfMeasure,
         price: existingProduct.price,
         companyId: existingProduct.companyId || undefined,
+        brandId: existingProduct.brandId || undefined,
       });
     } else if (!isEditing) {
       reset({
@@ -84,6 +87,7 @@ export function ProductForm() {
         unitOfMeasure: "unit",
         price: 0,
         companyId: undefined,
+        brandId: undefined,
       });
     }
   }, [isEditing, existingProduct, reset]);
@@ -188,6 +192,15 @@ export function ProductForm() {
                     />
                   </FormField>
                 )}
+
+                <FormField>
+                  <Label>{t("fields.brand")}</Label>
+                  <BrandSelector
+                    value={watch("brandId")}
+                    onChange={(v) => setValue("brandId", v)}
+                    allowClear
+                  />
+                </FormField>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <FormField error={errors.unitOfMeasure?.message}>

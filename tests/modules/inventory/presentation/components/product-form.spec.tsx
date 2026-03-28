@@ -35,6 +35,16 @@ vi.mock(
   }),
 );
 
+vi.mock("@/modules/brands/presentation/components/brand-selector", () => ({
+  BrandSelector: ({
+    value,
+    onChange,
+  }: {
+    value: string | null;
+    onChange: (v: string | null) => void;
+  }) => <div data-testid="brand-selector">{value || "none"}</div>,
+}));
+
 let mockIsOpen = true;
 let mockEditingId: string | null = null;
 

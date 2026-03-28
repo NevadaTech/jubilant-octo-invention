@@ -61,7 +61,8 @@ describe("AlertConfigurationForm", () => {
 
   it("Given: config loaded When: rendering Then: should show frequency field", () => {
     render(<AlertConfigurationForm />);
-    expect(screen.getByText("frequency")).toBeDefined();
+    // "frequency" appears in both the label and the select trigger placeholder
+    expect(screen.getAllByText("frequency").length).toBeGreaterThan(0);
   });
 
   it("Given: config loaded When: rendering Then: should show enabled toggle label", () => {

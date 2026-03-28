@@ -64,6 +64,9 @@ export interface SaleProps {
   returnedBy: string | null;
   returnedByName: string | null;
   pickingEnabled: boolean;
+  contactType: string | null;
+  integrationConnectionId: string | null;
+  integrationProvider: string | null;
 }
 
 export class SaleLine extends ValueObject<SaleLineProps> {
@@ -164,6 +167,9 @@ export class Sale extends AggregateRoot<string> {
       returnedBy: props.returnedBy,
       returnedByName: props.returnedByName,
       pickingEnabled: props.pickingEnabled,
+      contactType: props.contactType,
+      integrationConnectionId: props.integrationConnectionId,
+      integrationProvider: props.integrationProvider,
     });
   }
 
@@ -325,6 +331,18 @@ export class Sale extends AggregateRoot<string> {
 
   get pickingEnabled(): boolean {
     return this.props.pickingEnabled;
+  }
+
+  get contactType(): string | null {
+    return this.props.contactType;
+  }
+
+  get integrationConnectionId(): string | null {
+    return this.props.integrationConnectionId;
+  }
+
+  get integrationProvider(): string | null {
+    return this.props.integrationProvider;
   }
 
   toJSON() {

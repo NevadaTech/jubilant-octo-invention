@@ -7,7 +7,7 @@ import type {
 export const createContactSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
   identification: z.string().min(1, "Identification is required").max(100),
-  type: z.enum(["CUSTOMER", "SUPPLIER"]).default("CUSTOMER"),
+  type: z.enum(["CUSTOMER", "SUPPLIER", "EMPLOYEE"]).default("CUSTOMER"),
   email: z.string().email().max(255).optional().or(z.literal("")),
   phone: z.string().max(50).optional(),
   address: z.string().max(500).optional(),
@@ -33,7 +33,7 @@ export function toCreateContactDto(
 export const updateContactSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
   identification: z.string().min(1, "Identification is required").max(100),
-  type: z.enum(["CUSTOMER", "SUPPLIER"]),
+  type: z.enum(["CUSTOMER", "SUPPLIER", "EMPLOYEE"]),
   email: z.string().email().max(255).optional().or(z.literal("")),
   phone: z.string().max(50).optional(),
   address: z.string().max(500).optional(),

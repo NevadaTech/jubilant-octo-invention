@@ -199,6 +199,9 @@ export class SaleApiAdapter implements SaleRepositoryPort {
     if (filters.sortOrder) params.sortOrder = filters.sortOrder;
     if (filters.page) params.page = filters.page;
     if (filters.limit) params.limit = filters.limit;
+    if (filters.contactType) params.contactType = filters.contactType;
+    if (filters.integrationProvider)
+      params.integrationProvider = filters.integrationProvider;
 
     return params;
   }

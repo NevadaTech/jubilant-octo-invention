@@ -16,6 +16,12 @@ vi.mock("@/modules/inventory/presentation/hooks", () => ({
   }),
 }));
 
+vi.mock("@/modules/brands/presentation/hooks/use-brands", () => ({
+  useBrands: () => ({
+    data: { data: [{ id: "brand-1", name: "Acme" }] },
+  }),
+}));
+
 describe("ProductFilters", () => {
   const defaultFilters = { page: 1, limit: 10 };
   const mockOnChange = vi.fn();

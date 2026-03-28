@@ -65,6 +65,7 @@ export function Sidebar({ className }: SidebarProps) {
         PERMISSIONS.INVENTORY_READ,
         PERMISSIONS.INVENTORY_TRANSFER,
         PERMISSIONS.COMBOS_READ,
+        PERMISSIONS.BRANDS_READ,
       ],
       children: [
         {
@@ -81,6 +82,11 @@ export function Sidebar({ className }: SidebarProps) {
           label: t("navigation.combos"),
           href: "/dashboard/inventory/combos",
           requiredPermissions: [PERMISSIONS.COMBOS_READ],
+        },
+        {
+          label: t("navigation.brands"),
+          href: "/dashboard/inventory/brands",
+          requiredPermissions: [PERMISSIONS.BRANDS_READ],
         },
         {
           label: t("navigation.warehouses"),

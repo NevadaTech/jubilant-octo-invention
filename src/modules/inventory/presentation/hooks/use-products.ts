@@ -33,6 +33,16 @@ export function useProduct(id: string) {
   });
 }
 
+export function useLookupProduct(code: string) {
+  return useQuery({
+    queryKey: productKeys.lookup(code),
+    queryFn: () => getContainer().productRepository.lookupByCode(code),
+    staleTime: STALE_TIME,
+    enabled: Boolean(code),
+    retry: false,
+  });
+}
+
 export function useCreateProduct() {
   const queryClient = useQueryClient();
   const t = useTranslations("inventory.products");

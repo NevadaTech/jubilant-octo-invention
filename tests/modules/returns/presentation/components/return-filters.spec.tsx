@@ -4,6 +4,7 @@ import { ReturnFiltersComponent } from "@/modules/returns/presentation/component
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
+  useLocale: () => "en",
 }));
 
 vi.mock("@/shared/presentation/hooks", () => ({
@@ -12,6 +13,61 @@ vi.mock("@/shared/presentation/hooks", () => ({
 
 vi.mock("@/modules/inventory/presentation/hooks", () => ({
   useWarehouses: () => ({ data: { data: [{ id: "wh-1", name: "Main" }] } }),
+}));
+
+vi.mock("@/ui/components/date-range-picker", () => ({
+  DateRangePicker: ({
+    onChange,
+    value,
+  }: {
+    value?: { from?: Date; to?: Date };
+    onChange: (range: { from?: Date; to?: Date } | undefined) => void;
+  }) => (
+    <div data-testid="date-range-picker">
+      <input
+        type="date"
+        data-testid="date-from"
+        value={
+          value?.from
+            ? new Date(
+                value.from.getTime() - value.from.getTimezoneOffset() * 60000,
+              )
+                .toISOString()
+                .split("T")[0]
+            : ""
+        }
+        onChange={(e) => {
+          const val = e.target.value;
+          onChange(
+            val
+              ? { from: new Date(val + "T00:00:00"), to: value?.to }
+              : undefined,
+          );
+        }}
+      />
+      <input
+        type="date"
+        data-testid="date-to"
+        value={
+          value?.to
+            ? new Date(
+                value.to.getTime() - value.to.getTimezoneOffset() * 60000,
+              )
+                .toISOString()
+                .split("T")[0]
+            : ""
+        }
+        onChange={(e) => {
+          const val = e.target.value;
+          onChange(
+            val
+              ? { from: value?.from, to: new Date(val + "T00:00:00") }
+              : undefined,
+          );
+        }}
+      />
+    </div>
+  ),
 }));
 
 describe("ReturnFiltersComponent", () => {
@@ -73,8 +129,7 @@ describe("ReturnFiltersComponent", () => {
     expect(screen.getByText("filters.type")).toBeDefined();
     expect(screen.getByText("filters.status")).toBeDefined();
     expect(screen.getByText("filters.warehouse")).toBeDefined();
-    expect(screen.getByText("filters.dateFrom")).toBeDefined();
-    expect(screen.getByText("filters.dateTo")).toBeDefined();
+    expect(screen.getByText("filters.dateRange")).toBeDefined();
   });
 
   it("Given: active filters When: clicking clear Then: should reset all filters", () => {
@@ -212,13 +267,11 @@ describe("ReturnFiltersComponent", () => {
       />,
     );
     fireEvent.click(screen.getByText("filter"));
-    const allDateInputs = document.querySelectorAll('input[type="date"]');
-    if (allDateInputs.length >= 1) {
-      fireEvent.change(allDateInputs[0], { target: { value: "2026-03-01" } });
-      expect(mockOnChange).toHaveBeenCalledWith(
-        expect.objectContaining({ startDate: "2026-03-01", page: 1 }),
-      );
-    }
+    const dateFrom = screen.getByTestId("date-from");
+    fireEvent.change(dateFrom, { target: { value: "2026-03-01" } });
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({ startDate: "2026-03-01", page: 1 }),
+    );
   });
 
   it("Given: filter panel open When: setting date to Then: should call onFiltersChange with endDate", () => {
@@ -229,13 +282,11 @@ describe("ReturnFiltersComponent", () => {
       />,
     );
     fireEvent.click(screen.getByText("filter"));
-    const allDateInputs = document.querySelectorAll('input[type="date"]');
-    if (allDateInputs.length >= 2) {
-      fireEvent.change(allDateInputs[1], { target: { value: "2026-03-31" } });
-      expect(mockOnChange).toHaveBeenCalledWith(
-        expect.objectContaining({ endDate: "2026-03-31", page: 1 }),
-      );
-    }
+    const dateTo = screen.getByTestId("date-to");
+    fireEvent.change(dateTo, { target: { value: "2026-03-31" } });
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({ endDate: "2026-03-31", page: 1 }),
+    );
   });
 
   it("Given: filter panel open When: clearing date from Then: should call onFiltersChange with undefined startDate", () => {
@@ -246,13 +297,11 @@ describe("ReturnFiltersComponent", () => {
       />,
     );
     fireEvent.click(screen.getByText("filter"));
-    const allDateInputs = document.querySelectorAll('input[type="date"]');
-    if (allDateInputs.length >= 1) {
-      fireEvent.change(allDateInputs[0], { target: { value: "" } });
-      expect(mockOnChange).toHaveBeenCalledWith(
-        expect.objectContaining({ startDate: undefined, page: 1 }),
-      );
-    }
+    const dateFrom = screen.getByTestId("date-from");
+    fireEvent.change(dateFrom, { target: { value: "" } });
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({ startDate: undefined, page: 1 }),
+    );
   });
 
   // --- Branch: clearing date to (endDate) ---
@@ -264,13 +313,11 @@ describe("ReturnFiltersComponent", () => {
       />,
     );
     fireEvent.click(screen.getByText("filter"));
-    const allDateInputs = document.querySelectorAll('input[type="date"]');
-    if (allDateInputs.length >= 2) {
-      fireEvent.change(allDateInputs[1], { target: { value: "" } });
-      expect(mockOnChange).toHaveBeenCalledWith(
-        expect.objectContaining({ endDate: undefined, page: 1 }),
-      );
-    }
+    const dateTo = screen.getByTestId("date-to");
+    fireEvent.change(dateTo, { target: { value: "" } });
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({ endDate: undefined, page: 1 }),
+    );
   });
 
   // --- Branch: debounced search same as current ---

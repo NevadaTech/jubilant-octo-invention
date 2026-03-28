@@ -3,10 +3,12 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Search, X, Filter } from "lucide-react";
+import { format } from "date-fns";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { MultiSelect } from "@/ui/components/multi-select";
+import { DateRangePicker } from "@/ui/components/date-range-picker";
 import { useDebounce } from "@/shared/presentation/hooks";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks";
 import type { StockMovementFilters } from "@/modules/inventory/application/dto/stock-movement.dto";
@@ -14,6 +16,7 @@ import type {
   MovementType,
   MovementStatus,
 } from "@/modules/inventory/domain/entities/stock-movement.entity";
+import type { DateRange } from "react-day-picker";
 
 interface MovementFiltersProps {
   filters: StockMovementFilters;
@@ -109,18 +112,15 @@ export function MovementFilters({
     });
   };
 
-  const handleDateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    const startDate = range?.from
+      ? format(range.from, "yyyy-MM-dd")
+      : undefined;
+    const endDate = range?.to ? format(range.to, "yyyy-MM-dd") : undefined;
     onFiltersChange({
       ...filters,
-      startDate: e.target.value || undefined,
-      page: 1,
-    });
-  };
-
-  const handleDateToChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onFiltersChange({
-      ...filters,
-      endDate: e.target.value || undefined,
+      startDate,
+      endDate,
       page: 1,
     });
   };
@@ -222,25 +222,25 @@ export function MovementFilters({
             />
           </div>
 
-          <div className="min-w-[150px]">
+          <div className="min-w-[280px]">
             <Label className="mb-2 block text-sm">
-              {t("filters.dateFrom")}
+              {t("filters.dateRange")}
             </Label>
-            <Input
-              type="date"
-              value={filters.startDate || ""}
-              onChange={handleDateFromChange}
-              className="w-auto"
-            />
-          </div>
-
-          <div className="min-w-[150px]">
-            <Label className="mb-2 block text-sm">{t("filters.dateTo")}</Label>
-            <Input
-              type="date"
-              value={filters.endDate || ""}
-              onChange={handleDateToChange}
-              className="w-auto"
+            <DateRangePicker
+              value={
+                filters.startDate || filters.endDate
+                  ? {
+                      from: filters.startDate
+                        ? new Date(filters.startDate + "T00:00:00")
+                        : undefined,
+                      to: filters.endDate
+                        ? new Date(filters.endDate + "T00:00:00")
+                        : undefined,
+                    }
+                  : undefined
+              }
+              onChange={handleDateRangeChange}
+              placeholder={t("filters.selectDateRange")}
             />
           </div>
         </div>

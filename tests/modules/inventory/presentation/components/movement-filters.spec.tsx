@@ -4,6 +4,7 @@ import { MovementFilters } from "@/modules/inventory/presentation/components/mov
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
+  useLocale: () => "en",
 }));
 
 vi.mock("@/shared/presentation/hooks", () => ({
@@ -73,8 +74,7 @@ describe("MovementFilters", () => {
     expect(screen.getByText("filters.type")).toBeDefined();
     expect(screen.getByText("filters.status")).toBeDefined();
     expect(screen.getByText("filters.warehouse")).toBeDefined();
-    expect(screen.getByText("filters.dateFrom")).toBeDefined();
-    expect(screen.getByText("filters.dateTo")).toBeDefined();
+    expect(screen.getByText("filters.dateRange")).toBeDefined();
   });
 
   it("Given: active filters When: clicking clear Then: should reset all filters", () => {

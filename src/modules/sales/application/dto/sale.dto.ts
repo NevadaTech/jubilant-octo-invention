@@ -59,6 +59,9 @@ export interface SaleApiRawDto {
   returnedBy?: string | null;
   returnedByName?: string | null;
   pickingEnabled?: boolean;
+  contactType?: string | null;
+  integrationConnectionId?: string | null;
+  integrationProvider?: string | null;
 }
 
 export interface SaleResponseDto {
@@ -101,6 +104,9 @@ export interface SaleResponseDto {
   returnedBy?: string | null;
   returnedByName?: string | null;
   pickingEnabled?: boolean;
+  contactType?: string | null;
+  integrationConnectionId?: string | null;
+  integrationProvider?: string | null;
 }
 
 export interface ShipSaleDto {
@@ -213,4 +219,6 @@ export interface SaleFilters {
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
+  contactType?: string;
+  integrationProvider?: string;
 }

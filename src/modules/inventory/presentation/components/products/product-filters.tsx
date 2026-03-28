@@ -9,6 +9,7 @@ import { Label } from "@/ui/components/label";
 import { MultiSelect } from "@/ui/components/multi-select";
 import { useDebounce } from "@/shared/presentation/hooks";
 import { useCategories } from "@/modules/inventory/presentation/hooks";
+import { useBrands } from "@/modules/brands/presentation/hooks/use-brands";
 import type { ProductFilters as ProductFiltersType } from "@/modules/inventory/application/dto/product.dto";
 
 interface ProductFiltersProps {
@@ -26,6 +27,7 @@ export function ProductFilters({
   const [showFilters, setShowFilters] = useState(false);
   const debouncedSearch = useDebounce(searchValue, 300);
   const { data: categoriesData } = useCategories({ limit: 100 });
+  const { data: brandsData } = useBrands({ isActive: true, limit: 100 });
 
   // Apply debounced search
   useEffect(() => {
@@ -56,6 +58,15 @@ export function ProductFilters({
     [categoriesData],
   );
 
+  const brandOptions = useMemo(
+    () =>
+      brandsData?.data.map((brand) => ({
+        value: brand.id,
+        label: brand.name,
+      })) ?? [],
+    [brandsData],
+  );
+
   const handleStatusChange = (values: string[]) => {
     onFiltersChange({
       ...filters,
@@ -72,12 +83,21 @@ export function ProductFilters({
     });
   };
 
+  const handleBrandChange = (values: string[]) => {
+    onFiltersChange({
+      ...filters,
+      brandIds: values.length > 0 ? values : undefined,
+      page: 1,
+    });
+  };
+
   const handleClearFilters = () => {
     setSearchValue("");
     onFiltersChange({
       page: 1,
       limit: filters.limit,
       categoryIds: undefined,
+      brandIds: undefined,
       statuses: undefined,
       search: undefined,
       sortBy: filters.sortBy,
@@ -88,6 +108,7 @@ export function ProductFilters({
   const hasActiveFilters =
     (filters.statuses?.length ?? 0) > 0 ||
     (filters.categoryIds?.length ?? 0) > 0 ||
+    (filters.brandIds?.length ?? 0) > 0 ||
     filters.search;
 
   return (
@@ -149,6 +170,19 @@ export function ProductFilters({
               options={categoryOptions}
               allLabel={t("filters.allCategories")}
               selectedLabel={t("filters.category")}
+            />
+          </div>
+
+          <div className="min-w-[220px] flex-1">
+            <Label className="mb-2 block text-sm">{t("filters.brand")}</Label>
+            <MultiSelect
+              value={filters.brandIds ?? []}
+              onValueChange={handleBrandChange}
+              options={brandOptions}
+              allLabel={t("filters.allBrands")}
+              selectedLabel={t("filters.brand")}
+              searchable
+              searchPlaceholder={t("filters.searchBrand")}
             />
           </div>
         </div>

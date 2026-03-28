@@ -4,6 +4,7 @@ import { TransferFiltersComponent } from "@/modules/inventory/presentation/compo
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
+  useLocale: () => "en",
 }));
 
 vi.mock("@/shared/presentation/hooks", () => ({
@@ -73,8 +74,7 @@ describe("TransferFiltersComponent", () => {
     expect(screen.getByText("filters.status")).toBeDefined();
     expect(screen.getByText("filters.fromWarehouse")).toBeDefined();
     expect(screen.getByText("filters.toWarehouse")).toBeDefined();
-    expect(screen.getByText("filters.dateFrom")).toBeDefined();
-    expect(screen.getByText("filters.dateTo")).toBeDefined();
+    expect(screen.getByText("filters.dateRange")).toBeDefined();
   });
 
   it("Given: active filters When: clicking clear Then: should reset all filters", () => {

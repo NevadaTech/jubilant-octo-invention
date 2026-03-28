@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { CalendarIcon, FilterX } from "lucide-react";
+import { FilterX } from "lucide-react";
+import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
+import { DateRangePicker } from "@/ui/components/date-range-picker";
 import {
   Select,
   SelectContent,
@@ -17,6 +19,7 @@ import { MultiSelect } from "@/ui/components/multi-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useCategories } from "@/modules/inventory/presentation/hooks/use-categories";
+import { useBrands } from "@/modules/brands/presentation/hooks/use-brands";
 import { useCompanies } from "@/modules/companies/presentation/hooks/use-companies";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
@@ -25,6 +28,7 @@ import type {
   ReportParameters,
 } from "@/modules/reports/application/dto/report.dto";
 import { REPORT_FILTER_CONFIG } from "@/modules/reports/application/dto/report.dto";
+import type { DateRange } from "react-day-picker";
 
 interface ReportFiltersFormProps {
   type: ReportTypeValue;
@@ -52,6 +56,8 @@ const MOVEMENT_TYPES = [
   "TRANSFER_IN",
   "TRANSFER_OUT",
 ];
+
+const CONTACT_TYPES = ["CUSTOMER", "EMPLOYEE"];
 
 const RETURN_TYPES = ["CUSTOMER", "SUPPLIER"];
 
@@ -107,6 +113,11 @@ export function ReportFiltersForm({
   );
   const categories = categoryData?.data ?? [];
 
+  const { data: brandData } = useBrands(
+    config.brandIds ? { isActive: true, limit: 100 } : undefined,
+  );
+  const brands = brandData?.data ?? [];
+
   const { multiCompanyEnabled } = useOrgSettings();
   const { data: companyData } = useCompanies(
     config.companyId && multiCompanyEnabled
@@ -149,10 +160,13 @@ export function ReportFiltersForm({
     }));
   };
 
-  const setDateRange = (field: "startDate" | "endDate", value: string) => {
+  const setDateRange = (range: DateRange | undefined) => {
     setParams((prev) => ({
       ...prev,
-      dateRange: { ...prev.dateRange, [field]: value || undefined },
+      dateRange: {
+        startDate: range?.from ? format(range.from, "yyyy-MM-dd") : undefined,
+        endDate: range?.to ? format(range.to, "yyyy-MM-dd") : undefined,
+      },
     }));
   };
 
@@ -202,6 +216,15 @@ export function ReportFiltersForm({
         label: c.name,
       })),
     [categories],
+  );
+
+  const brandOptions = useMemo(
+    () =>
+      brands.map((b) => ({
+        value: b.id,
+        label: b.name,
+      })),
+    [brands],
   );
 
   const movementTypeOptions = useMemo(
@@ -254,32 +277,25 @@ export function ReportFiltersForm({
       <CardContent>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {config.dateRange && (
-            <>
-              <div className="space-y-1.5">
-                <Label className="text-xs">{t("filters.startDate")}</Label>
-                <div className="relative">
-                  <CalendarIcon className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
-                  <Input
-                    type="date"
-                    className="pl-8 text-sm"
-                    value={params.dateRange?.startDate ?? ""}
-                    onChange={(e) => setDateRange("startDate", e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">{t("filters.endDate")}</Label>
-                <div className="relative">
-                  <CalendarIcon className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
-                  <Input
-                    type="date"
-                    className="pl-8 text-sm"
-                    value={params.dateRange?.endDate ?? ""}
-                    onChange={(e) => setDateRange("endDate", e.target.value)}
-                  />
-                </div>
-              </div>
-            </>
+            <div className="space-y-1.5">
+              <Label className="text-xs">{t("filters.dateRange")}</Label>
+              <DateRangePicker
+                value={
+                  params.dateRange?.startDate || params.dateRange?.endDate
+                    ? {
+                        from: params.dateRange?.startDate
+                          ? new Date(params.dateRange.startDate + "T00:00:00")
+                          : undefined,
+                        to: params.dateRange?.endDate
+                          ? new Date(params.dateRange.endDate + "T00:00:00")
+                          : undefined,
+                      }
+                    : undefined
+                }
+                onChange={setDateRange}
+                placeholder={t("filters.selectDateRange")}
+              />
+            </div>
           )}
 
           {config.warehouseIds && warehouses.length > 0 && (
@@ -329,6 +345,20 @@ export function ReportFiltersForm({
                 options={categoryOptions}
                 allLabel={t("filters.allCategories")}
                 selectedLabel={t("filters.category")}
+                className="text-sm"
+              />
+            </div>
+          )}
+
+          {config.brandIds && brands.length > 0 && (
+            <div className="space-y-1.5">
+              <Label className="text-xs">{t("filters.brand")}</Label>
+              <MultiSelect
+                value={params.brandIds ?? []}
+                onValueChange={(v) => setArray("brandIds", v)}
+                options={brandOptions}
+                allLabel={t("filters.allBrands")}
+                selectedLabel={t("filters.brand")}
                 className="text-sm"
               />
             </div>
@@ -403,6 +433,30 @@ export function ReportFiltersForm({
                 selectedLabel={tCommon("selected")}
                 className="text-sm"
               />
+            </div>
+          )}
+
+          {config.contactType && (
+            <div className="space-y-1.5">
+              <Label className="text-xs">{t("filters.contactType")}</Label>
+              <Select
+                value={params.contactType ?? "all"}
+                onValueChange={(v) => set("contactType", v)}
+              >
+                <SelectTrigger className="text-sm">
+                  <SelectValue placeholder={t("filters.allContactTypes")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    {t("filters.allContactTypes")}
+                  </SelectItem>
+                  {CONTACT_TYPES.map((ct) => (
+                    <SelectItem key={ct} value={ct}>
+                      {t(`contactType.${ct}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
 

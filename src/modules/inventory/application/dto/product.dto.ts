@@ -9,7 +9,7 @@ export interface ProductUnitDto {
   precision: number;
 }
 
-/** Forma real de la respuesta del backend */
+/** Raw API response from backend */
 export interface ProductApiRawDto {
   id: string;
   sku: string;
@@ -52,6 +52,8 @@ export interface ProductApiRawDto {
   statusChangedAt?: string | null;
   companyId?: string | null;
   companyName?: string | null;
+  brandId?: string | null;
+  brandName?: string | null;
 }
 
 export interface ProductResponseDto {
@@ -86,6 +88,8 @@ export interface ProductResponseDto {
   statusChangedAt?: string | null;
   companyId?: string | null;
   companyName?: string | null;
+  brandId?: string | null;
+  brandName?: string | null;
 }
 
 export interface ProductListResponseDto {
@@ -113,6 +117,7 @@ export interface CreateProductApiDto {
   status?: string;
   costMethod?: string;
   companyId?: string;
+  brandId?: string;
 }
 
 /** What the backend actually accepts for UPDATE */
@@ -129,6 +134,7 @@ export interface UpdateProductApiDto {
   price?: number;
   currency?: string;
   companyId?: string;
+  brandId?: string;
 }
 
 /** Legacy DTOs kept for form compatibility */
@@ -144,6 +150,7 @@ export interface CreateProductDto {
   maxStock: number;
   imageUrl?: string;
   companyId?: string;
+  brandId?: string;
 }
 
 export interface UpdateProductDto {
@@ -159,12 +166,14 @@ export interface UpdateProductDto {
   isActive?: boolean;
   imageUrl?: string;
   companyId?: string;
+  brandId?: string;
 }
 
 export interface ProductFilters {
   search?: string;
   categoryIds?: string[];
   companyId?: string;
+  brandIds?: string[];
   statuses?: string[];
   sortBy?: "name" | "sku" | "price" | "status" | "createdAt" | "updatedAt";
   sortOrder?: "asc" | "desc";
