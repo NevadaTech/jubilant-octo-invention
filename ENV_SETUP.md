@@ -5,6 +5,7 @@ Este documento describe cómo configurar las variables de entorno para el proyec
 ## Quick Start
 
 1. **Copiar el archivo de ejemplo:**
+
 ```bash
 cp .env.example .env.local
 ```
@@ -12,6 +13,7 @@ cp .env.example .env.local
 2. **Ajustar las variables según tu ambiente** (ver secciones abajo)
 
 3. **Reiniciar el servidor dev:**
+
 ```bash
 npm run dev
 ```
@@ -21,6 +23,7 @@ npm run dev
 ### 📱 Configuración de la Aplicación
 
 #### `NEXT_PUBLIC_APP_URL`
+
 - **Descripción:** URL base de la aplicación
 - **Usado en:** Open Graph tags, URLs canónicas, links absolutos
 - **Ejemplos:**
@@ -29,18 +32,20 @@ npm run dev
   - `https://app.example.com` (producción)
 - **Tipo:** URL válida
 - **Requerido:** ✅ Sí
-- **Expuesto al navegador:** ✅ Sí (NEXT_PUBLIC_)
+- **Expuesto al navegador:** ✅ Sí (NEXT*PUBLIC*)
 
 #### `NEXT_PUBLIC_APP_NAME`
+
 - **Descripción:** Nombre de la aplicación mostrado en la UI
 - **Usado en:** Títulos de página, headers, metadatos
 - **Ejemplo:** `Nevada Inventory System`
 - **Requerido:** ✅ Sí
-- **Expuesto al navegador:** ✅ Sí (NEXT_PUBLIC_)
+- **Expuesto al navegador:** ✅ Sí (NEXT*PUBLIC*)
 
 ### 🔗 Configuración de API
 
 #### `NEXT_PUBLIC_API_URL`
+
 - **Descripción:** URL base del backend API
 - **Usado en:** Todas las llamadas HTTP a la API
 - **Ejemplos:**
@@ -49,42 +54,46 @@ npm run dev
   - `https://api.example.com` (producción)
 - **Tipo:** URL válida
 - **Requerido:** ✅ Sí
-- **Expuesto al navegador:** ✅ Sí (NEXT_PUBLIC_)
+- **Expuesto al navegador:** ✅ Sí (NEXT*PUBLIC*)
 - **Nota:** Si usas CORS, asegúrate que el backend acepta requests desde `NEXT_PUBLIC_APP_URL`
 
 #### `NEXT_PUBLIC_API_TIMEOUT`
+
 - **Descripción:** Timeout para requests HTTP (en millisegundos)
 - **Default:** `30000` (30 segundos)
 - **Rango recomendado:** `5000` - `60000`
 - **Tipo:** Número entero
 - **Requerido:** ❌ No
-- **Expuesto al navegador:** ✅ Sí (NEXT_PUBLIC_)
+- **Expuesto al navegador:** ✅ Sí (NEXT*PUBLIC*)
 - **Nota:** Aumenta si tienes requests largas, disminuye para fallar más rápido
 
 ### 🔐 Configuración de Autenticación
 
 #### `NEXT_PUBLIC_AUTH_COOKIE_NAME`
+
 - **Descripción:** Nombre de la cookie para almacenar tokens de autenticación
 - **Default:** `nevada_auth_token`
 - **Requerido:** ✅ Sí
-- **Expuesto al navegador:** ✅ Sí (NEXT_PUBLIC_)
+- **Expuesto al navegador:** ✅ Sí (NEXT*PUBLIC*)
 - **⚠️ Importante:** Debe coincidir exactamente con el nombre usado en el backend
 
 #### `NEXT_PUBLIC_REFRESH_COOKIE_NAME`
+
 - **Descripción:** Nombre de la cookie para almacenar refresh tokens
 - **Default:** `nevada_refresh_token`
 - **Requerido:** ✅ Sí
-- **Expuesto al navegador:** ✅ Sí (NEXT_PUBLIC_)
+- **Expuesto al navegador:** ✅ Sí (NEXT*PUBLIC*)
 - **⚠️ Importante:** Debe coincidir exactamente con el nombre usado en el backend
 
 ### 🧪 Desarrollo y Testing
 
 #### `NEXT_PUBLIC_ENABLE_MOCK_API`
+
 - **Descripción:** Habilitar API mock (para desarrollo sin backend)
 - **Valores:** `true` o `false`
 - **Default:** `false`
 - **Requerido:** ❌ No
-- **Expuesto al navegador:** ✅ Sí (NEXT_PUBLIC_)
+- **Expuesto al navegador:** ✅ Sí (NEXT*PUBLIC*)
 - **Casos de uso:**
   - `true` - Desarrollo frontend sin backend (usa datos simulados)
   - `false` - Uso de backend real (requests HTTP reales)
@@ -92,16 +101,18 @@ npm run dev
 ### 📊 Monitoreo y Error Tracking
 
 #### `NEXT_PUBLIC_SENTRY_DSN`
+
 - **Descripción:** Data Source Name de Sentry para error tracking
 - **Default:** (vacío - Sentry deshabilitado)
 - **Obten tu DSN en:** https://sentry.io/
 - **Ejemplo:** `https://examplePublicKey@o0.ingest.sentry.io/0`
 - **Requerido:** ❌ No
-- **Expuesto al navegador:** ✅ Sí (NEXT_PUBLIC_)
+- **Expuesto al navegador:** ✅ Sí (NEXT*PUBLIC*)
 - **Tier gratuito:** 5,000 eventos/mes
 - **Nota:** Deixar vacío para deshabilitar Sentry
 
 #### `SENTRY_AUTH_TOKEN`
+
 - **Descripción:** Token de autenticación de Sentry (solo para uploads de source maps en build)
 - **Obten tu token en:** https://sentry.io/settings/account/auth-tokens/
 - **Requerido:** ❌ No (solo si usas Sentry)
@@ -130,6 +141,7 @@ SENTRY_AUTH_TOKEN=
 ```
 
 **Comando para correr:**
+
 ```bash
 npm run dev
 ```
@@ -149,10 +161,12 @@ SENTRY_AUTH_TOKEN=
 ```
 
 **Requisitos:**
+
 - Backend corriendo en `http://localhost:8080`
 - Backend configurado para aceptar CORS desde `http://localhost:3000`
 
 **Comando para correr:**
+
 ```bash
 npm run dev
 ```
@@ -172,6 +186,7 @@ SENTRY_AUTH_TOKEN=
 ```
 
 **Comando para correr:**
+
 ```bash
 npm run test
 ```
@@ -227,16 +242,19 @@ SENTRY_AUTH_TOKEN=sntrys_xxxxxxxxxxxx
 ## 🔄 Cambios en Tiempo de Desarrollo
 
 ### Cambios que requieren reinicio del servidor dev:
+
 - Cualquier variable `NEXT_PUBLIC_*`
 - `SENTRY_AUTH_TOKEN` (solo afecta en build time)
 
 **Reinicia con:**
+
 ```bash
 # Detener actual: Ctrl+C
 npm run dev
 ```
 
 ### Cambios que se aplican sin reinicio:
+
 - Variables de runtime (después del build)
 
 ## 🐛 Debugging
@@ -244,18 +262,19 @@ npm run dev
 ### Verificar variables cargadas:
 
 En el navegador, abre la consola y ejecuta:
+
 ```javascript
 // Variables públicas disponibles en el cliente:
-console.log(process.env.NEXT_PUBLIC_API_URL)
-console.log(process.env.NEXT_PUBLIC_APP_NAME)
+console.log(process.env.NEXT_PUBLIC_API_URL);
+console.log(process.env.NEXT_PUBLIC_APP_NAME);
 ```
 
 ### En el servidor:
 
 ```typescript
 // src/config/env.ts o similar
-console.log(process.env.NEXT_PUBLIC_API_URL)  // ✅ Accesible
-console.log(process.env.SENTRY_AUTH_TOKEN)     // ✅ Accesible
+console.log(process.env.NEXT_PUBLIC_API_URL); // ✅ Accesible
+console.log(process.env.SENTRY_AUTH_TOKEN); // ✅ Accesible
 ```
 
 ## 📚 Referencias

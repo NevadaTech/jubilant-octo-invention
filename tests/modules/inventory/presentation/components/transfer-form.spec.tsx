@@ -114,33 +114,43 @@ describe("TransferForm", () => {
   });
 
   it("Given: open is true When: rendering Then: should show create title", () => {
-    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(
+      <TransferForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show from and to warehouse fields", () => {
-    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(
+      <TransferForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("fields.from")).toBeInTheDocument();
     expect(screen.getByText("fields.to")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show products label and add product button", () => {
-    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(
+      <TransferForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("fields.products")).toBeInTheDocument();
     expect(screen.getByText("actions.addProduct")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show notes field", () => {
-    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(
+      <TransferForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("fields.notes")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show cancel and create buttons", () => {
-    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(
+      <TransferForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("cancel")).toBeInTheDocument();
     expect(screen.getByText("create")).toBeInTheDocument();
@@ -156,7 +166,9 @@ describe("TransferForm", () => {
   });
 
   it("Given: open is true When: clicking the close X button Then: should call onOpenChange with false", () => {
-    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(
+      <TransferForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     // The close X button is the first ghost icon button in the card header
     const buttons = screen.getAllByRole("button");

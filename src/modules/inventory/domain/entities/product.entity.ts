@@ -198,7 +198,8 @@ export class Product extends Entity<string> {
   }
 
   get brandName(): string | null | undefined {
-    return this.props.brandName;}
+    return this.props.brandName;
+  }
 
   get barcode(): string | null | undefined {
     return this.props.barcode;
