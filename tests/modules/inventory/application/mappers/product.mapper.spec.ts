@@ -33,6 +33,7 @@ describe("ProductMapper", () => {
     lastMovementDate: null,
     statusChangedBy: null,
     statusChangedAt: null,
+    barcode: "BAR-123",
     companyId: null,
     companyName: null,
     brandId: null,

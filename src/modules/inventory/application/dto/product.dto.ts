@@ -84,6 +84,7 @@ export interface ProductResponseDto {
   daysOfStock: number | null;
   turnoverRate: number;
   lastMovementDate: string | null;
+  barcode?: string | null;
   statusChangedBy?: string | null;
   statusChangedAt?: string | null;
   companyId?: string | null;

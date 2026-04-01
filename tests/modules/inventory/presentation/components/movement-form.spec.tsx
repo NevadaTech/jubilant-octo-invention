@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MovementForm } from "@/modules/inventory/presentation/components/movements/movement-form";
 
 // --- Mocks ---
@@ -18,14 +19,17 @@ vi.mock("@/modules/inventory/presentation/hooks/use-movements", () => ({
   }),
 }));
 
-vi.mock("@/modules/inventory/presentation/hooks/use-products", () => ({
-  useProducts: () => ({
-    data: {
-      data: [
-        { id: "p1", name: "Widget A", sku: "WA-001" },
-        { id: "p2", name: "Widget B", sku: "WB-002" },
-      ],
-    },
+vi.mock("@/modules/inventory/presentation/hooks/use-product-search", () => ({
+  useProductSearch: () => ({
+    products: [
+      { id: "p1", name: "Widget A", sku: "WA-001", barcode: "BAR-001" },
+      { id: "p2", name: "Widget B", sku: "WB-002", barcode: "BAR-002" },
+    ],
+    isLoading: false,
+    isFetchingNextPage: false,
+    hasNextPage: false,
+    fetchNextPage: vi.fn(),
+    isError: false,
   }),
 }));
 
@@ -81,14 +85,26 @@ vi.mock("@/ui/components/currency-input", () => ({
 
 describe("MovementForm", () => {
   const mockOnOpenChange = vi.fn();
+  let queryClient: QueryClient;
 
   beforeEach(() => {
     mockOnOpenChange.mockClear();
     mockMutateAsync.mockClear();
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
   });
 
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(
+      <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+    );
+
   it("Given: open is false When: rendering Then: should render nothing", () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <MovementForm open={false} onOpenChange={mockOnOpenChange} />,
     );
 
@@ -96,13 +112,17 @@ describe("MovementForm", () => {
   });
 
   it("Given: open is true When: rendering Then: should show create title", () => {
-    render(<MovementForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithProviders(
+      <MovementForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show movement info section with type, warehouse, reference, reason, and note fields", () => {
-    render(<MovementForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithProviders(
+      <MovementForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("form.movementInfo")).toBeInTheDocument();
     expect(screen.getByText("fields.type")).toBeInTheDocument();
@@ -113,14 +133,18 @@ describe("MovementForm", () => {
   });
 
   it("Given: open is true When: rendering Then: should show lines section with add line button", () => {
-    render(<MovementForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithProviders(
+      <MovementForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("form.linesSection")).toBeInTheDocument();
     expect(screen.getByText("actions.addLine")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show one product line with product, quantity, and unit cost fields", () => {
-    render(<MovementForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithProviders(
+      <MovementForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("fields.product")).toBeInTheDocument();
     expect(screen.getByText("fields.quantity")).toBeInTheDocument();
@@ -128,14 +152,18 @@ describe("MovementForm", () => {
   });
 
   it("Given: open is true When: rendering Then: should show cancel and create buttons", () => {
-    render(<MovementForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithProviders(
+      <MovementForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     expect(screen.getByText("cancel")).toBeInTheDocument();
     expect(screen.getByText("create")).toBeInTheDocument();
   });
 
   it("Given: open is true When: clicking the close X button Then: should call onOpenChange with false", () => {
-    render(<MovementForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithProviders(
+      <MovementForm open={true} onOpenChange={mockOnOpenChange} />,
+    );
 
     // The X close button is the first ghost icon button
     const buttons = screen.getAllByRole("button");

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MovementFormPage } from "@/modules/inventory/presentation/components/movements/movement-form-page";
 
 // --- Mocks ---
@@ -51,14 +52,17 @@ vi.mock("@/modules/inventory/presentation/hooks/use-movements", () => ({
   useMovement: () => mockMovementData,
 }));
 
-vi.mock("@/modules/inventory/presentation/hooks/use-products", () => ({
-  useProducts: () => ({
-    data: {
-      data: [
-        { id: "p1", name: "Widget A", sku: "WA-001" },
-        { id: "p2", name: "Widget B", sku: "WB-002" },
-      ],
-    },
+vi.mock("@/modules/inventory/presentation/hooks/use-product-search", () => ({
+  useProductSearch: () => ({
+    products: [
+      { id: "p1", name: "Widget A", sku: "WA-001", barcode: "BAR-001" },
+      { id: "p2", name: "Widget B", sku: "WB-002", barcode: "BAR-002" },
+    ],
+    isLoading: false,
+    isFetchingNextPage: false,
+    hasNextPage: false,
+    fetchNextPage: vi.fn(),
+    isError: false,
   }),
 }));
 
@@ -107,27 +111,40 @@ vi.mock("@/ui/components/currency-input", () => ({
 // --- Tests ---
 
 describe("MovementFormPage", () => {
+  let queryClient: QueryClient;
+
   beforeEach(() => {
     mockPush.mockClear();
     mockMovementData = { data: null, isLoading: false };
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
   });
 
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(
+      <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+    );
+
   it("Given: no movementId When: rendering Then: should show create title and description", () => {
-    render(<MovementFormPage />);
+    renderWithProviders(<MovementFormPage />);
 
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
     expect(screen.getByText("form.createDescription")).toBeInTheDocument();
   });
 
   it("Given: no movementId When: rendering Then: should show movement info and lines section cards", () => {
-    render(<MovementFormPage />);
+    renderWithProviders(<MovementFormPage />);
 
     expect(screen.getByText("form.movementInfo")).toBeInTheDocument();
     expect(screen.getByText("form.linesSection")).toBeInTheDocument();
   });
 
   it("Given: no movementId When: rendering Then: should show type, warehouse, reference, reason, and note fields", () => {
-    render(<MovementFormPage />);
+    renderWithProviders(<MovementFormPage />);
 
     expect(
       screen.getByText((content) => content.startsWith("fields.type")),
@@ -145,20 +162,20 @@ describe("MovementFormPage", () => {
   });
 
   it("Given: no movementId When: rendering Then: should show add line button", () => {
-    render(<MovementFormPage />);
+    renderWithProviders(<MovementFormPage />);
 
     expect(screen.getByText("actions.addLine")).toBeInTheDocument();
   });
 
   it("Given: no movementId When: rendering Then: should show cancel and create buttons", () => {
-    render(<MovementFormPage />);
+    renderWithProviders(<MovementFormPage />);
 
     expect(screen.getByText("cancel")).toBeInTheDocument();
     expect(screen.getByText("create")).toBeInTheDocument();
   });
 
   it("Given: no movementId When: rendering Then: should render one product line by default with product, quantity, and unit cost fields", () => {
-    render(<MovementFormPage />);
+    renderWithProviders(<MovementFormPage />);
 
     expect(
       screen.getByText(
@@ -176,7 +193,9 @@ describe("MovementFormPage", () => {
   it("Given: movementId with loading state When: rendering Then: should show skeleton placeholders", () => {
     mockMovementData = { data: null, isLoading: true };
 
-    const { container } = render(<MovementFormPage movementId="mov-1" />);
+    const { container } = renderWithProviders(
+      <MovementFormPage movementId="mov-1" />,
+    );
 
     // Skeleton component renders divs with animate-pulse class
     const skeletons = container.querySelectorAll(
@@ -202,7 +221,7 @@ describe("MovementFormPage", () => {
       isLoading: false,
     };
 
-    render(<MovementFormPage movementId="mov-1" />);
+    renderWithProviders(<MovementFormPage movementId="mov-1" />);
 
     expect(screen.getByText("form.editTitle")).toBeInTheDocument();
     expect(screen.getByText("form.editDescription")).toBeInTheDocument();
@@ -223,7 +242,7 @@ describe("MovementFormPage", () => {
       isLoading: false,
     };
 
-    render(<MovementFormPage movementId="mov-1" />);
+    renderWithProviders(<MovementFormPage movementId="mov-1" />);
 
     expect(screen.getByText("save")).toBeInTheDocument();
     expect(screen.queryByText("create")).not.toBeInTheDocument();

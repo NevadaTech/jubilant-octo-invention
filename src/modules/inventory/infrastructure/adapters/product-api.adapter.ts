@@ -57,6 +57,7 @@ export function mapApiProductToDto(raw: ProductApiRawDto): ProductResponseDto {
     daysOfStock: raw.daysOfStock ?? null,
     turnoverRate: raw.turnoverRate ?? 0,
     lastMovementDate: raw.lastMovementDate ?? null,
+    barcode: raw.barcode ?? null,
     statusChangedBy: raw.statusChangedBy ?? null,
     statusChangedAt: raw.statusChangedAt ?? null,
     companyId: raw.companyId ?? null,

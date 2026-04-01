@@ -23,6 +23,7 @@ import {
 } from "@/ui/components/select";
 import { Skeleton } from "@/ui/components/skeleton";
 import { Textarea } from "@/ui/components/textarea";
+import { ProductSearchSelect } from "@/modules/inventory/presentation/components/shared/product-search-select";
 import {
   createMovementSchema,
   toCreateMovementDto,
@@ -33,7 +34,6 @@ import {
   useUpdateMovement,
   useMovement,
 } from "@/modules/inventory/presentation/hooks/use-movements";
-import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import { useContacts } from "@/modules/contacts/presentation/hooks/use-contacts";
@@ -60,11 +60,6 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
     movementId ?? "",
   );
   const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
-  const { data: productsData } = useProducts({
-    limit: 100,
-    statuses: ["ACTIVE"],
-    ...(selectedCompanyId && { companyId: selectedCompanyId }),
-  });
   const { data: warehousesData } = useWarehouses({
     limit: 100,
     statuses: ["ACTIVE"],
@@ -376,37 +371,14 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
                           name={`lines.${index}.productId`}
                           control={control}
                           render={({ field: selectField }) => (
-                            <Select
+                            <ProductSearchSelect
                               value={selectField.value}
                               onValueChange={selectField.onChange}
-                            >
-                              <SelectTrigger>
-                                <SelectValue
-                                  placeholder={t("fields.productPlaceholder")}
-                                >
-                                  {selectField.value
-                                    ? (() => {
-                                        const p = productsData?.data.find(
-                                          (pr) => pr.id === selectField.value,
-                                        );
-                                        return p
-                                          ? `${p.name} (${p.sku})`
-                                          : undefined;
-                                      })()
-                                    : undefined}
-                                </SelectValue>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {productsData?.data.map((product) => (
-                                  <SelectItem
-                                    key={product.id}
-                                    value={product.id}
-                                  >
-                                    {product.name} ({product.sku})
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              companyId={selectedCompanyId ?? undefined}
+                              placeholder={t("fields.productPlaceholder")}
+                              searchPlaceholder={tCommon("search")}
+                              emptyMessage={tCommon("noResults")}
+                            />
                           )}
                         />
                       </FormField>

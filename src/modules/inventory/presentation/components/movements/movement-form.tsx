@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
@@ -17,16 +16,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/select";
-import { SearchableSelect } from "@/ui/components/searchable-select";
 import { Textarea } from "@/ui/components/textarea";
 import { CurrencyInput } from "@/ui/components/currency-input";
+import { ProductSearchSelect } from "@/modules/inventory/presentation/components/shared/product-search-select";
 import {
   createMovementSchema,
   toCreateMovementDto,
   type CreateMovementFormData,
 } from "@/modules/inventory/presentation/schemas/movement.schema";
 import { useCreateMovement } from "@/modules/inventory/presentation/hooks/use-movements";
-import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import { useContacts } from "@/modules/contacts/presentation/hooks/use-contacts";
@@ -41,11 +39,6 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
   const tCommon = useTranslations("common");
   const createMovement = useCreateMovement();
   const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
-  const { data: productsData } = useProducts({
-    limit: 100,
-    statuses: ["ACTIVE"],
-    ...(selectedCompanyId && { companyId: selectedCompanyId }),
-  });
   const { data: warehousesData } = useWarehouses({
     limit: 100,
     statuses: ["ACTIVE"],
@@ -77,15 +70,6 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
   });
 
   const watchType = watch("type");
-
-  const productOptions = useMemo(() => {
-    if (!productsData?.data) return [];
-    return productsData.data.map((p) => ({
-      value: p.id,
-      label: p.name,
-      description: p.sku,
-    }));
-  }, [productsData]);
 
   const { data: suppliersData } = useContacts({
     type: "SUPPLIER",
@@ -301,10 +285,10 @@ export function MovementForm({ open, onOpenChange }: MovementFormProps) {
                               name={`lines.${index}.productId`}
                               control={control}
                               render={({ field: selectField }) => (
-                                <SearchableSelect
-                                  options={productOptions}
+                                <ProductSearchSelect
                                   value={selectField.value}
                                   onValueChange={selectField.onChange}
+                                  companyId={selectedCompanyId ?? undefined}
                                   placeholder={t("fields.productPlaceholder")}
                                   searchPlaceholder={tCommon("search")}
                                   emptyMessage={tCommon("noResults")}
