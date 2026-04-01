@@ -21,6 +21,7 @@ import {
 } from "@/ui/components/select";
 import { SearchableSelect } from "@/ui/components/searchable-select";
 import { ProductSearchSelect } from "@/modules/inventory/presentation/components/shared/product-search-select";
+import { ContactsSearchSelect } from "@/modules/contacts/presentation/components/shared/contacts-search-select";
 import { Textarea } from "@/ui/components/textarea";
 import {
   createSaleSchema,
@@ -30,7 +31,6 @@ import {
 import { useCreateSale } from "@/modules/sales/presentation/hooks/use-sales";
 import { useCombos } from "@/modules/inventory/presentation/hooks/use-combos";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
-import { useContacts } from "@/modules/contacts/presentation/hooks/use-contacts";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
 export function SaleFormPage() {
@@ -43,10 +43,6 @@ export function SaleFormPage() {
   const { data: warehousesData } = useWarehouses({
     limit: 100,
     statuses: ["ACTIVE"],
-  });
-  const { data: contactsData } = useContacts({
-    limit: 100,
-    isActive: true,
   });
 
   const comboOptions = useMemo(() => {
@@ -191,20 +187,14 @@ export function SaleFormPage() {
                 name="contactId"
                 control={control}
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={t("fields.contactPlaceholder")}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {contactsData?.data.map((contact) => (
-                        <SelectItem key={contact.id} value={contact.id}>
-                          {contact.name} ({contact.identification})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <ContactsSearchSelect
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                    placeholder={t("fields.contactPlaceholder")}
+                    searchPlaceholder={tCommon("search")}
+                    emptyMessage={tCommon("noResults")}
+                    isActive={true}
+                  />
                 )}
               />
             </FormField>
