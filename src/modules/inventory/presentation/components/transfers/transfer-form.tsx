@@ -16,13 +16,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/select";
+import { ProductSearchSelect } from "@/modules/inventory/presentation/components/shared/product-search-select";
 import {
   createTransferSchema,
   toCreateTransferDto,
   type CreateTransferFormData,
 } from "@/modules/inventory/presentation/schemas/transfer.schema";
 import { useCreateTransfer } from "@/modules/inventory/presentation/hooks/use-transfers";
-import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 
@@ -36,11 +36,6 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
   const tCommon = useTranslations("common");
   const createTransfer = useCreateTransfer();
   const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
-  const { data: productsData } = useProducts({
-    limit: 100,
-    statuses: ["ACTIVE"],
-    ...(selectedCompanyId && { companyId: selectedCompanyId }),
-  });
   const { data: warehousesData } = useWarehouses({
     limit: 100,
     statuses: ["ACTIVE"],
@@ -69,23 +64,10 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
   });
 
   const selectedFromWarehouse = watch("fromWarehouseId");
-  const selectedProducts = watch("lines").map((line) => line.productId);
 
   // Filter out the source warehouse from destination options
   const toWarehouseOptions =
     warehousesData?.data.filter((w) => w.id !== selectedFromWarehouse) || [];
-
-  // Filter out already selected products for each line
-  const getAvailableProducts = (currentIndex: number) => {
-    const selectedInOtherLines = selectedProducts.filter(
-      (_, i) => i !== currentIndex,
-    );
-    return (
-      productsData?.data.filter(
-        (product) => !selectedInOtherLines.includes(product.id),
-      ) || []
-    );
-  };
 
   const onSubmit = async (data: CreateTransferFormData) => {
     try {
@@ -229,28 +211,14 @@ export function TransferForm({ open, onOpenChange }: TransferFormProps) {
                             name={`lines.${index}.productId`}
                             control={control}
                             render={({ field: selectField }) => (
-                              <Select
+                              <ProductSearchSelect
                                 value={selectField.value}
                                 onValueChange={selectField.onChange}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue
-                                    placeholder={t("fields.productPlaceholder")}
-                                  />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {getAvailableProducts(index).map(
-                                    (product) => (
-                                      <SelectItem
-                                        key={product.id}
-                                        value={product.id}
-                                      >
-                                        {product.name} ({product.sku})
-                                      </SelectItem>
-                                    ),
-                                  )}
-                                </SelectContent>
-                              </Select>
+                                companyId={selectedCompanyId ?? undefined}
+                                placeholder={t("fields.productPlaceholder")}
+                                searchPlaceholder={t("fields.searchProduct")}
+                                emptyMessage={t("fields.noProducts")}
+                              />
                             )}
                           />
                         </FormField>

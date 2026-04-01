@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TransferForm } from "@/modules/inventory/presentation/components/transfers/transfer-form";
 
 // --- Mocks ---
@@ -49,6 +50,51 @@ vi.mock("@hookform/resolvers/zod", () => ({
   zodResolver: () => vi.fn(),
 }));
 
+vi.mock(
+  "@/modules/inventory/presentation/components/shared/product-search-select",
+  () => ({
+    ProductSearchSelect: ({
+      placeholder,
+      value,
+      onValueChange,
+    }: {
+      placeholder?: string;
+      value?: string;
+      onValueChange?: (v: string) => void;
+    }) => (
+      <select
+        data-testid="product-search-select"
+        value={value}
+        onChange={(e) => onValueChange?.(e.target.value)}
+      >
+        <option value="">{placeholder}</option>
+      </select>
+    ),
+  }),
+);
+
+vi.mock("@/modules/companies/infrastructure/store/company.store", () => ({
+  useCompanyStore: (
+    selector: (s: { selectedCompanyId: string | null }) => unknown,
+  ) => selector({ selectedCompanyId: null }),
+}));
+
+// --- Test helper ---
+
+function renderWithQuery(component: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+  return render(component, {
+    wrapper: ({ children }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    ),
+  });
+}
+
 // --- Tests ---
 
 describe("TransferForm", () => {
@@ -68,33 +114,33 @@ describe("TransferForm", () => {
   });
 
   it("Given: open is true When: rendering Then: should show create title", () => {
-    render(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
 
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show from and to warehouse fields", () => {
-    render(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
 
     expect(screen.getByText("fields.from")).toBeInTheDocument();
     expect(screen.getByText("fields.to")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show products label and add product button", () => {
-    render(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
 
     expect(screen.getByText("fields.products")).toBeInTheDocument();
     expect(screen.getByText("actions.addProduct")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show notes field", () => {
-    render(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
 
     expect(screen.getByText("fields.notes")).toBeInTheDocument();
   });
 
   it("Given: open is true When: rendering Then: should show cancel and create buttons", () => {
-    render(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
 
     expect(screen.getByText("cancel")).toBeInTheDocument();
     expect(screen.getByText("create")).toBeInTheDocument();
@@ -110,7 +156,7 @@ describe("TransferForm", () => {
   });
 
   it("Given: open is true When: clicking the close X button Then: should call onOpenChange with false", () => {
-    render(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
+    renderWithQuery(<TransferForm open={true} onOpenChange={mockOnOpenChange} />);
 
     // The close X button is the first ghost icon button in the card header
     const buttons = screen.getAllByRole("button");
