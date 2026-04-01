@@ -1,16 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
-import {
-  SearchableSelect,
-  type SearchableSelectOption,
-} from "@/ui/components/searchable-select";
-import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
+import { ProductSearchSelect } from "@/modules/inventory/presentation/components/shared/product-search-select";
+import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import type { ComboItemFormData } from "@/modules/inventory/presentation/schemas/combo.schema";
 
 interface ComboItemSelectorProps {
@@ -27,17 +23,7 @@ export function ComboItemSelector({
   error,
 }: ComboItemSelectorProps) {
   const t = useTranslations("inventory.combos");
-  const { data: productsData } = useProducts({ limit: 200 });
-
-  const productOptions: SearchableSelectOption[] = useMemo(
-    () =>
-      productsData?.data.map((p) => ({
-        value: p.id,
-        label: p.name,
-        description: p.sku,
-      })) ?? [],
-    [productsData],
-  );
+  const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
 
   const handleProductChange = (index: number, productId: string) => {
     const updated = [...items];
@@ -73,10 +59,10 @@ export function ComboItemSelector({
             className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700"
           >
             <div className="flex-1">
-              <SearchableSelect
-                options={productOptions}
+              <ProductSearchSelect
                 value={item.productId}
                 onValueChange={(val) => handleProductChange(index, val)}
+                companyId={selectedCompanyId ?? undefined}
                 placeholder={t("form.selectProduct")}
                 searchPlaceholder={t("form.searchProduct")}
                 emptyMessage={t("form.noProducts")}
