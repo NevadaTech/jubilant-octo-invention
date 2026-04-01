@@ -139,7 +139,7 @@ export function ContactsSearchSelect({
 
     observer.observe(bottomRef.current);
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage, contacts.length]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <>

@@ -138,7 +138,7 @@ export function SalesSearchSelect({
 
     observer.observe(bottomRef.current);
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage, filteredSales.length]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <>

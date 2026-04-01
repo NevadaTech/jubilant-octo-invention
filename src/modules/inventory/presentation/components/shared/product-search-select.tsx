@@ -138,7 +138,7 @@ export function ProductSearchSelect({
 
     observer.observe(bottomRef.current);
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage, products.length]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <>
