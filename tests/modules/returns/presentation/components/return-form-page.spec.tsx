@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ReturnFormPage } from "@/modules/returns/presentation/components/return-form-page";
+import { createQueryWrapper } from "@tests/utils/create-query-wrapper";
 
 // --- Mocks ---
 
@@ -143,6 +144,29 @@ vi.mock("@/ui/components/searchable-select", () => ({
   ),
 }));
 
+vi.mock(
+  "@/modules/returns/presentation/components/shared/sales-search-select",
+  () => ({
+    SalesSearchSelect: ({
+      placeholder,
+      value,
+      onValueChange,
+    }: {
+      placeholder?: string;
+      value?: string;
+      onValueChange?: (v: string) => void;
+    }) => (
+      <select
+        data-testid="sales-search-select"
+        value={value}
+        onChange={(e) => onValueChange?.(e.target.value)}
+      >
+        <option value="">{placeholder}</option>
+      </select>
+    ),
+  }),
+);
+
 vi.mock("@/ui/components/currency-input", () => ({
   CurrencyInput: ({
     value,
@@ -163,6 +187,13 @@ vi.mock("@/ui/components/currency-input", () => ({
   ),
 }));
 
+// --- Test helper ---
+
+function renderWithQuery(component: React.ReactElement) {
+  const { Wrapper } = createQueryWrapper();
+  return render(component, { wrapper: Wrapper });
+}
+
 // --- Tests ---
 
 describe("ReturnFormPage", () => {
@@ -181,7 +212,7 @@ describe("ReturnFormPage", () => {
   // --- Loading skeleton ---
   it("Given: products are loading When: rendering Then: should show skeleton placeholders", () => {
     mockProductsLoading = true;
-    const { container } = render(<ReturnFormPage />);
+    const { container } = renderWithQuery(<ReturnFormPage />);
     const skeletons = container.querySelectorAll(
       "[class*='h-7'], [class*='h-10'], [class*='h-6'], [class*='h-4']",
     );
@@ -191,7 +222,7 @@ describe("ReturnFormPage", () => {
 
   it("Given: warehouses are loading When: rendering Then: should show skeleton", () => {
     mockWarehousesLoading = true;
-    const { container } = render(<ReturnFormPage />);
+    const { container } = renderWithQuery(<ReturnFormPage />);
     const skeletons = container.querySelectorAll("[class*='h-']");
     expect(skeletons.length).toBeGreaterThan(0);
     expect(screen.queryByText("form.createTitle")).not.toBeInTheDocument();
@@ -199,39 +230,39 @@ describe("ReturnFormPage", () => {
 
   it("Given: sales are loading When: rendering Then: should show skeleton", () => {
     mockSalesLoading = true;
-    expect(() => render(<ReturnFormPage />)).not.toThrow();
+    expect(() => renderWithQuery(<ReturnFormPage />)).not.toThrow();
   });
 
   it("Given: movements are loading When: rendering Then: should show skeleton", () => {
     mockMovementsLoading = true;
-    expect(() => render(<ReturnFormPage />)).not.toThrow();
+    expect(() => renderWithQuery(<ReturnFormPage />)).not.toThrow();
   });
 
   // --- Loaded state ---
   it("Given: data is loaded When: rendering Then: should show create title and description", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
     expect(screen.getByText("form.createDescription")).toBeInTheDocument();
   });
 
   it("Given: data is loaded When: rendering Then: should show return info card", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("form.returnInfo")).toBeInTheDocument();
   });
 
   it("Given: data is loaded When: rendering Then: should show lines section", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("form.linesSection")).toBeInTheDocument();
   });
 
   it("Given: data is loaded When: rendering Then: should show cancel and create buttons", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("cancel")).toBeInTheDocument();
     expect(screen.getByText("create")).toBeInTheDocument();
   });
 
   it("Given: data is loaded When: rendering Then: should have back link", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     const links = screen.getAllByRole("link");
     const backLink = links.find(
       (link) => link.getAttribute("href") === "/dashboard/returns",
@@ -241,19 +272,19 @@ describe("ReturnFormPage", () => {
 
   // --- isCustomerReturn branch (default) ---
   it("Given: default type RETURN_CUSTOMER When: rendering Then: should show sale reference field", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(
       screen.getAllByText(/fields\.saleReference/).length,
     ).toBeGreaterThanOrEqual(1);
   });
 
   it("Given: type is RETURN_CUSTOMER When: rendering Then: should show originalPrice field label", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("fields.originalPrice")).toBeInTheDocument();
   });
 
   it("Given: type is RETURN_CUSTOMER When: rendering Then: should NOT show movement reference field", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(
       screen.queryByText("fields.movementReference"),
     ).not.toBeInTheDocument();
@@ -261,7 +292,7 @@ describe("ReturnFormPage", () => {
 
   // --- reason and note fields ---
   it("Given: data is loaded When: rendering Then: should show reason and note fields", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("fields.reason")).toBeInTheDocument();
     expect(screen.getByText("fields.note")).toBeInTheDocument();
   });
@@ -269,38 +300,38 @@ describe("ReturnFormPage", () => {
   // --- createReturn.isError ---
   it("Given: createReturn has error When: rendering Then: should show error message", () => {
     mockCreateIsError = true;
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("form.error")).toBeInTheDocument();
   });
 
   it("Given: createReturn has no error When: rendering Then: should NOT show error message", () => {
     mockCreateIsError = false;
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.queryByText("form.error")).not.toBeInTheDocument();
   });
 
   // --- isSubmitting (isPending) ---
   it("Given: createReturn isPending When: rendering Then: should show loading text on submit button", () => {
     mockCreatePending = true;
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("loading")).toBeInTheDocument();
   });
 
   it("Given: createReturn isPending When: rendering Then: create button text should be loading", () => {
     mockCreatePending = true;
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.queryByText("create")).not.toBeInTheDocument();
     expect(screen.getByText("loading")).toBeInTheDocument();
   });
 
   // --- No source lines: add line button visible ---
   it("Given: no source lines (no sale/movement selected) When: rendering Then: should show add line button", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("actions.addLine")).toBeInTheDocument();
   });
 
   it("Given: no source lines When: clicking add line Then: should add a new line", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     const addLineButton = screen.getByText("actions.addLine");
     fireEvent.click(addLineButton);
     // After adding, there should be 2 product fields (1 default + 1 added)
@@ -310,7 +341,7 @@ describe("ReturnFormPage", () => {
 
   // --- Sales filter: DRAFT sales are excluded from options ---
   it("Given: sales data with DRAFT status When: filtering Then: DRAFT sales should be excluded from options", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     // The sales options useMemo filters out DRAFT and CANCELLED
     // This is internal logic - we just verify the component renders without error
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
@@ -319,7 +350,7 @@ describe("ReturnFormPage", () => {
   // --- Movement with null reference ---
   it("Given: movement with null reference When: rendering Then: should use truncated ID as label", () => {
     mockMovementReference = null;
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     // The movement option label uses `mov.reference || mov.id.slice(0, 8)`
     // We just verify no crash
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
@@ -328,7 +359,7 @@ describe("ReturnFormPage", () => {
   // --- isSubmitting branch for button text ---
   it("Given: not submitting When: rendering Then: submit button shows 'create' text", () => {
     mockCreatePending = false;
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("create")).toBeInTheDocument();
     expect(screen.queryByText("loading")).not.toBeInTheDocument();
   });
@@ -336,13 +367,13 @@ describe("ReturnFormPage", () => {
   // --- No error branch ---
   it("Given: createReturn is not error When: rendering Then: should not show error box", () => {
     mockCreateIsError = false;
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.queryByText("form.error")).not.toBeInTheDocument();
   });
 
   // --- hasSourceLines is false (no sale or movement selected) ---
   it("Given: hasSourceLines is false When: rendering Then: shows add line button and no hints", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("actions.addLine")).toBeInTheDocument();
     expect(screen.queryByText("form.saleProductsHint")).not.toBeInTheDocument();
     expect(
@@ -352,7 +383,7 @@ describe("ReturnFormPage", () => {
 
   // --- fields.length === 0 branch ---
   it("Given: all lines removed When: rendering Then: shows no lines message", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     // Default has 1 line, so remove it
     // The default form has 1 line; removing would need interaction.
     // Instead test that 1 line exists (fields.length > 0 branch)
@@ -366,7 +397,7 @@ describe("ReturnFormPage", () => {
     mockWarehousesLoading = true;
     mockSalesLoading = true;
     mockMovementsLoading = true;
-    const { container } = render(<ReturnFormPage />);
+    const { container } = renderWithQuery(<ReturnFormPage />);
     const skeletons = container.querySelectorAll("[class*='h-']");
     expect(skeletons.length).toBeGreaterThan(0);
     expect(screen.queryByText("form.createTitle")).not.toBeInTheDocument();
@@ -374,27 +405,27 @@ describe("ReturnFormPage", () => {
 
   // --- selectedCompanyId present in useProducts ---
   it("Given: selectedCompanyId is null When: rendering Then: useProducts is called without companyId", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
   });
 
   // --- Customer return: originalPrice field is shown (isCustomerReturn branch) ---
   it("Given: type RETURN_CUSTOMER When: rendering Then: shows originalPrice field not originalCost", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("fields.originalPrice")).toBeInTheDocument();
     expect(screen.queryByText("fields.originalCost")).not.toBeInTheDocument();
   });
 
   // --- getMaxQuantity when hasSourceLines is false returns undefined ---
   it("Given: no source lines When: checking max quantity Then: no max constraint is shown", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     // No max text should appear since hasSourceLines is false
     expect(screen.queryByText(/max:/)).not.toBeInTheDocument();
   });
 
   // --- Sales options filter: excludes CANCELLED sales too ---
   it("Given: sales with CANCELLED status When: rendering options Then: CANCELLED should also be excluded", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     // The mock has a DRAFT sale that should be excluded; if CANCELLED were added it would be excluded too
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
   });
@@ -402,7 +433,7 @@ describe("ReturnFormPage", () => {
   // --- Branch: isSubmitting controls disabled state of inputs ---
   it("Given: createReturn isPending When: rendering Then: inputs should be disabled", () => {
     mockCreatePending = true;
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     // The submit button shows loading
     expect(screen.getByText("loading")).toBeInTheDocument();
     // Fields.reason and fields.note inputs should be disabled
@@ -414,7 +445,7 @@ describe("ReturnFormPage", () => {
 
   // --- Branch: delete button disabled when fields.length === 1 ---
   it("Given: only one line When: rendering Then: delete button should be disabled", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     const deleteButtons = screen
       .getAllByRole("button")
       .filter((btn) => btn.querySelector("svg"));
@@ -429,7 +460,7 @@ describe("ReturnFormPage", () => {
 
   // --- Branch: customer return with no sale lines selected (no products from sale) ---
   it("Given: RETURN_CUSTOMER with no sale selected When: rendering Then: should show generic product select", () => {
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     // useSale returns null, so saleLineProducts is empty
     // Product field should be present (generic select)
     expect(screen.getByText("fields.product *")).toBeInTheDocument();
@@ -438,21 +469,21 @@ describe("ReturnFormPage", () => {
   // --- Branch: selectedCompanyId is non-null ---
   it("Given: selectedCompanyId is set When: rendering Then: products fetch includes companyId", () => {
     // The mock always uses null; we just verify no crash
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
   });
 
   // --- Branch: movement with non-null reference ---
   it("Given: movement has reference When: rendering Then: uses reference as label", () => {
     mockMovementReference = "REF-001";
-    render(<ReturnFormPage />);
+    renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
   });
 
   // --- Branch: error with createReturn.isError false then true ---
   it("Given: isError toggles When: rendering Then: error div appears and disappears", () => {
     mockCreateIsError = true;
-    const { rerender } = render(<ReturnFormPage />);
+    const { rerender } = renderWithQuery(<ReturnFormPage />);
     expect(screen.getByText("form.error")).toBeInTheDocument();
 
     mockCreateIsError = false;

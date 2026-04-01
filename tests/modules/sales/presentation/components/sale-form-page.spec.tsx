@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { SaleFormPage } from "@/modules/sales/presentation/components/sale-form-page";
+import { createQueryWrapper } from "@tests/utils/create-query-wrapper";
 
 // --- Mocks ---
 
@@ -82,25 +83,75 @@ vi.mock("@/ui/components/currency-input", () => ({
   ),
 }));
 
+vi.mock("@/ui/components/searchable-select", () => ({
+  SearchableSelect: ({
+    placeholder,
+    value,
+    onValueChange,
+  }: {
+    placeholder?: string;
+    value?: string;
+    onValueChange?: (v: string) => void;
+  }) => (
+    <select
+      data-testid="searchable-select"
+      value={value}
+      onChange={(e) => onValueChange?.(e.target.value)}
+    >
+      <option value="">{placeholder}</option>
+    </select>
+  ),
+}));
+
+vi.mock(
+  "@/modules/inventory/presentation/components/shared/product-search-select",
+  () => ({
+    ProductSearchSelect: ({
+      placeholder,
+      value,
+      onValueChange,
+    }: {
+      placeholder?: string;
+      value?: string;
+      onValueChange?: (v: string) => void;
+    }) => (
+      <select
+        data-testid="product-search-select"
+        value={value}
+        onChange={(e) => onValueChange?.(e.target.value)}
+      >
+        <option value="">{placeholder}</option>
+      </select>
+    ),
+  }),
+);
+
+// --- Test helper ---
+
+function renderWithQuery(component: React.ReactElement) {
+  const { Wrapper } = createQueryWrapper();
+  return render(component, { wrapper: Wrapper });
+}
+
 // --- Tests ---
 
 describe("SaleFormPage", () => {
   it("Given: component renders When: rendering Then: should show create title and description", () => {
-    render(<SaleFormPage />);
+    renderWithQuery(<SaleFormPage />);
 
     expect(screen.getByText("form.createTitle")).toBeInTheDocument();
     expect(screen.getByText("form.createDescription")).toBeInTheDocument();
   });
 
   it("Given: component renders When: rendering Then: should show sale info and lines section cards", () => {
-    render(<SaleFormPage />);
+    renderWithQuery(<SaleFormPage />);
 
     expect(screen.getByText("form.saleInfo")).toBeInTheDocument();
     expect(screen.getByText("form.linesSection")).toBeInTheDocument();
   });
 
   it("Given: component renders When: rendering Then: should show warehouse, customer, external reference, and note fields", () => {
-    render(<SaleFormPage />);
+    renderWithQuery(<SaleFormPage />);
 
     expect(
       screen.getByText(
@@ -115,20 +166,20 @@ describe("SaleFormPage", () => {
   });
 
   it("Given: component renders When: rendering Then: should show add line button", () => {
-    render(<SaleFormPage />);
+    renderWithQuery(<SaleFormPage />);
 
     expect(screen.getByText("actions.addLine")).toBeInTheDocument();
   });
 
   it("Given: component renders When: rendering Then: should show cancel and create buttons", () => {
-    render(<SaleFormPage />);
+    renderWithQuery(<SaleFormPage />);
 
     expect(screen.getByText("cancel")).toBeInTheDocument();
     expect(screen.getByText("create")).toBeInTheDocument();
   });
 
   it("Given: component renders When: rendering Then: should render one product line by default with product, quantity, and salePrice fields", () => {
-    render(<SaleFormPage />);
+    renderWithQuery(<SaleFormPage />);
 
     expect(
       screen.getByText(
@@ -146,7 +197,7 @@ describe("SaleFormPage", () => {
   });
 
   it("Given: component renders When: rendering Then: should render back link to sales list", () => {
-    render(<SaleFormPage />);
+    renderWithQuery(<SaleFormPage />);
 
     const links = screen.getAllByRole("link");
     const backLink = links.find(
@@ -156,7 +207,7 @@ describe("SaleFormPage", () => {
   });
 
   it("Given: component renders When: rendering Then: should render a currency input for sale price", () => {
-    render(<SaleFormPage />);
+    renderWithQuery(<SaleFormPage />);
 
     expect(screen.getByTestId("currency-input")).toBeInTheDocument();
   });
