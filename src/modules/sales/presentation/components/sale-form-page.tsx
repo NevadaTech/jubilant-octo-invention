@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/ui/components/select";
 import { SearchableSelect } from "@/ui/components/searchable-select";
+import { ProductSearchSelect } from "@/modules/inventory/presentation/components/shared/product-search-select";
 import { Textarea } from "@/ui/components/textarea";
 import {
   createSaleSchema,
@@ -27,7 +28,6 @@ import {
   type CreateSaleFormData,
 } from "@/modules/sales/presentation/schemas/sale.schema";
 import { useCreateSale } from "@/modules/sales/presentation/hooks/use-sales";
-import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useCombos } from "@/modules/inventory/presentation/hooks/use-combos";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useContacts } from "@/modules/contacts/presentation/hooks/use-contacts";
@@ -39,11 +39,6 @@ export function SaleFormPage() {
   const router = useRouter();
   const createSale = useCreateSale();
   const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
-  const { data: productsData } = useProducts({
-    limit: 100,
-    statuses: ["ACTIVE"],
-    ...(selectedCompanyId && { companyId: selectedCompanyId }),
-  });
   const { data: combosData } = useCombos({ limit: 100, isActive: true });
   const { data: warehousesData } = useWarehouses({
     limit: 100,
@@ -53,15 +48,6 @@ export function SaleFormPage() {
     limit: 100,
     isActive: true,
   });
-
-  const productOptions = useMemo(() => {
-    if (!productsData?.data) return [];
-    return productsData.data.map((p) => ({
-      value: p.id,
-      label: p.name,
-      description: p.sku,
-    }));
-  }, [productsData]);
 
   const comboOptions = useMemo(() => {
     if (!combosData?.data) return [];
@@ -370,10 +356,10 @@ export function SaleFormPage() {
                                 name={`lines.${index}.productId`}
                                 control={control}
                                 render={({ field: selectField }) => (
-                                  <SearchableSelect
-                                    options={productOptions}
+                                  <ProductSearchSelect
                                     value={selectField.value ?? ""}
                                     onValueChange={selectField.onChange}
+                                    companyId={selectedCompanyId ?? undefined}
                                     placeholder={t("fields.productPlaceholder")}
                                     searchPlaceholder={tCommon("search")}
                                     emptyMessage={tCommon("noResults")}

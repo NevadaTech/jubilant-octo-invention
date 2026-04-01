@@ -28,12 +28,12 @@ import {
   type CreateReturnFormData,
 } from "@/modules/returns/presentation/schemas/return.schema";
 import { SearchableSelect } from "@/ui/components/searchable-select";
+import { SalesSearchSelect } from "@/modules/returns/presentation/components/shared/sales-search-select";
 import { useCreateReturn } from "@/modules/returns/presentation/hooks/use-returns";
 import { useProducts } from "@/modules/inventory/presentation/hooks/use-products";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import {
-  useSales,
   useSale,
   useSaleReturns,
 } from "@/modules/sales/presentation/hooks/use-sales";
@@ -58,7 +58,6 @@ export function ReturnFormPage() {
     limit: 100,
     statuses: ["ACTIVE"],
   });
-  const { data: salesData, isLoading: salesLoading } = useSales({ limit: 100 });
   const { data: combosData } = useCombos({ limit: 100, isActive: true });
   const { data: movementsData, isLoading: movementsLoading } = useMovements({
     types: ["IN"],
@@ -66,20 +65,7 @@ export function ReturnFormPage() {
     limit: 100,
   });
 
-  const dataLoading =
-    productsLoading || warehousesLoading || salesLoading || movementsLoading;
-
-  const salesOptions = useMemo(
-    () =>
-      (salesData?.data ?? [])
-        .filter((s) => s.status !== "DRAFT" && s.status !== "CANCELLED")
-        .map((sale) => ({
-          value: sale.id,
-          label: sale.saleNumber,
-          description: `${sale.warehouseName} — ${sale.currency} ${sale.totalAmount.toLocaleString()}`,
-        })),
-    [salesData],
-  );
+  const dataLoading = productsLoading || warehousesLoading || movementsLoading;
 
   const movementOptions = useMemo(
     () =>
@@ -546,14 +532,15 @@ export function ReturnFormPage() {
                   name="saleId"
                   control={control}
                   render={({ field }) => (
-                    <SearchableSelect
-                      options={salesOptions}
+                    <SalesSearchSelect
                       value={field.value}
                       onValueChange={field.onChange}
+                      companyId={selectedCompanyId ?? undefined}
                       placeholder={t("fields.saleReferencePlaceholder")}
                       searchPlaceholder={t("fields.saleSearchPlaceholder")}
                       emptyMessage={t("fields.saleNotFound")}
                       disabled={isSubmitting}
+                      excludeStatuses={["DRAFT", "CANCELLED"]}
                     />
                   )}
                 />
