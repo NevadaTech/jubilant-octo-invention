@@ -1,0 +1,13 @@
+Mejora visual de la beta de Nevada Inventory. Solo pantallas de acceso, en español. No es un sitio de marketing.
+
+Sistema visual, el mismo en todo el archivo: luz de oficina y bodega, fondo gris frío #F3F5F8, superficies blancas, acento azul #2E5A94, texto #1A2332, peligro #B42318. Sans de trabajo (IBM Plex Sans). Cada control lleva etiqueta de texto visible junto al icono. Errores en texto bajo el campo, no solo color.
+
+Un archivo con dos filas. Fila superior: marcos de escritorio de 1440 px. Fila inferior: los mismos tres flujos en móvil de 390 px, alineados en columnas. Nombra cada marco.
+
+Columna 1, Iniciar sesión. Marca visible: Nevada. Título: Bienvenido de nuevo. Campos con etiqueta: Organización (valor de ejemplo nevada), Correo electrónico, Contraseña. Botón Iniciar sesión. Enlace ¿Olvidaste tu contraseña? Bajo los campos, error visible: Organización, correo o contraseña incorrectos. Inténtalo de nuevo.
+
+Columna 2, Restablecer contraseña. Título Restablecer contraseña. Texto: Ingresa tu organización y correo para recibir un código de verificación. Campos Organización y Correo electrónico. Botón Enviar código de verificación. Enlace Volver a iniciar sesión.
+
+Columna 3, Cambio obligatorio. Título Cambia tu contraseña. Aviso en texto: Tu administrador te asignó una contraseña temporal. Por seguridad, debes establecer una nueva antes de acceder. Campos Nueva contraseña y Confirmar contraseña, ambos con etiqueta. Botón Establecer nueva contraseña.
+
+Datos de maqueta, no son clientes reales. Sin registro público. Sin ilustraciones decorativas genéricas.

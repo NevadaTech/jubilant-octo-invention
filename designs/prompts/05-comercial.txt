@@ -1,0 +1,13 @@
+Mejora visual del área comercial de la beta de Nevada Inventory. Español. Operación de ventas, no marketing.
+
+Sistema: fondo #F3F5F8, blanco, acento #2E5A94, texto #1A2332, éxito #1F7A4D, advertencia #A15C07. IBM Plex Sans. Estados con palabra. Botones con texto visible.
+
+Dos filas: escritorio 1440 arriba, móvil 390 abajo, tres columnas. Shell: marca Nevada; nav Ventas activa, también Devoluciones y Contactos; Empresa Nevada Retail; Ana Pérez; Cerrar sesión. Móvil: Nevada, Empresa, botón Menú.
+
+Columna 1, Ventas. Título Ventas. Buscar. Filtro Estado. Botón Nueva venta. Tabla: Número, Contacto, Estado, Total. Filas de maqueta: VTA-320 Taller Andino, Picking, $ 1.240.000; VTA-319 Distribuidora Sol, Confirmada, $ 860.000; VTA-318 Ana Pérez no, usa Cliente Mostrador, Borrador, $ 95.000; VTA-310 Ferretería Luna, Completada, $ 2.100.000. Paginación Mostrando 1 a 4 de 86.
+
+Columna 2, Detalle de venta VTA-320. Paso del flujo visible con texto: Borrador, Confirmada, Picking (actual), Enviada, Completada. Contacto Taller Andino. Líneas: Audífonos Pulse, 4, $ 320.000; Cable HDMI 2m, 10. Total $ 1.240.000. Botón principal con texto Marcar enviada. Enlace Volver a ventas.
+
+Columna 3, Contactos. Título Contactos. Filtro Tipo: Cliente, Proveedor, Ambos. Botón Nuevo contacto. Filas: Taller Andino, Cliente; Distribuidora Sol, Ambos; Bodega Sur SAS, Proveedor. Acción Ver con texto.
+
+Datos de maqueta, no son clientes reales. Devoluciones usa el mismo patrón de lista que Ventas; no hace falta un cuarto marco.

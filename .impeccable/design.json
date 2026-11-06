@@ -1,0 +1,357 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-06T21:30:00.000Z",
+  "title": "Design System: Nevada Inventory",
+  "extensions": {
+    "colorMeta": {
+      "nevada-blue": {
+        "role": "primary",
+        "displayName": "Azul Nevada",
+        "canonical": "oklch(47% 0.13 255)",
+        "tonalRamp": [
+          "oklch(18% 0.04 255)",
+          "oklch(33% 0.085 255)",
+          "oklch(40% 0.11 255)",
+          "oklch(47% 0.13 255)",
+          "oklch(63% 0.14 255)",
+          "oklch(86% 0.065 255)",
+          "oklch(93% 0.032 255)",
+          "oklch(97% 0.014 255)"
+        ]
+      },
+      "nevada-blue-soft": {
+        "role": "primary",
+        "displayName": "Azul Nevada suave",
+        "canonical": "oklch(93% 0.032 255)",
+        "tonalRamp": [
+          "oklch(24% 0.055 255)",
+          "oklch(33% 0.085 255)",
+          "oklch(40% 0.11 255)",
+          "oklch(55% 0.14 255)",
+          "oklch(76% 0.1 255)",
+          "oklch(86% 0.065 255)",
+          "oklch(93% 0.032 255)",
+          "oklch(97% 0.014 255)"
+        ]
+      },
+      "nevada-ink": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "oklch(18% 0.012 250)",
+        "tonalRamp": [
+          "oklch(12% 0.01 250)",
+          "oklch(18% 0.012 250)",
+          "oklch(26% 0.015 250)",
+          "oklch(35% 0.018 250)",
+          "oklch(50% 0.02 250)",
+          "oklch(65% 0.018 250)",
+          "oklch(84% 0.012 250)",
+          "oklch(96% 0.006 250)"
+        ]
+      },
+      "nevada-muted": {
+        "role": "neutral",
+        "displayName": "Tinta secundaria",
+        "canonical": "oklch(50% 0.02 250)",
+        "tonalRamp": [
+          "oklch(18% 0.012 250)",
+          "oklch(26% 0.015 250)",
+          "oklch(35% 0.018 250)",
+          "oklch(42% 0.02 250)",
+          "oklch(50% 0.02 250)",
+          "oklch(65% 0.018 250)",
+          "oklch(84% 0.012 250)",
+          "oklch(96% 0.006 250)"
+        ]
+      },
+      "nevada-paper": {
+        "role": "neutral",
+        "displayName": "Papel",
+        "canonical": "oklch(99% 0.002 250)",
+        "tonalRamp": [
+          "oklch(16% 0.012 250)",
+          "oklch(26% 0.015 250)",
+          "oklch(42% 0.02 250)",
+          "oklch(65% 0.018 250)",
+          "oklch(84% 0.012 250)",
+          "oklch(91% 0.008 250)",
+          "oklch(96% 0.006 250)",
+          "oklch(99% 0.002 250)"
+        ]
+      },
+      "nevada-card": {
+        "role": "neutral",
+        "displayName": "Ficha",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": [
+          "oklch(21% 0.014 250)",
+          "oklch(26% 0.015 250)",
+          "oklch(35% 0.018 250)",
+          "oklch(50% 0.02 250)",
+          "oklch(84% 0.012 250)",
+          "oklch(91% 0.008 250)",
+          "oklch(98% 0.004 250)",
+          "oklch(100% 0 0)"
+        ]
+      },
+      "nevada-line": {
+        "role": "neutral",
+        "displayName": "Línea",
+        "canonical": "oklch(91% 0.008 250)",
+        "tonalRamp": [
+          "oklch(26% 0.015 250)",
+          "oklch(30% 0.015 250)",
+          "oklch(42% 0.02 250)",
+          "oklch(65% 0.018 250)",
+          "oklch(84% 0.012 250)",
+          "oklch(91% 0.008 250)",
+          "oklch(96% 0.006 250)",
+          "oklch(98% 0.004 250)"
+        ]
+      },
+      "nevada-success": {
+        "role": "success",
+        "displayName": "Hecho",
+        "canonical": "oklch(47% 0.12 145)",
+        "tonalRamp": [
+          "oklch(20% 0.04 145)",
+          "oklch(28% 0.06 145)",
+          "oklch(34% 0.08 145)",
+          "oklch(40% 0.1 145)",
+          "oklch(47% 0.12 145)",
+          "oklch(65% 0.14 145)",
+          "oklch(86% 0.08 145)",
+          "oklch(97% 0.02 145)"
+        ]
+      },
+      "nevada-success-soft": {
+        "role": "success",
+        "displayName": "Hecho suave",
+        "canonical": "oklch(93% 0.04 145)",
+        "tonalRamp": [
+          "oklch(20% 0.04 145)",
+          "oklch(34% 0.08 145)",
+          "oklch(47% 0.12 145)",
+          "oklch(65% 0.14 145)",
+          "oklch(76% 0.12 145)",
+          "oklch(86% 0.08 145)",
+          "oklch(93% 0.04 145)",
+          "oklch(97% 0.02 145)"
+        ]
+      },
+      "nevada-warning": {
+        "role": "warning",
+        "displayName": "Pendiente",
+        "canonical": "oklch(47% 0.12 85)",
+        "tonalRamp": [
+          "oklch(20% 0.04 85)",
+          "oklch(28% 0.06 85)",
+          "oklch(34% 0.08 85)",
+          "oklch(40% 0.1 85)",
+          "oklch(47% 0.12 85)",
+          "oklch(65% 0.14 85)",
+          "oklch(86% 0.08 85)",
+          "oklch(97% 0.02 85)"
+        ]
+      },
+      "nevada-warning-soft": {
+        "role": "warning",
+        "displayName": "Pendiente suave",
+        "canonical": "oklch(93% 0.04 85)",
+        "tonalRamp": [
+          "oklch(20% 0.04 85)",
+          "oklch(34% 0.08 85)",
+          "oklch(47% 0.12 85)",
+          "oklch(65% 0.14 85)",
+          "oklch(76% 0.12 85)",
+          "oklch(86% 0.08 85)",
+          "oklch(93% 0.04 85)",
+          "oklch(97% 0.02 85)"
+        ]
+      },
+      "nevada-danger": {
+        "role": "danger",
+        "displayName": "Peligro",
+        "canonical": "oklch(60% 0.2 25)",
+        "tonalRamp": [
+          "oklch(20% 0.06 25)",
+          "oklch(28% 0.09 25)",
+          "oklch(35% 0.12 25)",
+          "oklch(48% 0.16 25)",
+          "oklch(60% 0.2 25)",
+          "oklch(65% 0.16 25)",
+          "oklch(86% 0.08 25)",
+          "oklch(97% 0.02 25)"
+        ]
+      },
+      "nevada-danger-soft": {
+        "role": "danger",
+        "displayName": "Peligro suave",
+        "canonical": "oklch(93% 0.04 25)",
+        "tonalRamp": [
+          "oklch(20% 0.06 25)",
+          "oklch(35% 0.12 25)",
+          "oklch(48% 0.16 25)",
+          "oklch(60% 0.2 25)",
+          "oklch(76% 0.12 25)",
+          "oklch(86% 0.08 25)",
+          "oklch(93% 0.04 25)",
+          "oklch(97% 0.02 25)"
+        ]
+      },
+      "focus-ring": {
+        "role": "primary",
+        "displayName": "Anillo de foco",
+        "canonical": "oklch(55% 0.14 255)",
+        "tonalRamp": [
+          "oklch(18% 0.04 255)",
+          "oklch(33% 0.085 255)",
+          "oklch(40% 0.11 255)",
+          "oklch(55% 0.14 255)",
+          "oklch(63% 0.14 255)",
+          "oklch(76% 0.1 255)",
+          "oklch(86% 0.065 255)",
+          "oklch(97% 0.014 255)"
+        ]
+      },
+      "modal-scrim": {
+        "role": "neutral",
+        "displayName": "Velo del diálogo",
+        "canonical": "rgb(0 0 0 / 0.8)",
+        "tonalRamp": [
+          "rgb(0 0 0 / 0.92)",
+          "rgb(0 0 0 / 0.8)",
+          "rgb(0 0 0 / 0.64)",
+          "rgb(0 0 0 / 0.48)",
+          "rgb(0 0 0 / 0.32)",
+          "rgb(0 0 0 / 0.2)",
+          "rgb(0 0 0 / 0.12)",
+          "rgb(0 0 0 / 0.04)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Título de página", "purpose": "El nombre de la pantalla, una vez." },
+      "title": { "displayName": "Título de fila", "purpose": "Nombre de fila, etiqueta de campo y texto de botón." },
+      "body": { "displayName": "Cuerpo", "purpose": "Valores, ayuda breve y texto de diálogo." },
+      "label": { "displayName": "Pastilla", "purpose": "Estado y rótulos pequeños." },
+      "mono": { "displayName": "Código", "purpose": "SKU, código de barras y números de documento." }
+    },
+    "shadows": [
+      {
+        "name": "menu-float",
+        "value": "0 4px 6px rgb(0 0 0 / 0.1)",
+        "purpose": "Listas desplegables y el botón que abre el menú en móvil."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Apertura del submenú Inventario y del diálogo."
+      }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "390px" },
+      { "name": "desktop", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón primario",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "La única acción que completa la vista.",
+      "html": "<button class=\"ds-btn-primary\">Confirmar</button>",
+      "css": ".ds-btn-primary { background: var(--color-primary); color: var(--color-primary-foreground); height: 40px; padding: 8px 16px; border: none; border-radius: var(--radius-md); font-family: Inter, ui-sans-serif, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; } .ds-btn-primary:hover { background: color-mix(in oklch, var(--color-primary) 90%, transparent); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Botón secundario",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Cancelar y el resto de acciones que no completan la vista.",
+      "html": "<button class=\"ds-btn-outline\">Cancelar</button>",
+      "css": ".ds-btn-outline { background: var(--color-card); color: var(--color-foreground); height: 40px; padding: 8px 16px; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-family: Inter, ui-sans-serif, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; } .ds-btn-outline:hover { background: var(--color-accent); color: var(--color-accent-foreground); } .ds-btn-outline:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Botón de peligro",
+      "kind": "button",
+      "refersTo": "button-destructive",
+      "description": "Eliminar, anular, desactivar o cancelar.",
+      "html": "<button class=\"ds-btn-danger\">Desactivar</button>",
+      "css": ".ds-btn-danger { background: var(--color-destructive); color: var(--color-destructive-foreground); height: 40px; padding: 8px 16px; border: none; border-radius: var(--radius-md); font-family: Inter, ui-sans-serif, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; } .ds-btn-danger:hover { background: color-mix(in oklch, var(--color-destructive) 90%, transparent); } .ds-btn-danger:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo con etiqueta visible y error en texto.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">SKU</span><input class=\"ds-input\" value=\"NV-HDMI-2M\" /></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; font-family: Inter, ui-sans-serif, sans-serif; } .ds-field-label { font-size: 13px; font-weight: 600; color: var(--color-foreground); } .ds-input { height: 40px; padding: 8px 12px; border: 1px solid var(--color-input); border-radius: var(--radius-md); background: var(--color-background); color: var(--color-foreground); font-size: 14px; } .ds-input:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Pastilla de estado",
+      "kind": "chip",
+      "refersTo": "chip-status",
+      "description": "El estado se lee. El color solo acompaña.",
+      "html": "<span class=\"ds-chip\">Confirmada</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; background: var(--color-success-100); color: var(--color-success-700); font-family: Inter, ui-sans-serif, sans-serif; font-size: 12px; font-weight: 600; }"
+    },
+    {
+      "name": "Ficha",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Superficie de trabajo, plana, con línea.",
+      "html": "<article class=\"ds-card\"><h2 class=\"ds-card-title\">Cable HDMI 2m</h2><p class=\"ds-card-meta\">NV-HDMI-2M · Stock 3</p></article>",
+      "css": ".ds-card { background: var(--color-card); color: var(--color-card-foreground); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 16px; font-family: Inter, ui-sans-serif, sans-serif; } .ds-card-title { margin: 0; font-size: 15px; font-weight: 600; } .ds-card-meta { margin: 4px 0 0; font-size: 13px; color: var(--color-muted-foreground); }"
+    },
+    {
+      "name": "Menú activo",
+      "kind": "nav",
+      "refersTo": "nav-active",
+      "description": "Ítem activo del lateral. Inventario es el único grupo con submenú.",
+      "html": "<a class=\"ds-nav ds-nav-active\">Productos</a>",
+      "css": ".ds-nav { display: flex; align-items: center; padding: 8px 12px; border-radius: var(--radius-lg); font-family: Inter, ui-sans-serif, sans-serif; font-size: 14px; font-weight: 500; color: var(--color-neutral-600); text-decoration: none; } .ds-nav-active { background: var(--color-primary-100); color: var(--color-primary-700); font-weight: 600; }"
+    },
+    {
+      "name": "Diálogo",
+      "kind": "custom",
+      "refersTo": "button-primary",
+      "description": "Confirmación sobre velo negro. El foco queda en el botón que confirma.",
+      "html": "<div class=\"ds-modal\"><div class=\"ds-dialog\"><p class=\"ds-dialog-kicker\">Ventas</p><h2 class=\"ds-dialog-title\">Confirmar venta</h2><p class=\"ds-dialog-body\">Esto descontará el stock del almacén y no se puede deshacer.</p><div class=\"ds-dialog-actions\"><button class=\"ds-btn-outline\">Cancelar</button><button class=\"ds-btn-primary\">Confirmar</button></div></div></div>",
+      "css": ".ds-modal { background: rgb(0 0 0 / 0.8); padding: 36px; display: flex; align-items: center; justify-content: center; } .ds-dialog { width: 100%; max-width: 480px; background: var(--color-popover); color: var(--color-popover-foreground); border-radius: var(--radius-lg); padding: 20px; font-family: Inter, ui-sans-serif, sans-serif; } .ds-dialog-kicker { margin: 0; font-size: 12px; font-weight: 600; color: var(--color-primary); } .ds-dialog-title { margin: 8px 0 0; font-size: 18px; font-weight: 600; } .ds-dialog-body { margin: 8px 0 0; font-size: 14px; color: var(--color-muted-foreground); } .ds-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; } .ds-btn-outline { background: var(--color-card); color: var(--color-foreground); height: 36px; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 13px; font-weight: 600; } .ds-btn-primary { background: var(--color-primary); color: var(--color-primary-foreground); height: 36px; padding: 8px 12px; border: none; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; outline: 2px solid var(--color-ring); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El libro de bodega",
+    "overview": "Nevada es una herramienta de trabajo, no una vitrina. La pantalla se lee como un libro de bodega: título, dato, estado y una sola acción que sigue. El azul Nevada marca lo que se puede pulsar y lo que está activo. El resto permanece en papel claro y tinta oscura para que el inventario, la venta o el permiso se vean antes que la marca.\n\nLa densidad es la de una aplicación de escritorio usada entre la bodega y la oficina. Las listas caben en una vista. El texto explicativo aparece solo cuando la acción cambia el stock o no se puede deshacer. En el móvil, la misma información pasa a tarjetas. El nombre visible es Nevada.",
+    "keyCharacteristics": [
+      "Una acción principal por vista, en azul Nevada.",
+      "El estado se lee en palabras. El color lo acompaña.",
+      "Etiquetas siempre visibles. Ningún control depende solo de un icono.",
+      "El error va en texto, junto al campo.",
+      "El diálogo confirma sobre un velo negro y el botón que confirma queda enfocado."
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "En una vista solo el botón principal usa el azul sólido. Cancelar, filtros y acciones secundarias quedan en ficha con línea.", "section": "colors" },
+      { "name": "The Words First Rule", "body": "Un estado no se comunica solo con color. La palabra va dentro de la pastilla.", "section": "colors" },
+      { "name": "The Plain Case Rule", "body": "Los botones y los estados van en el castellano de la interfaz, con mayúscula inicial. No se ponen en mayúsculas sostenidas.", "section": "typography" },
+      { "name": "The Company Scope Rule", "body": "Si el alcance es Todas las Empresas, la pantalla lo dice y no ofrece crear ventas, movimientos, transferencias ni devoluciones.", "section": "layout" },
+      { "name": "The Flat Work Surface Rule", "body": "Listas, formularios y fichas de detalle no llevan sombra en reposo.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do dejar una sola acción primaria por vista.",
+      "Do escribir el estado, el error y la consecuencia de una acción irreversible.",
+      "Do mostrar la empresa activa en el encabezado.",
+      "Do usar JetBrains Mono para SKU y códigos.",
+      "Do abrir un modal con velo negro cuando la acción no se puede deshacer."
+    ],
+    "donts": [
+      "Don't usar un botón que sea solo un icono.",
+      "Don't comunicar un estado únicamente con color.",
+      "Don't poner un párrafo de ayuda en una lista que ya se entiende.",
+      "Don't tratar la pantalla como una página de marketing.",
+      "Don't sacar Empresas al menú lateral. Vive en Configuración, pestaña Organización, cuando la organización tiene varias empresas."
+    ]
+  }
+}
