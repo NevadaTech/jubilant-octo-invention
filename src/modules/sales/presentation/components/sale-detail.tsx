@@ -55,6 +55,7 @@ import {
 import { useCombos } from "@/modules/inventory/presentation/hooks/use-combos";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { PERMISSIONS } from "@/shared/domain/permissions";
+import { ProductReferenceThumb } from "@/modules/inventory/presentation/components/products/product-reference-photo";
 import { SaleStatusBadge } from "./sale-status-badge";
 import { SaleTimeline } from "./sale-timeline";
 import { SaleSwapDialog } from "./sale-swap-dialog";
@@ -751,6 +752,10 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                             <tr key={line.id} className="border-b">
                               <td className="py-3 pr-4">
                                 <div className="flex items-center gap-2">
+                                  <ProductReferenceThumb
+                                    productId={line.productId}
+                                    productName={line.productName}
+                                  />
                                   <div>
                                     <p className="font-medium">
                                       {line.productName}
@@ -799,10 +804,18 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                     : sale.lines.map((line) => (
                         <tr key={line.id} className="border-b">
                           <td className="py-3 pr-4">
-                            <p className="font-medium">{line.productName}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {line.productSku}
-                            </p>
+                            <div className="flex items-center gap-2">
+                              <ProductReferenceThumb
+                                productId={line.productId}
+                                productName={line.productName}
+                              />
+                              <div>
+                                <p className="font-medium">{line.productName}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {line.productSku}
+                                </p>
+                              </div>
+                            </div>
                           </td>
                           <td className="py-3 pr-4">{line.quantity}</td>
                           <td className="py-3 pr-4">

@@ -107,6 +107,56 @@ export function useToggleProductStatus() {
  * Use `mutateAsync(code)` from inside `onScan` callbacks and handle the
  * null case to show a "not found" toast.
  */
+export function useProductImage(productId: string, enabled: boolean) {
+  return useQuery({
+    queryKey: productKeys.image(productId),
+    queryFn: () => getContainer().productRepository.fetchImage(productId),
+    enabled: enabled && Boolean(productId),
+    staleTime: STALE_TIME,
+    retry: false,
+  });
+}
+
+export function useUploadProductImage() {
+  const queryClient = useQueryClient();
+  const t = useTranslations("inventory.products.photo");
+  const tErrors = useTranslations("apiErrors");
+
+  return useMutation({
+    mutationFn: ({ productId, file }: { productId: string; file: File }) =>
+      getContainer().productRepository.uploadImage(productId, file),
+    onSuccess: (_, { productId }) => {
+      queryClient.invalidateQueries({ queryKey: productKeys.image(productId) });
+      queryClient.invalidateQueries({ queryKey: productKeys.detail(productId) });
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+      toast.success(t("uploaded"));
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
+    },
+  });
+}
+
+export function useDeleteProductImage() {
+  const queryClient = useQueryClient();
+  const t = useTranslations("inventory.products.photo");
+  const tErrors = useTranslations("apiErrors");
+
+  return useMutation({
+    mutationFn: (productId: string) =>
+      getContainer().productRepository.deleteImage(productId),
+    onSuccess: (_, productId) => {
+      queryClient.invalidateQueries({ queryKey: productKeys.image(productId) });
+      queryClient.invalidateQueries({ queryKey: productKeys.detail(productId) });
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+      toast.success(t("removed"));
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, tErrors));
+    },
+  });
+}
+
 export function useProductLookupMutation() {
   return useMutation({
     mutationFn: (code: string) =>

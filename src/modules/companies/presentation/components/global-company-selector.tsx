@@ -15,6 +15,7 @@ import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 
 export function GlobalCompanySelector() {
   const t = useTranslations("inventory.companies");
+  const tNav = useTranslations("navigation");
   const { multiCompanyEnabled } = useOrgSettings();
   const selectedCompanyId = useCompanyStore((s) => s.selectedCompanyId);
   const setSelectedCompany = useCompanyStore((s) => s.setSelectedCompany);
@@ -26,46 +27,56 @@ export function GlobalCompanySelector() {
 
   if (isLoading) {
     return (
-      <Button variant="outline" disabled className="min-w-[180px]">
-        <Building2 className="mr-2 h-4 w-4" />
-        {t("selector.loading")}
-      </Button>
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-semibold text-muted-foreground">
+          {tNav("company")}
+        </span>
+        <Button variant="outline" disabled className="min-w-[180px]">
+          <Building2 className="mr-2 h-4 w-4" aria-hidden="true" />
+          {t("selector.loading")}
+        </Button>
+      </div>
     );
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="min-w-[180px] justify-between">
-          <span className="flex items-center">
-            <Building2 className="mr-2 h-4 w-4" />
-            {selectedCompany ? selectedCompany.name : t("selector.all")}
-          </span>
-          <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[220px]">
-        <DropdownMenuItem onClick={() => setSelectedCompany(null)}>
-          <Check
-            className={`mr-2 h-4 w-4 ${selectedCompanyId === null ? "opacity-100" : "opacity-0"}`}
-          />
-          {t("selector.all")}
-        </DropdownMenuItem>
-        {data?.data.map((company) => (
-          <DropdownMenuItem
-            key={company.id}
-            onClick={() => setSelectedCompany(company.id)}
-          >
-            <Check
-              className={`mr-2 h-4 w-4 ${selectedCompanyId === company.id ? "opacity-100" : "opacity-0"}`}
-            />
-            {company.name}
-            <span className="ml-auto text-xs text-muted-foreground">
-              {company.code}
+    <div className="flex items-center gap-2">
+      <span className="text-xs font-semibold text-muted-foreground">
+        {tNav("company")}
+      </span>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="min-w-[180px] justify-between">
+            <span className="flex items-center">
+              <Building2 className="mr-2 h-4 w-4" aria-hidden="true" />
+              {selectedCompany ? selectedCompany.name : t("selector.all")}
             </span>
+            <ChevronDown className="ml-2 h-4 w-4 opacity-50" aria-hidden="true" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-[220px]">
+          <DropdownMenuItem onClick={() => setSelectedCompany(null)}>
+            <Check
+              className={`mr-2 h-4 w-4 ${selectedCompanyId === null ? "opacity-100" : "opacity-0"}`}
+            />
+            {t("selector.all")}
           </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          {data?.data.map((company) => (
+            <DropdownMenuItem
+              key={company.id}
+              onClick={() => setSelectedCompany(company.id)}
+            >
+              <Check
+                className={`mr-2 h-4 w-4 ${selectedCompanyId === company.id ? "opacity-100" : "opacity-0"}`}
+              />
+              {company.name}
+              <span className="ml-auto text-xs text-muted-foreground">
+                {company.code}
+              </span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }

@@ -15,6 +15,14 @@ vi.mock("next-intl", () => ({
   useLocale: () => "en",
 }));
 
+vi.mock(
+  "@/modules/inventory/presentation/components/products/product-reference-photo",
+  () => ({
+    ProductReferencePhoto: () => <div data-testid="product-photo" />,
+    ProductReferenceThumb: () => <div data-testid="product-photo-thumb" />,
+  }),
+);
+
 vi.mock("@/i18n/navigation", () => ({
   Link: ({ children, href }: { children: React.ReactNode; href: string }) => (
     <a href={href}>{children}</a>

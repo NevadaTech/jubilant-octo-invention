@@ -54,6 +54,7 @@ import { useReorderRules } from "@/modules/inventory/presentation/hooks/use-reor
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { formatDate } from "@/lib/date";
 import { ReorderRuleDialog } from "@/modules/inventory/presentation/components/stock/reorder-rule-dialog";
+import { ProductReferencePhoto } from "./product-reference-photo";
 import type { Warehouse as WarehouseEntity } from "@/modules/inventory/domain/entities/warehouse.entity";
 
 interface ProductDetailProps {
@@ -226,6 +227,12 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           </Button>
         </div>
       </div>
+
+      <ProductReferencePhoto
+        productId={product.id}
+        productName={product.name}
+        imageUrl={product.imageUrl}
+      />
 
       {/* Confirmation dialog */}
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>

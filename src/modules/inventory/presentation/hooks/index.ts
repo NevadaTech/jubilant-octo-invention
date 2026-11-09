@@ -4,6 +4,9 @@ export {
   useCreateProduct,
   useUpdateProduct,
   useToggleProductStatus,
+  useProductImage,
+  useUploadProductImage,
+  useDeleteProductImage,
   productKeys,
 } from "./use-products";
 

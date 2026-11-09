@@ -261,4 +261,50 @@ describe("ProductApiAdapter", () => {
       expect(result).toBeTruthy();
     });
   });
+
+  describe("image", () => {
+    it("Given: a photo file When: uploadImage is called Then: should POST multipart and unwrap the photo url", async () => {
+      vi.mocked(apiClient.post).mockResolvedValue({
+        data: {
+          data: {
+            imageUrl: "/inventory/products/prod-001/image",
+            updatedAt: "2026-11-09T12:00:00.000Z",
+          },
+        },
+        status: 201,
+        headers: {},
+      });
+      const file = new File([new Uint8Array([1, 2, 3])], "hdmi.jpg", {
+        type: "image/jpeg",
+      });
+
+      const result = await adapter.uploadImage("prod-001", file);
+
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/inventory/products/prod-001/image",
+        expect.any(FormData),
+      );
+      expect(result.imageUrl).toBe("/inventory/products/prod-001/image");
+    });
+
+    it("Given: the product has no photo When: fetchImage is called Then: should return null", async () => {
+      vi.mocked(apiClient.get).mockRejectedValue({ response: { status: 404 } });
+
+      await expect(adapter.fetchImage("prod-001")).resolves.toBeNull();
+    });
+
+    it("Given: a stored photo When: deleteImage is called Then: should DELETE the photo", async () => {
+      vi.mocked(apiClient.delete).mockResolvedValue({
+        data: { success: true },
+        status: 200,
+        headers: {},
+      });
+
+      await adapter.deleteImage("prod-001");
+
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        "/inventory/products/prod-001/image",
+      );
+    });
+  });
 });

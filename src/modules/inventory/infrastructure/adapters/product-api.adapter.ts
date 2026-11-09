@@ -3,6 +3,7 @@ import type { Product } from "@/modules/inventory/domain/entities/product.entity
 import type {
   ProductRepositoryPort,
   PaginatedResult,
+  ProductImageUploadResult,
 } from "@/modules/inventory/application/ports/product.repository.port";
 import type {
   ProductListResponseDto,
@@ -182,6 +183,41 @@ export class ProductApiAdapter implements ProductRepositoryPort {
     );
     const dto = mapApiProductToDto(response.data.data);
     return ProductMapper.toDomain(dto);
+  }
+
+  async fetchImage(productId: string): Promise<Blob | null> {
+    try {
+      const response = await apiClient.get<Blob>(
+        `${this.basePath}/${productId}/image`,
+        { responseType: "blob" },
+      );
+      return response.data;
+    } catch (error) {
+      if (this.isNotFoundError(error)) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async uploadImage(
+    productId: string,
+    file: File,
+  ): Promise<ProductImageUploadResult> {
+    const form = new FormData();
+    form.append("file", file);
+    const response = await apiClient.post<
+      ProductImageUploadResult | { data: ProductImageUploadResult }
+    >(`${this.basePath}/${productId}/image`, form);
+    const body = response.data;
+    if ("data" in body && body.data?.imageUrl) {
+      return body.data;
+    }
+    return body as ProductImageUploadResult;
+  }
+
+  async deleteImage(productId: string): Promise<void> {
+    await apiClient.delete(`${this.basePath}/${productId}/image`);
   }
 
   private buildQueryParams(filters?: ProductFilters): Record<string, unknown> {
