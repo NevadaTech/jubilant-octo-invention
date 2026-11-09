@@ -1,3 +1,5 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -22,6 +24,11 @@ const cspHeader = `
 `.replace(/\n/g, "");
 
 const nextConfig: NextConfig = {
+  // The parent folder has another lockfile, so Turbopack otherwise
+  // treats inventorySystem/ as the root and cannot resolve tailwindcss.
+  turbopack: {
+    root: path.dirname(fileURLToPath(import.meta.url)),
+  },
   productionBrowserSourceMaps: false,
   typedRoutes: true,
   ...(process.env.STANDALONE === "true"
