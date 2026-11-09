@@ -11,6 +11,8 @@ const publicRoutes = [
   "/forgot-password",
   "/reset-password",
   "/change-password",
+  // Visual mock only. startsWith covers this tree and no other route.
+  "/preview",
 ];
 
 function isPublicRoute(pathname: string): boolean {
