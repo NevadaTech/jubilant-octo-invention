@@ -295,6 +295,21 @@
         "updated": "Producto actualizado exitosamente",
         "deleted": "Producto eliminado exitosamente"
       },
+      "photo": {
+        "title": "Foto de referencia",
+        "purpose": "Foto de referencia para reconocer el producto.",
+        "empty": "Sin foto. El producto se puede vender y picar igual.",
+        "upload": "Subir foto",
+        "remove": "Quitar foto",
+        "removeTitle": "¿Quitar la foto?",
+        "removeDescription": "El producto se puede vender y picar igual.",
+        "error": "No se pudo subir la foto. La anterior se mantiene.",
+        "invalidType": "La foto debe ser JPEG, PNG o WebP.",
+        "tooLarge": "La foto no puede pasar de 5 MB.",
+        "alt": "Foto de {name}",
+        "uploaded": "Foto actualizada",
+        "removed": "Foto quitada"
+      },
       "toast": {
         "error": "Ocurrió un error. Inténtalo de nuevo."
       }
@@ -1258,7 +1273,8 @@
       "scanned": "Escaneado",
       "status": "Estado",
       "shipBlocked": "Completa la verificación de picking antes de enviar",
-      "shipBlockedMessage": "Todos los productos deben ser verificados antes de enviar esta venta"
+      "shipBlockedMessage": "Todos los productos deben ser verificados antes de enviar esta venta",
+      "photoNote": "La foto no confirma la línea. El código sí."
     }
   },
   "returns": {
@@ -2076,7 +2092,12 @@
     "roles": "Roles",
     "audit": "Auditoría",
     "settings": "Configuración",
-    "combos": "Combos"
+    "combos": "Combos",
+    "sections": "Secciones",
+    "menu": "Menú",
+    "closeMenu": "Cerrar menú",
+    "company": "Empresa",
+    "language": "Idioma"
   },
   "pages": {
     "inventory": {
@@ -2194,7 +2215,8 @@
   "theme": {
     "light": "Modo claro",
     "dark": "Modo oscuro",
-    "system": "Sistema"
+    "system": "Sistema",
+    "label": "Tema"
   },
   "imports": {
     "title": "Importaciones",

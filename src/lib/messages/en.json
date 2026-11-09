@@ -295,6 +295,21 @@
         "updated": "Product updated successfully",
         "deleted": "Product deleted successfully"
       },
+      "photo": {
+        "title": "Reference photo",
+        "purpose": "Reference photo used to recognize the product.",
+        "empty": "No photo. The product can still be sold and picked.",
+        "upload": "Upload photo",
+        "remove": "Remove photo",
+        "removeTitle": "Remove the photo?",
+        "removeDescription": "The product can still be sold and picked.",
+        "error": "The photo could not be uploaded. The previous one stays.",
+        "invalidType": "The photo must be JPEG, PNG, or WebP.",
+        "tooLarge": "The photo cannot be larger than 5 MB.",
+        "alt": "Photo of {name}",
+        "uploaded": "Photo updated",
+        "removed": "Photo removed"
+      },
       "toast": {
         "error": "An error occurred. Please try again."
       }
@@ -1258,7 +1273,8 @@
       "scanned": "Scanned",
       "status": "Status",
       "shipBlocked": "Complete picking verification before shipping",
-      "shipBlockedMessage": "All products must be verified before this sale can be shipped"
+      "shipBlockedMessage": "All products must be verified before this sale can be shipped",
+      "photoNote": "The photo does not confirm the line. The code does."
     }
   },
   "returns": {
@@ -2076,7 +2092,12 @@
     "roles": "Roles",
     "audit": "Audit Log",
     "settings": "Settings",
-    "combos": "Combos"
+    "combos": "Combos",
+    "sections": "Sections",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "company": "Company",
+    "language": "Language"
   },
   "pages": {
     "inventory": {
@@ -2194,7 +2215,8 @@
   "theme": {
     "light": "Light mode",
     "dark": "Dark mode",
-    "system": "System"
+    "system": "System",
+    "label": "Theme"
   },
   "imports": {
     "title": "Data Imports",

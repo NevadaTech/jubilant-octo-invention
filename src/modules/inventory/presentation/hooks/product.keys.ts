@@ -9,4 +9,5 @@ export const productKeys = {
   detail: (id: string) => [...productKeys.details(), id] as const,
   lookups: () => [...productKeys.all, "lookup"] as const,
   lookup: (code: string) => [...productKeys.lookups(), code] as const,
+  image: (id: string) => [...productKeys.all, "image", id] as const,
 };

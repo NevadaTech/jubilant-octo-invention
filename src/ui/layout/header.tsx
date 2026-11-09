@@ -1,14 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { LogOut, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/modules/authentication/presentation/hooks/use-auth";
 import { useLogout } from "@/modules/authentication/presentation/hooks/use-logout";
 import { LocaleSwitcher } from "./locale-switcher";
 import { Button } from "@/ui/components/button";
-import { UserAvatar } from "@/ui/components/user-avatar";
 import { GlobalCompanySelector } from "@/modules/companies/presentation/components";
 import { cn } from "@/ui/lib/utils";
 
@@ -20,69 +17,55 @@ export function DashboardHeader({ className }: DashboardHeaderProps) {
   const t = useTranslations();
   const { user } = useAuth();
   const { logout, isLoading } = useLogout();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const { resolvedTheme, setTheme } = useTheme();
+
+  const displayName = user
+    ? [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email
+    : "";
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200 bg-white/95 px-4 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/95 lg:px-6",
+        "sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-border bg-card px-6",
         className,
       )}
     >
-      <div className="flex items-center gap-4">
-        <div className="h-10 w-10 lg:hidden" />
+      <div className="flex min-w-0 items-center pl-28 lg:pl-0">
+        <GlobalCompanySelector />
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex shrink-0 items-center gap-4">
+        <div className="hidden items-center gap-2 sm:flex">
+          <span className="text-xs font-semibold text-muted-foreground">
+            {t("navigation.language")}
+          </span>
+          <LocaleSwitcher />
+        </div>
+
         <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          title={
-            mounted
-              ? theme === "dark"
-                ? t("theme.light")
-                : t("theme.dark")
-              : undefined
+          type="button"
+          variant="outline"
+          onClick={() =>
+            setTheme(resolvedTheme === "dark" ? "light" : "dark")
           }
         >
-          <Sun className="h-5 w-5 rotate-0 scale-100 transition-transform dark:rotate-90 dark:scale-0" />
-          <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
+          {t("theme.label")}
         </Button>
 
-        <LocaleSwitcher />
+        {displayName ? (
+          <p className="hidden text-sm font-semibold text-foreground md:block">
+            {displayName}
+          </p>
+        ) : null}
 
-        <GlobalCompanySelector />
-
-        {user && (
-          <div className="flex items-center gap-3">
-            <UserAvatar
-              name={user.email}
-              size={32}
-              className="hidden md:block"
-            />
-            <div className="hidden text-right text-sm md:block">
-              <p className="font-medium text-neutral-900 dark:text-neutral-100">
-                {user.firstName} {user.lastName}
-              </p>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                {user.email}
-              </p>
-            </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => logout()}
-              disabled={isLoading}
-              title={t("auth.logout")}
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </div>
-        )}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => logout()}
+          disabled={isLoading}
+        >
+          {t("auth.logout")}
+        </Button>
       </div>
     </header>
   );

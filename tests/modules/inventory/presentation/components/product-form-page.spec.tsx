@@ -31,6 +31,14 @@ let mockProductData: {
   isLoading: boolean;
 };
 
+vi.mock(
+  "@/modules/inventory/presentation/components/products/product-reference-photo",
+  () => ({
+    ProductReferencePhoto: () => <div data-testid="product-photo" />,
+    ProductReferenceThumb: () => <div data-testid="product-photo-thumb" />,
+  }),
+);
+
 vi.mock("@/modules/inventory/presentation/hooks/use-products", () => ({
   useCreateProduct: () => ({
     isPending: false,

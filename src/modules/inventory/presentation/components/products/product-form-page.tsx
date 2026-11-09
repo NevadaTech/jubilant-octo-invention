@@ -27,6 +27,7 @@ import {
 import { CategoryMultiSelector } from "@/modules/inventory/presentation/components/categories/category-multi-selector";
 import { CompanySelector } from "@/modules/companies/presentation/components/company-selector";
 import { BrandSelector } from "@/modules/brands/presentation/components/brand-selector";
+import { ProductReferencePhoto } from "./product-reference-photo";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 
 interface ProductFormPageProps {
@@ -138,6 +139,18 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
           </p>
         </div>
       </div>
+
+      {isEditing && productId && existingProduct ? (
+        <Card>
+          <CardContent className="p-6">
+            <ProductReferencePhoto
+              productId={productId}
+              productName={existingProduct.name}
+              imageUrl={existingProduct.imageUrl}
+            />
+          </CardContent>
+        </Card>
+      ) : null}
 
       {/* Form */}
       <Card>

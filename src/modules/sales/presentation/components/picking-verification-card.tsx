@@ -18,6 +18,7 @@ import { usePickingConfig } from "@/modules/sales/presentation/hooks/use-picking
 import { usePickingVerification } from "@/modules/sales/presentation/hooks/use-picking-verification";
 import { useBarcodeScanner } from "@/shared/presentation/hooks/use-barcode-scanner";
 import { CameraScannerDialog } from "@/shared/presentation/components/camera-scanner-dialog";
+import { ProductReferenceThumb } from "@/modules/inventory/presentation/components/products/product-reference-photo";
 
 interface PickingVerificationCardProps {
   lines: SaleLine[];
@@ -156,6 +157,8 @@ export function PickingVerificationCard({
             </div>
           )}
 
+          <p className="text-sm text-muted-foreground">{t("photoNote")}</p>
+
           {/* Verification table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -184,7 +187,15 @@ export function PickingVerificationCard({
                         {idx + 1}
                       </td>
                       <td className="py-2 pr-3 font-medium">
-                        {vl.productName}
+                        <div className="flex items-center gap-2">
+                          {vl.productId ? (
+                            <ProductReferenceThumb
+                              productId={vl.productId}
+                              productName={vl.productName}
+                            />
+                          ) : null}
+                          {vl.productName}
+                        </div>
                       </td>
                       <td className="py-2 pr-3 font-mono text-xs">
                         {vl.productSku}

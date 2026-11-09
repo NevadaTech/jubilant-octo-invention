@@ -8,6 +8,7 @@ export type ScanResult = "SUCCESS" | "ALREADY_COMPLETE" | "NOT_FOUND";
 
 export interface VerificationLine {
   lineId: string;
+  productId: string;
   productSku: string;
   productBarcode: string | null;
   productName: string;
@@ -45,6 +46,7 @@ export function usePickingVerification(lines: SaleLine[]) {
   >(() =>
     lines.map((line) => ({
       lineId: line.id,
+      productId: line.productId,
       productSku: line.productSku,
       productBarcode: line.productBarcode,
       productName: line.productName,
@@ -66,6 +68,7 @@ export function usePickingVerification(lines: SaleLine[]) {
     );
     const newLines = lines.map((line) => ({
       lineId: line.id,
+      productId: line.productId,
       productSku: line.productSku,
       productBarcode: line.productBarcode,
       productName: line.productName,
