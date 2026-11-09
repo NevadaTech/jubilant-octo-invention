@@ -1,0 +1,13 @@
+Mejora visual del catálogo de la beta de Nevada Inventory. Español. App operativa, no marketing.
+
+Sistema: fondo #F3F5F8, blanco, acento #2E5A94, texto #1A2332, éxito #1F7A4D, advertencia #A15C07. IBM Plex Sans. Icono siempre con etiqueta de texto.
+
+Dos filas. Arriba escritorio 1440. Abajo móvil 390. Tres columnas alineadas. Misma barra lateral y barra superior en escritorio: marca Nevada; nav Panel, Inventario abierto con Productos activo, Categorías, Combos, Marcas, Almacenes, Movimientos, Transferencias, Stock, luego Ventas, Devoluciones, Contactos, Reportes, Importaciones, Integraciones, Usuarios, Roles, Auditoría, Configuración. Arriba: etiqueta Empresa = Nevada Retail, ES, Tema, Ana Pérez, Cerrar sesión. En móvil: Nevada, Empresa Nevada Retail, botón Menú.
+
+Columna 1, Productos. Título Productos. Buscar con etiqueta. Filtros Categoría y Marca con etiqueta. Botón Nuevo producto. Tabla: SKU, Nombre, Marca, Categoría, Stock, Estado. Filas de maqueta: NV-HDMI-2M Cable HDMI 2m, marca Nevada, categoría Cables, stock 3, estado Stock bajo; NV-PULSE Audífonos Pulse, Audio, stock 128, Activo; NV-COMBO-01 Combo Escritorio, Combos, stock 12, Activo. Paginación: Mostrando 1 a 3 de 1.248. Por página. Acciones de fila con texto: Ver, Editar.
+
+Columna 2, Nuevo producto. Título Nuevo producto. Empresa Nevada Retail visible y no editable. Campos con etiqueta: Nombre, SKU, Marca, Categoría, Precio, Stock mínimo. Error bajo SKU: Este SKU ya existe en la empresa. Botones Cancelar y Guardar.
+
+Columna 3, Categorías. Título Categorías. Lista: Cables 42 productos, Audio 18, Combos 6. Botón Nueva categoría. Muestra que Marcas y Combos usan esta misma lista, con una línea de contexto, sin diseñarlas aparte.
+
+Datos de maqueta.

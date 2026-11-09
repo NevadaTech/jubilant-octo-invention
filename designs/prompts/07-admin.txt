@@ -1,0 +1,13 @@
+Mejora visual de administración de la beta de Nevada Inventory. Español. Control: usuarios, permisos y auditoría. No es un panel de marketing.
+
+Sistema: fondo #F3F5F8, blanco, acento #2E5A94, texto #1A2332, éxito #1F7A4D, peligro #B42318. IBM Plex Sans. Permisos y acciones con etiqueta visible, nunca solo un icono.
+
+Dos filas: escritorio 1440 arriba, móvil 390 abajo, tres columnas. Shell: marca Nevada; nav Usuarios, Roles, Auditoría, Configuración; Empresa Nevada Retail; usuario Ana Pérez; Cerrar sesión. Móvil: Nevada, Empresa, botón Menú.
+
+Columna 1, Usuarios. Título Usuarios. Botón Nuevo usuario. Tabla: Nombre, Correo, Rol, Estado. Filas: Ana Pérez, ana.perez@nevada.example, Administración, Activo; Luis Gómez, luis.gomez@nevada.example, Operación, Activo; Marta Ríos, marta.rios@nevada.example, Comercial, Inactivo. Acción Editar con texto.
+
+Columna 2, Rol. Título Rol Operación. Grupos de permisos con casillas y etiqueta: Productos leer, Stock leer, Movimientos crear y publicar, Transferencias, Ventas leer. Botones Cancelar y Guardar. El grupo Ventas confirmar está desmarcado, para mostrar que el permiso es granular.
+
+Columna 3, Auditoría. Título Registro de actividad. Filtros con etiqueta: Tipo de entidad y Rango de fechas. Botón Exportar. Tabla: Fecha/hora, Acción, Entidad, Realizado por, Estado. Filas: 6 nov 2026 09:14, Publicar, Movimiento MOV-1041, Luis Gómez, Correcto; 6 nov 2026 09:02, Confirmar, Venta VTA-319, Marta Ríos, Correcto; 5 nov 2026 18:40, Iniciar sesión, Sesión, Ana Pérez, Correcto.
+
+Datos de maqueta. Configuración no necesita marco propio: la inactividad de sesión ya se entiende en acceso.

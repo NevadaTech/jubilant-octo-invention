@@ -1,0 +1,13 @@
+Mejora visual de reportes, importaciones e integraciones de la beta de Nevada Inventory. Español. Herramientas de trabajo, no una página de producto. VTEX existe pero no es el protagonista.
+
+Sistema: fondo #F3F5F8, blanco, acento #2E5A94, texto #1A2332, peligro #B42318, éxito #1F7A4D. IBM Plex Sans. Botones con texto.
+
+Dos filas: escritorio 1440 arriba, móvil 390 abajo, tres columnas. Shell: marca Nevada; nav Reportes, Importaciones, Integraciones; Empresa Nevada Retail; Ana Pérez; Cerrar sesión. Móvil: Nevada, Empresa, botón Menú.
+
+Columna 1, Reportes. Título Reportes. Alcance visible: Empresa Nevada Retail. Rango de fechas con etiqueta, ejemplo 1 nov 2026 – 6 nov 2026. Tres reportes en lista, no un mosaico de marketing: Stock por almacén, Ventas por período, Movimientos. Cada uno con botón Exportar Excel.
+
+Columna 2, Importaciones. Título Importaciones. Texto: Carga masiva desde Excel o CSV. Zona para soltar archivo productos.xlsx. Vista previa de 3 filas: SKU, Nombre, Precio, con una fila en error de texto: Fila 3, el precio no es un número. Botones Cancelar e Importar filas válidas.
+
+Columna 3, Integraciones. Título Integraciones. Una sola conexión: VTEX. Estado Desconectada, en texto. Campos con etiqueta: Cuenta y Token, el token enmascarado. Botón Conectar. Sin gráficos de ecosistema ni logos inventados de otras tiendas.
+
+Datos de maqueta.
