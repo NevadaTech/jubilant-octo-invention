@@ -117,16 +117,21 @@ export function ImportWizardDialog({
 
   return (
     <Dialog open={open} onOpenChange={(next) => (next ? undefined : handleClose())}>
-      <DialogContent className="max-h-[88vh] max-w-2xl overflow-hidden p-0">
+      <DialogContent className="max-h-[88vh] max-w-2xl overflow-hidden rounded-2xl p-0">
         <CompanyRequiredGuard active={requiresCompany}>
           <div className="flex max-h-[88vh] flex-col">
             {/* Header with title + step indicator */}
-            <div className="border-b border-neutral-200 bg-neutral-50/40 px-6 py-5 dark:border-neutral-800 dark:bg-neutral-900/40">
-              <DialogHeader>
-                <DialogTitle className="text-lg font-semibold tracking-tight">
-                  {t("wizard.title", { type: schema.displayName })}
+            <div className="border-b border-border px-5 py-5">
+              <DialogHeader className="space-y-2 text-left">
+                <p className="text-xs font-semibold text-muted-foreground">
+                  {t("module")}
+                </p>
+                <DialogTitle className="text-lg font-semibold">
+                  {step === "preview"
+                    ? tFlow("runDryRun")
+                    : t("wizard.title", { type: schema.displayName })}
                 </DialogTitle>
-                <DialogDescription className="text-xs text-neutral-500">
+                <DialogDescription className="text-sm text-muted-foreground">
                   {schema.description}
                 </DialogDescription>
               </DialogHeader>
@@ -163,7 +168,10 @@ export function ImportWizardDialog({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ImportPreviewResults preview={preview} />
+                  <ImportPreviewResults
+                    preview={preview}
+                    fileName={file?.name}
+                  />
                 </motion.div>
               )}
 
@@ -191,7 +199,7 @@ export function ImportWizardDialog({
                     })}
                   </span>
                   <div className="ml-auto flex items-center gap-2">
-                    <Button variant="ghost" onClick={handleClose}>
+                    <Button variant="outline" onClick={handleClose}>
                       {t("wizard.cancel")}
                     </Button>
                     <Button
@@ -218,7 +226,7 @@ export function ImportWizardDialog({
                     {tFlow("prevStep")}
                   </Button>
                   <div className="ml-auto flex items-center gap-2">
-                    <Button variant="ghost" onClick={handleClose}>
+                    <Button variant="outline" onClick={handleClose}>
                       {t("wizard.cancel")}
                     </Button>
                     <Button
@@ -231,7 +239,7 @@ export function ImportWizardDialog({
                     >
                       {executeMutation.isPending
                         ? tFlow("importing")
-                        : tFlow("runImport")}
+                        : tFlow("importValid")}
                     </Button>
                   </div>
                 </>

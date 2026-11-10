@@ -10,7 +10,7 @@ export function IntegrationsToggle() {
   const { integrationsEnabled } = useOrgSettings();
 
   return (
-    <Card>
+    <Card className="max-w-[560px] rounded-xl">
       <CardHeader>
         <CardTitle className="text-lg">{t("integrations.title")}</CardTitle>
       </CardHeader>

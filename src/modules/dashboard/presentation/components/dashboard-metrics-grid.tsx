@@ -38,58 +38,70 @@ export function DashboardMetricsGrid({ metrics }: DashboardMetricsGridProps) {
       : t("combosOutOfStock.descriptionOk");
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          title={t("totalProducts.title")}
-          value={formatNumber(metrics.inventory.totalProducts, locale)}
-          description={t("totalProducts.description", {
-            quantity: formatNumber(
-              metrics.inventory.totalStockQuantity,
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-3">
+        <div className="order-1">
+          <StatCard
+            title={t("totalProducts.title")}
+            shortTitle={t("totalProducts.short")}
+            value={formatNumber(metrics.inventory.totalProducts, locale)}
+            description={t("totalProducts.description", {
+              quantity: formatNumber(
+                metrics.inventory.totalStockQuantity,
+                locale,
+              ),
+            })}
+            icon={Package}
+            color="primary"
+          />
+        </div>
+
+        <div className="order-4 lg:order-2">
+          <StatCard
+            title={t("inventoryValue.title")}
+            shortTitle={t("inventoryValue.short")}
+            value={formatCurrency(
+              metrics.inventory.totalInventoryValue,
+              metrics.inventory.currency,
               locale,
-            ),
-          })}
-          icon={Package}
-          color="primary"
-        />
+            )}
+            description={t("inventoryValue.description")}
+            icon={DollarSign}
+            color="success"
+          />
+        </div>
 
-        <StatCard
-          title={t("inventoryValue.title")}
-          value={formatCurrency(
-            metrics.inventory.totalInventoryValue,
-            metrics.inventory.currency,
-            locale,
-          )}
-          description={t("inventoryValue.description")}
-          icon={DollarSign}
-          color="success"
-        />
+        <div className="order-2 lg:order-3">
+          <StatCard
+            title={t("lowStock.title")}
+            shortTitle={t("lowStock.short")}
+            value={formatNumber(metrics.lowStock.count, locale)}
+            description={lowStockDescription}
+            icon={AlertTriangle}
+            color={lowStockColor}
+          />
+        </div>
 
-        <StatCard
-          title={t("lowStock.title")}
-          value={formatNumber(metrics.lowStock.count, locale)}
-          description={lowStockDescription}
-          icon={AlertTriangle}
-          color={lowStockColor}
-        />
-
-        <StatCard
-          title={t("monthlySales.title")}
-          value={formatCurrency(
-            metrics.sales.monthlyRevenue,
-            metrics.sales.currency,
-            locale,
-          )}
-          description={t("monthlySales.description", {
-            count: metrics.sales.monthlyCount,
-          })}
-          icon={ShoppingCart}
-          color="primary"
-        />
+        <div className="order-3 lg:order-4">
+          <StatCard
+            title={t("monthlySales.title")}
+            shortTitle={t("monthlySales.short")}
+            value={formatCurrency(
+              metrics.sales.monthlyRevenue,
+              metrics.sales.currency,
+              locale,
+            )}
+            description={t("monthlySales.description", {
+              count: metrics.sales.monthlyCount,
+            })}
+            icon={ShoppingCart}
+            color="primary"
+          />
+        </div>
       </div>
 
       {metrics.combos && (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-3">
           <StatCard
             title={t("activeCombos.title")}
             value={formatNumber(metrics.combos.totalActiveCombos, locale)}

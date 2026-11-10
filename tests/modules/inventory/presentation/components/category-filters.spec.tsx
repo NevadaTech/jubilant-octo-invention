@@ -18,7 +18,7 @@ describe("CategoryFiltersComponent", () => {
     vi.clearAllMocks();
   });
 
-  it("Given: default filters When: rendering Then: should render search input", () => {
+  it("Given: default filters When: rendering Then: should show search and status without a click", () => {
     render(
       <CategoryFiltersComponent
         filters={defaultFilters}
@@ -26,59 +26,66 @@ describe("CategoryFiltersComponent", () => {
       />,
     );
     expect(screen.getByPlaceholderText("search.placeholder")).toBeDefined();
+    expect(screen.getByText("filters.status")).toBeDefined();
+    expect(screen.queryByText("filter")).toBeNull();
   });
 
-  it("Given: default filters When: rendering Then: should render filter toggle button", () => {
+  it("Given: empty search When: user types Then: should call onFiltersChange with search and page 1", () => {
     render(
       <CategoryFiltersComponent
         filters={defaultFilters}
         onFiltersChange={mockOnChange}
       />,
     );
-    expect(screen.getByText("filter")).toBeDefined();
+    fireEvent.change(screen.getByPlaceholderText("search.placeholder"), {
+      target: { value: "test" },
+    });
+    expect(mockOnChange).toHaveBeenCalledWith({
+      search: "test",
+      page: 1,
+    });
   });
 
-  it("Given: filters with search When: rendering Then: should show clear button", () => {
+  it("Given: active search When: user clears the field Then: should reset search", () => {
     render(
       <CategoryFiltersComponent
         filters={{ ...defaultFilters, search: "test" }}
         onFiltersChange={mockOnChange}
       />,
     );
-    expect(screen.getByText("clearFilters")).toBeDefined();
-  });
-
-  it("Given: default filters When: no active filters Then: should not show clear button", () => {
-    render(
-      <CategoryFiltersComponent
-        filters={defaultFilters}
-        onFiltersChange={mockOnChange}
-      />,
-    );
-    expect(screen.queryByText("clearFilters")).toBeNull();
-  });
-
-  it("Given: rendered component When: clicking filter toggle Then: should show filter panel", () => {
-    render(
-      <CategoryFiltersComponent
-        filters={defaultFilters}
-        onFiltersChange={mockOnChange}
-      />,
-    );
-    fireEvent.click(screen.getByText("filter"));
-    expect(screen.getByText("filters.status")).toBeDefined();
-  });
-
-  it("Given: active filters When: clicking clear Then: should call onFiltersChange with cleared values", () => {
-    render(
-      <CategoryFiltersComponent
-        filters={{ ...defaultFilters, search: "test", statuses: ["ACTIVE"] }}
-        onFiltersChange={mockOnChange}
-      />,
-    );
-    fireEvent.click(screen.getByText("clearFilters"));
+    fireEvent.change(screen.getByPlaceholderText("search.placeholder"), {
+      target: { value: "" },
+    });
     expect(mockOnChange).toHaveBeenCalledWith({
       search: undefined,
+      page: 1,
+    });
+  });
+
+  it("Given: visible status filter When: selecting ACTIVE Then: should call onFiltersChange with statuses", () => {
+    render(
+      <CategoryFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
+    fireEvent.click(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByRole("option", { name: "status.active" }));
+    expect(mockOnChange).toHaveBeenCalledWith({
+      statuses: ["ACTIVE"],
+      page: 1,
+    });
+  });
+
+  it("Given: selected status When: clearing the selection Then: should reset statuses", () => {
+    render(
+      <CategoryFiltersComponent
+        filters={{ ...defaultFilters, statuses: ["ACTIVE"] }}
+        onFiltersChange={mockOnChange}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button"));
+    expect(mockOnChange).toHaveBeenCalledWith({
       statuses: undefined,
       page: 1,
     });

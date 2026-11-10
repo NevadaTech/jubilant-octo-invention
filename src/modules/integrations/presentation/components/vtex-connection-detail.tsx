@@ -13,6 +13,7 @@ import {
   MoreVertical,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import {
@@ -24,16 +25,7 @@ import {
 } from "@/ui/components/dropdown-menu";
 import { Skeleton } from "@/ui/components/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/components/tabs";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/ui/components/alert-dialog";
+import { ActionDialog } from "./action-dialog";
 import { ConnectionStatusBadge } from "./connection-status-badge";
 import { SyncLogTable } from "./sync-log-table";
 import { SkuMappingTable } from "./sku-mapping-table";
@@ -139,31 +131,37 @@ export function VtexConnectionDetail({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Button
-            asChild
-            variant="ghost"
-            size="icon"
-            className="shrink-0 rounded-full"
-          >
-            <Link href="/dashboard/integrations">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2.5">
-              <h1 className="truncate text-2xl font-bold text-foreground">
-                {connection.storeName}
-              </h1>
-              <ConnectionStatusBadge status={connection.status} />
-            </div>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {connection.provider} &middot; {connection.accountName}
-            </p>
-          </div>
-        </div>
+      <Link
+        href="/dashboard/integrations"
+        className="text-sm font-semibold text-primary"
+      >
+        {t("back")}
+      </Link>
+      <PageHeader
+        title={connection.storeName}
+        description={`${connection.provider} · ${connection.accountName}`}
+        action={
+          connection.isConnected ? (
+            <Button
+              onClick={() => setSyncDialogOpen(true)}
+              disabled={triggerSync.isPending}
+            >
+              {triggerSync.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-2 h-4 w-4" />
+              )}
+              {t("actions.sync")}
+            </Button>
+          ) : (
+            <Button onClick={() => setEditFormOpen(true)}>
+              {t("actions.connect")}
+            </Button>
+          )
+        }
+      />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <ConnectionStatusBadge status={connection.status} />
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -171,52 +169,45 @@ export function VtexConnectionDetail({
             onClick={() => testIntegration.mutate(connectionId)}
             disabled={testIntegration.isPending}
           >
-            {testIntegration.isPending ? (
-              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <TestTube className="mr-1.5 h-3.5 w-3.5" />
-            )}
             {t("actions.test")}
           </Button>
-          <Button
-            size="sm"
-            onClick={() => setSyncDialogOpen(true)}
-            disabled={!connection.isConnected || triggerSync.isPending}
-          >
-            {triggerSync.isPending ? (
-              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-            )}
-            {t("actions.sync")}
-          </Button>
-          <div className="mx-0.5 h-6 w-px bg-border" />
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => setEditFormOpen(true)}
-                className="cursor-pointer gap-2"
-              >
-                <Pencil className="h-4 w-4" />
-                {t("actions.edit")}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setDeleteDialogOpen(true)}
-                className="cursor-pointer gap-2 text-destructive focus:text-destructive"
-              >
-                <Trash2 className="h-4 w-4" />
-                {tCommon("delete")}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <MoreVertical className="mr-2 h-4 w-4" />
+              {tCommon("actions")}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              className="lg:hidden"
+              onClick={() => testIntegration.mutate(connectionId)}
+              disabled={testIntegration.isPending}
+            >
+              <TestTube className="mr-2 h-4 w-4" />
+              {t("actions.test")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setEditFormOpen(true)}>
+              <Pencil className="mr-2 h-4 w-4" />
+              {t("actions.edit")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => setDeleteDialogOpen(true)}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              {tCommon("delete")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         </div>
       </div>
+      {connection.status === "ERROR" || connection.lastSyncError ? (
+        <p className="rounded-lg bg-destructive/10 px-3 py-3 text-sm text-destructive">
+          {connection.lastSyncError || t("connectError")}
+        </p>
+      ) : null}
 
       {/* Connection Info */}
       <Card>
@@ -296,7 +287,7 @@ export function VtexConnectionDetail({
               </dd>
             </div>
             {connection.lastSyncError && (
-              <div className="sm:col-span-2 lg:col-span-3">
+              <div className="sm:col-span-2 lg:col-span-3 lg:hidden">
                 <dt className="text-sm font-medium text-muted-foreground">
                   {t("fields.lastError")}
                 </dt>
@@ -359,28 +350,16 @@ export function VtexConnectionDetail({
       />
 
       {/* Delete Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("messages.confirmDelete")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("messages.confirmDeleteDescription")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleteIntegration.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              {tCommon("delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ActionDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title={t("messages.confirmDelete")}
+        consequence={t("messages.confirmDeleteDescription")}
+        confirmLabel={tCommon("delete")}
+        onConfirm={handleDelete}
+        pending={deleteIntegration.isPending}
+        destructive
+      />
     </div>
   );
 }

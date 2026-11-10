@@ -92,10 +92,17 @@ export function WarehouseForm() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <Card className="w-full max-w-lg mx-4">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>
-            {isEditing ? t("form.editTitle") : t("form.createTitle")}
-          </CardTitle>
+        <CardHeader className="flex flex-row items-start justify-between">
+          <div className="space-y-1">
+            <CardTitle>
+              {isEditing ? t("form.editTitle") : t("form.createTitle")}
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              {isEditing
+                ? t("form.editDescription")
+                : t("form.createDescription")}
+            </p>
+          </div>
           <Button variant="ghost" size="icon" onClick={handleClose}>
             <X className="h-4 w-4" />
           </Button>

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { FileSpreadsheet } from "lucide-react";
+import { PageHeader } from "@/ui/layout/page-header";
 import {
   useDownloadTemplate,
   useImportTypes,
@@ -37,21 +37,8 @@ export function ImportDashboard() {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Page header */}
-      <header className="flex items-start gap-3">
-        <div className="rounded-xl bg-neutral-900 p-2.5 text-white dark:bg-neutral-50 dark:text-neutral-900">
-          <FileSpreadsheet className="h-5 w-5" aria-hidden />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-            {t("title")}
-          </h1>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-            {t("description")}
-          </p>
-        </div>
-      </header>
+    <div className="space-y-6">
+      <PageHeader title={t("title")} description={t("description")} />
 
       {/* Getting started — always visible, steps self-adapt to the
           current backend registry */}

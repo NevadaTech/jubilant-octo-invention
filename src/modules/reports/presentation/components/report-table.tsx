@@ -38,6 +38,7 @@ interface ReportTableProps {
   rows: Record<string, unknown>[];
   locale?: string;
   currency?: string;
+  mobileCards?: boolean;
 }
 
 interface CellLabels {
@@ -144,11 +145,24 @@ function renderCell(
   );
 }
 
+function columnHaystack(col: ReportColumn) {
+  return `${col.key} ${col.header}`.toLowerCase();
+}
+
+function pickColumn(
+  columns: ReportColumn[],
+  pattern: RegExp,
+  fallback?: ReportColumn,
+) {
+  return columns.find((col) => pattern.test(columnHaystack(col))) ?? fallback;
+}
+
 export function ReportTable({
   columns,
   rows,
   locale = "en-US",
   currency,
+  mobileCards = false,
 }: ReportTableProps) {
   const t = useTranslations("reports");
   const cellLabels: CellLabels = {
@@ -203,8 +217,97 @@ export function ReportTable({
     );
   }
 
+  const textColumns = columns.filter(
+    (col) => col.type === "string" || col.type === "date",
+  );
+  const titleColumn = pickColumn(
+    columns,
+    /product|name|sku/,
+    textColumns[0],
+  );
+  const subtitleColumn = pickColumn(
+    columns,
+    /warehouse|almac/,
+    textColumns.find((col) => col.key !== titleColumn?.key),
+  );
+  const quantityColumn = pickColumn(columns, /quantity|qty|cantidad/);
+  const valueColumn =
+    columns.find((col) => col.type === "currency") ??
+    columns.find(
+      (col) => col.type === "number" && col.key !== quantityColumn?.key,
+    );
+
   return (
-    <div className="relative overflow-x-auto rounded-md border">
+    <div className="space-y-3">
+      {mobileCards ? (
+        <div className="space-y-3 md:hidden">
+          {sortedRows.map((row, index) => {
+            const title = titleColumn
+              ? formatCellValue(row[titleColumn.key], titleColumn.type, locale, currency)
+              : "";
+            const subtitle = subtitleColumn
+              ? formatCellValue(
+                  row[subtitleColumn.key],
+                  subtitleColumn.type,
+                  locale,
+                  currency,
+                )
+              : "";
+            const quantity = quantityColumn
+              ? formatCellValue(
+                  row[quantityColumn.key],
+                  quantityColumn.type,
+                  locale,
+                  currency,
+                )
+              : "";
+            const value = valueColumn
+              ? formatCellValue(
+                  row[valueColumn.key],
+                  valueColumn.type,
+                  locale,
+                  currency,
+                )
+              : "";
+            const visible = (text: string) =>
+              text && text !== "—" ? text : "";
+            const amount = [visible(quantity), visible(value)]
+              .filter(Boolean)
+              .join(" · ");
+
+            return (
+              <div
+                // eslint-disable-next-line @eslint-react/no-array-index-key
+                key={index}
+                className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-[15px] font-semibold text-foreground">
+                    {title}
+                  </p>
+                  {subtitle ? (
+                    <p className="truncate text-[13px] text-muted-foreground">
+                      {subtitle}
+                    </p>
+                  ) : null}
+                </div>
+                {amount ? (
+                  <p className="shrink-0 text-sm font-semibold text-foreground">
+                    {amount}
+                  </p>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+
+      <div
+        className={cn(
+          "relative overflow-x-auto rounded-xl border border-border",
+          mobileCards && "hidden md:block",
+        )}
+      >
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50">
@@ -267,6 +370,7 @@ export function ReportTable({
           ))}
         </TableBody>
       </Table>
+      </div>
     </div>
   );
 }

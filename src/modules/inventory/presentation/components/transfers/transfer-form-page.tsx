@@ -5,7 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft, ArrowRight, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, Plus, Trash2 } from "lucide-react";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
@@ -104,21 +105,10 @@ export function TransferFormPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/dashboard/inventory/transfers">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            {t("form.createTitle")}
-          </h1>
-          <p className="text-neutral-500 dark:text-neutral-400">
-            {t("form.createDescription")}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={t("form.createTitle")}
+        description={t("form.createDescription")}
+      />
 
       {/* Form */}
       <CompanyRequiredGuard>

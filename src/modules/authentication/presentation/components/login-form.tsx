@@ -8,14 +8,19 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { PasswordInput } from "@/ui/components/password-input";
-import { Label } from "@/ui/components/label";
-import { FormField } from "@/ui/components/form-field";
 import {
   loginSchema,
   type LoginDto,
 } from "@/modules/authentication/application/dto/login.dto";
 import { useLogin } from "@/modules/authentication/presentation/hooks/use-login";
 import { AuthApiError } from "@/modules/authentication/infrastructure/errors/auth-api.error";
+import {
+  AuthDescription,
+  AuthField,
+  AuthSplit,
+  AuthTitle,
+  authControlClass,
+} from "@/modules/authentication/presentation/components/auth-shell";
 
 const AUTH_ERROR_KEYS = [
   "unauthorized",
@@ -58,59 +63,75 @@ export function LoginForm() {
     login(data);
   };
 
+  const authError = error ? tErrors(getAuthErrorKey(error)) : undefined;
+  const passwordError = errors.password?.message ?? authError;
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {error && (
-        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-          {tErrors(getAuthErrorKey(error))}
-        </div>
-      )}
+    <AuthSplit>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <AuthTitle>{t("title")}</AuthTitle>
+        <AuthDescription>{t("description")}</AuthDescription>
 
-      <FormField error={errors.organizationSlug?.message}>
-        <Label htmlFor="organizationSlug">{t("organization")}</Label>
-        <Input
+        <AuthField
           id="organizationSlug"
-          type="text"
-          placeholder={t("organizationPlaceholder")}
-          autoComplete="organization"
-          {...register("organizationSlug")}
-        />
-      </FormField>
+          label={t("organization")}
+          error={errors.organizationSlug?.message}
+        >
+          <Input
+            id="organizationSlug"
+            type="text"
+            placeholder={t("organizationPlaceholder")}
+            autoComplete="organization"
+            aria-invalid={Boolean(errors.organizationSlug)}
+            aria-describedby={
+              errors.organizationSlug ? "organizationSlug-error" : undefined
+            }
+            className={authControlClass(Boolean(errors.organizationSlug))}
+            {...register("organizationSlug")}
+          />
+        </AuthField>
 
-      <FormField error={errors.email?.message}>
-        <Label htmlFor="email">{t("email")}</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder={t("emailPlaceholder")}
-          autoComplete="email"
-          {...register("email")}
-        />
-      </FormField>
+        <AuthField id="email" label={t("email")} error={errors.email?.message}>
+          <Input
+            id="email"
+            type="email"
+            placeholder={t("emailPlaceholder")}
+            autoComplete="email"
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? "email-error" : undefined}
+            className={authControlClass(Boolean(errors.email))}
+            {...register("email")}
+          />
+        </AuthField>
 
-      <FormField error={errors.password?.message}>
-        <Label htmlFor="password">{t("password")}</Label>
-        <PasswordInput
-          id="password"
-          placeholder={t("passwordPlaceholder")}
-          autoComplete="current-password"
-          {...register("password")}
-        />
-      </FormField>
+        <AuthField id="password" label={t("password")} error={passwordError}>
+          <PasswordInput
+            id="password"
+            placeholder={t("passwordPlaceholder")}
+            autoComplete="current-password"
+            aria-invalid={Boolean(passwordError)}
+            aria-describedby={passwordError ? "password-error" : undefined}
+            className={authControlClass(Boolean(passwordError))}
+            {...register("password")}
+          />
+        </AuthField>
 
-      <div className="flex items-center justify-end">
+        <Button
+          type="submit"
+          className="w-full rounded-lg"
+          disabled={isLoading}
+        >
+          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {isLoading ? t("submitting") : t("submit")}
+        </Button>
+
         <Link
           href="/forgot-password"
-          className="text-sm text-muted-foreground hover:text-primary"
+          className="w-fit text-sm font-semibold text-primary"
         >
           {t("forgotPassword")}
         </Link>
-      </div>
-
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isLoading ? t("submitting") : t("submit")}
-      </Button>
-    </form>
+      </form>
+    </AuthSplit>
   );
 }

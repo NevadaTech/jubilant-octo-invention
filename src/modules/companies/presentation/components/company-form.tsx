@@ -75,7 +75,7 @@ export function CompanyForm({ open, onOpenChange, editId }: CompanyFormProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="shadow-none sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? t("form.editTitle") : t("form.createTitle")}
@@ -103,6 +103,7 @@ export function CompanyForm({ open, onOpenChange, editId }: CompanyFormProps) {
                 id="code"
                 {...register("code")}
                 placeholder={t("form.codePlaceholder")}
+                className="h-10 font-mono"
                 disabled={isEditing}
               />
               {errors.code && (

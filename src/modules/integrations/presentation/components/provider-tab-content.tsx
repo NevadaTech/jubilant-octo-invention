@@ -2,20 +2,11 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Plug, Loader2 } from "lucide-react";
+import { Plus, Plug } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/ui/components/alert-dialog";
+import { ActionDialog } from "./action-dialog";
 import { ConnectionCard } from "./connection-card";
 import { VtexProviderHeader } from "./vtex-provider-header";
 import { MeliProviderHeader } from "./meli-provider-header";
@@ -134,31 +125,16 @@ export function ProviderTabContent({ provider }: ProviderTabContentProps) {
           />
         ))}
 
-      <AlertDialog
+      <ActionDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("messages.confirmDelete")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("messages.confirmDeleteDescription")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleteIntegration.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              {tCommon("delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title={t("messages.confirmDelete")}
+        consequence={t("messages.confirmDeleteDescription")}
+        confirmLabel={tCommon("delete")}
+        onConfirm={handleDelete}
+        pending={deleteIntegration.isPending}
+        destructive
+      />
     </div>
   );
 }

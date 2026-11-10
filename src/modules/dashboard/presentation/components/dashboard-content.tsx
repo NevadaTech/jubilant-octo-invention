@@ -48,41 +48,29 @@ export function DashboardContent() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-3">
           <StatCardSkeleton />
           <StatCardSkeleton />
           <StatCardSkeleton />
           <StatCardSkeleton />
         </div>
-        <div className="grid gap-4 lg:grid-cols-7">
-          <div className="lg:col-span-4">
-            <ChartSkeleton />
-          </div>
-          <div className="lg:col-span-3">
-            <ChartSkeleton />
-          </div>
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <ChartSkeleton />
+          <ChartSkeleton />
         </div>
         {showStockByCompany ? (
           <>
-            <div className="grid gap-4 lg:grid-cols-7">
-              <div className="lg:col-span-3">
-                <ChartSkeleton />
-              </div>
-              <div className="lg:col-span-4">
-                <ChartSkeleton />
-              </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <ChartSkeleton />
+              <ChartSkeleton />
             </div>
             <ChartSkeleton />
           </>
         ) : (
-          <div className="grid gap-4 lg:grid-cols-7">
-            <div className="lg:col-span-3">
-              <ChartSkeleton />
-            </div>
-            <div className="lg:col-span-4">
-              <ChartSkeleton />
-            </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <ChartSkeleton />
+            <ChartSkeleton />
           </div>
         )}
       </div>
@@ -124,63 +112,51 @@ export function DashboardContent() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Stat Cards Row */}
+    <div className="space-y-4">
       <DashboardMetricsGrid metrics={metrics} />
 
-      {/* Charts Row 1: Sales Trend + Stock by Warehouse */}
-      <div className="grid gap-4 lg:grid-cols-7">
-        <div className="lg:col-span-4">
-          <SalesTrendChart
-            data={metrics.salesTrend}
-            currency={metrics.sales.currency}
-          />
-        </div>
-        <div className="lg:col-span-3">
-          <StockDistributionChart
-            data={metrics.stockByWarehouse}
-            currency={metrics.inventory.currency}
-          />
-        </div>
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <RecentActivityFeed
+          data={metrics.recentActivity}
+          lowStockCount={metrics.lowStock.count}
+          combosOutOfStock={metrics.combos?.combosWithZeroAvailability ?? 0}
+        />
+        <SalesTrendChart
+          data={metrics.salesTrend}
+          currency={metrics.sales.currency}
+        />
       </div>
 
       {showStockByCompany && metrics.stockByCompany ? (
         <>
-          {/* Charts Row 2 (multi-company): Stock by Company + Top Products */}
-          <div className="grid gap-4 lg:grid-cols-7">
-            <div className="lg:col-span-3">
-              <StockByCompanyChart
-                data={metrics.stockByCompany}
-                currency={metrics.inventory.currency}
-              />
-            </div>
-            <div className="lg:col-span-4">
-              <TopProductsChart
-                data={metrics.topProducts}
-                currency={metrics.sales.currency}
-              />
-            </div>
-          </div>
-
-          {/* Charts Row 3 (multi-company): Recent Activity full width */}
-          <RecentActivityFeed data={metrics.recentActivity} />
-        </>
-      ) : (
-        /* Charts Row 2 (single-company): Top Products + Recent Activity */
-        <div className="grid gap-4 lg:grid-cols-7">
-          <div className="lg:col-span-3">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <StockByCompanyChart
+              data={metrics.stockByCompany}
+              currency={metrics.inventory.currency}
+            />
             <TopProductsChart
               data={metrics.topProducts}
               currency={metrics.sales.currency}
             />
           </div>
-          <div className="lg:col-span-4">
-            <RecentActivityFeed data={metrics.recentActivity} />
-          </div>
+          <StockDistributionChart
+            data={metrics.stockByWarehouse}
+            currency={metrics.inventory.currency}
+          />
+        </>
+      ) : (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <TopProductsChart
+            data={metrics.topProducts}
+            currency={metrics.sales.currency}
+          />
+          <StockDistributionChart
+            data={metrics.stockByWarehouse}
+            currency={metrics.inventory.currency}
+          />
         </div>
       )}
 
-      {/* Combos Section */}
       {metrics.combos?.topCombos && metrics.combos.topCombos.length > 0 && (
         <TopCombosTable
           data={metrics.combos.topCombos}

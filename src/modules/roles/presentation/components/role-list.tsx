@@ -1,27 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { formatDateTimeMedium } from "@/lib/date";
-import {
-  Plus,
-  Search,
-  Shield,
-  MoreHorizontal,
-  Trash2,
-  Edit2,
-  KeyRound,
-  Loader2,
-} from "lucide-react";
+import { useTranslations } from "next-intl";
+import { MoreHorizontal, Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { Label } from "@/ui/components/label";
 import { Skeleton } from "@/ui/components/skeleton";
-import { Badge } from "@/ui/components/badge";
+import { PageHeader } from "@/ui/layout/page-header";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/ui/components/dropdown-menu";
 import {
@@ -42,14 +33,12 @@ import {
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
-import { DropdownMenuSeparator } from "@/ui/components/dropdown-menu";
 import { RoleTypeBadge } from "./role-type-badge";
 import { RoleForm } from "./role-form";
 import { RolePermissionsDialog } from "./role-permissions-dialog";
 import type { Role } from "@/modules/roles/domain/entities/role.entity";
 
 export function RoleList() {
-  const locale = useLocale();
   const t = useTranslations("roles");
   const tCommon = useTranslations("common");
   const [searchValue, setSearchValue] = useState("");
@@ -62,11 +51,15 @@ export function RoleList() {
   const updateRole = useUpdateRole();
   const { hasPermission } = usePermissions();
 
+  const roleName = (role: Role) =>
+    t.has(`names.${role.name}`) ? t(`names.${role.name}`) : role.name;
+
   const filteredRoles = roles?.filter((role) => {
     if (!searchValue) return true;
     const search = searchValue.toLowerCase();
     return (
       role.name.toLowerCase().includes(search) ||
+      roleName(role).toLowerCase().includes(search) ||
       role.description?.toLowerCase().includes(search)
     );
   });
@@ -92,164 +85,211 @@ export function RoleList() {
     }
   };
 
-  if (isError) {
-    return (
-      <Card>
-        <CardContent className="py-10 text-center">
-          <p className="text-destructive">{t("error.loading")}</p>
-        </CardContent>
-      </Card>
-    );
-  }
+  const canUpdate = hasPermission(PERMISSIONS.ROLES_UPDATE);
+  const canDelete = hasPermission(PERMISSIONS.ROLES_DELETE);
+
+  const openPermissions = (role: Role) => setPermissionsTarget(role);
+
+  const actions = (role: Role) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={tCommon("actions")}
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => openPermissions(role)}>
+          {role.isSystem || !canUpdate
+            ? t("actions.viewPermissions")
+            : t("actions.managePermissions")}
+        </DropdownMenuItem>
+        {role.canEdit && canUpdate ? (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => handleToggleStatus(role)}>
+              {role.isActive ? t("status.inactive") : t("status.active")}
+            </DropdownMenuItem>
+            {role.canDelete && canDelete ? (
+              <DropdownMenuItem
+                onClick={() => setDeleteTarget(role)}
+                className="text-destructive"
+              >
+                {t("actions.delete")}
+              </DropdownMenuItem>
+            ) : null}
+          </>
+        ) : null}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle>{t("list.title")}</CardTitle>
-            <PermissionGate permission={PERMISSIONS.ROLES_CREATE}>
-              <Button onClick={() => setIsFormOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                {t("actions.new")}
-              </Button>
-            </PermissionGate>
-          </div>
-          <div className="relative max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      {permissionsTarget ? (
+        <RolePermissionsDialog
+          role={permissionsTarget}
+          open
+          onOpenChange={(open) => {
+            if (!open) setPermissionsTarget(null);
+          }}
+          readOnly={permissionsTarget.isSystem || !canUpdate}
+        />
+      ) : (
+        <div className="space-y-4">
+          {isError ? (
+            <p className="rounded-xl border border-border bg-card px-4 py-8 text-center text-sm text-destructive">
+              {t("error.loading")}
+            </p>
+          ) : (
+          <>
+          <PageHeader
+            title={t("list.title")}
+            action={
+              <PermissionGate permission={PERMISSIONS.ROLES_CREATE}>
+                <Button type="button" onClick={() => setIsFormOpen(true)}>
+                  {t("actions.new")}
+                </Button>
+              </PermissionGate>
+            }
+          />
+          <div className="w-full max-w-xs space-y-1">
+            <Label htmlFor="roles-search">{tCommon("search")}</Label>
             <Input
+              id="roles-search"
               placeholder={t("search.placeholder")}
               value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="pl-9"
+              onChange={(event) => setSearchValue(event.target.value)}
             />
           </div>
-        </CardHeader>
-        <CardContent>
+
           {isLoading ? (
             <div className="space-y-3">
-              {[...Array(5)].map((_, i) => (
-                // eslint-disable-next-line @eslint-react/no-array-index-key
-                <Skeleton key={i} className="h-16 w-full" />
+              {[0, 1, 2, 3, 4].map((item) => (
+                <Skeleton key={item} className="h-16 w-full" />
               ))}
             </div>
           ) : !filteredRoles?.length ? (
-            <div className="py-10 text-center">
-              <Shield className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-semibold">{t("empty.title")}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+            <div className="rounded-xl border border-border bg-card px-4 py-10 text-center">
+              <h2 className="text-lg font-semibold text-foreground">
+                {t("empty.title")}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
                 {t("empty.description")}
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                    <th className="pb-3 pr-4">{t("fields.name")}</th>
-                    <th className="hidden pb-3 pr-4 md:table-cell">
-                      {t("fields.description")}
-                    </th>
-                    <th className="pb-3 pr-4">{t("fields.system")}</th>
-                    <th className="pb-3 pr-4">{t("fields.status")}</th>
-                    <th className="hidden pb-3 pr-4 lg:table-cell">
-                      {t("fields.createdAt")}
-                    </th>
-                    <th className="pb-3 pr-4 text-right">
-                      {tCommon("actions")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredRoles.map((role) => (
-                    <tr key={role.id} className="border-b">
-                      <td className="py-4 pr-4">
-                        <p className="font-medium">
-                          {t.has(`names.${role.name}`)
-                            ? t(`names.${role.name}`)
-                            : role.name}
-                        </p>
-                      </td>
-                      <td className="hidden py-4 pr-4 text-sm text-muted-foreground md:table-cell">
-                        {role.description || "-"}
-                      </td>
-                      <td className="py-4 pr-4">
-                        <RoleTypeBadge isSystem={role.isSystem} />
-                      </td>
-                      <td className="py-4 pr-4">
-                        <Badge
-                          variant={role.isActive ? "success" : "secondary"}
-                        >
-                          {role.isActive
-                            ? t("status.active")
-                            : t("status.inactive")}
-                        </Badge>
-                      </td>
-                      <td className="hidden py-4 pr-4 text-sm text-muted-foreground lg:table-cell">
-                        {formatDateTimeMedium(role.createdAt, locale)}
-                      </td>
-                      <td className="py-4 text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => setPermissionsTarget(role)}
-                            >
-                              <KeyRound className="mr-2 h-4 w-4" />
-                              {role.isSystem ||
-                              !hasPermission(PERMISSIONS.ROLES_UPDATE)
-                                ? t("actions.viewPermissions")
-                                : t("actions.managePermissions")}
-                            </DropdownMenuItem>
-                            {role.canEdit &&
-                              hasPermission(PERMISSIONS.ROLES_UPDATE) && (
-                                <>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                    onClick={() => handleToggleStatus(role)}
-                                  >
-                                    <Edit2 className="mr-2 h-4 w-4" />
-                                    {role.isActive
-                                      ? t("status.inactive")
-                                      : t("status.active")}
-                                  </DropdownMenuItem>
-                                  {role.canDelete &&
-                                    hasPermission(PERMISSIONS.ROLES_DELETE) && (
-                                      <DropdownMenuItem
-                                        onClick={() => setDeleteTarget(role)}
-                                        className="text-destructive"
-                                      >
-                                        <Trash2 className="mr-2 h-4 w-4" />
-                                        {t("actions.delete")}
-                                      </DropdownMenuItem>
-                                    )}
-                                </>
-                              )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
+            <>
+              <div className="hidden overflow-hidden rounded-xl border border-border bg-card lg:block">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="h-[42px] bg-background text-left text-[13px] font-semibold text-muted-foreground">
+                      <th className="px-3 font-semibold" scope="col">
+                        {t("fields.name")}
+                      </th>
+                      <th className="px-3 font-semibold" scope="col">
+                        {t("fields.description")}
+                      </th>
+                      <th className="px-3 font-semibold" scope="col">
+                        {t("fields.system")}
+                      </th>
+                      <th className="w-12 px-3" scope="col">
+                        <span className="sr-only">{tCommon("actions")}</span>
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {filteredRoles.map((role) => (
+                      <tr
+                        key={role.id}
+                        className="h-[52px] border-t border-border"
+                      >
+                        <td className="px-3">
+                          <button
+                            type="button"
+                            className="font-semibold text-foreground"
+                            onClick={() => openPermissions(role)}
+                          >
+                            {roleName(role)}
+                          </button>
+                          <span className="ml-2 text-xs font-semibold text-muted-foreground">
+                            {role.isActive
+                              ? t("status.active")
+                              : t("status.inactive")}
+                          </span>
+                        </td>
+                        <td className="px-3 text-muted-foreground">
+                          {role.description || "-"}
+                        </td>
+                        <td className="px-3">
+                          <RoleTypeBadge isSystem={role.isSystem} />
+                        </td>
+                        <td className="px-3 text-right">{actions(role)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="space-y-3 lg:hidden">
+                {filteredRoles.map((role) => (
+                  <article
+                    key={role.id}
+                    className="rounded-xl border border-border bg-card p-3.5"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <button
+                        type="button"
+                        className="text-left"
+                        onClick={() => openPermissions(role)}
+                      >
+                        <p className="text-[15px] font-semibold text-foreground">
+                          {roleName(role)}
+                        </p>
+                        <p className="mt-0.5 text-[13px] text-muted-foreground">
+                          {role.description || "—"}
+                        </p>
+                      </button>
+                      <RoleTypeBadge isSystem={role.isSystem} />
+                    </div>
+                    <div className="mt-1 flex items-center justify-between">
+                      {role.isActive ? (
+                        <span />
+                      ) : (
+                        <span className="text-xs font-semibold text-muted-foreground">
+                          {t("status.inactive")}
+                        </span>
+                      )}
+                      {actions(role)}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </>
           )}
-        </CardContent>
-      </Card>
+          </>
+          )}
+        </div>
+      )}
 
       <RoleForm open={isFormOpen} onOpenChange={setIsFormOpen} />
 
       <AlertDialog
         open={!!deleteTarget}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onOpenChange={(open) => {
+          if (!open && !deleteRole.isPending) setDeleteTarget(null);
+        }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("delete.title")}</AlertDialogTitle>
+        <AlertDialogContent className="max-w-[500px] gap-2.5 rounded-2xl p-5 shadow-none sm:rounded-2xl">
+          <AlertDialogHeader className="space-y-2 text-left">
+            <p className="text-xs font-semibold text-primary">{t("title")}</p>
+            <AlertDialogTitle className="text-lg font-semibold text-foreground">
+              {t("delete.title")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {t("delete.description")}
             </AlertDialogDescription>
@@ -263,24 +303,14 @@ export function RoleList() {
               disabled={deleteRole.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteRole.isPending && (
+              {deleteRole.isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              ) : null}
               {deleteRole.isPending ? tCommon("loading") : tCommon("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      <RolePermissionsDialog
-        role={permissionsTarget}
-        open={!!permissionsTarget}
-        onOpenChange={(open) => !open && setPermissionsTarget(null)}
-        readOnly={
-          (permissionsTarget?.isSystem ?? false) ||
-          !hasPermission(PERMISSIONS.ROLES_UPDATE)
-        }
-      />
     </>
   );
 }

@@ -3,8 +3,8 @@
 import { useState, useMemo } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { PageHeader } from "@/ui/layout/page-header";
 import {
-  Plus,
   ArrowRightLeft,
   CheckCircle,
   XCircle,
@@ -15,7 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { Card, CardContent } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
 import { SortableHeader } from "@/ui/components/sortable-header";
@@ -46,7 +46,6 @@ import { formatDateTimeMedium } from "@/lib/date";
 import { MovementTypeBadge } from "./movement-type-badge";
 import { MovementStatusBadge } from "./movement-status-badge";
 import { MovementFilters } from "./movement-filters";
-import { MovementForm } from "./movement-form";
 import type { StockMovementFilters } from "@/modules/inventory/application/dto/stock-movement.dto";
 import type { StockMovement } from "@/modules/inventory/domain/entities/stock-movement.entity";
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
@@ -59,7 +58,6 @@ export function MovementList() {
     page: 1,
     limit: 10,
   });
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [postConfirm, setPostConfirm] = useState<StockMovement | null>(null);
   const [voidConfirm, setVoidConfirm] = useState<StockMovement | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<StockMovement | null>(
@@ -134,18 +132,19 @@ export function MovementList() {
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle>{t("list.title")}</CardTitle>
-            <Button onClick={() => setIsFormOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t("actions.new")}
+      <div className="space-y-4">
+        <PageHeader
+          title={t("list.title")}
+          description={t("description")}
+          action={
+            <Button asChild>
+              <Link href="/dashboard/inventory/movements/new">
+                {t("actions.new")}
+              </Link>
             </Button>
-          </div>
-          <MovementFilters filters={filters} onFiltersChange={setFilters} />
-        </CardHeader>
-        <CardContent>
+          }
+        />
+        <MovementFilters filters={filters} onFiltersChange={setFilters} />
           {isLoading ? (
             <div className="space-y-3">
               {[...Array(5)].map((_, i) => (
@@ -160,17 +159,18 @@ export function MovementList() {
               <p className="mt-2 text-sm text-muted-foreground">
                 {t("empty.description")}
               </p>
-              <Button className="mt-4" onClick={() => setIsFormOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                {t("actions.new")}
+              <Button asChild variant="outline" className="mt-4">
+                <Link href="/dashboard/inventory/movements/new">
+                  {t("actions.new")}
+                </Link>
               </Button>
             </div>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              <div className="lg:overflow-hidden lg:rounded-xl lg:border lg:border-border lg:bg-card">
                 <table className="w-full">
-                  <thead>
-                    <tr className="border-b text-left text-sm font-medium text-muted-foreground">
+                  <thead className="hidden bg-muted/70 text-left text-xs font-semibold text-muted-foreground lg:table-header-group">
+                    <tr className="h-10">
                       <SortableHeader
                         label={t("fields.type")}
                         field="type"
@@ -209,9 +209,12 @@ export function MovementList() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="flex flex-col gap-3 lg:table-row-group">
                     {data.data.map((movement) => (
-                      <tr key={movement.id} className="border-b">
+                      <tr
+                        key={movement.id}
+                        className="flex flex-col gap-1 rounded-xl border border-border bg-card p-3.5 lg:table-row lg:rounded-none lg:border-0 lg:border-b lg:bg-transparent lg:p-0"
+                      >
                         <td className="py-4 pr-4">
                           <MovementTypeBadge type={movement.type} />
                         </td>
@@ -350,10 +353,7 @@ export function MovementList() {
               />
             </>
           )}
-        </CardContent>
-      </Card>
-
-      <MovementForm open={isFormOpen} onOpenChange={setIsFormOpen} />
+      </div>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog

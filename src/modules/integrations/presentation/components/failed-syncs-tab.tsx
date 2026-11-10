@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateTimeShort } from "@/lib/date";
 import { RefreshCw, Loader2 } from "lucide-react";
@@ -11,6 +12,7 @@ import {
   useRetrySyncLog,
   useRetryAllFailed,
 } from "@/modules/integrations/presentation/hooks/use-integrations";
+import { ActionDialog } from "./action-dialog";
 
 interface FailedSyncsTabProps {
   connectionId: string;
@@ -22,6 +24,9 @@ export function FailedSyncsTab({ connectionId }: FailedSyncsTabProps) {
   const tCommon = useTranslations("common");
   const retrySyncLog = useRetrySyncLog(connectionId);
   const retryAll = useRetryAllFailed(connectionId);
+  const [pendingRetry, setPendingRetry] = useState<
+    { kind: "one"; id: string; message: string } | { kind: "all" } | null
+  >(null);
 
   const { data: failedResult, isLoading: isLoadingFailed } = useSyncLogs(
     connectionId,
@@ -59,7 +64,7 @@ export function FailedSyncsTab({ connectionId }: FailedSyncsTabProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => retryAll.mutate()}
+              onClick={() => setPendingRetry({ kind: "all" })}
               disabled={retryAll.isPending}
             >
               {retryAll.isPending ? (
@@ -112,7 +117,13 @@ export function FailedSyncsTab({ connectionId }: FailedSyncsTabProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => retrySyncLog.mutate(log.id)}
+                  onClick={() =>
+                    setPendingRetry({
+                      kind: "one",
+                      id: log.id,
+                      message: log.errorMessage || t("retryHint"),
+                    })
+                  }
                   disabled={retrySyncLog.isPending}
                 >
                   {retrySyncLog.isPending ? (
@@ -127,6 +138,27 @@ export function FailedSyncsTab({ connectionId }: FailedSyncsTabProps) {
           </div>
         )}
       </CardContent>
+      <ActionDialog
+        open={pendingRetry !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingRetry(null);
+        }}
+        title={t("title")}
+        consequence={
+          pendingRetry?.kind === "one"
+            ? `${pendingRetry.message} ${t("retryHint")}`
+            : t("retryHint")
+        }
+        confirmLabel={
+          pendingRetry?.kind === "all" ? t("retryAll") : t("retryOne")
+        }
+        pending={retrySyncLog.isPending || retryAll.isPending}
+        onConfirm={() => {
+          if (pendingRetry?.kind === "all") retryAll.mutate();
+          if (pendingRetry?.kind === "one") retrySyncLog.mutate(pendingRetry.id);
+          setPendingRetry(null);
+        }}
+      />
     </Card>
   );
 }

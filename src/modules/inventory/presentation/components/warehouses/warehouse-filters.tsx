@@ -64,16 +64,21 @@ export function WarehouseFiltersComponent({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder={t("search.placeholder")}
-            className="pl-9"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="flex flex-1 flex-col gap-1">
+          <Label className="text-xs font-semibold text-muted-foreground">
+            {tCommon("search")}
+          </Label>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder={t("search.placeholder")}
+              className="h-10 pl-9"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
+          </div>
         </div>
 
         <Button
@@ -101,7 +106,9 @@ export function WarehouseFiltersComponent({
       {showFilters && (
         <div className="flex flex-wrap gap-4 rounded-lg border bg-muted/30 p-4">
           <div className="min-w-[180px] flex-1">
-            <Label className="mb-2 block text-sm">{t("filters.status")}</Label>
+            <Label className="mb-1 block text-xs font-semibold text-muted-foreground">
+              {t("filters.status")}
+            </Label>
             <MultiSelect
               value={filters.statuses ?? []}
               onValueChange={handleStatusChange}

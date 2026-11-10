@@ -27,6 +27,7 @@ import {
   useSyncLogs,
   useRetrySyncLog,
 } from "@/modules/integrations/presentation/hooks/use-integrations";
+import { ActionDialog } from "./action-dialog";
 import type {
   SyncAction,
   IntegrationSyncLog,
@@ -75,11 +76,15 @@ interface SyncLogTableProps {
 export function SyncLogTable({ connectionId }: SyncLogTableProps) {
   const locale = useLocale();
   const t = useTranslations("integrations.syncLogs");
+  const tFailed = useTranslations("integrations.failedSyncs");
   const tCommon = useTranslations("common");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [actionFilter, setActionFilter] = useState<string>("ALL");
   const [selectedLog, setSelectedLog] = useState<IntegrationSyncLog | null>(
+    null,
+  );
+  const [retryTarget, setRetryTarget] = useState<IntegrationSyncLog | null>(
     null,
   );
 
@@ -202,6 +207,7 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                   <td className="py-2">
                     <Badge
                       variant={actionVariantMap[log.action] ?? "secondary"}
+                      className="rounded-full px-2 py-0.5 text-xs font-semibold"
                     >
                       {t(`actions.${log.action}` as never)}
                     </Badge>
@@ -213,6 +219,7 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                           externalStatusVariant[log.externalOrderStatus] ??
                           "secondary"
                         }
+                        className="rounded-full px-2 py-0.5 text-xs font-semibold"
                       >
                         {t(`orderStatuses.${log.externalOrderStatus}` as never)}
                       </Badge>
@@ -248,7 +255,7 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleRetry(log.id);
+                          setRetryTarget(log);
                         }}
                         disabled={retryingLogId !== null}
                       >
@@ -533,10 +540,7 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
                   <Button
                     variant="outline"
                     className="w-full sm:w-auto"
-                    onClick={() => {
-                      handleRetry(selectedLog.id);
-                      setSelectedLog(null);
-                    }}
+                    onClick={() => setRetryTarget(selectedLog)}
                     disabled={retryingLogId !== null}
                   >
                     {retryingLogId === selectedLog.id ? (
@@ -552,6 +556,25 @@ export function SyncLogTable({ connectionId }: SyncLogTableProps) {
           )}
         </DialogContent>
       </Dialog>
+      <ActionDialog
+        open={retryTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setRetryTarget(null);
+        }}
+        title={tFailed("title")}
+        consequence={
+          retryTarget?.errorMessage
+            ? `${retryTarget.errorMessage} ${tFailed("retryHint")}`
+            : tFailed("retryHint")
+        }
+        confirmLabel={t("detail.retry")}
+        pending={retryingLogId !== null}
+        onConfirm={() => {
+          if (!retryTarget) return;
+          handleRetry(retryTarget.id);
+          setRetryTarget(null);
+        }}
+      />
     </div>
   );
 }

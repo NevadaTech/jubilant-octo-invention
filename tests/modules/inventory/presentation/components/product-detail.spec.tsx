@@ -368,11 +368,7 @@ describe("ProductDetail", () => {
     expect(screen.getByText("PW-100")).toBeDefined();
     // Price formatted as currency
     expect(screen.getByText("$199.99")).toBeDefined();
-    // Active badge
-    const badges = screen.getAllByTestId("badge");
-    const activeBadge = badges.find((b) => b.textContent === "status.active");
-    expect(activeBadge).toBeDefined();
-    expect(activeBadge?.getAttribute("data-variant")).toBe("success");
+    expect(screen.getByText("status.active")).toBeDefined();
   });
 
   it("Given: inactive product with statusChangedBy When: rendering Then: should show status info card", () => {
@@ -397,13 +393,7 @@ describe("ProductDetail", () => {
     expect(screen.getByText("John Admin")).toBeDefined();
     expect(screen.getByText("detail.statusChangedBy")).toBeDefined();
     expect(screen.getByText("detail.statusChangedAt")).toBeDefined();
-    // Inactive badge
-    const badges = screen.getAllByTestId("badge");
-    const inactiveBadge = badges.find(
-      (b) => b.textContent === "status.inactive",
-    );
-    expect(inactiveBadge).toBeDefined();
-    expect(inactiveBadge?.getAttribute("data-variant")).toBe("secondary");
+    expect(screen.getByText("status.inactive")).toBeDefined();
   });
 
   it("Given: product with categories When: rendering Then: should render category badges", () => {
@@ -425,11 +415,8 @@ describe("ProductDetail", () => {
     render(<ProductDetail productId="prod-1" />);
 
     // Assert
-    const badges = screen.getAllByTestId("badge");
-    const categoryBadges = badges.filter(
-      (b) => b.textContent === "Hardware" || b.textContent === "Networking",
-    );
-    expect(categoryBadges.length).toBe(2);
+    expect(screen.getByText("Hardware")).toBeDefined();
+    expect(screen.getByText("Networking")).toBeDefined();
   });
 
   it("Given: product with description When: rendering Then: should display description card", () => {

@@ -44,7 +44,7 @@ export function PickingConfigForm() {
   return (
     <div className="space-y-6">
       {/* Toggle picking process */}
-      <Card>
+      <Card className="rounded-xl">
         <CardContent className="flex items-center justify-between p-6">
           {isLoading ? (
             <div className="flex w-full items-center justify-between">
@@ -72,7 +72,13 @@ export function PickingConfigForm() {
       </Card>
 
       {/* Verification mode */}
-      <Card className={!pickingEnabled ? "opacity-50 pointer-events-none" : ""}>
+      <Card
+        className={
+          !pickingEnabled
+            ? "pointer-events-none rounded-xl opacity-50"
+            : "rounded-xl"
+        }
+      >
         <CardHeader>
           <CardTitle>{t("title")}</CardTitle>
           <CardDescription>{t("description")}</CardDescription>

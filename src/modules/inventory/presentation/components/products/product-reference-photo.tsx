@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Package } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import {
   AlertDialog,
@@ -65,12 +64,16 @@ export function ProductReferenceThumb({
   const image = useProductImage(productId, imageUrl !== null);
   const src = useObjectUrl(image.data);
 
-  if (!src) {
+  if (!imageUrl) {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-        <Package className="h-5 w-5 text-primary-600 dark:text-primary-400" aria-hidden="true" />
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-muted px-1 text-center text-[10px] font-semibold leading-tight text-muted-foreground">
+        {t("none")}
       </div>
     );
+  }
+
+  if (!src) {
+    return <div className="h-14 w-14 shrink-0 animate-pulse rounded-xl bg-muted" />;
   }
 
   return (
@@ -79,7 +82,7 @@ export function ProductReferenceThumb({
     <img
       src={src}
       alt={t("alt", { name: productName })}
-      className="h-10 w-10 rounded-lg border border-border object-cover"
+      className="h-14 w-14 shrink-0 rounded-xl border border-border object-cover"
     />
   );
 }
@@ -125,60 +128,68 @@ export function ProductReferencePhoto({
   };
 
   return (
-    <section className="space-y-3" aria-label={t("title")}>
-      <div>
-        <h2 className="text-sm font-semibold text-foreground">{t("title")}</h2>
-        <p className="text-sm text-muted-foreground">{t("purpose")}</p>
-      </div>
+    <section className="flex flex-col gap-5 sm:flex-row" aria-label={t("title")}>
       {src ? (
         // The bytes come from an authenticated blob URL, so the image optimizer cannot fetch them.
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={src}
           alt={t("alt", { name: productName })}
-          className="size-40 rounded-md border border-border object-cover"
+          className="size-[180px] shrink-0 rounded-xl border border-border object-cover"
         />
+      ) : imageUrl && !image.isError ? (
+        <div className="size-[180px] shrink-0 animate-pulse rounded-xl bg-muted" />
       ) : (
-        <p className="text-sm text-muted-foreground">{t("empty")}</p>
+        <div className="flex size-[180px] shrink-0 items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
+          {t("none")}
+        </div>
       )}
-      {localError ? (
-        <p className="text-sm text-destructive" role="alert">
-          {localError}
+      <div className="space-y-3">
+        <p className="text-sm text-muted-foreground">
+          {src ? t("purpose") : t("empty")}
         </p>
-      ) : null}
-      {canUpdate ? (
-        <div className="flex flex-wrap gap-2">
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="sr-only"
-            onChange={(event) => {
-              chooseFile(event.target.files?.[0]);
-              event.target.value = "";
-            }}
-          />
-          <Button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={upload.isPending}
+        {localError ? (
+          <p
+            className="max-w-lg rounded-lg bg-error-100 px-3 py-3 text-sm text-destructive"
+            role="alert"
           >
-            {t("upload")}
-          </Button>
-          {src ? (
+            {localError}
+          </p>
+        ) : null}
+        {canUpdate ? (
+          <div className="flex flex-wrap gap-2">
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="sr-only"
+              onChange={(event) => {
+                chooseFile(event.target.files?.[0]);
+                event.target.value = "";
+              }}
+            />
             <Button
               type="button"
-              variant="outline"
-              onClick={() => setConfirmOpen(true)}
-              disabled={remove.isPending}
+              onClick={() => inputRef.current?.click()}
+              disabled={upload.isPending}
             >
-              {t("remove")}
+              {src ? t("change") : t("upload")}
             </Button>
-          ) : null}
-        </div>
-      ) : null}
+            {src ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setConfirmOpen(true)}
+                disabled={remove.isPending}
+              >
+                {t("remove")}
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="shadow-none">
           <AlertDialogHeader>
             <AlertDialogTitle>{t("removeTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -190,6 +201,7 @@ export function ProductReferencePhoto({
               {tCommon("cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
                 remove.mutate(productId);
                 setConfirmOpen(false);

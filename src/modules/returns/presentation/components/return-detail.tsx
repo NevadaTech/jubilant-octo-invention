@@ -1,17 +1,11 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { formatDateTimeMedium } from "@/lib/date";
 import { Link } from "@/i18n/navigation";
-import {
-  ArrowLeft,
-  CheckCircle,
-  XCircle,
-  Package,
-  Loader2,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Button } from "@/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import {
   AlertDialog,
@@ -25,9 +19,9 @@ import {
   AlertDialogTrigger,
 } from "@/ui/components/alert-dialog";
 import {
-  useReturn,
-  useConfirmReturn,
   useCancelReturn,
+  useConfirmReturn,
+  useReturn,
 } from "@/modules/returns/presentation/hooks/use-returns";
 import { ReturnStatusBadge } from "./return-status-badge";
 import { ReturnTypeBadge } from "./return-type-badge";
@@ -44,13 +38,12 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
   const confirmReturn = useConfirmReturn();
   const cancelReturn = useCancelReturn();
 
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
+  const formatCurrency = (amount: number, currency: string) =>
+    new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currency || "COP",
       minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const handleConfirm = async () => {
     try {
@@ -70,80 +63,68 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="flex flex-col gap-4">
         <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-40 w-full rounded-xl" />
       </div>
     );
   }
 
   if (isError || !returnData) {
     return (
-      <div className="space-y-6">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/dashboard/returns">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <Card>
-          <CardContent className="py-10 text-center">
-            <p className="text-destructive">{t("error.loading")}</p>
-          </CardContent>
-        </Card>
+      <div className="flex flex-col gap-4">
+        <Link
+          href="/dashboard/returns"
+          className="text-sm font-semibold text-primary"
+        >
+          {t("detail.backToList")}
+        </Link>
+        <p className="rounded-xl border border-border bg-card px-4 py-10 text-center text-destructive">
+          {t("error.loading")}
+        </p>
       </div>
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/dashboard/returns">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                {returnData.returnNumber}
-              </h1>
-              <ReturnStatusBadge status={returnData.status} />
-              <ReturnTypeBadge type={returnData.type} />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {t("detail.createdAt", {
-                date: formatDateTimeMedium(returnData.createdAt, locale),
-              })}
-            </p>
-          </div>
-        </div>
+  const reference = returnData.saleNumber;
+  const description = [
+    t(
+      `types.${returnData.type === "RETURN_CUSTOMER" ? "customer" : "supplier"}`,
+    ),
+    reference,
+    returnData.warehouseName,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
-        <div className="flex gap-2">
-          {returnData.canConfirm && (
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        title={returnData.returnNumber}
+        description={description}
+        action={
+          returnData.canConfirm ? (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button disabled={confirmReturn.isPending}>
+                <Button className="rounded-lg" disabled={confirmReturn.isPending}>
                   {confirmReturn.isPending ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <CheckCircle className="mr-2 h-4 w-4" />
-                  )}
+                  ) : null}
                   {t("actions.confirm")}
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent>
+              <AlertDialogContent className="rounded-2xl sm:max-w-[500px]">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    {t("confirmReturn.title")}
-                  </AlertDialogTitle>
+                  <p className="text-xs font-semibold text-primary">
+                    {t("title")}
+                  </p>
+                  <AlertDialogTitle>{t("confirmReturn.title")}</AlertDialogTitle>
                   <AlertDialogDescription>
                     {t("confirmReturn.description")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
+                <AlertDialogFooter className="sm:justify-start">
                   <AlertDialogCancel disabled={confirmReturn.isPending}>
                     {tCommon("cancel")}
                   </AlertDialogCancel>
@@ -151,9 +132,9 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                     onClick={handleConfirm}
                     disabled={confirmReturn.isPending}
                   >
-                    {confirmReturn.isPending && (
+                    {confirmReturn.isPending ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
+                    ) : null}
                     {confirmReturn.isPending
                       ? tCommon("loading")
                       : t("actions.confirm")}
@@ -161,198 +142,180 @@ export function ReturnDetail({ returnId }: ReturnDetailProps) {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-          )}
-          {returnData.canCancel && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" disabled={cancelReturn.isPending}>
-                  {cancelReturn.isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <XCircle className="mr-2 h-4 w-4" />
-                  )}
-                  {t("actions.cancelReturn")}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("cancelReturn.title")}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t("cancelReturn.description")}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={cancelReturn.isPending}>
-                    {tCommon("cancel")}
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleCancel}
-                    disabled={cancelReturn.isPending}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    {cancelReturn.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {cancelReturn.isPending
-                      ? tCommon("loading")
-                      : t("actions.cancelReturn")}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-        </div>
+          ) : null
+        }
+      />
+
+      <div className="flex flex-wrap items-center gap-2">
+        <ReturnStatusBadge status={returnData.status} />
+        <ReturnTypeBadge type={returnData.type} />
       </div>
 
-      {/* Return Info Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("detail.info")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.warehouse")}
-              </dt>
-              <dd className="mt-1 font-medium">{returnData.warehouseName}</dd>
-            </div>
-            {returnData.saleNumber && (
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("fields.saleReference")}
-                </dt>
-                <dd className="mt-1 font-mono text-sm">
-                  {returnData.saleNumber}
-                </dd>
-              </div>
-            )}
-            {returnData.reason && (
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("fields.reason")}
-                </dt>
-                <dd className="mt-1">{returnData.reason}</dd>
-              </div>
-            )}
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.total")}
-              </dt>
-              <dd className="mt-1 text-lg font-bold">
-                {formatCurrency(returnData.totalAmount, returnData.currency)}
-              </dd>
-            </div>
-            {returnData.confirmedAt && (
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("fields.confirmedAt")}
-                </dt>
-                <dd className="mt-1">
-                  {formatDateTimeMedium(returnData.confirmedAt, locale)}
-                </dd>
-              </div>
-            )}
-            {returnData.cancelledAt && (
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("fields.cancelledAt")}
-                </dt>
-                <dd className="mt-1">
-                  {formatDateTimeMedium(returnData.cancelledAt, locale)}
-                </dd>
-              </div>
-            )}
-            {returnData.note && (
-              <div className="sm:col-span-2 lg:col-span-3">
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("fields.note")}
-                </dt>
-                <dd className="mt-1">{returnData.note}</dd>
-              </div>
-            )}
-          </dl>
-        </CardContent>
-      </Card>
+      <p className="text-sm text-muted-foreground">
+        {t("detail.createdAt", {
+          date: formatDateTimeMedium(returnData.createdAt, locale),
+        })}
+      </p>
 
-      {/* Lines Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {t("detail.lines")}
-            {returnData.totalItems > 0 && ` (${returnData.totalItems})`}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {returnData.lines.length === 0 ? (
-            <div className="py-8 text-center">
-              <Package className="mx-auto h-10 w-10 text-muted-foreground" />
-              <p className="mt-2 text-muted-foreground">{t("form.noLines")}</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+      <div className="grid gap-2 sm:grid-cols-2">
+        <div className="flex flex-col gap-0.5 rounded-lg border border-border bg-card px-3.5 py-2.5">
+          <span className="text-sm text-muted-foreground">
+            {t("fields.warehouse")}
+          </span>
+          <span className="text-sm font-semibold">{returnData.warehouseName}</span>
+        </div>
+        {returnData.saleNumber ? (
+          <div className="flex flex-col gap-0.5 rounded-lg border border-border bg-card px-3.5 py-2.5">
+            <span className="text-sm text-muted-foreground">
+              {t("fields.saleReference")}
+            </span>
+            <span className="text-sm font-semibold">{returnData.saleNumber}</span>
+          </div>
+        ) : null}
+      </div>
+
+      {returnData.reason ? (
+        <p className="text-sm">
+          <span>{t("fields.reason")}</span>
+          {": "}
+          <span>{returnData.reason}</span>
+        </p>
+      ) : null}
+      {returnData.note ? (
+        <p className="text-sm text-muted-foreground">
+          <span>{t("fields.note")}</span>
+          {": "}
+          <span>{returnData.note}</span>
+        </p>
+      ) : null}
+
+      {returnData.canCancel ? (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-fit rounded-lg border-destructive text-destructive hover:bg-destructive/10"
+              disabled={cancelReturn.isPending}
+            >
+              {cancelReturn.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {t("actions.cancelReturn")}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="rounded-2xl sm:max-w-[500px]">
+            <AlertDialogHeader>
+              <p className="text-xs font-semibold text-primary">{t("title")}</p>
+              <AlertDialogTitle>{t("cancelReturn.title")}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t("cancelReturn.description")}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="sm:justify-start">
+              <AlertDialogCancel disabled={cancelReturn.isPending}>
+                {tCommon("cancel")}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleCancel}
+                disabled={cancelReturn.isPending}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {cancelReturn.isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                {cancelReturn.isPending
+                  ? tCommon("loading")
+                  : t("actions.cancelReturn")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      ) : null}
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-base font-semibold">
+          {t("detail.lines")}
+          {returnData.totalItems > 0 ? ` (${returnData.totalItems})` : ""}
+        </h2>
+        {returnData.lines.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t("form.noLines")}</p>
+        ) : (
+          <>
+            <div className="hidden overflow-hidden rounded-xl border border-border bg-card lg:block">
+              <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                    <th className="pb-3 pr-4">{t("fields.product")}</th>
-                    <th className="pb-3 pr-4">{t("fields.quantity")}</th>
-                    <th className="pb-3 pr-4">
+                  <tr className="bg-muted text-xs font-semibold text-muted-foreground">
+                    <th className="h-10 px-3 text-left">{t("fields.product")}</th>
+                    <th className="h-10 px-3 text-left">{t("fields.quantity")}</th>
+                    <th className="h-10 px-3 text-left">
                       {returnData.isCustomerReturn
                         ? t("fields.originalPrice")
                         : t("fields.originalCost")}
                     </th>
-                    <th className="pb-3 pr-4 text-right">
-                      {t("fields.lineTotal")}
-                    </th>
+                    <th className="h-10 px-3 text-left">{t("fields.lineTotal")}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {returnData.lines.map((line) => (
-                    <tr key={line.id} className="border-b">
-                      <td className="py-3 pr-4">
-                        <p className="font-medium">{line.productName}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {line.productSku}
-                        </p>
-                      </td>
-                      <td className="py-3 pr-4">{line.quantity}</td>
-                      <td className="py-3 pr-4">
-                        {line.originalSalePrice
-                          ? formatCurrency(
-                              line.originalSalePrice,
-                              line.currency,
-                            )
-                          : line.originalUnitCost
-                            ? formatCurrency(
-                                line.originalUnitCost,
-                                line.currency,
-                              )
-                            : "-"}
-                      </td>
-                      <td className="py-3 pr-4 text-right font-medium">
-                        {formatCurrency(line.totalPrice, line.currency)}
-                      </td>
-                    </tr>
-                  ))}
+                  {returnData.lines.map((line) => {
+                    const unit =
+                      line.originalSalePrice ?? line.originalUnitCost;
+                    return (
+                      <tr key={line.id} className="border-t border-border">
+                        <td className="px-3 py-3">
+                          <p className="font-medium">{line.productName}</p>
+                          <p className="font-mono text-xs text-muted-foreground">
+                            {line.productSku}
+                          </p>
+                        </td>
+                        <td className="px-3 py-3">{line.quantity}</td>
+                        <td className="px-3 py-3">
+                          {unit != null
+                            ? formatCurrency(unit, line.currency)
+                            : "—"}
+                        </td>
+                        <td className="px-3 py-3">
+                          {formatCurrency(line.totalPrice, line.currency)}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
-                <tfoot>
-                  <tr className="border-t-2">
-                    <td colSpan={3} className="py-3 pr-4 text-right font-bold">
-                      {t("fields.total")}
-                    </td>
-                    <td className="py-3 text-right text-lg font-bold">
-                      {formatCurrency(
-                        returnData.totalAmount,
-                        returnData.currency,
-                      )}
-                    </td>
-                  </tr>
-                </tfoot>
               </table>
             </div>
-          )}
-        </CardContent>
-      </Card>
+            <ul className="flex flex-col gap-3 lg:hidden">
+              {returnData.lines.map((line) => {
+                const unit = line.originalSalePrice ?? line.originalUnitCost;
+                return (
+                  <li
+                    key={line.id}
+                    className="rounded-xl border border-border bg-card p-3.5 text-sm"
+                  >
+                    {line.productName}
+                    {" · "}
+                    {line.quantity}
+                    {unit != null
+                      ? ` · ${t("fields.originalPrice")} ${formatCurrency(unit, line.currency)}`
+                      : ""}
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="text-lg font-bold">
+              {t("fields.total")}{" "}
+              <span>
+                {formatCurrency(returnData.totalAmount, returnData.currency)}
+              </span>
+            </p>
+          </>
+        )}
+      </section>
+
+      <Link
+        href="/dashboard/returns"
+        className="text-sm font-semibold text-primary"
+      >
+        {t("detail.backToList")}
+      </Link>
     </div>
   );
 }

@@ -70,6 +70,10 @@ vi.mock("@hookform/resolvers/zod", () => ({
 
 let mockSelectedCompanyId: string | null = "company-test-1";
 
+vi.mock("@/modules/companies/presentation/hooks/use-companies", () => ({
+  useCompanies: () => ({ data: { data: [] }, isLoading: false }),
+}));
+
 vi.mock("@/modules/companies/infrastructure/store/company.store", () => ({
   useCompanyStore: (
     selector: (state: {

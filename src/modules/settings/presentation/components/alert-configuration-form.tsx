@@ -98,7 +98,7 @@ export function AlertConfigurationForm() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="rounded-xl">
         <CardHeader>
           <Skeleton className="h-6 w-48" />
           <Skeleton className="h-4 w-72" />
@@ -114,13 +114,13 @@ export function AlertConfigurationForm() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("title")}</CardTitle>
+    <Card className="rounded-xl">
+      <CardHeader className="p-4">
+        <CardTitle className="text-base">{t("title")}</CardTitle>
         <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <CardContent className="p-4 pt-0">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Enable/Disable */}
           <div className="flex items-center justify-between">
             <Label htmlFor="isEnabled">{t("enabled")}</Label>
@@ -174,7 +174,7 @@ export function AlertConfigurationForm() {
                 <Label className="text-sm font-medium">{t("severities")}</Label>
 
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between rounded-lg border p-3">
+                  <div className="flex items-center justify-between gap-3 py-1">
                     <Label htmlFor="notifyLowStock" className="font-normal">
                       {t("lowStock")}
                     </Label>
@@ -191,7 +191,7 @@ export function AlertConfigurationForm() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-lg border p-3">
+                  <div className="flex items-center justify-between gap-3 py-1">
                     <Label
                       htmlFor="notifyCriticalStock"
                       className="font-normal"
@@ -211,7 +211,7 @@ export function AlertConfigurationForm() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-lg border p-3">
+                  <div className="flex items-center justify-between gap-3 py-1">
                     <Label htmlFor="notifyOutOfStock" className="font-normal">
                       {t("outOfStock")}
                     </Label>
@@ -260,7 +260,7 @@ export function AlertConfigurationForm() {
             </p>
           )}
 
-          <div className="flex justify-end">
+          <div className="flex justify-start">
             <Button type="submit" disabled={!isDirty || updateConfig.isPending}>
               {updateConfig.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

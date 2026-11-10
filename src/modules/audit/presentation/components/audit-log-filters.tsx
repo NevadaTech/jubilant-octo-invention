@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Search, X, Filter } from "lucide-react";
 import { format } from "date-fns";
 import { Input } from "@/ui/components/input";
 import { Button } from "@/ui/components/button";
@@ -65,7 +64,6 @@ export function AuditLogFiltersBar({ filters, onFiltersChange }: Props) {
   const t = useTranslations("audit");
   const tCommon = useTranslations("common");
   const [searchValue, setSearchValue] = useState(filters.entityId || "");
-  const [showFilters, setShowFilters] = useState(false);
   const debouncedSearch = useDebounce(searchValue, 300);
   const { data: usersData } = useUsers({ limit: 100 });
 
@@ -142,160 +140,121 @@ export function AuditLogFiltersBar({ filters, onFiltersChange }: Props) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder={
-              t("filters.entityIdPlaceholder") || "Search by Entity ID..."
-            }
-            className="pl-9"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
-        </div>
-
-        <Button
-          variant="outline"
-          onClick={() => setShowFilters(!showFilters)}
-          className="gap-2"
+    <div className="flex flex-wrap items-end gap-4">
+      <div className="w-full space-y-1 sm:w-[220px]">
+        <Label htmlFor="audit-entity">{t("filters.entityType")}</Label>
+        <Select
+          value={filters.entityType || "all"}
+          onValueChange={handleEntityTypeChange}
         >
-          <Filter className="h-4 w-4" />
-          {tCommon("filter")}
-          {hasActiveFilters && (
-            <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-              !
-            </span>
-          )}
-        </Button>
-
-        {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-            <X className="mr-2 h-4 w-4" />
-            {tCommon("clearFilters")}
-          </Button>
-        )}
+          <SelectTrigger id="audit-entity">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("filters.allTypes")}</SelectItem>
+            {ENTITY_TYPES.map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      {showFilters && (
-        <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
-          <div className="flex flex-wrap items-end gap-3">
-            <div className="min-w-[140px]">
-              <Label className="mb-2 block text-sm">
-                {t("filters.entityType")}
-              </Label>
-              <Select
-                value={filters.entityType || "all"}
-                onValueChange={handleEntityTypeChange}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("filters.allTypes")}</SelectItem>
-                  {ENTITY_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      <div className="w-full space-y-1 sm:w-[220px]">
+        <Label htmlFor="audit-action">{t("filters.action")}</Label>
+        <Select
+          value={filters.action || "all"}
+          onValueChange={handleActionChange}
+        >
+          <SelectTrigger id="audit-action">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("filters.allActions")}</SelectItem>
+            {ACTIONS.map((action) => (
+              <SelectItem key={action} value={action}>
+                {action}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-            <div className="min-w-[140px]">
-              <Label className="mb-2 block text-sm">
-                {t("filters.action")}
-              </Label>
-              <Select
-                value={filters.action || "all"}
-                onValueChange={handleActionChange}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("filters.allActions")}</SelectItem>
-                  {ACTIONS.map((action) => (
-                    <SelectItem key={action} value={action}>
-                      {action}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="min-w-[140px]">
-              <Label className="mb-2 block text-sm">
-                {t("filters.httpMethod")}
-              </Label>
-              <Select
-                value={filters.httpMethod || "all"}
-                onValueChange={handleHttpMethodChange}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("filters.allMethods")}</SelectItem>
-                  {HTTP_METHODS.map((method) => (
-                    <SelectItem key={method} value={method}>
-                      {method}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="min-w-[170px]">
-              <Label className="mb-2 block text-sm">
-                {t("filters.performedBy")}
-              </Label>
-              <Select
-                value={filters.performedBy || "all"}
-                onValueChange={handlePerformedByChange}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("filters.allUsers")}</SelectItem>
-                  {usersData?.data.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                      {user.fullName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-end gap-3">
-            <div className="min-w-[280px]">
-              <Label className="mb-2 block text-sm">
-                {t("filters.dateRange")}
-              </Label>
-              <DateRangePicker
-                value={
-                  filters.startDate || filters.endDate
-                    ? {
-                        from: filters.startDate
-                          ? new Date(filters.startDate)
-                          : undefined,
-                        to: filters.endDate
-                          ? new Date(filters.endDate)
-                          : undefined,
-                      }
-                    : undefined
+      <div className="w-full space-y-1 sm:w-[220px]">
+        <Label>{t("filters.dateRange")}</Label>
+        <DateRangePicker
+          value={
+            filters.startDate || filters.endDate
+              ? {
+                  from: filters.startDate
+                    ? new Date(filters.startDate)
+                    : undefined,
+                  to: filters.endDate ? new Date(filters.endDate) : undefined,
                 }
-                onChange={handleDateRangeChange}
-                placeholder={t("filters.selectDateRange")}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+              : undefined
+          }
+          onChange={handleDateRangeChange}
+          placeholder={t("filters.selectDateRange")}
+        />
+      </div>
+
+      <div className="w-full space-y-1 sm:w-[220px]">
+        <Label htmlFor="audit-actor">{t("filters.performedBy")}</Label>
+        <Select
+          value={filters.performedBy || "all"}
+          onValueChange={handlePerformedByChange}
+        >
+          <SelectTrigger id="audit-actor">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("filters.allUsers")}</SelectItem>
+            {usersData?.data.map((user) => (
+              <SelectItem key={user.id} value={user.id}>
+                {user.fullName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="w-full space-y-1 sm:w-[160px]">
+        <Label htmlFor="audit-method">{t("filters.httpMethod")}</Label>
+        <Select
+          value={filters.httpMethod || "all"}
+          onValueChange={handleHttpMethodChange}
+        >
+          <SelectTrigger id="audit-method">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("filters.allMethods")}</SelectItem>
+            {HTTP_METHODS.map((method) => (
+              <SelectItem key={method} value={method}>
+                {method}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="w-full space-y-1 sm:w-52">
+        <Label htmlFor="audit-entity-id">{t("filters.entityId")}</Label>
+        <Input
+          id="audit-entity-id"
+          type="search"
+          placeholder={t("filters.entityIdPlaceholder")}
+          value={searchValue}
+          onChange={(event) => setSearchValue(event.target.value)}
+        />
+      </div>
+
+      {hasActiveFilters ? (
+        <Button type="button" variant="ghost" onClick={handleClearFilters}>
+          {tCommon("clearFilters")}
+        </Button>
+      ) : null}
     </div>
   );
 }

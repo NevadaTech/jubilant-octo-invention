@@ -1,0 +1,11 @@
+Mejora visual del panel de la beta de Nevada Inventory. Aplicación operativa en español, no un sitio de marketing. La persona debe ver en el primer pantallazo en qué empresa trabaja y qué requiere acción.
+
+Sistema visual: fondo #F3F5F8, superficies blancas, acento #2E5A94, texto #1A2332, éxito #1F7A4D, advertencia #A15C07, peligro #B42318. Sans IBM Plex Sans. Ningún control es solo un icono.
+
+Escritorio 1440, fila superior. Barra lateral izquierda fija, marca Nevada, navegación con texto: Panel (activo), Inventario, Ventas, Devoluciones, Contactos, Reportes, Importaciones, Integraciones, Usuarios, Roles, Auditoría, Configuración. Barra superior: selector con etiqueta Empresa y valor Nevada Retail, idioma ES, botón Tema, Ana Pérez, botón Cerrar sesión.
+
+Contenido del panel, alcance de la empresa Nevada Retail, dicho en el título: Panel de control. Cuatro cifras reales de maqueta: Total de productos 1.248 (18.430 unidades en stock), Valor del inventario $ 482.900.000, Alertas de stock bajo 14, Ventas del mes 86 pedidos. Debajo, una cola Requieren atención, no más tarjetas: Cable HDMI 2m, stock 3 en Bodega Norte, mínimo 20; Audífonos Pulse, stock 0 en Bodega Centro; movimiento MOV-1042 en Borrador; transferencia TR-218 En tránsito. A la derecha, Tendencia de ventas, ingresos de los últimos 7 días, con eje y cifras, sin gráfica vacía.
+
+Móvil 390, fila inferior, la misma información. Barra superior: Nevada, Empresa Nevada Retail, botón con texto Menú. La cola de atención va antes que la gráfica. Cifras en dos columnas.
+
+Datos de maqueta. Sin claims comerciales.

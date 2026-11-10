@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { MoreHorizontal, Plug, TestTube, Trash2, Pencil } from "lucide-react";
+import { MoreHorizontal, TestTube, Trash2, Pencil } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent } from "@/ui/components/card";
 import {
@@ -39,24 +39,22 @@ export function ConnectionCard({
   };
 
   return (
-    <Card className="relative">
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-              <Plug className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            </div>
-            <div>
+    <Card className="relative rounded-xl">
+      <CardContent className="space-y-4 p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
               <Link
                 href={`/dashboard/integrations/${connection.id}`}
-                className="font-semibold hover:underline"
+                className="text-lg font-semibold text-foreground"
               >
                 {connection.storeName}
               </Link>
-              <p className="text-xs text-muted-foreground">
-                {connection.accountName}
-              </p>
+              <ConnectionStatusBadge status={connection.status} />
             </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {connection.accountName}
+            </p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -86,13 +84,7 @@ export function ConnectionCard({
           </DropdownMenu>
         </div>
 
-        <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
-              {t("fields.status")}
-            </span>
-            <ConnectionStatusBadge status={connection.status} />
-          </div>
+        <div className="space-y-2">
           {connection.companyName && (
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">

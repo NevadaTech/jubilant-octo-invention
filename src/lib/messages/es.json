@@ -18,9 +18,10 @@
     "previous": "Anterior",
     "next": "Siguiente",
     "close": "Cerrar",
-    "accessDenied": "Acceso Denegado",
-    "accessDeniedDescription": "No tienes los permisos necesarios para acceder a esta sección. Contacta a tu administrador si crees que esto es un error.",
-    "backToDashboard": "Volver al Dashboard",
+    "accessDenied": "No tienes permiso para ver esta pantalla",
+    "accessDeniedDescription": "Tu rol {role} no incluye esta pantalla. Pide el acceso a administración.",
+    "accessDeniedUnknownRole": "actual",
+    "backToDashboard": "Volver al panel",
     "clearFilters": "Limpiar filtros",
     "selected": "seleccionados",
     "pagination": {
@@ -35,6 +36,16 @@
       "forbidden": "No tienes acceso a este recurso.",
       "serverError": "Error del servidor. Inténtalo más tarde.",
       "generic": "Error de autenticación. Inténtalo de nuevo."
+    },
+    "brand": {
+      "name": "Nevada",
+      "purpose": "El inventario de la organización, siempre dentro de la empresa activa.",
+      "permissionsTitle": "Permisos",
+      "permissionsText": "Cada persona solo actúa dentro de su rol.",
+      "statesTitle": "Estados",
+      "statesText": "Borrador, publicado, anulado. Nada queda a medias.",
+      "auditTitle": "Auditoría",
+      "auditText": "Lo que ocurre se puede reconstruir."
     },
     "login": {
       "title": "Bienvenido de nuevo",
@@ -55,62 +66,78 @@
     "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
     "sessionTimeout": {
       "title": "Sesión por expirar",
-      "description": "Tu sesión expirará en {time} por inactividad. ¿Deseas continuar?",
+      "description": "Tu sesión se cierra en {time}. Continúa para seguir trabajando en Nevada Retail.",
       "extend": "Continuar sesión",
       "logout": "Cerrar sesión"
     },
     "forgotPassword": {
-      "title": "Restablecer Contraseña",
-      "description": "Ingresa tu organización y correo para recibir un código de verificación",
+      "title": "Restablecer contraseña",
+      "description": "Ingresa tu organización y correo para recibir un código de verificación.",
       "organization": "Organización",
       "organizationPlaceholder": "tu-organizacion",
       "enterEmail": "Correo electrónico",
-      "sendCode": "Enviar Código de Verificación",
+      "sendCode": "Enviar código de verificación",
       "sending": "Enviando...",
-      "checkEmail": "Revisa tu Correo",
-      "checkEmailDescription": "Enviamos un código de 6 dígitos a tu correo. Ingrésalo a continuación.",
-      "enterOtp": "Código de Verificación",
+      "checkEmail": "Revisa tu correo",
+      "checkEmailDescription": "Enviamos un código de 6 dígitos a {email}.",
+      "enterOtp": "Código de verificación",
       "otpPlaceholder": "000000",
-      "verifyCode": "Verificar Código",
+      "verifyCode": "Verificar código",
       "verifying": "Verificando...",
       "invalidCode": "Código inválido o expirado",
-      "newPassword": "Nueva Contraseña",
-      "confirmPassword": "Confirmar Contraseña",
-      "resetPassword": "Restablecer Contraseña",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "requirements": "Mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial.",
+      "resetPassword": "Restablecer contraseña",
       "resetting": "Restableciendo...",
-      "success": "Contraseña Restablecida",
-      "successDescription": "Tu contraseña ha sido actualizada. Ya puedes iniciar sesión con tu nueva contraseña.",
-      "backToLogin": "Volver a Iniciar Sesión",
+      "success": "Contraseña restablecida",
+      "successDescription": "Tu contraseña fue actualizada. Ya puedes iniciar sesión.",
+      "backToLogin": "Volver a iniciar sesión",
       "requestNew": "Solicitar nuevo código",
       "resendIn": "Reenviar código en {minutes}:{seconds}"
     },
     "forceChangePassword": {
-      "title": "Cambia tu Contraseña",
+      "title": "Cambia tu contraseña",
       "description": "Debes cambiar tu contraseña temporal antes de continuar",
-      "warning": "Tu administrador te asignó una contraseña temporal. Por seguridad, debes establecer una nueva contraseña antes de acceder al sistema.",
-      "submit": "Establecer Nueva Contraseña",
+      "warning": "Tu administrador te asignó una contraseña temporal. Debes establecer una nueva antes de acceder.",
+      "submit": "Establecer nueva contraseña",
       "submitting": "Actualizando contraseña..."
     }
   },
   "dashboard": {
     "title": "Panel de control",
     "description": "Resumen de tu sistema de inventario",
+    "scope": "Lo que requiere acción en {name}",
+    "scopeAll": "todas las empresas",
+    "attention": {
+      "viewStock": "Ver stock",
+      "lowStockTitle": "Alertas de stock bajo",
+      "lowStockMeta": "{count, plural, =1 {1 producto bajo el mínimo} other {# productos bajo el mínimo}}",
+      "lowStockStatus": "Stock bajo",
+      "combosTitle": "Combos sin stock",
+      "combosMeta": "{count, plural, =1 {1 combo sin disponibilidad} other {# combos sin disponibilidad}}",
+      "combosStatus": "Sin stock"
+    },
     "metrics": {
       "totalProducts": {
-        "title": "Total de Productos",
+        "title": "Total de productos",
+        "short": "Productos",
         "description": "{quantity} unidades en stock"
       },
       "inventoryValue": {
-        "title": "Valor del Inventario",
-        "description": "Valor total de todos los productos"
+        "title": "Valor del inventario",
+        "short": "Valor",
+        "description": "Suma del stock valorado"
       },
       "lowStock": {
-        "title": "Alertas de Stock Bajo",
-        "descriptionAlert": "Productos requieren atención inmediata",
+        "title": "Alertas de stock bajo",
+        "short": "Stock bajo",
+        "descriptionAlert": "Productos bajo el mínimo",
         "descriptionOk": "Todos los productos tienen stock suficiente"
       },
       "monthlySales": {
-        "title": "Ventas del Mes",
+        "title": "Ventas del mes",
+        "short": "Ventas",
         "description": "{count, plural, =0 {Sin ventas} =1 {1 pedido} other {# pedidos}} este mes"
       },
       "activeCombos": {
@@ -135,7 +162,7 @@
     "charts": {
       "noData": "Sin datos disponibles",
       "salesTrend": {
-        "title": "Tendencia de Ventas",
+        "title": "Tendencia de ventas",
         "description": "Ingresos de los últimos 7 días",
         "revenue": "Ingresos",
         "orders": "Pedidos"
@@ -167,8 +194,20 @@
         "name": "Nombre"
       },
       "recentActivity": {
-        "title": "Actividad Reciente",
+        "title": "Requieren atención",
         "description": "Últimas transacciones en todos los módulos",
+        "status": {
+          "DRAFT": "Borrador",
+          "CONFIRMED": "Confirmado",
+          "COMPLETED": "Completado",
+          "SHIPPED": "Enviado",
+          "PICKING": "En preparación",
+          "POSTED": "Contabilizado",
+          "VOID": "Anulado",
+          "IN_TRANSIT": "En tránsito",
+          "RECEIVED": "Recibido",
+          "CANCELLED": "Cancelado"
+        },
         "justNow": "Ahora mismo",
         "minutesAgo": "{count, plural, =1 {Hace 1 minuto} other {Hace # minutos}}",
         "hoursAgo": "{count, plural, =1 {Hace 1 hora} other {Hace # horas}}",
@@ -197,6 +236,7 @@
         "minStock": "Stock Mínimo",
         "maxStock": "Stock Máximo",
         "status": "Estado",
+        "stock": "Stock",
         "company": "Empresa",
         "brand": "Marca",
         "barcode": "Código de barras",
@@ -205,7 +245,8 @@
       },
       "status": {
         "active": "Activo",
-        "inactive": "Inactivo"
+        "inactive": "Inactivo",
+        "lowStock": "Stock bajo"
       },
       "actions": {
         "new": "Nuevo Producto",
@@ -259,7 +300,8 @@
         }
       },
       "search": {
-        "placeholder": "Buscar productos..."
+        "placeholder": "Buscar productos...",
+        "byNameOrSku": "Nombre o SKU"
       },
       "filter": "Filtros",
       "filters": {
@@ -299,7 +341,9 @@
         "title": "Foto de referencia",
         "purpose": "Foto de referencia para reconocer el producto.",
         "empty": "Sin foto. El producto se puede vender y picar igual.",
+        "none": "Sin foto",
         "upload": "Subir foto",
+        "change": "Cambiar",
         "remove": "Quitar foto",
         "removeTitle": "¿Quitar la foto?",
         "removeDescription": "El producto se puede vender y picar igual.",
@@ -420,6 +464,8 @@
         "quantity": "Cantidad Total",
         "reserved": "Reservado",
         "available": "Disponible",
+        "minimum": "Mínimo",
+        "status": "Estado",
         "avgCost": "Costo Prom.",
         "totalValue": "Valor Total",
         "lastMovement": "Último Movimiento",
@@ -451,6 +497,11 @@
       },
       "actions": {
         "setRule": "Configurar Regla"
+      },
+      "status": {
+        "active": "Activo",
+        "low": "Stock bajo",
+        "out": "Sin stock"
       },
       "reorderRule": {
         "createTitle": "Crear Regla de Reorden",
@@ -620,6 +671,7 @@
       "form": {
         "createTitle": "Registrar Movimiento de Stock",
         "createDescription": "Ingresa los detalles para registrar un nuevo movimiento de inventario",
+        "draftNotice": "Queda en borrador hasta confirmar. Confirmar actualiza el stock y no se deshace.",
         "editTitle": "Editar Movimiento de Stock",
         "editDescription": "Actualiza los detalles de este movimiento en borrador",
         "movementInfo": "Detalles del Movimiento",
@@ -729,7 +781,8 @@
         "timeline": "Línea de Tiempo de Estado",
         "backToList": "Volver a transferencias",
         "notFound": "Transferencia No Encontrada",
-        "notFoundDescription": "La transferencia que buscas no existe o ha sido eliminada."
+        "notFoundDescription": "La transferencia que buscas no existe o ha sido eliminada.",
+        "flow": "Flujo: Borrador → En tránsito → Recibido"
       },
       "timeline": {
         "created": "Creada",
@@ -785,6 +838,14 @@
       },
       "toast": {
         "error": "Ocurrió un error. Inténtalo de nuevo."
+      },
+      "confirmReject": {
+        "title": "Rechazar transferencia",
+        "description": "La transferencia quedará rechazada y el stock no se recibirá en el almacén destino."
+      },
+      "confirmCancel": {
+        "title": "Cancelar transferencia",
+        "description": "La transferencia en borrador se cancelará y no pasará a tránsito."
       },
       "receive": {
         "title": "Confirmar Recepción",
@@ -850,7 +911,8 @@
       },
       "requiredCompany": {
         "title": "Selecciona una empresa para continuar",
-        "description": "Elige una empresa específica en el selector del encabezado. No se pueden crear ventas, movimientos, transferencias o devoluciones mientras esté seleccionada \"Todas las Empresas\"."
+        "description": "Con Todas las Empresas no se pueden crear ventas, movimientos, transferencias ni devoluciones. Elige una empresa en el encabezado.",
+        "action": "Elegir empresa"
       },
       "messages": {
         "created": "Empresa creada exitosamente",
@@ -1007,7 +1069,8 @@
         "updatedAt": "Última actualización",
         "items": "Artículos del Combo",
         "availability": "Disponibilidad",
-        "noAvailability": "No hay datos de disponibilidad para este combo."
+        "noAvailability": "No hay datos de disponibilidad para este combo.",
+        "stockLimit": "El stock del combo lo limita el componente con menos unidades."
       },
       "availability": {
         "title": "Disponibilidad de Combos",
@@ -1156,7 +1219,8 @@
       "timeline": "Línea de Tiempo",
       "shippingDetails": "Detalles de Envío",
       "comboGroup": "Combo: {name}",
-      "fromCombo": "Del combo"
+      "fromCombo": "Del combo",
+      "backToList": "Volver a ventas"
     },
     "timeline": {
       "draft": "Borrador",
@@ -1212,6 +1276,7 @@
     "swapLine": {
       "title": "Cambiar Producto",
       "description": "Reemplaza un producto en esta línea de venta por otro producto diferente. El inventario se ajustará automáticamente.",
+      "currentProduct": "Producto actual",
       "replacementProduct": "Producto de Reemplazo",
       "replacementProductPlaceholder": "Buscar producto...",
       "swapQuantity": "Cantidad a Cambiar",
@@ -1274,7 +1339,11 @@
       "status": "Estado",
       "shipBlocked": "Completa la verificación de picking antes de enviar",
       "shipBlockedMessage": "Todos los productos deben ser verificados antes de enviar esta venta",
-      "photoNote": "La foto no confirma la línea. El código sí."
+      "photoNote": "La foto no confirma la línea. El código sí.",
+      "scan": "Escanear",
+      "noPhoto": "Sin foto",
+      "pending": "Pendiente",
+      "verified": "Verificado"
     }
   },
   "returns": {
@@ -1361,7 +1430,8 @@
     "detail": {
       "info": "Información de la Devolución",
       "lines": "Productos",
-      "createdAt": "Creado el {date}"
+      "createdAt": "Creado el {date}",
+      "backToList": "Volver a devoluciones"
     },
     "filters": {
       "type": "Tipo de Devolución",
@@ -1415,7 +1485,7 @@
       "createdAt": "Creado"
     },
     "actions": {
-      "new": "Nuevo Usuario",
+      "new": "Nuevo usuario",
       "activate": "Activar",
       "deactivate": "Desactivar",
       "lock": "Bloquear Cuenta",
@@ -1444,7 +1514,11 @@
     },
     "form": {
       "createTitle": "Crear Usuario",
+      "consequence": "Nombre, apellido, correo, usuario y contraseña. Después, Gestionar Roles asigna el rol. Desde la lista: Activar, Desactivar o Bloquear Cuenta.",
       "error": "Ocurrió un error al crear el usuario."
+    },
+    "lock": {
+      "description": "{name} pasará a Bloqueado. También puedes Activar o Desactivar la cuenta desde el menú de acciones."
     },
     "messages": {
       "created": "Usuario creado exitosamente",
@@ -1457,6 +1531,7 @@
     "roles": {
       "title": "Gestionar Roles",
       "description": "Ver y gestionar los roles asignados a este usuario.",
+      "prompt": "{name}. Marca los roles de esta cuenta.",
       "assigned": "Roles Asignados",
       "add": "Agregar Rol",
       "selectRole": "Seleccionar un rol...",
@@ -1502,7 +1577,7 @@
       "custom": "Personalizado"
     },
     "actions": {
-      "new": "Nuevo Rol",
+      "new": "Nuevo rol",
       "edit": "Editar",
       "delete": "Eliminar",
       "managePermissions": "Gestionar Permisos",
@@ -1529,6 +1604,8 @@
     },
     "permissions": {
       "title": "Gestionar Permisos",
+      "heading": "Rol {name}",
+      "help": "Los permisos son granulares. Marca solo lo que este rol debe poder hacer.",
       "description": "Selecciona los permisos para este rol",
       "module": "Módulo",
       "selectAll": "Seleccionar Todo",
@@ -1607,6 +1684,8 @@
   "reports": {
     "title": "Reportes",
     "description": "Genera y exporta reportes de inteligencia de negocio",
+    "scope": "Empresa {company}",
+    "exportExcelAction": "Exportar Excel",
     "generate": "Generar Reporte",
     "generating": "Generando...",
     "backToReports": "Volver a Reportes",
@@ -2161,7 +2240,7 @@
   },
   "audit": {
     "list": {
-      "title": "Registro de Actividad"
+      "title": "Registro de actividad"
     },
     "columns": {
       "timestamp": "Fecha/Hora",
@@ -2220,7 +2299,8 @@
   },
   "imports": {
     "title": "Importaciones",
-    "description": "Importar datos desde fuentes externas",
+    "module": "Importaciones",
+    "description": "Carga masiva desde Excel o CSV.",
     "types": {
       "products": "Productos",
       "movements": "Movimientos",
@@ -2258,6 +2338,7 @@
     "upload": {
       "title": "Subir Archivo",
       "description": "Selecciona un archivo CSV o Excel para importar",
+      "dropLabel": "Soltar archivo",
       "dragDrop": "Arrastra y suelta tu archivo aqui, o haz clic para buscar",
       "selectedFile": "Archivo seleccionado",
       "fileSize": "Tamano",
@@ -2278,6 +2359,8 @@
       "hasErrors": "Corrige los errores a continuacion antes de importar",
       "canProcess": "Todas las filas son validas y estan listas para importar",
       "cannotProcess": "No se puede continuar debido a errores de validacion",
+      "fileStep": "{file} · paso {step}.",
+      "rowIssue": "Fila {row}, {error}.",
       "companyCodeNote": "La columna 'Company Code' es opcional para organizaciones multi-empresa"
     },
     "execute": {
@@ -2420,6 +2503,7 @@
       "prevStep": "Atrás",
       "runDryRun": "Validar archivo",
       "runImport": "Importar ahora",
+      "importValid": "Importar filas válidas",
       "validating": "Validando…",
       "importing": "Importando…",
       "dropHint": "Soltá tu archivo en cualquier parte de esta zona",
@@ -2575,7 +2659,8 @@
     "detail": {
       "info": "Información del Contacto",
       "notFound": "Contacto No Encontrado",
-      "notFoundDescription": "El contacto que buscas no existe o ha sido eliminado."
+      "notFoundDescription": "El contacto que buscas no existe o ha sido eliminado.",
+      "backToList": "Volver a contactos"
     },
     "delete": {
       "title": "Eliminar Contacto",
@@ -2596,6 +2681,9 @@
   },
   "integrations": {
     "title": "Integraciones",
+    "module": "Integraciones",
+    "back": "Volver",
+    "connectError": "No se pudo conectar. Revisa la cuenta y el token.",
     "description": "Conecta plataformas externas para sincronizar órdenes e inventario",
     "list": {
       "empty": "Sin integraciones conectadas",
@@ -2777,12 +2865,15 @@
       "typeCombo": "Combo",
       "unmatchedAlert": "SKUs sin coincidencia",
       "unmatchedDescription": "Estos SKUs externos no pudieron coincidir con productos internos. Mapéalos para habilitar la sincronización de órdenes.",
-      "mapThis": "Mapear"
+      "mapThis": "Mapear",
+      "mismatch": "El SKU externo {sku} no coincide.",
+      "comboHint": "También se puede mapear a un combo."
     },
     "failedSyncs": {
       "title": "Sincronizaciones fallidas",
       "retryOne": "Reintentar",
       "retryAll": "Reintentar todos",
+      "retryHint": "Reintentar esa fila o reintentar todas.",
       "retrySuccess": "Sincronización reintentada exitosamente",
       "retryAllSuccess": "Se están reintentando todas las sincronizaciones fallidas",
       "empty": "Sin sincronizaciones fallidas",

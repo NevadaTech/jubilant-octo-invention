@@ -184,45 +184,45 @@ function ImportRowCard({
 
   return (
     <div
-      className={`rounded-lg border p-3 ${
+      className={`rounded-xl border px-4 py-3 ${
         row.isValid
-          ? "border-neutral-200 dark:border-neutral-700"
-          : "border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/30"
+          ? "border-border bg-card"
+          : "border-destructive/40 bg-destructive/5"
       }`}
     >
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm font-medium">
-          {t("detail.row")} #{row.rowNumber}
-        </span>
-        <Badge variant={row.isValid ? "success" : "error"}>
+      <div className="flex items-start justify-between gap-3">
+        <p className="min-w-0 text-sm text-foreground">
+          <span className="font-semibold">
+            {t("detail.row")} #{row.rowNumber}
+          </span>
+          {dataEntries.map(([key, value]) => (
+            <span key={key}>
+              {" · "}
+              <span>{String(value)}</span>
+            </span>
+          ))}
+        </p>
+        <Badge
+          variant="outline"
+          className={
+            row.isValid
+              ? "shrink-0 rounded-full border-transparent bg-success-100 px-2 py-0.5 text-xs font-semibold text-success-800"
+              : "shrink-0 rounded-full border-transparent bg-error-100 px-2 py-0.5 text-xs font-semibold text-destructive"
+          }
+        >
           {row.isValid ? t("detail.valid") : t("detail.invalid")}
         </Badge>
       </div>
 
-      {/* Row data as compact key-value pairs */}
-      <div className="space-y-0.5">
-        {dataEntries.map(([key, value]) => (
-          <div key={key} className="flex gap-2 text-xs">
-            <span className="shrink-0 text-neutral-500">{key}:</span>
-            <span className="truncate font-medium" title={String(value)}>
-              {String(value)}
-            </span>
-          </div>
-        ))}
-      </div>
-
       {/* Errors */}
       {row.errors.length > 0 && (
-        <div className="mt-2 rounded bg-red-100 p-2 dark:bg-red-950/50">
-          <p className="text-xs font-medium text-red-600">
-            {t("detail.errors")}:
-          </p>
-          <ul className="ml-3 list-disc text-xs text-red-600">
-            {row.errors.map((error) => (
-              <li key={error}>{error}</li>
-            ))}
-          </ul>
-        </div>
+        <ul className="mt-2 space-y-1">
+          {row.errors.map((error) => (
+            <li key={error} className="text-[13px] font-semibold text-destructive">
+              {error}
+            </li>
+          ))}
+        </ul>
       )}
 
       {/* Warnings */}

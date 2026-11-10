@@ -10,13 +10,47 @@ import { ImportReferencesPreview } from "./import-references-preview";
 
 interface ImportPreviewResultsProps {
   preview: ImportPreview;
+  fileName?: string;
 }
 
-export function ImportPreviewResults({ preview }: ImportPreviewResultsProps) {
+export function ImportPreviewResults({
+  preview,
+  fileName,
+}: ImportPreviewResultsProps) {
   const t = useTranslations("imports.preview");
+  const tImports = useTranslations("imports");
+  const tFlow = useTranslations("imports.wizardFlow");
+  const firstRowError = preview.rowErrors[0];
+  const firstStructureError = preview.structureErrors[0];
 
   return (
     <div className="space-y-4">
+      <div className="space-y-2">
+        <p className="text-xs font-semibold text-muted-foreground">
+          {tImports("module")}
+        </p>
+        <h3 className="text-lg font-semibold text-foreground">
+          {tFlow("runDryRun")}
+        </h3>
+        {fileName ? (
+          <p className="text-sm text-foreground">
+            {t("fileStep", { file: fileName, step: tImports("wizard.validate") })}
+          </p>
+        ) : null}
+        {firstRowError ? (
+          <p className="text-sm text-foreground">
+            {t("rowIssue", {
+              row: firstRowError.rowNumber,
+              error: firstRowError.error,
+            })}
+          </p>
+        ) : firstStructureError ? (
+          <p className="text-sm text-foreground">{firstStructureError.message}</p>
+        ) : null}
+        <p className="text-sm text-muted-foreground lg:hidden">
+          {preview.canBeProcessed ? t("canProcess") : t("cannotProcess")}
+        </p>
+      </div>
       {/* Summary counters with subtle entrance animation */}
       <Card>
         <CardContent className="p-4">

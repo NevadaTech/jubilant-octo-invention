@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
@@ -56,7 +56,7 @@ export function ComboItemSelector({
           <div
             // eslint-disable-next-line @eslint-react/no-array-index-key
             key={index}
-            className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700"
+            className="flex items-end gap-3 rounded-lg border border-border p-3"
           >
             <div className="flex-1">
               <ProductSearchSelect
@@ -70,11 +70,16 @@ export function ComboItemSelector({
               />
             </div>
 
-            <div className="w-24">
+            <div className="w-24 space-y-1">
+              <Label htmlFor={`combo-qty-${index}`} className="text-xs font-semibold text-muted-foreground">
+                {t("fields.quantity")}
+              </Label>
               <Input
+                id={`combo-qty-${index}`}
                 type="number"
                 min={1}
                 step={1}
+                placeholder={t("fields.quantity")}
                 value={item.quantity}
                 onChange={(e) =>
                   handleQuantityChange(
@@ -82,7 +87,7 @@ export function ComboItemSelector({
                     Math.max(1, parseInt(e.target.value, 10) || 1),
                   )
                 }
-                placeholder={t("fields.quantity")}
+                className="h-10"
                 disabled={disabled}
               />
             </div>
@@ -90,12 +95,11 @@ export function ComboItemSelector({
             <Button
               type="button"
               variant="ghost"
-              size="icon"
+              className="text-destructive"
               onClick={() => handleRemoveRow(index)}
               disabled={disabled || items.length <= 1}
-              title={t("form.removeItem")}
             >
-              <Trash2 className="h-4 w-4 text-destructive" />
+              {t("form.removeItem")}
             </Button>
           </div>
         ))}

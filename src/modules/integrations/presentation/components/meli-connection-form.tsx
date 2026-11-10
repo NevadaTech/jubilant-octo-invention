@@ -94,7 +94,7 @@ export function MeliConnectionForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-2xl sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{t("providers.mercadolibre.addConnection")}</DialogTitle>
           <DialogDescription>
@@ -108,7 +108,7 @@ export function MeliConnectionForm({
             className="space-y-4 py-4"
           >
             <FormField error={errors.storeName?.message}>
-              <Label htmlFor="meliStoreName">{t("form.storeName")} *</Label>
+              <Label className="text-[13px] font-semibold" htmlFor="meliStoreName">{t("form.storeName")} *</Label>
               <Input
                 id="meliStoreName"
                 {...register("storeName")}
@@ -117,7 +117,7 @@ export function MeliConnectionForm({
             </FormField>
 
             <FormField error={errors.clientId?.message}>
-              <Label htmlFor="meliClientId">
+              <Label className="text-[13px] font-semibold" htmlFor="meliClientId">
                 {t("providers.mercadolibre.form.clientId")} *
               </Label>
               <Input
@@ -130,7 +130,7 @@ export function MeliConnectionForm({
             </FormField>
 
             <FormField error={errors.clientSecret?.message}>
-              <Label htmlFor="meliClientSecret">
+              <Label className="text-[13px] font-semibold" htmlFor="meliClientSecret">
                 {t("providers.mercadolibre.form.clientSecret")} *
               </Label>
               <Input
@@ -144,7 +144,7 @@ export function MeliConnectionForm({
             </FormField>
 
             <FormField error={errors.syncStrategy?.message}>
-              <Label>{t("form.syncStrategy")} *</Label>
+              <Label className="text-[13px] font-semibold">{t("form.syncStrategy")} *</Label>
               <Controller
                 name="syncStrategy"
                 control={control}
@@ -173,7 +173,7 @@ export function MeliConnectionForm({
             </FormField>
 
             <FormField>
-              <Label>{t("form.syncDirection")}</Label>
+              <Label className="text-[13px] font-semibold">{t("form.syncDirection")}</Label>
               <Input
                 value={t("syncDirection.inbound", { provider: meliProvider })}
                 disabled
@@ -185,7 +185,7 @@ export function MeliConnectionForm({
             </FormField>
 
             <FormField error={errors.defaultWarehouseId?.message}>
-              <Label>{t("form.warehouse")} *</Label>
+              <Label className="text-[13px] font-semibold">{t("form.warehouse")} *</Label>
               <Controller
                 name="defaultWarehouseId"
                 control={control}
@@ -209,7 +209,7 @@ export function MeliConnectionForm({
             </FormField>
 
             <FormField>
-              <Label>{t("form.fulfillmentWarehouse")}</Label>
+              <Label className="text-[13px] font-semibold">{t("form.fulfillmentWarehouse")}</Label>
               <Controller
                 name="fullWarehouseId"
                 control={control}
@@ -239,7 +239,7 @@ export function MeliConnectionForm({
             </FormField>
 
             <FormField>
-              <Label>{t("form.defaultContact")}</Label>
+              <Label className="text-[13px] font-semibold">{t("form.defaultContact")}</Label>
               <Controller
                 name="defaultContactId"
                 control={control}
@@ -266,7 +266,7 @@ export function MeliConnectionForm({
             </FormField>
 
             <FormField>
-              <Label>{t("form.contactResolutionMode")}</Label>
+              <Label className="text-[13px] font-semibold">{t("form.contactResolutionMode")}</Label>
               <Controller
                 name="contactResolutionMode"
                 control={control}
@@ -300,7 +300,7 @@ export function MeliConnectionForm({
 
             {multiCompanyEnabled && (
               <FormField>
-                <Label>{t("form.company")}</Label>
+                <Label className="text-[13px] font-semibold">{t("form.company")}</Label>
                 <Controller
                   name="companyId"
                   control={control}

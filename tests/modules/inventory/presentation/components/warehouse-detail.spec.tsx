@@ -328,7 +328,7 @@ describe("WarehouseDetail", () => {
     // Assert
     expect(screen.getByText("East Distribution Center")).toBeDefined();
     expect(screen.getByText("EDC-01")).toBeDefined();
-    expect(screen.getByText("456 Commerce Ave")).toBeDefined();
+    expect(screen.getAllByText("456 Commerce Ave").length).toBeGreaterThan(0);
     const badges = screen.getAllByTestId("badge");
     const activeBadge = badges.find((b) => b.textContent === "status.active");
     expect(activeBadge).toBeDefined();

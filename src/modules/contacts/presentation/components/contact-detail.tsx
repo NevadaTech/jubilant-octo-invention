@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateTimeMedium } from "@/lib/date";
 import { Link, useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Button } from "@/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Badge } from "@/ui/components/badge";
 import { Skeleton } from "@/ui/components/skeleton";
 import {
   AlertDialog,
@@ -46,175 +44,92 @@ export function ContactDetail({ contactId }: ContactDetailProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="flex flex-col gap-4">
         <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-[300px] w-full" />
+        <Skeleton className="h-64 w-full max-w-[480px] rounded-xl" />
       </div>
     );
   }
 
   if (isError || !contact) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/dashboard/contacts">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <h1 className="text-2xl font-bold">{t("detail.notFound")}</h1>
+      <div className="flex flex-col gap-4">
+        <Link
+          href="/dashboard/contacts"
+          className="text-sm font-semibold text-primary"
+        >
+          {t("detail.backToList")}
+        </Link>
+        <div>
+          <h1 className="text-[26px] font-semibold">{t("detail.notFound")}</h1>
+          <p className="mt-2 text-sm text-destructive">
+            {t("detail.notFoundDescription")}
+          </p>
         </div>
-        <Card>
-          <CardContent className="py-10 text-center">
-            <p className="text-destructive">
-              {t("detail.notFoundDescription")}
-            </p>
-          </CardContent>
-        </Card>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/dashboard/contacts">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-              {contact.name}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {contact.identification}
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button asChild variant="outline">
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        title={contact.name}
+        action={
+          <Button asChild className="rounded-lg">
             <Link href={`/dashboard/contacts/${contactId}/edit`}>
-              <Pencil className="mr-2 h-4 w-4" />
               {t("actions.edit")}
             </Link>
           </Button>
-          <Button
-            variant="destructive"
-            onClick={() => setDeleteDialogOpen(true)}
-            disabled={contact.salesCount > 0}
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            {tCommon("delete")}
-          </Button>
-        </div>
+        }
+      />
+      <ContactTypeBadge type={contact.type} />
+
+      <div className="flex max-w-[480px] flex-col gap-2">
+        <Fact label={t("fields.email")}>{contact.email || "—"}</Fact>
+        <Fact label={t("fields.phone")}>{contact.phone || "—"}</Fact>
+        <Fact label={t("fields.identification")}>
+          <span className="font-mono">{contact.identification}</span>
+        </Fact>
+        <Fact label={t("fields.address")}>{contact.address || "—"}</Fact>
+        <Fact label={t("fields.salesCount")}>{contact.salesCount}</Fact>
+        <Fact label={t("fields.notes")}>{contact.notes || "—"}</Fact>
+        <Fact label={t("fields.status")}>
+          {contact.isActive ? t("status.active") : t("status.inactive")}
+        </Fact>
+        <Fact label={t("fields.createdAt")}>
+          {formatDateTimeMedium(contact.createdAt, locale)}
+        </Fact>
+        <Fact label={t("fields.updatedAt")}>
+          {formatDateTimeMedium(contact.updatedAt, locale)}
+        </Fact>
       </div>
 
-      {/* Contact Info Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("detail.info")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.name")}
-              </dt>
-              <dd className="mt-1 text-sm">{contact.name}</dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.identification")}
-              </dt>
-              <dd className="mt-1 text-sm">
-                <code className="bg-muted px-2 py-1 rounded">
-                  {contact.identification}
-                </code>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.type")}
-              </dt>
-              <dd className="mt-1">
-                <ContactTypeBadge type={contact.type} />
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.status")}
-              </dt>
-              <dd className="mt-1">
-                <Badge variant={contact.isActive ? "success" : "secondary"}>
-                  {contact.isActive ? t("status.active") : t("status.inactive")}
-                </Badge>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.email")}
-              </dt>
-              <dd className="mt-1 text-sm">{contact.email || "-"}</dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.phone")}
-              </dt>
-              <dd className="mt-1 text-sm">{contact.phone || "-"}</dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.address")}
-              </dt>
-              <dd className="mt-1 text-sm">{contact.address || "-"}</dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.salesCount")}
-              </dt>
-              <dd className="mt-1 text-sm">{contact.salesCount}</dd>
-            </div>
-            <div className="sm:col-span-2">
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.notes")}
-              </dt>
-              <dd className="mt-1 text-sm whitespace-pre-wrap">
-                {contact.notes || "-"}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.createdAt")}
-              </dt>
-              <dd className="mt-1 text-sm">
-                {formatDateTimeMedium(contact.createdAt, locale)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-muted-foreground">
-                {t("fields.updatedAt")}
-              </dt>
-              <dd className="mt-1 text-sm">
-                {formatDateTimeMedium(contact.updatedAt, locale)}
-              </dd>
-            </div>
-          </dl>
-        </CardContent>
-      </Card>
+      <Button
+        variant="outline"
+        className="w-fit rounded-lg border-destructive text-destructive hover:bg-destructive/10"
+        onClick={() => setDeleteDialogOpen(true)}
+        disabled={contact.salesCount > 0}
+      >
+        {tCommon("delete")}
+      </Button>
 
-      {/* Delete Dialog */}
+      <Link
+        href="/dashboard/contacts"
+        className="text-sm font-semibold text-primary"
+      >
+        {t("detail.backToList")}
+      </Link>
+
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl sm:max-w-[500px]">
           <AlertDialogHeader>
+            <p className="text-xs font-semibold text-primary">{t("title")}</p>
             <AlertDialogTitle>{t("delete.title")}</AlertDialogTitle>
             <AlertDialogDescription>
               {t("delete.description")}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className="sm:justify-start">
             <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
@@ -225,6 +140,15 @@ export function ContactDetail({ contactId }: ContactDetailProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </div>
+  );
+}
+
+function Fact({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-0.5 rounded-lg border border-border bg-card px-3.5 py-2.5">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-sm font-semibold">{children}</span>
     </div>
   );
 }

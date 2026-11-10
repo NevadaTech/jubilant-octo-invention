@@ -6,12 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { Card, CardContent } from "@/ui/components/card";
 import {
   Select,
   SelectContent,
@@ -116,35 +117,22 @@ export function CategoryFormPage({ categoryId }: CategoryFormPageProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/dashboard/inventory/categories">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            {isEditing ? t("form.editTitle") : t("form.createTitle")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isEditing
-              ? t("form.editDescription")
-              : t("form.createDescription")}
-          </p>
-        </div>
-      </div>
+    <div className="space-y-4">
+      <PageHeader
+        title={isEditing ? t("form.editTitle") : t("form.createTitle")}
+        description={
+          isEditing ? t("form.editDescription") : t("form.createDescription")
+        }
+      />
 
-      {/* Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("form.categoryInfo")}</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <Card className="shadow-none">
+        <CardContent className="p-6">
+          <h2 className="mb-6 text-base font-semibold text-foreground">
+            {t("form.categoryInfo")}
+          </h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {(createCategory.isError || updateCategory.isError) && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="rounded-lg bg-error-100 p-3 text-sm text-destructive">
                 {t("form.error")}
               </div>
             )}

@@ -96,17 +96,8 @@ describe("UserForm", () => {
   // --- Branch: close button (X) ---
   it("Given: open true When: clicking X button Then: should call onOpenChange(false)", () => {
     render(<UserForm open={true} onOpenChange={mockOnOpenChange} />);
-    const buttons = screen.getAllByRole("button");
-    // Find the X button (ghost icon button)
-    const closeBtn = buttons.find(
-      (b) =>
-        b.querySelector("svg") !== null &&
-        !b.textContent?.includes("cancel") &&
-        !b.textContent?.includes("create"),
-    );
-    if (closeBtn) {
-      fireEvent.click(closeBtn);
-      expect(mockOnOpenChange).toHaveBeenCalledWith(false);
-    }
+    // Password visibility is also an icon button; the dialog X is named Close.
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(mockOnOpenChange).toHaveBeenCalledWith(false);
   });
 });

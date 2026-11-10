@@ -163,7 +163,7 @@ describe("TransferForm", () => {
   });
 
   it("Given: open is true When: rendering Then: should render one product line with a quantity input", () => {
-    const { container } = render(
+    const { container } = renderWithQuery(
       <TransferForm open={true} onOpenChange={mockOnOpenChange} />,
     );
 

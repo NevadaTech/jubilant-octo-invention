@@ -1,18 +1,11 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Shield, Check } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Skeleton } from "@/ui/components/skeleton";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/ui/components/dialog";
+import { cn } from "@/ui/lib/utils";
 import {
   usePermissions,
   useRolePermissions,
@@ -43,22 +36,20 @@ export function RolePermissionsDialog({
     useRolePermissions(role?.id ?? "", open && !!role);
   const assignPermissions = useAssignPermissions();
 
-  // Initialize selection from role's current permissions
   useEffect(() => {
     if (rolePermissions) {
-      setSelectedIds(new Set(rolePermissions.map((p) => p.id)));
+      setSelectedIds(new Set(rolePermissions.map((permission) => permission.id)));
     }
   }, [rolePermissions]);
 
-  // Group permissions by module
   const groupedPermissions = useMemo(() => {
     if (!allPermissions) return {};
     const groups: Record<string, typeof allPermissions> = {};
-    for (const perm of allPermissions) {
-      if (!groups[perm.module]) {
-        groups[perm.module] = [];
+    for (const permission of allPermissions) {
+      if (!groups[permission.module]) {
+        groups[permission.module] = [];
       }
-      groups[perm.module].push(perm);
+      groups[permission.module].push(permission);
     }
     return groups;
   }, [allPermissions]);
@@ -66,35 +57,40 @@ export function RolePermissionsDialog({
   const modules = Object.keys(groupedPermissions).sort();
 
   const togglePermission = (id: string) => {
+    if (readOnly) return;
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
 
   const toggleModule = (module: string) => {
+    if (readOnly) return;
     const modulePerms = groupedPermissions[module] ?? [];
-    const allSelected = modulePerms.every((p) => selectedIds.has(p.id));
+    const allSelected = modulePerms.every((permission) =>
+      selectedIds.has(permission.id),
+    );
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      for (const perm of modulePerms) {
-        if (allSelected) {
-          next.delete(perm.id);
-        } else {
-          next.add(perm.id);
-        }
+      for (const permission of modulePerms) {
+        if (allSelected) next.delete(permission.id);
+        else next.add(permission.id);
       }
       return next;
     });
   };
 
+  const handleCancel = () => {
+    if (rolePermissions) {
+      setSelectedIds(new Set(rolePermissions.map((permission) => permission.id)));
+    }
+    onOpenChange(false);
+  };
+
   const handleSave = async () => {
-    if (!role) return;
+    if (!role || readOnly) return;
     try {
       await assignPermissions.mutateAsync({
         id: role.id,
@@ -106,25 +102,17 @@ export function RolePermissionsDialog({
     }
   };
 
+  if (!open) return null;
+
   const isLoading = loadingPermissions || loadingRolePerms;
-
-  const moduleLabel = (module: string): string => {
-    const key = module.toLowerCase();
-    try {
-      return t(`permissions.modules.${key}`);
-    } catch {
-      return module;
-    }
-  };
-
-  const actionLabel = (action: string): string => {
-    try {
-      return t(`permissions.actions.${action}`);
-    } catch {
-      return action;
-    }
-  };
-
+  const moduleLabel = (module: string) =>
+    t.has(`permissions.modules.${module.toLowerCase()}`)
+      ? t(`permissions.modules.${module.toLowerCase()}`)
+      : module;
+  const actionLabel = (action: string) =>
+    t.has(`permissions.actions.${action}`)
+      ? t(`permissions.actions.${action}`)
+      : action;
   const roleName = role
     ? t.has(`names.${role.name}`)
       ? t(`names.${role.name}`)
@@ -132,136 +120,145 @@ export function RolePermissionsDialog({
     : "";
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            {t("permissions.title")} — {roleName}
-          </DialogTitle>
-          <DialogDescription>{t("permissions.description")}</DialogDescription>
-        </DialogHeader>
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <h1
+          data-testid="dialog-title"
+          className="text-[26px] font-semibold leading-tight text-foreground"
+        >
+          {t("permissions.title")}
+          {" — "}
+          {roleName}
+        </h1>
+        <p className="max-w-xl text-sm text-muted-foreground">
+          {t("permissions.description")}
+        </p>
+        <p className="max-w-xl text-sm text-muted-foreground">
+          {t("permissions.help")}
+        </p>
+      </div>
 
-        <div className="flex-1 overflow-y-auto pr-2 space-y-4">
-          {isLoading ? (
-            <div className="space-y-3">
-              {[...Array(4)].map((_, i) => (
-                // eslint-disable-next-line @eslint-react/no-array-index-key
-                <Skeleton key={i} className="h-20 w-full" />
-              ))}
-            </div>
-          ) : modules.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">
-              {t("permissions.noPermissions")}
-            </p>
-          ) : (
-            modules.map((module) => {
-              const perms = groupedPermissions[module];
-              const allSelected = perms.every((p) => selectedIds.has(p.id));
-              const someSelected = perms.some((p) => selectedIds.has(p.id));
-
-              return (
-                <div key={module} className="rounded-lg border">
-                  <button
-                    type="button"
-                    onClick={() => !readOnly && toggleModule(module)}
-                    disabled={readOnly}
-                    className={`flex w-full items-center justify-between px-4 py-3 transition-colors ${readOnly ? "cursor-default" : "hover:bg-muted/50"}`}
-                  >
-                    <span className="font-medium text-sm">
-                      {moduleLabel(module)}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">
-                        {perms.filter((p) => selectedIds.has(p.id)).length}/
-                        {perms.length}
-                      </span>
-                      <div
-                        className={`h-4 w-4 rounded border flex items-center justify-center transition-colors ${
-                          allSelected
-                            ? "bg-primary border-primary text-primary-foreground"
-                            : someSelected
-                              ? "bg-primary/30 border-primary"
-                              : "border-muted-foreground/30"
-                        }`}
-                      >
-                        {(allSelected || someSelected) && (
-                          <Check className="h-3 w-3" />
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                  <div className="border-t px-4 py-2 grid grid-cols-2 gap-1">
-                    {perms.map((perm) => (
-                      <label
-                        key={perm.id}
-                        className={`flex items-center gap-2 py-1.5 px-2 rounded text-sm ${readOnly ? "cursor-default" : "hover:bg-muted/50 cursor-pointer"}`}
-                      >
-                        <div
-                          className={`h-4 w-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
-                            selectedIds.has(perm.id)
-                              ? "bg-primary border-primary text-primary-foreground"
-                              : "border-muted-foreground/30"
-                          }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (!readOnly) togglePermission(perm.id);
-                          }}
-                        >
-                          {selectedIds.has(perm.id) && (
-                            <Check className="h-3 w-3" />
-                          )}
-                        </div>
-                        <span
-                          className={
-                            readOnly ? "cursor-default" : "cursor-pointer"
-                          }
-                          onClick={() => {
-                            if (!readOnly) togglePermission(perm.id);
-                          }}
-                        >
-                          {actionLabel(perm.action)}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-
-        <DialogFooter className="pt-4 border-t">
-          <div className="flex items-center justify-between w-full">
-            <span className="text-xs text-muted-foreground">
-              {selectedIds.size} {t("fields.permissions").toLowerCase()}
-            </span>
-            <div className="flex gap-2">
-              {readOnly ? (
-                <Button variant="outline" onClick={() => onOpenChange(false)}>
-                  {tCommon("close")}
-                </Button>
-              ) : (
-                <>
-                  <Button variant="outline" onClick={() => onOpenChange(false)}>
-                    {tCommon("cancel")}
-                  </Button>
-                  <Button
-                    onClick={handleSave}
-                    disabled={
-                      assignPermissions.isPending || selectedIds.size === 0
-                    }
-                  >
-                    {assignPermissions.isPending
-                      ? tCommon("loading")
-                      : tCommon("save")}
-                  </Button>
-                </>
-              )}
-            </div>
+      <div className="w-full max-w-[520px] space-y-5 rounded-xl border border-border bg-card p-5">
+        {isLoading ? (
+          <div className="space-y-3">
+            {[0, 1, 2, 3].map((item) => (
+              <Skeleton key={item} className="h-8 w-full" />
+            ))}
           </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        ) : modules.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            {t("permissions.noPermissions")}
+          </p>
+        ) : (
+          modules.map((module) => {
+            const permissions = groupedPermissions[module];
+            const selectedCount = permissions.filter((permission) =>
+              selectedIds.has(permission.id),
+            ).length;
+            const allSelected = selectedCount === permissions.length;
+            const someSelected = selectedCount > 0 && !allSelected;
+            return (
+              <div key={module} className="space-y-3">
+                <button
+                  type="button"
+                  disabled={readOnly}
+                  onClick={() => toggleModule(module)}
+                  className="flex w-full items-center gap-2 text-left"
+                >
+                  <span
+                    className={cn(
+                      "flex size-[18px] shrink-0 items-center justify-center rounded border text-xs leading-none",
+                      allSelected
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : someSelected
+                          ? "border-primary"
+                          : "border-muted-foreground/30",
+                    )}
+                  >
+                    {allSelected ? "✓" : ""}
+                  </span>
+                  <span className="font-medium text-sm">
+                    {moduleLabel(module)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {selectedCount}/{permissions.length}
+                  </span>
+                  {readOnly ? null : (
+                    <span className="ml-auto text-xs font-semibold text-primary">
+                      {allSelected
+                        ? t("permissions.deselectAll")
+                        : t("permissions.selectAll")}
+                    </span>
+                  )}
+                </button>
+                <div className="space-y-1">
+                  {permissions.map((permission) => {
+                    const checked = selectedIds.has(permission.id);
+                    return (
+                      <div key={permission.id} className="border-t">
+                        <label
+                          className="flex items-center gap-2.5 py-2 text-left text-[15px] text-foreground"
+                          onClick={() => togglePermission(permission.id)}
+                        ><div
+                            className={cn(
+                              "flex size-[18px] shrink-0 items-center justify-center rounded border text-xs leading-none",
+                              checked
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "border-border bg-card",
+                            )}
+                          >
+                            {checked ? "✓" : ""}
+                          </div>
+                          <span>{actionLabel(permission.action)}</span>
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <p className="text-sm text-muted-foreground">
+        {selectedIds.size} {t("fields.permissions")}
+      </p>
+
+      <div className="flex gap-3">
+        {readOnly ? (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+          >
+            {tCommon("close")}
+          </Button>
+        ) : (
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={assignPermissions.isPending}
+            >
+              {tCommon("cancel")}
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSave}
+              disabled={assignPermissions.isPending || selectedIds.size === 0}
+            >
+              {assignPermissions.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {assignPermissions.isPending
+                ? tCommon("loading")
+                : tCommon("save")}
+            </Button>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

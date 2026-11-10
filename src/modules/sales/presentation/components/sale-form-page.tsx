@@ -5,7 +5,8 @@ import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Plus, Trash2, Loader2 } from "lucide-react";
+import { Plus, Trash2, Loader2 } from "lucide-react";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { CurrencyInput } from "@/ui/components/currency-input";
@@ -187,26 +188,23 @@ export function SaleFormPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/dashboard/sales">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            {t("form.createTitle")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t("form.createDescription")}
-          </p>
-        </div>
+      <div className="flex flex-col gap-3">
+        <PageHeader
+          title={t("form.createTitle")}
+          description={t("form.createDescription")}
+        />
+        <Link
+          href="/dashboard/sales"
+          className="text-sm font-semibold text-primary"
+        >
+          {t("detail.backToList")}
+        </Link>
       </div>
 
       <CompanyRequiredGuard>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {createSale.isError && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+          <div className="rounded-lg bg-error-100 px-3 py-3 text-sm text-error-800 dark:bg-error-900/30 dark:text-error-300">
             {t("form.error")}
           </div>
         )}
@@ -216,7 +214,7 @@ export function SaleFormPage() {
           <CardHeader>
             <CardTitle>{t("form.saleInfo")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="grid gap-4 lg:grid-cols-2">
             <FormField error={errors.warehouseId?.message}>
               <Label>{t("fields.warehouse")} *</Label>
               <Controller
@@ -259,7 +257,7 @@ export function SaleFormPage() {
               />
             </FormField>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-2">
               <FormField error={errors.customerReference?.message}>
                 <Label>{t("fields.customer")}</Label>
                 <Input
@@ -277,7 +275,7 @@ export function SaleFormPage() {
               </FormField>
             </div>
 
-            <FormField error={errors.note?.message}>
+            <FormField error={errors.note?.message} className="lg:col-span-2">
               <Label>{t("fields.note")}</Label>
               <Textarea
                 placeholder={t("fields.notePlaceholder")}
@@ -330,7 +328,7 @@ export function SaleFormPage() {
                   return (
                     <div
                       key={field.id}
-                      className="flex items-start gap-4 rounded-lg border p-4"
+                      className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3.5 lg:flex-row lg:items-start"
                     >
                       <div className="flex-1 space-y-4">
                         {/* Line type toggle */}

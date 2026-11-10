@@ -1,0 +1,13 @@
+Mejora visual de operaciones de inventario de la beta de Nevada Inventory. Español. Bodega y oficina. No es marketing.
+
+Sistema: fondo #F3F5F8, blanco, acento #2E5A94, texto #1A2332, éxito #1F7A4D, advertencia #A15C07, peligro #B42318. IBM Plex Sans. Cada estado es una palabra, no solo un color. Cada botón tiene texto.
+
+Dos filas: escritorio 1440 arriba, móvil 390 abajo, tres columnas. Shell de escritorio: marca Nevada; nav con Inventario abierto y Stock, Movimientos, Transferencias visibles; Empresa Nevada Retail; Ana Pérez; Cerrar sesión. Móvil: Nevada, Empresa, botón Menú.
+
+Columna 1, Stock. Título Niveles de stock. Filtro con etiqueta Almacén = Bodega Norte. Tabla: Producto, Almacén, Disponible, Reservado, Mínimo. Filas: Cable HDMI 2m, 3, 0, 20 marcado Stock bajo; Audífonos Pulse, 128, 4, 10; Combo Escritorio, 12, 1, 5. Botón con texto Exportar.
+
+Columna 2, Movimientos. Título Movimientos. Filtro Estado. Botón Nuevo movimiento. Tabla: Número, Tipo, Almacén, Estado, Fecha. Filas: MOV-1042 Salida, Bodega Norte, Borrador, 6 nov 2026; MOV-1041 Entrada, Bodega Centro, Publicado; MOV-1038 Ajuste, Bodega Norte, Anulado. En móvil cada movimiento es una ficha con el estado en texto.
+
+Columna 3, Transferencia. Título TR-218. Estado En tránsito. Origen Bodega Norte, destino Bodega Centro. Líneas: Cable HDMI 2m, cantidad 20. Acciones con texto: Marcar recibida y Anular. Nota corta de los otros estados del flujo: Borrador, En tránsito, Recibido.
+
+Datos de maqueta. La empresa activa se lee en la barra, no se repite como hero.

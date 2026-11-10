@@ -79,17 +79,24 @@ export function SyncConfigurationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t("actions.syncDialogTitle")}</DialogTitle>
-          <DialogDescription>
-            {t("actions.syncDialogDescription")}
+      <DialogContent className="flex max-h-[85vh] flex-col rounded-2xl sm:max-w-md">
+        <DialogHeader className="space-y-2 text-left">
+          <p className="text-xs font-semibold text-muted-foreground">
+            {t("module")}
+          </p>
+          <DialogTitle className="text-lg font-semibold">
+            {t("actions.syncDialogTitle")}
+          </DialogTitle>
+          <DialogDescription className="text-sm text-foreground">
+            {t("actions.syncDialogDescription")} {t("actions.syncDialogDateHelper")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="-mx-1 flex-1 space-y-4 overflow-y-auto px-1">
           <div className="space-y-2">
-            <Label>{t("actions.syncFromDate")}</Label>
+            <Label className="text-[13px] font-semibold">
+              {t("actions.syncFromDate")}
+            </Label>
             <DatePicker
               value={syncFromDate}
               onChange={(date) => setSyncFromDate(date)}

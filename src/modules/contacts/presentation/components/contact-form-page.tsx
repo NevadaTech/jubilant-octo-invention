@@ -5,7 +5,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
@@ -115,34 +116,29 @@ export function ContactFormPage({ mode, contactId }: ContactFormPageProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link
-            href={
-              isEditing && contactId
-                ? `/dashboard/contacts/${contactId}`
-                : "/dashboard/contacts"
-            }
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            {isEditing ? t("form.editTitle") : t("form.createTitle")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isEditing
-              ? t("form.editDescription")
-              : t("form.createDescription")}
-          </p>
-        </div>
+      <div className="flex max-w-[560px] flex-col gap-3">
+        <PageHeader
+          title={isEditing ? t("form.editTitle") : t("form.createTitle")}
+          description={
+            isEditing ? t("form.editDescription") : t("form.createDescription")
+          }
+        />
+        <Link
+          href={
+            isEditing && contactId
+              ? `/dashboard/contacts/${contactId}`
+              : "/dashboard/contacts"
+          }
+          className="text-sm font-semibold text-primary"
+        >
+          {t("detail.backToList")}
+        </Link>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset disabled={isPending} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="max-w-[560px]">
+        <fieldset disabled={isPending} className="space-y-4">
           {isError && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-lg bg-error-100 px-3 py-3 text-sm text-error-800 dark:bg-error-900/30 dark:text-error-300">
               {t("form.error")}
             </div>
           )}

@@ -1,6 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReportCatalog } from "@/modules/reports/presentation/components/report-catalog";
+
+function renderCatalog() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <ReportCatalog />
+    </QueryClientProvider>,
+  );
+}
 
 // --- Mocks ---
 
@@ -107,7 +119,7 @@ describe("ReportCatalog", () => {
 
   it("Given: no tab in URL When: rendering Then: should display the page title and description", () => {
     // Arrange & Act
-    render(<ReportCatalog />);
+    renderCatalog();
 
     // Assert
     expect(screen.getByText("title")).toBeDefined();
@@ -116,7 +128,7 @@ describe("ReportCatalog", () => {
 
   it("Given: no tab in URL When: rendering Then: should default to inventory tab", () => {
     // Arrange & Act
-    render(<ReportCatalog />);
+    renderCatalog();
 
     // Assert
     const tabs = screen.getByTestId("tabs");
@@ -125,7 +137,7 @@ describe("ReportCatalog", () => {
 
   it("Given: catalog When: rendering Then: should render tabs for all three categories", () => {
     // Arrange & Act
-    render(<ReportCatalog />);
+    renderCatalog();
 
     // Assert
     expect(screen.getByTestId("tab-inventory")).toBeDefined();
@@ -135,7 +147,7 @@ describe("ReportCatalog", () => {
 
   it("Given: catalog When: rendering Then: should render tab content areas for all categories", () => {
     // Arrange & Act
-    render(<ReportCatalog />);
+    renderCatalog();
 
     // Assert
     expect(screen.getByTestId("tab-content-inventory")).toBeDefined();
@@ -148,7 +160,7 @@ describe("ReportCatalog", () => {
     mockGet.mockReturnValue("sales");
 
     // Act
-    render(<ReportCatalog />);
+    renderCatalog();
 
     // Assert
     const tabs = screen.getByTestId("tabs");
@@ -160,7 +172,7 @@ describe("ReportCatalog", () => {
     mockGet.mockReturnValue("nonexistent");
 
     // Act
-    render(<ReportCatalog />);
+    renderCatalog();
 
     // Assert
     const tabs = screen.getByTestId("tabs");
@@ -169,7 +181,7 @@ describe("ReportCatalog", () => {
 
   it("Given: catalog When: rendering Then: should display category names from translations", () => {
     // Arrange & Act
-    render(<ReportCatalog />);
+    renderCatalog();
 
     // Assert
     // Category names appear in both tabs and badges

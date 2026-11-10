@@ -6,12 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { PageHeader } from "@/ui/layout/page-header";
 import {
   createWarehouseSchema,
   toCreateWarehouseDto,
@@ -96,24 +97,12 @@ export function WarehouseFormPage({ warehouseId }: WarehouseFormPageProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/dashboard/inventory/warehouses">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            {isEditing ? t("form.editTitle") : t("form.createTitle")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isEditing
-              ? t("form.editDescription")
-              : t("form.createDescription")}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={isEditing ? t("form.editTitle") : t("form.createTitle")}
+        description={
+          isEditing ? t("form.editDescription") : t("form.createDescription")
+        }
+      />
 
       {/* Form */}
       <Card>
@@ -130,7 +119,9 @@ export function WarehouseFormPage({ warehouseId }: WarehouseFormPageProps) {
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField error={errors.code?.message}>
-                <Label htmlFor="code">{t("fields.code")} *</Label>
+                <Label htmlFor="code" className="text-[13px] font-semibold">
+                  {t("fields.code")} *
+                </Label>
                 <Input
                   id="code"
                   placeholder={t("fields.codePlaceholder")}
@@ -139,7 +130,9 @@ export function WarehouseFormPage({ warehouseId }: WarehouseFormPageProps) {
               </FormField>
 
               <FormField error={errors.name?.message}>
-                <Label htmlFor="name">{t("fields.name")} *</Label>
+                <Label htmlFor="name" className="text-[13px] font-semibold">
+                  {t("fields.name")} *
+                </Label>
                 <Input
                   id="name"
                   placeholder={t("fields.namePlaceholder")}
@@ -149,7 +142,9 @@ export function WarehouseFormPage({ warehouseId }: WarehouseFormPageProps) {
             </div>
 
             <FormField error={errors.address?.message}>
-              <Label htmlFor="address">{t("fields.address")}</Label>
+              <Label htmlFor="address" className="text-[13px] font-semibold">
+                {t("fields.address")}
+              </Label>
               <Input
                 id="address"
                 placeholder={t("fields.addressPlaceholder")}

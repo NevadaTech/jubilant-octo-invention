@@ -168,7 +168,9 @@ describe("ComboList", () => {
 
     it("Given: active combo (combo1) When: rendering Then: should show deactivate button", () => {
       render(<ComboList />);
-      expect(screen.getByTitle("actions.deactivate")).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "actions.deactivate" }),
+      ).toBeInTheDocument();
     });
 
     it("Given: inactive combo When: rendering Then: should NOT show deactivate button for that row", () => {
@@ -183,7 +185,9 @@ describe("ComboList", () => {
 
       render(<ComboList />);
 
-      expect(screen.queryByTitle("actions.deactivate")).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "actions.deactivate" }),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -236,16 +240,23 @@ describe("ComboList", () => {
     it("Given: active combo When: clicking deactivate Then: should open confirm dialog", () => {
       render(<ComboList />);
 
-      fireEvent.click(screen.getByTitle("actions.deactivate"));
+      fireEvent.click(
+        screen.getByRole("button", { name: "actions.deactivate" }),
+      );
 
-      expect(screen.getByTestId("confirm-dialog")).toBeInTheDocument();
+      expect(screen.getByText("confirm.deactivate.title")).toBeInTheDocument();
     });
 
     it("Given: confirm dialog open When: clicking confirm Then: should call deactivateCombo.mutate with id", () => {
       render(<ComboList />);
 
-      fireEvent.click(screen.getByTitle("actions.deactivate"));
-      fireEvent.click(screen.getByText("confirm"));
+      fireEvent.click(
+        screen.getByRole("button", { name: "actions.deactivate" }),
+      );
+      const confirmButtons = screen.getAllByRole("button", {
+        name: "actions.deactivate",
+      });
+      fireEvent.click(confirmButtons[confirmButtons.length - 1]);
 
       expect(mockDeactivateMutate).toHaveBeenCalledWith("c-1");
     });

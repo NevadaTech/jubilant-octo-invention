@@ -6,13 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Loader2, ScanBarcode } from "lucide-react";
+import { Loader2, ScanBarcode } from "lucide-react";
 import { Button } from "@/ui/components/button";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Input } from "@/ui/components/input";
 import { CurrencyInput } from "@/ui/components/currency-input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { Card, CardContent } from "@/ui/components/card";
 import {
   createProductSchema,
   toCreateProductDto,
@@ -120,28 +121,16 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/dashboard/inventory/products">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            {isEditing ? t("form.editTitle") : t("form.createTitle")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isEditing
-              ? t("form.editDescription")
-              : t("form.createDescription")}
-          </p>
-        </div>
-      </div>
+    <div className="space-y-4">
+      <PageHeader
+        title={isEditing ? t("form.editTitle") : t("form.createTitle")}
+        description={
+          isEditing ? t("form.editDescription") : t("form.createDescription")
+        }
+      />
 
       {isEditing && productId && existingProduct ? (
-        <Card>
+        <Card className="shadow-none">
           <CardContent className="p-6">
             <ProductReferencePhoto
               productId={productId}
@@ -152,15 +141,14 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
         </Card>
       ) : null}
 
-      {/* Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("form.productInfo")}</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <Card className="shadow-none">
+        <CardContent className="p-6">
+          <h2 className="mb-6 text-base font-semibold text-foreground">
+            {t("form.productInfo")}
+          </h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {mutationError && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="rounded-lg bg-error-100 p-3 text-sm text-destructive">
                 {(
                   mutationError as Error & {
                     response?: { data?: { message?: string } };
@@ -177,6 +165,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
                   id="sku"
                   placeholder={t("fields.skuPlaceholder")}
                   disabled={isEditing}
+                  className="h-10 font-mono"
                   {...register("sku")}
                 />
               </FormField>
@@ -205,7 +194,7 @@ export function ProductFormPage({ productId }: ProductFormPageProps) {
                   spellCheck={false}
                   placeholder={t("fields.barcodePlaceholder")}
                   aria-describedby="barcode-helper"
-                  className="pl-9 font-mono tracking-wider"
+                  className="h-10 pl-9 font-mono tracking-wider"
                   {...register("barcode")}
                 />
               </div>

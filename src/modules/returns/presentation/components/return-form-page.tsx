@@ -5,7 +5,8 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Loader2, Package, Plus, Trash2 } from "lucide-react";
+import { Loader2, Package, Plus, Trash2 } from "lucide-react";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { CurrencyInput } from "@/ui/components/currency-input";
@@ -425,26 +426,23 @@ export function ReturnFormPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/dashboard/returns">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            {t("form.createTitle")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t("form.createDescription")}
-          </p>
-        </div>
+      <div className="flex flex-col gap-3">
+        <PageHeader
+          title={t("form.createTitle")}
+          description={t("form.createDescription")}
+        />
+        <Link
+          href="/dashboard/returns"
+          className="text-sm font-semibold text-primary"
+        >
+          {t("detail.backToList")}
+        </Link>
       </div>
 
       <CompanyRequiredGuard>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {createReturn.isError && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+          <div className="rounded-lg bg-error-100 px-3 py-3 text-sm text-error-800 dark:bg-error-900/30 dark:text-error-300">
             {t("form.error")}
           </div>
         )}
@@ -614,12 +612,12 @@ export function ReturnFormPage() {
           </CardHeader>
           <CardContent>
             {hasSaleLines && (
-              <div className="mb-4 rounded-md bg-primary-50 p-3 text-sm text-primary-700 dark:bg-primary-900/20 dark:text-primary-400">
+              <div className="mb-4 rounded-lg bg-primary/10 px-3 py-3 text-sm text-primary">
                 {t("form.saleProductsHint")}
               </div>
             )}
             {hasMovementLines && (
-              <div className="mb-4 rounded-md bg-primary-50 p-3 text-sm text-primary-700 dark:bg-primary-900/20 dark:text-primary-400">
+              <div className="mb-4 rounded-lg bg-primary/10 px-3 py-3 text-sm text-primary">
                 {t("form.movementProductsHint")}
               </div>
             )}
@@ -668,7 +666,7 @@ export function ReturnFormPage() {
                         return (
                           <div
                             key={field.id}
-                            className="flex items-start gap-4 rounded-lg border bg-background p-4"
+                            className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3.5 lg:flex-row lg:items-start"
                           >
                             <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
                               <FormField
@@ -801,7 +799,7 @@ export function ReturnFormPage() {
                 {fields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="flex items-start gap-4 rounded-lg border p-4"
+                    className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3.5 lg:flex-row lg:items-start"
                   >
                     <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
                       <FormField

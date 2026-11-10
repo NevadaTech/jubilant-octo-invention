@@ -4,13 +4,11 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { Loader2, ArrowLeft, CheckCircle2, Timer } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { PasswordInput } from "@/ui/components/password-input";
-import { Label } from "@/ui/components/label";
-import { FormField } from "@/ui/components/form-field";
 import {
   requestResetSchema,
   verifyOtpSchema,
@@ -24,8 +22,22 @@ import {
   useVerifyOtp,
   useResetPassword,
 } from "@/modules/authentication/presentation/hooks/use-password-reset";
+import {
+  AuthCentered,
+  AuthDescription,
+  AuthField,
+  AuthSplit,
+  AuthTitle,
+  authControlClass,
+} from "@/modules/authentication/presentation/components/auth-shell";
 
 type Step = "email" | "otp" | "password" | "success";
+
+const OTP_LENGTH = 6;
+
+function messageFrom(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
 
 export function ForgotPasswordForm() {
   const t = useTranslations("auth.forgotPassword");
@@ -33,6 +45,10 @@ export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [organizationSlug, setOrganizationSlug] = useState("");
   const [otpCode, setOtpCode] = useState("");
+  const [digits, setDigits] = useState<string[]>(() =>
+    Array.from({ length: OTP_LENGTH }, () => ""),
+  );
+  const digitRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   const [cooldown, setCooldown] = useState(0);
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -62,7 +78,6 @@ export function ForgotPasswordForm() {
   const verifyOtp = useVerifyOtp();
   const resetPassword = useResetPassword();
 
-  // Step 1: Email form
   const emailForm = useForm<RequestResetFormValues>({
     resolver: zodResolver(requestResetSchema),
     defaultValues: { organizationSlug: "", email: "" },
@@ -79,11 +94,21 @@ export function ForgotPasswordForm() {
     });
   };
 
-  // Step 2: OTP form
   const otpForm = useForm<VerifyOtpFormValues>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: { otpCode: "" },
   });
+
+  const applyDigits = (next: string[]) => {
+    const normalized = Array.from({ length: OTP_LENGTH }, (_, index) =>
+      (next[index] ?? "").replace(/\D/g, "").slice(0, 1),
+    );
+    setDigits(normalized);
+    otpForm.setValue("otpCode", normalized.join(""), {
+      shouldDirty: true,
+      shouldValidate: normalized.join("").length === OTP_LENGTH,
+    });
+  };
 
   const onOtpSubmit = (data: VerifyOtpFormValues) => {
     verifyOtp.mutate(
@@ -97,7 +122,6 @@ export function ForgotPasswordForm() {
     );
   };
 
-  // Step 3: New password form
   const passwordForm = useForm<NewPasswordFormValues>({
     resolver: zodResolver(newPasswordSchema),
     defaultValues: { newPassword: "", confirmPassword: "" },
@@ -119,215 +143,306 @@ export function ForgotPasswordForm() {
   };
 
   if (step === "email") {
+    const requestError = requestReset.error
+      ? messageFrom(requestReset.error, t("description"))
+      : undefined;
+
     return (
-      <form
-        onSubmit={emailForm.handleSubmit(onEmailSubmit)}
-        className="space-y-4"
-      >
-        <div className="text-center mb-6">
-          <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            {t("title")}
-          </h2>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            {t("description")}
-          </p>
-        </div>
-
-        {requestReset.error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            {requestReset.error instanceof Error
-              ? requestReset.error.message
-              : t("description")}
-          </div>
-        )}
-
-        <FormField error={emailForm.formState.errors.organizationSlug?.message}>
-          <Label htmlFor="organizationSlug">{t("organization")}</Label>
-          <Input
-            id="organizationSlug"
-            type="text"
-            placeholder={t("organizationPlaceholder")}
-            {...emailForm.register("organizationSlug")}
-          />
-        </FormField>
-
-        <FormField error={emailForm.formState.errors.email?.message}>
-          <Label htmlFor="resetEmail">{t("enterEmail")}</Label>
-          <Input
-            id="resetEmail"
-            type="email"
-            placeholder="you@example.com"
-            autoComplete="email"
-            {...emailForm.register("email")}
-          />
-        </FormField>
-
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={requestReset.isPending}
+      <AuthSplit>
+        <form
+          onSubmit={emailForm.handleSubmit(onEmailSubmit)}
+          className="flex flex-col gap-4"
         >
-          {requestReset.isPending && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          )}
-          {requestReset.isPending ? t("sending") : t("sendCode")}
-        </Button>
+          <AuthTitle>{t("title")}</AuthTitle>
+          <AuthDescription>{t("description")}</AuthDescription>
 
-        <div className="text-center">
+          <AuthField
+            id="organizationSlug"
+            label={t("organization")}
+            error={emailForm.formState.errors.organizationSlug?.message}
+          >
+            <Input
+              id="organizationSlug"
+              type="text"
+              placeholder={t("organizationPlaceholder")}
+              autoComplete="organization"
+              aria-invalid={Boolean(
+                emailForm.formState.errors.organizationSlug,
+              )}
+              aria-describedby={
+                emailForm.formState.errors.organizationSlug
+                  ? "organizationSlug-error"
+                  : undefined
+              }
+              className={authControlClass(
+                Boolean(emailForm.formState.errors.organizationSlug),
+              )}
+              {...emailForm.register("organizationSlug")}
+            />
+          </AuthField>
+
+          <AuthField
+            id="resetEmail"
+            label={t("enterEmail")}
+            error={emailForm.formState.errors.email?.message ?? requestError}
+          >
+            <Input
+              id="resetEmail"
+              type="email"
+              placeholder="you@example.com"
+              autoComplete="email"
+              aria-invalid={Boolean(
+                emailForm.formState.errors.email || requestError,
+              )}
+              aria-describedby={
+                emailForm.formState.errors.email || requestError
+                  ? "resetEmail-error"
+                  : undefined
+              }
+              className={authControlClass(
+                Boolean(emailForm.formState.errors.email || requestError),
+              )}
+              {...emailForm.register("email")}
+            />
+          </AuthField>
+
+          <Button
+            type="submit"
+            className="w-full rounded-lg"
+            disabled={requestReset.isPending}
+          >
+            {requestReset.isPending && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            {requestReset.isPending ? t("sending") : t("sendCode")}
+          </Button>
+
           <Link
             href="/login"
-            className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 inline-flex items-center gap-1"
+            className="w-fit text-sm font-semibold text-primary"
           >
-            <ArrowLeft className="h-3 w-3" />
             {t("backToLogin")}
           </Link>
-        </div>
-      </form>
+        </form>
+      </AuthSplit>
     );
   }
 
   if (step === "otp") {
+    const otpError =
+      otpForm.formState.errors.otpCode?.message ??
+      (verifyOtp.error
+        ? messageFrom(verifyOtp.error, t("invalidCode"))
+        : undefined);
+
     return (
-      <form onSubmit={otpForm.handleSubmit(onOtpSubmit)} className="space-y-4">
-        <div className="text-center mb-6">
-          <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            {t("checkEmail")}
-          </h2>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            {t("checkEmailDescription")}
-          </p>
-        </div>
+      <AuthCentered>
+        <form
+          onSubmit={otpForm.handleSubmit(onOtpSubmit)}
+          className="flex flex-col gap-4"
+        >
+          <AuthTitle>{t("checkEmail")}</AuthTitle>
+          <AuthDescription>
+            {t("checkEmailDescription", { email })}
+          </AuthDescription>
 
-        {verifyOtp.error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            {verifyOtp.error instanceof Error
-              ? verifyOtp.error.message
-              : t("invalidCode")}
+          <input type="hidden" {...otpForm.register("otpCode")} />
+
+          <div className="flex flex-col gap-1.5">
+            <div className="flex justify-between gap-2">
+              {digits.map((digit, index) => (
+                <Input
+                  key={index}
+                  ref={(node) => {
+                    digitRefs.current[index] = node;
+                  }}
+                  value={digit}
+                  inputMode="numeric"
+                  autoComplete={index === 0 ? "one-time-code" : "off"}
+                  maxLength={1}
+                  aria-label={`${t("enterOtp")} ${index + 1}`}
+                  aria-invalid={Boolean(otpError)}
+                  className="h-[52px] w-11 rounded-lg bg-card px-0 text-center text-xl font-semibold lg:h-[60px] lg:w-[52px] lg:bg-background lg:text-[22px]"
+                  onChange={(event) => {
+                    const cleaned = event.target.value.replace(/\D/g, "");
+                    if (cleaned.length > 1) {
+                      applyDigits(cleaned.split(""));
+                      const focusIndex = Math.min(cleaned.length, OTP_LENGTH) - 1;
+                      digitRefs.current[Math.max(focusIndex, 0)]?.focus();
+                      return;
+                    }
+                    const next = [...digits];
+                    next[index] = cleaned;
+                    applyDigits(next);
+                    if (cleaned && index < OTP_LENGTH - 1) {
+                      digitRefs.current[index + 1]?.focus();
+                    }
+                  }}
+                  onKeyDown={(event) => {
+                    if (
+                      event.key === "Backspace" &&
+                      !digits[index] &&
+                      index > 0
+                    ) {
+                      digitRefs.current[index - 1]?.focus();
+                    }
+                  }}
+                  onPaste={(event) => {
+                    const text = event.clipboardData
+                      .getData("text")
+                      .replace(/\D/g, "")
+                      .slice(0, OTP_LENGTH);
+                    if (!text) return;
+                    event.preventDefault();
+                    applyDigits(text.split(""));
+                    const focusIndex = Math.min(text.length, OTP_LENGTH) - 1;
+                    digitRefs.current[Math.max(focusIndex, 0)]?.focus();
+                  }}
+                />
+              ))}
+            </div>
+            {otpError ? (
+              <p role="alert" className="text-[13px] leading-snug text-destructive">
+                {otpError}
+              </p>
+            ) : null}
           </div>
-        )}
 
-        <FormField error={otpForm.formState.errors.otpCode?.message}>
-          <Label htmlFor="otpCode">{t("enterOtp")}</Label>
-          <Input
-            id="otpCode"
-            type="text"
-            inputMode="numeric"
-            maxLength={6}
-            placeholder={t("otpPlaceholder")}
-            autoComplete="one-time-code"
-            className="text-center text-lg tracking-widest"
-            {...otpForm.register("otpCode")}
-          />
-        </FormField>
+          <Button
+            type="submit"
+            className="w-full rounded-lg"
+            disabled={verifyOtp.isPending}
+          >
+            {verifyOtp.isPending && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            {verifyOtp.isPending ? t("verifying") : t("verifyCode")}
+          </Button>
 
-        <Button type="submit" className="w-full" disabled={verifyOtp.isPending}>
-          {verifyOtp.isPending && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          )}
-          {verifyOtp.isPending ? t("verifying") : t("verifyCode")}
-        </Button>
-
-        <div className="text-center">
-          {cooldown > 0 ? (
-            <span className="text-sm text-neutral-400 dark:text-neutral-500 inline-flex items-center gap-1.5">
-              <Timer className="h-3 w-3" />
-              {t("resendIn", {
-                minutes: String(Math.floor(cooldown / 60)).padStart(2, "0"),
-                seconds: String(cooldown % 60).padStart(2, "0"),
-              })}
-            </span>
-          ) : (
-            <button
-              type="button"
-              onClick={() => {
-                requestReset.mutate(
-                  { email, organizationSlug },
-                  { onSuccess: () => startCooldown() },
-                );
-              }}
-              disabled={requestReset.isPending}
-              className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 inline-flex items-center gap-1"
-            >
-              {requestReset.isPending ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <ArrowLeft className="h-3 w-3" />
-              )}
-              {t("requestNew")}
-            </button>
-          )}
-        </div>
-      </form>
+          <div>
+            {cooldown > 0 ? (
+              <span className="text-[13px] text-muted-foreground">
+                {t("resendIn", {
+                  minutes: String(Math.floor(cooldown / 60)).padStart(2, "0"),
+                  seconds: String(cooldown % 60).padStart(2, "0"),
+                })}
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  requestReset.mutate(
+                    { email, organizationSlug },
+                    { onSuccess: () => startCooldown() },
+                  );
+                }}
+                disabled={requestReset.isPending}
+                className="text-sm font-semibold text-primary disabled:opacity-50"
+              >
+                {requestReset.isPending ? (
+                  <Loader2 className="mr-2 inline h-3 w-3 animate-spin" />
+                ) : null}
+                {t("requestNew")}
+              </button>
+            )}
+          </div>
+        </form>
+      </AuthCentered>
     );
   }
 
   if (step === "password") {
+    const resetError = resetPassword.error
+      ? messageFrom(resetPassword.error, t("resetPassword"))
+      : undefined;
+
     return (
-      <form
-        onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
-        className="space-y-4"
-      >
-        <div className="text-center mb-6">
-          <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            {t("resetPassword")}
-          </h2>
-        </div>
+      <AuthCentered>
+        <form
+          onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
+          className="flex flex-col gap-4"
+        >
+          <AuthTitle>{t("newPassword")}</AuthTitle>
 
-        {resetPassword.error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            {resetPassword.error instanceof Error
-              ? resetPassword.error.message
-              : t("resetPassword")}
-          </div>
-        )}
-
-        <FormField error={passwordForm.formState.errors.newPassword?.message}>
-          <Label htmlFor="newPassword">{t("newPassword")}</Label>
-          <PasswordInput
+          <AuthField
             id="newPassword"
-            autoComplete="new-password"
-            {...passwordForm.register("newPassword")}
-          />
-        </FormField>
+            label={t("newPassword")}
+            error={passwordForm.formState.errors.newPassword?.message}
+          >
+            <PasswordInput
+              id="newPassword"
+              autoComplete="new-password"
+              aria-invalid={Boolean(
+                passwordForm.formState.errors.newPassword,
+              )}
+              aria-describedby={
+                passwordForm.formState.errors.newPassword
+                  ? "newPassword-error"
+                  : undefined
+              }
+              className={authControlClass(
+                Boolean(passwordForm.formState.errors.newPassword),
+              )}
+              {...passwordForm.register("newPassword")}
+            />
+          </AuthField>
 
-        <FormField
-          error={passwordForm.formState.errors.confirmPassword?.message}
-        >
-          <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
-          <PasswordInput
+          <AuthField
             id="confirmPassword"
-            autoComplete="new-password"
-            {...passwordForm.register("confirmPassword")}
-          />
-        </FormField>
+            label={t("confirmPassword")}
+            error={
+              passwordForm.formState.errors.confirmPassword?.message ??
+              resetError
+            }
+          >
+            <PasswordInput
+              id="confirmPassword"
+              autoComplete="new-password"
+              aria-invalid={Boolean(
+                passwordForm.formState.errors.confirmPassword || resetError,
+              )}
+              aria-describedby={
+                passwordForm.formState.errors.confirmPassword || resetError
+                  ? "confirmPassword-error"
+                  : undefined
+              }
+              className={authControlClass(
+                Boolean(
+                  passwordForm.formState.errors.confirmPassword || resetError,
+                ),
+              )}
+              {...passwordForm.register("confirmPassword")}
+            />
+          </AuthField>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={resetPassword.isPending}
-        >
-          {resetPassword.isPending && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          )}
-          {resetPassword.isPending ? t("resetting") : t("resetPassword")}
-        </Button>
-      </form>
+          <p className="text-[13px] leading-snug text-muted-foreground">
+            {t("requirements")}
+          </p>
+
+          <Button
+            type="submit"
+            className="w-full rounded-lg"
+            disabled={resetPassword.isPending}
+          >
+            {resetPassword.isPending && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            {resetPassword.isPending ? t("resetting") : t("resetPassword")}
+          </Button>
+        </form>
+      </AuthCentered>
     );
   }
 
-  // Success step
   return (
-    <div className="text-center space-y-4">
-      <CheckCircle2 className="mx-auto h-12 w-12 text-green-500" />
-      <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-        {t("success")}
-      </h2>
-      <p className="text-sm text-neutral-500 dark:text-neutral-400">
-        {t("successDescription")}
-      </p>
-      <Link href="/login">
-        <Button className="w-full">{t("backToLogin")}</Button>
-      </Link>
-    </div>
+    <AuthCentered width="420">
+      <div className="flex flex-col gap-3">
+        <AuthTitle>{t("success")}</AuthTitle>
+        <AuthDescription>{t("successDescription")}</AuthDescription>
+        <Button asChild className="w-full rounded-lg">
+          <Link href="/login">{t("backToLogin")}</Link>
+        </Button>
+      </div>
+    </AuthCentered>
   );
 }

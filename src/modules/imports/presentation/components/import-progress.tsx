@@ -58,7 +58,7 @@ export function ImportProgress({ batchId, initialBatch }: ImportProgressProps) {
           </div>
 
           {isCompleted && (
-            <div className="mt-4 flex items-center gap-2 rounded-lg bg-green-50 p-3 text-green-800 dark:bg-green-950 dark:text-green-200">
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-success-100 p-3 text-success-800">
               <CheckCircle2 className="h-5 w-5" />
               <div>
                 <p className="font-medium">{t("execute.completed")}</p>
@@ -70,7 +70,7 @@ export function ImportProgress({ batchId, initialBatch }: ImportProgressProps) {
           )}
 
           {isFailed && (
-            <div className="mt-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-red-800 dark:bg-red-950 dark:text-red-200">
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-error-100 p-3 text-destructive">
               <XCircle className="h-5 w-5" />
               <div>
                 <p className="font-medium">{t("execute.failed")}</p>

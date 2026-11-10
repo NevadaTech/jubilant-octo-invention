@@ -3,33 +3,11 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import {
-  Package,
-  Edit,
-  ArrowLeft,
-  Tag,
-  DollarSign,
-  BarChart3,
-  Calendar,
-  Layers,
-  TrendingUp,
-  ShieldCheck,
-  Warehouse,
-  RefreshCw,
-  ArrowDownToLine,
-  ArrowUpFromLine,
-  Clock,
-  Plus,
-  Pencil,
-  ToggleLeft,
-  ToggleRight,
-  User,
-  Loader2,
-  ScanBarcode,
-} from "lucide-react";
+import { ArrowLeft, Loader2, Pencil, Plus, Warehouse } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Badge } from "@/ui/components/badge";
+import { PageHeader } from "@/ui/layout/page-header";
+import { CatalogStatus, catalogTextAction } from "./catalog-chrome";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,28 +46,32 @@ function formatCurrency(amount: number, currency = "USD"): string {
   }).format(amount);
 }
 
-function DetailItem({
-  icon: Icon,
+function Fact({
   label,
   value,
 }: {
-  icon: React.ElementType;
   label: string;
   value: React.ReactNode;
 }) {
   return (
-    <div className="flex items-start gap-3">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
-        <Icon className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
-      </div>
-      <div>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          {label}
-        </p>
-        <div className="font-medium text-neutral-900 dark:text-neutral-100">
-          {value}
-        </div>
-      </div>
+    <div className="space-y-1 rounded-xl border border-border bg-card px-3.5 py-3">
+      <p className="text-sm text-muted-foreground">{label}</p>
+      <div className="text-sm font-semibold text-foreground">{value}</div>
+    </div>
+  );
+}
+
+function FactRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <dt className="text-sm text-muted-foreground">{label}</dt>
+      <dd className="text-sm font-medium text-foreground">{value}</dd>
     </div>
   );
 }
@@ -143,7 +125,6 @@ export function ProductDetail({ productId }: ProductDetailProps) {
       <Card>
         <CardContent className="py-8">
           <div className="text-center">
-            <Package className="mx-auto mb-4 h-12 w-12 text-neutral-400" />
             <p className="text-destructive">
               {error?.message || t("detail.notFound")}
             </p>
@@ -181,52 +162,45 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         ? "text-destructive"
         : "text-neutral-600 dark:text-neutral-300";
 
+  const lowStock = product.isActive && minStock > 0 && totalStock <= minStock;
+  const statusTone = !product.isActive
+    ? "muted"
+    : lowStock
+      ? "warning"
+      : "success";
+  const statusLabel = !product.isActive
+    ? t("status.inactive")
+    : lowStock
+      ? t("status.lowStock")
+      : t("status.active");
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/dashboard/inventory/products">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-            <Package className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+    <div className="space-y-4">
+      <PageHeader
+        title={product.name}
+        description={[product.sku, product.companyName].filter(Boolean).join(" · ")}
+        action={
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild variant="outline">
+              <Link href={`/dashboard/inventory/products/${productId}/edit`}>
+                {tCommon("edit")}
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              className={product.isActive ? "text-destructive" : undefined}
+              onClick={() => setConfirmOpen(true)}
+              disabled={toggleStatus.isPending}
+            >
+              {toggleStatus.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {product.isActive ? t("actions.deactivate") : t("actions.activate")}
+            </Button>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-              {product.name}
-            </h1>
-            <p className="text-sm text-muted-foreground">{product.sku}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant={product.isActive ? "success" : "secondary"}>
-            {product.isActive ? t("status.active") : t("status.inactive")}
-          </Badge>
-          <Button
-            variant="outline"
-            onClick={() => setConfirmOpen(true)}
-            disabled={toggleStatus.isPending}
-          >
-            {toggleStatus.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : product.isActive ? (
-              <ToggleRight className="mr-2 h-4 w-4 text-green-600" />
-            ) : (
-              <ToggleLeft className="mr-2 h-4 w-4 text-muted-foreground" />
-            )}
-            {product.isActive ? t("actions.deactivate") : t("actions.activate")}
-          </Button>
-          <Button asChild>
-            <Link href={`/dashboard/inventory/products/${productId}/edit`}>
-              <Edit className="mr-2 h-4 w-4" />
-              {tCommon("edit")}
-            </Link>
-          </Button>
-        </div>
-      </div>
+        }
+      />
+      <CatalogStatus tone={statusTone}>{statusLabel}</CatalogStatus>
 
       <ProductReferencePhoto
         productId={product.id}
@@ -236,7 +210,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
 
       {/* Confirmation dialog */}
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="shadow-none">
           <AlertDialogHeader>
             <AlertDialogTitle>
               {product.isActive
@@ -254,6 +228,11 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               {tCommon("cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
+              className={
+                product.isActive
+                  ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  : undefined
+              }
               onClick={() => {
                 toggleStatus.mutate({
                   id: product.id,
@@ -274,215 +253,143 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Description */}
-      {product.description && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t("detail.description")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-neutral-600 dark:text-neutral-300">
-              {product.description}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      {product.description ? (
+        <section className="rounded-xl border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-foreground">
+            {t("detail.description")}
+          </h2>
+          <p className="mt-2 text-sm text-foreground">{product.description}</p>
+        </section>
+      ) : null}
 
-      {/* Status info (deactivated by / at) */}
       {!product.isActive &&
-        (product.statusChangedBy || product.statusChangedAt) && (
-          <Card className="border-warning-200 dark:border-warning-800 bg-warning-50/50 dark:bg-warning-950/20">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base text-warning-700 dark:text-warning-400">
-                {t("detail.statusInfo")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {product.statusChangedBy && (
-                <DetailItem
-                  icon={User}
-                  label={t("detail.statusChangedBy")}
-                  value={product.statusChangedBy}
-                />
-              )}
-              {product.statusChangedAt && (
-                <DetailItem
-                  icon={Calendar}
-                  label={t("detail.statusChangedAt")}
-                  value={formatDate(product.statusChangedAt, locale)}
-                />
-              )}
-            </CardContent>
-          </Card>
-        )}
+      (product.statusChangedBy || product.statusChangedAt) ? (
+        <section className="space-y-3 rounded-xl border border-warning-200 bg-warning-100/40 p-4">
+          <h2 className="text-sm font-semibold text-warning-700">
+            {t("detail.statusInfo")}
+          </h2>
+          <dl className="space-y-2">
+            {product.statusChangedBy ? (
+              <FactRow
+                label={t("detail.statusChangedBy")}
+                value={product.statusChangedBy}
+              />
+            ) : null}
+            {product.statusChangedAt ? (
+              <FactRow
+                label={t("detail.statusChangedAt")}
+                value={formatDate(product.statusChangedAt, locale)}
+              />
+            ) : null}
+          </dl>
+        </section>
+      ) : null}
 
-      {/* Details Grid */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Pricing */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t("detail.pricing")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <DetailItem
-              icon={DollarSign}
-              label={t("fields.price")}
-              value={formatCurrency(product.price)}
-            />
-            <DetailItem
-              icon={DollarSign}
-              label={t("fields.cost")}
-              value={formatCurrency(averageCost)}
-            />
-            <DetailItem
-              icon={TrendingUp}
-              label={t("detail.margin")}
-              value={
-                <span className={marginColor}>
-                  {margin > 0 ? "+" : ""}
-                  {margin}%
-                </span>
-              }
-            />
-            <DetailItem
-              icon={BarChart3}
-              label={t("detail.profit")}
-              value={formatCurrency(profit)}
-            />
-          </CardContent>
-        </Card>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <Fact label={t("fields.price")} value={formatCurrency(product.price)} />
+        <Fact label={t("fields.cost")} value={formatCurrency(averageCost)} />
+        <Fact
+          label={t("detail.margin")}
+          value={
+            <span className={marginColor}>
+              {margin > 0 ? "+" : ""}
+              {margin}%
+            </span>
+          }
+        />
+        <Fact label={t("detail.profit")} value={formatCurrency(profit)} />
+        <Fact label={t("detail.totalStock")} value={totalStock.toLocaleString()} />
+        <Fact
+          label={t("fields.minStock")}
+          value={minStock > 0 ? minStock.toString() : "—"}
+        />
+        <Fact
+          label={t("fields.maxStock")}
+          value={maxStock > 0 ? maxStock.toString() : "—"}
+        />
+        <Fact
+          label={t("detail.safetyStock")}
+          value={safetyStock > 0 ? safetyStock.toString() : "—"}
+        />
+        <Fact label={t("fields.unitOfMeasure")} value={product.unitOfMeasure} />
+      </div>
 
-        {/* Inventory */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t("detail.inventory")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <DetailItem
-              icon={Layers}
-              label={t("fields.unitOfMeasure")}
-              value={product.unitOfMeasure}
-            />
-            <DetailItem
-              icon={Warehouse}
-              label={t("detail.totalStock")}
-              value={totalStock.toLocaleString()}
-            />
-            <DetailItem
-              icon={BarChart3}
-              label={t("fields.minStock")}
-              value={minStock > 0 ? minStock.toString() : "-"}
-            />
-            <DetailItem
-              icon={BarChart3}
-              label={t("fields.maxStock")}
-              value={maxStock > 0 ? maxStock.toString() : "-"}
-            />
-            <DetailItem
-              icon={ShieldCheck}
-              label={t("detail.safetyStock")}
-              value={safetyStock > 0 ? safetyStock.toString() : "-"}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Classification & Dates */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">
-              {t("detail.classification")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <DetailItem
-              icon={Tag}
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="space-y-3 rounded-xl border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-foreground">
+            {t("detail.classification")}
+          </h2>
+          <dl className="space-y-3">
+            <FactRow
               label={t("fields.category")}
               value={
                 product.categories.length > 0 ? (
-                  <div className="flex flex-wrap gap-1 mt-0.5">
-                    {product.categories.map((c) => (
-                      <Badge key={c.id} variant="outline" className="text-xs">
-                        {c.name}
-                      </Badge>
+                  <span className="flex flex-wrap justify-end gap-1">
+                    {product.categories.map((category) => (
+                      <span key={category.id}>{category.name}</span>
                     ))}
-                  </div>
-                ) : (
-                  "—"
-                )
-              }
-            />
-            <DetailItem
-              icon={Tag}
-              label={t("fields.brand")}
-              value={product.brandName || "—"}
-            />
-            <DetailItem
-              icon={ScanBarcode}
-              label={t("fields.barcode")}
-              value={
-                product.barcode ? (
-                  <span className="font-mono tracking-wider tabular-nums">
-                    {product.barcode}
                   </span>
                 ) : (
                   "—"
                 )
               }
             />
-            <DetailItem
-              icon={Calendar}
+            <FactRow label={t("fields.brand")} value={product.brandName || "—"} />
+            <FactRow
+              label={t("fields.barcode")}
+              value={
+                product.barcode ? (
+                  <span className="font-mono tracking-wider">{product.barcode}</span>
+                ) : (
+                  "—"
+                )
+              }
+            />
+            <FactRow
               label={t("detail.createdAt")}
               value={formatDate(product.createdAt, locale)}
             />
-            <DetailItem
-              icon={Calendar}
+            <FactRow
               label={t("detail.updatedAt")}
               value={formatDate(product.updatedAt, locale)}
             />
-          </CardContent>
-        </Card>
+          </dl>
+        </section>
 
-        {/* Rotation */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t("detail.rotation")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <DetailItem
-              icon={ArrowDownToLine}
+        <section className="space-y-3 rounded-xl border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-foreground">
+            {t("detail.rotation")}
+          </h2>
+          <dl className="space-y-3">
+            <FactRow
               label={t("detail.totalIn30d")}
               value={totalIn30d.toLocaleString()}
             />
-            <DetailItem
-              icon={ArrowUpFromLine}
+            <FactRow
               label={t("detail.totalOut30d")}
               value={totalOut30d.toLocaleString()}
             />
-            <DetailItem
-              icon={BarChart3}
+            <FactRow
               label={t("detail.avgDailyConsumption")}
               value={avgDailyConsumption.toLocaleString()}
             />
-            <DetailItem
-              icon={Layers}
+            <FactRow
               label={t("detail.daysOfStock")}
               value={
                 daysOfStock !== null
                   ? t("detail.daysUnit", { days: daysOfStock })
-                  : "-"
+                  : "—"
               }
             />
-            <DetailItem
-              icon={RefreshCw}
+            <FactRow
               label={t("detail.turnoverRate")}
               value={
                 turnoverRate > 0
                   ? t("detail.timesPerYear", { rate: turnoverRate })
-                  : "-"
+                  : "—"
               }
             />
-            <DetailItem
-              icon={Clock}
+            <FactRow
               label={t("detail.lastMovementDate")}
               value={
                 lastMovementDate
@@ -490,12 +397,15 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                   : t("detail.noMovements")
               }
             />
-          </CardContent>
-        </Card>
+          </dl>
+        </section>
       </div>
 
-      {/* Reorder Rules */}
       <ProductReorderRules productId={productId} productName={product.name} />
+
+      <Link href="/dashboard/inventory/products" className={catalogTextAction}>
+        {t("detail.backToList")}
+      </Link>
     </div>
   );
 }
@@ -550,9 +460,9 @@ function ProductReorderRules({
 
   return (
     <>
-      <Card>
+      <Card className="shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="text-lg">{t("detail.reorderRules")}</CardTitle>
+          <CardTitle className="text-base">{t("detail.reorderRules")}</CardTitle>
           {availableWarehouses.length > 0 && (
             <WarehouseAddDropdown
               warehouses={availableWarehouses}

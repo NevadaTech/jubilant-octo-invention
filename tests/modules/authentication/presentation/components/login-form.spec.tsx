@@ -95,8 +95,7 @@ describe("LoginForm", () => {
 
   it("Given: login page When: no error Then: should not show error message", () => {
     render(<LoginForm />);
-    const errorDiv = document.querySelector(".bg-destructive\\/10");
-    expect(errorDiv).toBeNull();
+    expect(screen.queryByRole("alert")).toBeNull();
   });
 
   it("Given: login page When: rendering Then: should render form element", () => {
@@ -115,9 +114,8 @@ describe("LoginForm", () => {
     };
 
     render(<LoginForm />);
-    const errorDiv = document.querySelector(".bg-destructive\\/10");
-    expect(errorDiv).not.toBeNull();
-    expect(errorDiv?.textContent).toBe("unauthorized");
+    const error = screen.getByRole("alert");
+    expect(error.textContent).toBe("unauthorized");
   });
 
   it("Given: AuthApiError with unknown code When: rendering Then: should fall back to generic", () => {
@@ -128,9 +126,7 @@ describe("LoginForm", () => {
     };
 
     render(<LoginForm />);
-    const errorDiv = document.querySelector(".bg-destructive\\/10");
-    expect(errorDiv).not.toBeNull();
-    expect(errorDiv?.textContent).toBe("generic");
+    expect(screen.getByRole("alert").textContent).toBe("generic");
   });
 
   it("Given: non-AuthApiError When: rendering Then: should show generic error", () => {
@@ -141,9 +137,7 @@ describe("LoginForm", () => {
     };
 
     render(<LoginForm />);
-    const errorDiv = document.querySelector(".bg-destructive\\/10");
-    expect(errorDiv).not.toBeNull();
-    expect(errorDiv?.textContent).toBe("generic");
+    expect(screen.getByRole("alert").textContent).toBe("generic");
   });
 
   // --- Branch: isLoading ---
@@ -170,8 +164,7 @@ describe("LoginForm", () => {
     };
 
     render(<LoginForm />);
-    const errorDiv = document.querySelector(".bg-destructive\\/10");
-    expect(errorDiv?.textContent).toBe("forbidden");
+    expect(screen.getByRole("alert").textContent).toBe("forbidden");
   });
 
   // --- Branch: AuthApiError with serverError code ---
@@ -183,7 +176,6 @@ describe("LoginForm", () => {
     };
 
     render(<LoginForm />);
-    const errorDiv = document.querySelector(".bg-destructive\\/10");
-    expect(errorDiv?.textContent).toBe("serverError");
+    expect(screen.getByRole("alert").textContent).toBe("serverError");
   });
 });
