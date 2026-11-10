@@ -3,14 +3,9 @@
 import { useCallback, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import {
-  Upload,
-  FileSpreadsheet,
-  FileText,
-  X,
-  CloudUpload,
-} from "lucide-react";
+import { Upload, X, CloudUpload } from "lucide-react";
 import { Button } from "@/ui/components/button";
+import { Label } from "@/ui/components/label";
 import { cn } from "@/ui/lib/utils";
 
 interface FileDropzoneProps {
@@ -99,32 +94,13 @@ export function FileDropzone({
 
   // Selected file card — rendered once a file is picked
   if (selectedFile) {
-    const ext = selectedFile.name.slice(selectedFile.name.lastIndexOf(".")).toLowerCase();
-    const Icon = ext === ".csv" ? FileText : FileSpreadsheet;
-
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 4 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-        className="rounded-xl border border-primary-200 bg-primary-50/40 p-4 dark:border-primary-900/60 dark:bg-primary-950/30"
-      >
-        <div className="flex items-center gap-4">
-          <div className="shrink-0 rounded-lg bg-primary-600 p-2.5 text-white shadow-sm dark:bg-primary-500">
-            <Icon className="h-5 w-5" aria-hidden />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">
-              {selectedFile.name}
-            </p>
-            <p className="mt-0.5 text-xs tabular-nums text-neutral-500 dark:text-neutral-400">
-              {formatSize(selectedFile.size)}
-              <span className="mx-1.5 text-neutral-300 dark:text-neutral-700">
-                •
-              </span>
-              {ext.replace(".", "").toUpperCase()}
-            </p>
-          </div>
+      <div className="space-y-2">
+        <Label htmlFor={inputId}>{t("dropLabel")}</Label>
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-4">
+          <p className="min-w-0 flex-1 truncate text-base font-semibold text-foreground">
+            {selectedFile.name}
+          </p>
           <Button
             variant="ghost"
             size="sm"
@@ -136,26 +112,27 @@ export function FileDropzone({
           </Button>
         </div>
         {error && (
-          <p role="alert" className="mt-2 text-xs text-rose-600">
+          <p role="alert" className="text-sm font-semibold text-destructive">
             {error}
           </p>
         )}
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <div>
+    <div className="space-y-2">
+      <Label htmlFor={inputId}>{t("dropLabel")}</Label>
       <label
         htmlFor={inputId}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={cn(
-          "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center transition-all",
+          "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed p-8 text-center transition-colors",
           isDragOver
-            ? "border-primary-500 bg-primary-50 dark:bg-primary-950/40"
-            : "border-neutral-300 bg-neutral-50/40 hover:border-primary-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900/40 dark:hover:border-primary-700",
+            ? "border-primary bg-accent"
+            : "border-border bg-card hover:border-primary",
           disabled && "cursor-not-allowed opacity-50",
         )}
       >
@@ -206,8 +183,3 @@ export function FileDropzone({
   );
 }
 
-function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}

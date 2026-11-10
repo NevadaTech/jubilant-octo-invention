@@ -300,7 +300,9 @@ describe("ReturnList", () => {
 
   it("Given: returns data When: rendering Then: should show status badges", () => {
     render(<ReturnList />);
-    const badges = screen.getAllByTestId("return-status");
+    const badges = screen
+      .getAllByTestId("return-status")
+      .filter((badge) => !badge.closest('[class~="lg:hidden"]'));
     expect(badges).toHaveLength(2);
     expect(badges[0]).toHaveTextContent("DRAFT");
     expect(badges[1]).toHaveTextContent("CONFIRMED");
@@ -308,7 +310,9 @@ describe("ReturnList", () => {
 
   it("Given: returns data When: rendering Then: should show type badges", () => {
     render(<ReturnList />);
-    const typeBadges = screen.getAllByTestId("return-type");
+    const typeBadges = screen
+      .getAllByTestId("return-type")
+      .filter((badge) => !badge.closest('[class~="lg:hidden"]'));
     expect(typeBadges).toHaveLength(2);
     expect(typeBadges[0]).toHaveTextContent("RETURN_CUSTOMER");
     expect(typeBadges[1]).toHaveTextContent("RETURN_SUPPLIER");

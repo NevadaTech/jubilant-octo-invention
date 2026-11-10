@@ -18,7 +18,7 @@ describe("UserFiltersComponent", () => {
     vi.clearAllMocks();
   });
 
-  it("Given: default filters When: rendering Then: should render search input", () => {
+  it("Given: default filters When: rendering Then: should show search and status without a click", () => {
     render(
       <UserFiltersComponent
         filters={defaultFilters}
@@ -26,16 +26,8 @@ describe("UserFiltersComponent", () => {
       />,
     );
     expect(screen.getByPlaceholderText("search.placeholder")).toBeDefined();
-  });
-
-  it("Given: default filters When: rendering Then: should render filter button", () => {
-    render(
-      <UserFiltersComponent
-        filters={defaultFilters}
-        onFiltersChange={mockOnChange}
-      />,
-    );
-    expect(screen.getByText("filter")).toBeDefined();
+    expect(screen.getByText("filters.status")).toBeDefined();
+    expect(screen.queryByText("filter")).toBeNull();
   });
 
   it("Given: filters with status When: rendering Then: should show clear button", () => {
@@ -58,15 +50,37 @@ describe("UserFiltersComponent", () => {
     expect(screen.queryByText("clearFilters")).toBeNull();
   });
 
-  it("Given: rendered component When: clicking filter button Then: should show status filter", () => {
+  it("Given: empty search When: user types Then: should call onFiltersChange with search and page 1", () => {
     render(
       <UserFiltersComponent
         filters={defaultFilters}
         onFiltersChange={mockOnChange}
       />,
     );
-    fireEvent.click(screen.getByText("filter"));
-    expect(screen.getByText("filters.status")).toBeDefined();
+    fireEvent.change(screen.getByPlaceholderText("search.placeholder"), {
+      target: { value: "john" },
+    });
+    expect(mockOnChange).toHaveBeenCalledWith({
+      page: 1,
+      limit: 10,
+      search: "john",
+    });
+  });
+
+  it("Given: visible status filter When: selecting ACTIVE Then: should call onFiltersChange with status", () => {
+    render(
+      <UserFiltersComponent
+        filters={defaultFilters}
+        onFiltersChange={mockOnChange}
+      />,
+    );
+    fireEvent.click(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByRole("option", { name: "status.active" }));
+    expect(mockOnChange).toHaveBeenCalledWith({
+      page: 1,
+      limit: 10,
+      status: ["ACTIVE"],
+    });
   });
 
   it("Given: active filters When: clicking clear Then: should reset filters", () => {

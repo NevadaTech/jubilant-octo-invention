@@ -30,6 +30,7 @@ import type { SaleLine } from "@/modules/sales/domain/entities/sale.entity";
 
 interface SaleSwapDialogProps {
   saleId: string;
+  saleNumber?: string;
   line: SaleLine;
   saleCurrency: string;
   open: boolean;
@@ -38,6 +39,7 @@ interface SaleSwapDialogProps {
 
 export function SaleSwapDialog({
   saleId,
+  saleNumber,
   line,
   saleCurrency,
   open,
@@ -132,15 +134,30 @@ export function SaleSwapDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="rounded-2xl sm:max-w-[560px]">
         <DialogHeader>
-          <DialogTitle>{t("swapLine.title")}</DialogTitle>
+          <p className="text-xs font-semibold text-primary">{t("title")}</p>
+          <DialogTitle>
+            {saleNumber
+              ? `${t("swapLine.title")} · ${saleNumber}`
+              : t("swapLine.title")}
+          </DialogTitle>
           <DialogDescription>{t("swapLine.description")}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label>{t("swapLine.replacementProduct")}</Label>
+        <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[13px] font-semibold">
+              {t("swapLine.currentProduct")}
+            </Label>
+            <div className="flex h-11 items-center rounded-lg border border-border bg-card px-3 text-[15px]">
+              {line.productName}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[13px] font-semibold">
+              {t("swapLine.replacementProduct")}
+            </Label>
             <SearchableSelect
               options={productOptions}
               value={replacementProductId}

@@ -118,7 +118,7 @@ export function ProfileForm() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="rounded-xl">
         <CardHeader>
           <Skeleton className="h-6 w-32" />
           <Skeleton className="h-4 w-64" />
@@ -143,7 +143,7 @@ export function ProfileForm() {
   }
 
   return (
-    <Card>
+    <Card className="rounded-xl">
       <CardHeader>
         <CardTitle>{t("title")}</CardTitle>
         <CardDescription>{t("description")}</CardDescription>
@@ -277,7 +277,7 @@ export function ProfileForm() {
             </FormField>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-start">
             <Button
               type="submit"
               disabled={!isDirty || updateProfile.isPending}

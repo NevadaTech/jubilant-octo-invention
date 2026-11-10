@@ -231,14 +231,17 @@ describe("ComboDetail", () => {
 
       fireEvent.click(screen.getByText("actions.deactivate"));
 
-      expect(screen.getByTestId("confirm-dialog")).toBeInTheDocument();
+      expect(screen.getByText("confirm.deactivate.title")).toBeInTheDocument();
     });
 
     it("Given: confirm dialog When: clicking confirm Then: should call deactivateCombo.mutate", () => {
       render(<ComboDetail comboId="c-1" />);
 
       fireEvent.click(screen.getByText("actions.deactivate"));
-      fireEvent.click(screen.getByText("confirm"));
+      const confirmButtons = screen.getAllByRole("button", {
+        name: "actions.deactivate",
+      });
+      fireEvent.click(confirmButtons[confirmButtons.length - 1]);
 
       expect(mockDeactivateMutate).toHaveBeenCalledWith("c-1");
     });

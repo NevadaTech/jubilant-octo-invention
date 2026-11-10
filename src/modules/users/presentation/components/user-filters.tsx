@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Search, X, Filter } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
@@ -25,7 +24,6 @@ export function UserFiltersComponent({
   const t = useTranslations("users");
   const tCommon = useTranslations("common");
   const [searchValue, setSearchValue] = useState(filters.search || "");
-  const [showFilters, setShowFilters] = useState(false);
   const debouncedSearch = useDebounce(searchValue, 300);
 
   useEffect(() => {
@@ -64,55 +62,34 @@ export function UserFiltersComponent({
   }));
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder={t("search.placeholder")}
-            className="pl-9"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
-        </div>
-
-        <Button
-          variant="outline"
-          onClick={() => setShowFilters(!showFilters)}
-          className="gap-2"
-        >
-          <Filter className="h-4 w-4" />
-          {tCommon("filter")}
-          {hasActiveFilters && (
-            <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-              !
-            </span>
-          )}
-        </Button>
-
-        {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-            <X className="mr-2 h-4 w-4" />
-            {tCommon("clearFilters")}
-          </Button>
-        )}
+    <div className="flex flex-wrap items-end gap-4">
+      <div className="w-full space-y-1 sm:w-64">
+        <Label htmlFor="users-search">{tCommon("search")}</Label>
+        <Input
+          id="users-search"
+          type="search"
+          placeholder={t("search.placeholder")}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
       </div>
 
-      {showFilters && (
-        <div className="flex flex-wrap gap-4 rounded-lg border bg-muted/30 p-4">
-          <div className="min-w-[200px]">
-            <Label className="mb-2 block text-sm">{t("filters.status")}</Label>
-            <MultiSelect
-              value={filters.status || []}
-              onValueChange={handleStatusChange}
-              options={statusOptions}
-              allLabel={t("filters.allStatuses")}
-              selectedLabel={tCommon("selected")}
-            />
-          </div>
-        </div>
-      )}
+      <div className="w-full space-y-1 sm:w-56">
+        <Label>{t("filters.status")}</Label>
+        <MultiSelect
+          value={filters.status || []}
+          onValueChange={handleStatusChange}
+          options={statusOptions}
+          allLabel={t("filters.allStatuses")}
+          selectedLabel={tCommon("selected")}
+        />
+      </div>
+
+      {hasActiveFilters ? (
+        <Button type="button" variant="ghost" onClick={handleClearFilters}>
+          {tCommon("clearFilters")}
+        </Button>
+      ) : null}
     </div>
   );
 }

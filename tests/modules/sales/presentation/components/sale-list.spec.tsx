@@ -303,7 +303,9 @@ describe("SaleList", () => {
 
   it("Given: sales data When: rendering Then: should show status badges", () => {
     render(<SaleList />);
-    const badges = screen.getAllByTestId("sale-status");
+    const badges = screen
+      .getAllByTestId("sale-status")
+      .filter((badge) => !badge.closest('[class~="lg:hidden"]'));
     expect(badges).toHaveLength(2);
     expect(badges[0]).toHaveTextContent("DRAFT");
     expect(badges[1]).toHaveTextContent("CONFIRMED");

@@ -2,21 +2,15 @@
 
 import { useTranslations } from "next-intl";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/ui/components/tabs";
+import { PageHeader } from "@/ui/layout/page-header";
 import { ProviderTabContent } from "./provider-tab-content";
 
 export function IntegrationsPage() {
   const t = useTranslations("integrations");
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-          {t("title")}
-        </h1>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          {t("description")}
-        </p>
-      </div>
+    <div className="space-y-4">
+      <PageHeader title={t("title")} description={t("description")} />
 
       <Tabs defaultValue="vtex">
         <TabsList>

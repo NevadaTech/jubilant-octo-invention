@@ -142,7 +142,9 @@ describe("ComboItemSelector", () => {
         />,
       );
 
-      const removeButtons = screen.getAllByTitle("form.removeItem");
+      const removeButtons = screen.getAllByRole("button", {
+        name: "form.removeItem",
+      });
       fireEvent.click(removeButtons[0]);
 
       expect(onChange).toHaveBeenCalledWith([
@@ -160,7 +162,9 @@ describe("ComboItemSelector", () => {
         />,
       );
 
-      const removeButton = screen.getByTitle("form.removeItem");
+      const removeButton = screen.getByRole("button", {
+        name: "form.removeItem",
+      });
       expect(removeButton).toBeDisabled();
       fireEvent.click(removeButton);
       expect(onChange).not.toHaveBeenCalled();

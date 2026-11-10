@@ -1,5 +1,4 @@
 import { setRequestLocale } from "next-intl/server";
-import { Card, CardContent } from "@/ui/components/card";
 import { ForgotPasswordForm } from "@/modules/authentication/presentation/components/forgot-password-form";
 
 interface ForgotPasswordPageProps {
@@ -12,11 +11,5 @@ export default async function ForgotPasswordPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return (
-    <Card>
-      <CardContent className="pt-6">
-        <ForgotPasswordForm />
-      </CardContent>
-    </Card>
-  );
+  return <ForgotPasswordForm />;
 }

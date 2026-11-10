@@ -13,7 +13,7 @@ import { useCompanies } from "@/modules/companies/presentation/hooks/use-compani
 import { useCompanyStore } from "@/modules/companies/infrastructure/store/company.store";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 
-export function GlobalCompanySelector() {
+export function GlobalCompanySelector({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("inventory.companies");
   const tNav = useTranslations("navigation");
   const { multiCompanyEnabled } = useOrgSettings();
@@ -28,10 +28,17 @@ export function GlobalCompanySelector() {
   if (isLoading) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs font-semibold text-muted-foreground">
-          {tNav("company")}
-        </span>
-        <Button variant="outline" disabled className="min-w-[180px]">
+        {compact ? null : (
+          <span className="text-xs font-semibold text-muted-foreground">
+            {tNav("company")}
+          </span>
+        )}
+        <Button
+          variant="outline"
+          disabled
+          data-company-selector=""
+          className={compact ? "h-9 max-w-[148px] px-2" : "min-w-[180px]"}
+        >
           <Building2 className="mr-2 h-4 w-4" aria-hidden="true" />
           {t("selector.loading")}
         </Button>
@@ -41,15 +48,27 @@ export function GlobalCompanySelector() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs font-semibold text-muted-foreground">
-        {tNav("company")}
-      </span>
+      {compact ? null : (
+        <span className="text-xs font-semibold text-muted-foreground">
+          {tNav("company")}
+        </span>
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="min-w-[180px] justify-between">
-            <span className="flex items-center">
-              <Building2 className="mr-2 h-4 w-4" aria-hidden="true" />
-              {selectedCompany ? selectedCompany.name : t("selector.all")}
+          <Button
+            variant="outline"
+            data-company-selector=""
+            className={
+              compact
+                ? "h-9 max-w-[148px] justify-between px-2"
+                : "min-w-[180px] justify-between"
+            }
+          >
+            <span className="flex min-w-0 items-center">
+              <Building2 className="mr-2 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span className="truncate">
+                {selectedCompany ? selectedCompany.name : t("selector.all")}
+              </span>
             </span>
             <ChevronDown className="ml-2 h-4 w-4 opacity-50" aria-hidden="true" />
           </Button>

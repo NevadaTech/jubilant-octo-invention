@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from "@/ui/components/select";
 import { MultiSelect } from "@/ui/components/multi-select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { useWarehouses } from "@/modules/inventory/presentation/hooks/use-warehouses";
 import { useCategories } from "@/modules/inventory/presentation/hooks/use-categories";
 import { useBrands } from "@/modules/brands/presentation/hooks/use-brands";
@@ -255,30 +254,29 @@ export function ReportFiltersForm({
   );
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            {t("filters.title")}
-          </CardTitle>
-          {hasFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearAll}
-              className="h-7 gap-1 text-xs text-muted-foreground"
-            >
-              <FilterX className="h-3.5 w-3.5" />
-              {t("filters.clear")}
-            </Button>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold text-muted-foreground">
+          {t("filters.title")}
+        </p>
+        {hasFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearAll}
+            className="h-7 gap-1 text-xs text-muted-foreground"
+          >
+            <FilterX className="h-3.5 w-3.5" />
+            {t("filters.clear")}
+          </Button>
+        )}
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {config.dateRange && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.dateRange")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">
+                {t("filters.dateRange")}
+              </Label>
               <DateRangePicker
                 value={
                   params.dateRange?.startDate || params.dateRange?.endDate
@@ -300,7 +298,7 @@ export function ReportFiltersForm({
 
           {config.warehouseIds && warehouses.length > 0 && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.warehouse")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.warehouse")}</Label>
               <MultiSelect
                 value={params.warehouseIds ?? []}
                 onValueChange={(v) => setArray("warehouseIds", v)}
@@ -314,7 +312,7 @@ export function ReportFiltersForm({
 
           {config.companyId && multiCompanyEnabled && companies.length > 0 && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.company")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.company")}</Label>
               <Select
                 value={params.companyId ?? "all"}
                 onValueChange={(v) => set("companyId", v)}
@@ -338,7 +336,7 @@ export function ReportFiltersForm({
 
           {config.categoryIds && categories.length > 0 && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.category")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.category")}</Label>
               <MultiSelect
                 value={params.categoryIds ?? []}
                 onValueChange={(v) => setArray("categoryIds", v)}
@@ -352,7 +350,7 @@ export function ReportFiltersForm({
 
           {config.brandIds && brands.length > 0 && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.brand")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.brand")}</Label>
               <MultiSelect
                 value={params.brandIds ?? []}
                 onValueChange={(v) => setArray("brandIds", v)}
@@ -366,7 +364,7 @@ export function ReportFiltersForm({
 
           {config.period && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.period")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.period")}</Label>
               <Select
                 value={params.period ?? "all"}
                 onValueChange={(v) => set("period", v)}
@@ -390,7 +388,7 @@ export function ReportFiltersForm({
 
           {config.groupBy && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.groupBy")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.groupBy")}</Label>
               <Select
                 value={params.groupBy ?? "all"}
                 onValueChange={(v) => set("groupBy", v)}
@@ -422,7 +420,7 @@ export function ReportFiltersForm({
 
           {config.status && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.status")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.status")}</Label>
               <MultiSelect
                 value={params.status || []}
                 onValueChange={(statuses) =>
@@ -438,7 +436,7 @@ export function ReportFiltersForm({
 
           {config.contactType && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.contactType")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.contactType")}</Label>
               <Select
                 value={params.contactType ?? "all"}
                 onValueChange={(v) => set("contactType", v)}
@@ -462,7 +460,7 @@ export function ReportFiltersForm({
 
           {config.returnTypes && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.returnType")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.returnType")}</Label>
               <MultiSelect
                 value={params.returnTypes ?? []}
                 onValueChange={(v) => setArray("returnTypes", v)}
@@ -476,7 +474,7 @@ export function ReportFiltersForm({
 
           {config.severities && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.severity")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.severity")}</Label>
               <MultiSelect
                 value={params.severities ?? []}
                 onValueChange={(v) => setArray("severities", v)}
@@ -490,7 +488,7 @@ export function ReportFiltersForm({
 
           {config.movementTypes && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.movementType")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.movementType")}</Label>
               <MultiSelect
                 value={params.movementTypes ?? []}
                 onValueChange={(v) => setArray("movementTypes", v)}
@@ -504,7 +502,7 @@ export function ReportFiltersForm({
 
           {config.deadStockDays && (
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("filters.deadStockDays")}</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t("filters.deadStockDays")}</Label>
               <Input
                 type="number"
                 min={1}
@@ -537,7 +535,6 @@ export function ReportFiltersForm({
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

@@ -53,9 +53,9 @@ describe("SessionTimeoutDialog", () => {
       />,
     );
 
-    // Assert — 45 seconds = "45s"
+    // Assert — 45 seconds = "00:45"
     const description = screen.getByText(/sessionTimeout\.description/);
-    expect(description.textContent).toContain("45s");
+    expect(description.textContent).toContain("00:45");
   });
 
   it("Given: open is true When: rendering Then: should display logout and extend buttons", () => {

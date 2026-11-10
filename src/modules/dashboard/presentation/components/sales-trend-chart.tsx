@@ -35,10 +35,14 @@ export function SalesTrendChart({ data, currency }: SalesTrendChartProps) {
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">{t("salesTrend.title")}</CardTitle>
-        <CardDescription>{t("salesTrend.description")}</CardDescription>
+    <Card className="h-full">
+      <CardHeader className="space-y-1 pb-2">
+        <CardTitle className="text-base font-semibold">
+          {t("salesTrend.title")}
+        </CardTitle>
+        <CardDescription className="text-[13px]">
+          {t("salesTrend.description")}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {data.length === 0 ? (

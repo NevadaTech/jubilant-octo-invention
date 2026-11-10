@@ -4,7 +4,6 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   Warehouse as WarehouseIcon,
-  Edit,
   ArrowLeft,
   MapPin,
   Calendar,
@@ -12,8 +11,6 @@ import {
   Search,
   DollarSign,
   Boxes,
-  ToggleLeft,
-  ToggleRight,
   User,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
@@ -21,6 +18,7 @@ import { Input } from "@/ui/components/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { SortableHeader } from "@/ui/components/sortable-header";
 import { Badge } from "@/ui/components/badge";
+import { PageHeader } from "@/ui/layout/page-header";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -207,29 +205,24 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/dashboard/inventory/warehouses">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-            <WarehouseIcon className="h-6 w-6 text-primary-600 dark:text-primary-400" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-              {warehouse.name}
-            </h1>
-            <p className="text-neutral-500 dark:text-neutral-400">
-              {warehouse.code}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant={warehouse.isActive ? "success" : "secondary"}>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3">
+        <PageHeader
+          title={warehouse.name}
+          action={
+            <Button asChild>
+              <Link href={`/dashboard/inventory/warehouses/${warehouseId}/edit`}>
+                {tCommon("edit")}
+              </Link>
+            </Button>
+          }
+        />
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <span>{warehouse.code}</span>
+          <Badge
+            variant={warehouse.isActive ? "success" : "secondary"}
+            className="rounded-full px-2 py-0.5 text-xs font-semibold"
+          >
             {warehouse.isActive ? t("status.active") : t("status.inactive")}
           </Badge>
           <Button
@@ -237,23 +230,7 @@ export function WarehouseDetail({ warehouseId }: WarehouseDetailProps) {
             onClick={() => setConfirmOpen(true)}
             disabled={toggleStatus.isPending}
           >
-            {warehouse.isActive ? (
-              <>
-                <ToggleRight className="mr-2 h-4 w-4 text-green-600" />
-                {t("actions.deactivate")}
-              </>
-            ) : (
-              <>
-                <ToggleLeft className="mr-2 h-4 w-4 text-muted-foreground" />
-                {t("actions.activate")}
-              </>
-            )}
-          </Button>
-          <Button asChild variant="outline">
-            <Link href={`/dashboard/inventory/warehouses/${warehouseId}/edit`}>
-              <Edit className="mr-2 h-4 w-4" />
-              {tCommon("edit")}
-            </Link>
+            {warehouse.isActive ? t("actions.deactivate") : t("actions.activate")}
           </Button>
         </div>
       </div>

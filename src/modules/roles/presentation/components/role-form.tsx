@@ -3,13 +3,17 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { X } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Textarea } from "@/ui/components/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/ui/components/dialog";
 import {
   createRoleSchema,
   toCreateRoleDto,
@@ -52,60 +56,60 @@ export function RoleForm({ open, onOpenChange }: RoleFormProps) {
   };
 
   const handleClose = () => {
+    if (createRole.isPending) return;
     onOpenChange(false);
     reset();
   };
 
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>{t("form.createTitle")}</CardTitle>
-          <Button variant="ghost" size="icon" onClick={handleClose}>
-            <X className="h-4 w-4" />
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <fieldset disabled={createRole.isPending} className="space-y-4">
-              {createRole.isError && (
-                <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
-                  {t("form.error")}
-                </div>
-              )}
+    <Dialog open={open} onOpenChange={(next) => !next && handleClose()}>
+      <DialogContent className="max-w-[500px] gap-2.5 rounded-2xl p-5 shadow-none sm:rounded-2xl">
+        <p className="text-xs font-semibold text-primary">{t("title")}</p>
+        <DialogTitle className="text-lg font-semibold text-foreground">
+          {t("form.createTitle")}
+        </DialogTitle>
+        <DialogDescription>{t("description")}</DialogDescription>
 
-              <FormField error={errors.name?.message}>
-                <Label>{t("fields.name")} *</Label>
-                <Input
-                  placeholder={t("fields.namePlaceholder")}
-                  {...register("name")}
-                />
-              </FormField>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <fieldset disabled={createRole.isPending} className="space-y-3">
+            {createRole.isError ? (
+              <p className="rounded-lg bg-error-100 px-3 py-2 text-sm text-destructive">
+                {t("form.error")}
+              </p>
+            ) : null}
 
-              <FormField error={errors.description?.message}>
-                <Label>{t("fields.description")}</Label>
-                <Textarea
-                  placeholder={t("fields.descriptionPlaceholder")}
-                  {...register("description")}
-                />
-              </FormField>
+            <FormField error={errors.name?.message}>
+              <Label>{t("fields.name")}</Label>
+              <Input
+                placeholder={t("fields.namePlaceholder")}
+                {...register("name")}
+              />
+            </FormField>
 
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <Button type="button" variant="outline" onClick={handleClose}>
-                  {tCommon("cancel")}
-                </Button>
-                <Button type="submit" disabled={createRole.isPending}>
-                  {createRole.isPending
-                    ? tCommon("loading")
-                    : tCommon("create")}
-                </Button>
-              </div>
-            </fieldset>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+            <FormField error={errors.description?.message}>
+              <Label>{t("fields.description")}</Label>
+              <Textarea
+                placeholder={t("fields.descriptionPlaceholder")}
+                {...register("description")}
+              />
+            </FormField>
+
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleClose}
+                disabled={createRole.isPending}
+              >
+                {tCommon("cancel")}
+              </Button>
+              <Button type="submit" disabled={createRole.isPending}>
+                {createRole.isPending ? tCommon("loading") : tCommon("create")}
+              </Button>
+            </div>
+          </fieldset>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

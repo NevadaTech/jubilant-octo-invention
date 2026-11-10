@@ -34,7 +34,6 @@ export function ReportExportButton({
 }: ReportExportButtonProps) {
   const { mutate, isPending } = useReportExport();
   const t = useTranslations("reports");
-  const tCommon = useTranslations("common");
 
   const doExport = (format: "EXCEL" | "CSV") => {
     const options: ExportOptionsDto = {
@@ -48,14 +47,9 @@ export function ReportExportButton({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={disabled || isPending}
-          className="gap-2"
-        >
+        <Button disabled={disabled || isPending} className="gap-2">
           <Download className="h-4 w-4" />
-          {isPending ? t("generating") : tCommon("export")}
+          {isPending ? t("generating") : t("export")}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

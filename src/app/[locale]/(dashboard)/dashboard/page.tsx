@@ -1,6 +1,7 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { HydrationBoundary } from "@tanstack/react-query";
 import { DashboardContent } from "@/modules/dashboard";
+import { DashboardPageHeader } from "@/modules/dashboard/presentation/components/dashboard-page-header";
 import {
   createServerQueryClient,
   dehydrateState,
@@ -16,7 +17,6 @@ interface DashboardPageProps {
 export default async function DashboardPage({ params }: DashboardPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("dashboard");
 
   const queryClient = createServerQueryClient();
   try {
@@ -35,14 +35,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
   return (
     <HydrationBoundary state={dehydrateState(queryClient)}>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-            {t("title")}
-          </h1>
-          <p className="text-muted-foreground">{t("description")}</p>
-        </div>
-
+      <div className="space-y-4">
+        <DashboardPageHeader />
         <DashboardContent />
       </div>
     </HydrationBoundary>

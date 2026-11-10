@@ -3,13 +3,13 @@
 import { useState, useCallback, useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateTimeShort } from "@/lib/date";
-import { ClipboardList, Eye, Download, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { TablePagination } from "@/ui/components/table-pagination";
-import { SortableHeader } from "@/ui/components/sortable-header";
+import { PageHeader } from "@/ui/layout/page-header";
+import { cn } from "@/ui/lib/utils";
 import { useAuditLogs } from "@/modules/audit/presentation/hooks/use-audit-logs";
 import { useUsers } from "@/modules/users/presentation/hooks/use-users";
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
@@ -17,11 +17,27 @@ import { PERMISSIONS } from "@/shared/domain/permissions";
 import { getContainer } from "@/config/di/container";
 import { AuditLogFiltersBar } from "./audit-log-filters";
 import { AuditLogDetailDialog } from "./audit-log-detail-dialog";
-import { AuditActionBadge } from "./audit-action-badge";
-import { AuditMethodBadge } from "./audit-method-badge";
-import { AuditStatusIndicator } from "./audit-status-indicator";
 import type { AuditLogFilters } from "@/modules/audit/application/dto/audit-log.dto";
 import type { AuditLog } from "@/modules/audit/domain/entities/audit-log.entity";
+
+function StatusChip({ code }: { code: number | null }) {
+  if (code === null) {
+    return <span className="text-sm text-muted-foreground">—</span>;
+  }
+  const ok = code >= 200 && code < 400;
+  return (
+    <span
+      className={cn(
+        "inline-flex rounded-full px-2 py-0.5 text-xs font-semibold",
+        ok
+          ? "bg-success-100 text-success-600"
+          : "bg-error-100 text-destructive",
+      )}
+    >
+      {code}
+    </span>
+  );
+}
 
 export function AuditLogList() {
   const locale = useLocale();
@@ -44,17 +60,40 @@ export function AuditLogList() {
     return map;
   }, [usersData]);
 
+  const actorName = (log: AuditLog) => {
+    if (!log.performedBy) return "—";
+    return userNameMap.get(log.performedBy) || log.performedBy;
+  };
+
+  const entityLabel = (log: AuditLog) =>
+    log.entityId ? `${log.entityType} · ${log.entityId}` : log.entityType;
+
+  const actionLabel = (action: string) => action.replace(/_/g, " ");
+
   const handlePageSizeChange = (size: number) => {
     setFilters((prev) => ({ ...prev, limit: size, page: 1 }));
   };
 
-  const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
-    setFilters((prev) => ({
-      ...prev,
-      sortBy: order ? (field as AuditLogFilters["sortBy"]) : undefined,
-      sortOrder: order,
-      page: 1,
-    }));
+  const handleSort = (field: NonNullable<AuditLogFilters["sortBy"]>) => {
+    setFilters((prev) => {
+      const nextOrder =
+        prev.sortBy !== field
+          ? "asc"
+          : prev.sortOrder === "asc"
+            ? "desc"
+            : undefined;
+      return {
+        ...prev,
+        sortBy: nextOrder ? field : undefined,
+        sortOrder: nextOrder,
+        page: 1,
+      };
+    });
+  };
+
+  const sortMark = (field: string) => {
+    if (filters.sortBy !== field) return "";
+    return filters.sortOrder === "asc" ? " ↑" : " ↓";
   };
 
   const handleExportExcel = useCallback(async () => {
@@ -71,7 +110,7 @@ export function AuditLogList() {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("Audit Log");
 
-      const columns = [
+      worksheet.addRow([
         t("columns.timestamp"),
         t("columns.action"),
         t("columns.entityType"),
@@ -81,9 +120,7 @@ export function AuditLogList() {
         t("columns.duration"),
         "URL",
         "IP",
-      ];
-
-      worksheet.addRow(columns);
+      ]);
 
       for (const log of allData.data) {
         worksheet.addRow([
@@ -101,7 +138,6 @@ export function AuditLogList() {
         ]);
       }
 
-      // Auto-size columns
       worksheet.columns.forEach((column) => {
         let maxLength = 10;
         column.eachCell?.({ includeEmpty: true }, (cell) => {
@@ -126,176 +162,172 @@ export function AuditLogList() {
     }
   }, [filters, t, userNameMap]);
 
-  if (isError) {
-    return (
-      <Card>
-        <CardContent className="py-10 text-center">
-          <p className="text-destructive">{t("error.loading")}</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle>{t("list.title")}</CardTitle>
-            {hasPermission(PERMISSIONS.AUDIT_EXPORT) && (
+      <div className="space-y-4">
+        <PageHeader
+          title={t("list.title")}
+          action={
+            hasPermission(PERMISSIONS.AUDIT_EXPORT) ? (
               <Button
-                variant="outline"
-                size="sm"
+                type="button"
                 onClick={handleExportExcel}
                 disabled={isExporting || !data?.data.length}
               >
                 {isExporting ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="mr-2 h-4 w-4" />
-                )}
-                {t("export.excel")}
+                ) : null}
+                {tCommon("export")}
               </Button>
-            )}
+            ) : null
+          }
+        />
+
+        <AuditLogFiltersBar filters={filters} onFiltersChange={setFilters} />
+
+        {isError ? (
+          <p className="rounded-xl border border-border bg-card px-4 py-8 text-center text-sm text-destructive">
+            {t("error.loading")}
+          </p>
+        ) : isLoading ? (
+          <div className="space-y-2">
+            {[0, 1, 2, 3, 4, 5, 6, 7].map((item) => (
+              <Skeleton key={item} className="h-12 w-full" />
+            ))}
           </div>
-          <AuditLogFiltersBar filters={filters} onFiltersChange={setFilters} />
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-3">
-              {[...Array(8)].map((_, i) => (
-                // eslint-disable-next-line @eslint-react/no-array-index-key
-                <Skeleton key={i} className="h-12 w-full" />
+        ) : !data?.data.length ? (
+          <div className="rounded-xl border border-border bg-card px-4 py-10 text-center">
+            <h2 className="text-lg font-semibold text-foreground">
+              {t("empty.title")}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("empty.description")}
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="hidden overflow-hidden rounded-xl border border-border bg-card lg:block">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="h-[42px] bg-background text-left text-[13px] font-semibold text-muted-foreground">
+                    <th className="px-3 font-semibold" scope="col">
+                      <button type="button" onClick={() => handleSort("createdAt")}>
+                        {t("columns.timestamp")}
+                        {sortMark("createdAt")}
+                      </button>
+                    </th>
+                    <th className="px-3 font-semibold" scope="col">
+                      <button type="button" onClick={() => handleSort("action")}>
+                        {t("columns.action")}
+                        {sortMark("action")}
+                      </button>
+                    </th>
+                    <th className="px-3 font-semibold" scope="col">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("entityType")}
+                      >
+                        {t("columns.entityType")}
+                        {sortMark("entityType")}
+                      </button>
+                    </th>
+                    <th className="px-3 font-semibold" scope="col">
+                      {t("columns.performedBy")}
+                    </th>
+                    <th className="px-3 font-semibold" scope="col">
+                      <button
+                        type="button"
+                        onClick={() => handleSort("httpStatusCode")}
+                      >
+                        {t("columns.status")}
+                        {sortMark("httpStatusCode")}
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.data.map((log) => (
+                    <tr
+                      key={log.id}
+                      className="h-[52px] cursor-pointer border-t border-border hover:bg-background"
+                      onClick={() => setSelectedLog(log)}
+                    >
+                      <td className="whitespace-nowrap px-3 text-foreground">
+                        {formatDateTimeShort(log.createdAt, locale)}
+                      </td>
+                      <td className="px-3 text-foreground">
+                        <div>{actionLabel(log.action)}</div>
+                        {log.httpMethod ? <div>{log.httpMethod}</div> : null}
+                        {log.duration != null ? <div>{log.duration}ms</div> : null}
+                      </td>
+                      <td className="px-3 font-semibold text-foreground">
+                        <span>{log.entityType}</span>
+                        {log.entityId ? (
+                          <span className="font-normal text-muted-foreground">
+                            {" "}
+                            · {log.entityId}
+                          </span>
+                        ) : null}
+                      </td>
+                      <td className="px-3 text-foreground">{actorName(log)}</td>
+                      <td className="px-3">
+                        <StatusChip code={log.httpStatusCode} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="overflow-hidden rounded-xl border border-border bg-card lg:hidden">
+              {data.data.map((log) => (
+                <button
+                  key={log.id}
+                  type="button"
+                  className="block w-full border-b border-border px-3 py-2.5 text-left last:border-b-0"
+                  onClick={() => setSelectedLog(log)}
+                >
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="text-sm text-foreground">
+                      {formatDateTimeShort(log.createdAt, locale)}
+                    </span>
+                    <StatusChip code={log.httpStatusCode} />
+                  </span>
+                  <span className="mt-0.5 block text-sm font-semibold text-foreground">
+                    {actionLabel(log.action)}
+                  </span>
+                  <span className="block text-[13px] text-muted-foreground">
+                    {entityLabel(log)}
+                    {" · "}
+                    {actorName(log)}
+                  </span>
+                </button>
               ))}
             </div>
-          ) : !data?.data.length ? (
-            <div className="py-10 text-center">
-              <ClipboardList className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-semibold">{t("empty.title")}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t("empty.description")}
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                      <SortableHeader
-                        label={t("columns.timestamp")}
-                        field="createdAt"
-                        currentSortBy={filters.sortBy}
-                        currentSortOrder={filters.sortOrder}
-                        onSort={handleSort}
-                      />
-                      <SortableHeader
-                        label={t("columns.action")}
-                        field="action"
-                        currentSortBy={filters.sortBy}
-                        currentSortOrder={filters.sortOrder}
-                        onSort={handleSort}
-                      />
-                      <SortableHeader
-                        label={t("columns.entityType")}
-                        field="entityType"
-                        currentSortBy={filters.sortBy}
-                        currentSortOrder={filters.sortOrder}
-                        onSort={handleSort}
-                      />
-                      <SortableHeader
-                        label={t("columns.method")}
-                        field="httpMethod"
-                        currentSortBy={filters.sortBy}
-                        currentSortOrder={filters.sortOrder}
-                        onSort={handleSort}
-                        className="hidden md:table-cell"
-                      />
-                      <SortableHeader
-                        label={t("columns.status")}
-                        field="httpStatusCode"
-                        currentSortBy={filters.sortBy}
-                        currentSortOrder={filters.sortOrder}
-                        onSort={handleSort}
-                        className="hidden md:table-cell"
-                      />
-                      <th className="hidden pb-3 pr-4 lg:table-cell">
-                        {t("columns.duration")}
-                      </th>
-                      <th className="pb-3 pr-4 text-right">
-                        {tCommon("actions")}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.data.map((log) => (
-                      <tr
-                        key={log.id}
-                        className="border-b hover:bg-muted/50 cursor-pointer"
-                        onClick={() => setSelectedLog(log)}
-                      >
-                        <td className="py-3 pr-4 text-sm whitespace-nowrap">
-                          {formatDateTimeShort(log.createdAt, locale)}
-                        </td>
-                        <td className="py-3 pr-4">
-                          <AuditActionBadge action={log.action} />
-                        </td>
-                        <td className="py-3 pr-4 text-sm font-medium">
-                          {log.entityType}
-                        </td>
-                        <td className="hidden py-3 pr-4 md:table-cell">
-                          <AuditMethodBadge method={log.httpMethod} />
-                        </td>
-                        <td className="hidden py-3 pr-4 md:table-cell">
-                          <AuditStatusIndicator
-                            statusCode={log.httpStatusCode}
-                          />
-                        </td>
-                        <td className="hidden py-3 pr-4 text-sm text-muted-foreground lg:table-cell">
-                          {log.duration !== null ? `${log.duration}ms` : "-"}
-                        </td>
-                        <td className="py-3 text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedLog(log);
-                            }}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
 
-              <TablePagination
-                page={data.pagination.page}
-                totalPages={data.pagination.totalPages}
-                total={data.pagination.total}
-                limit={data.pagination.limit}
-                onPageChange={(p) =>
-                  setFilters((prev) => ({ ...prev, page: p }))
-                }
-                onPageSizeChange={handlePageSizeChange}
-                showingLabel={tCommon("pagination.showing", {
-                  from: (data.pagination.page - 1) * data.pagination.limit + 1,
-                  to: Math.min(
-                    data.pagination.page * data.pagination.limit,
-                    data.pagination.total,
-                  ),
-                  total: data.pagination.total,
-                })}
-                perPageLabel={tCommon("pagination.perPage")}
-                allLabel={tCommon("pagination.all")}
-              />
-            </>
-          )}
-        </CardContent>
-      </Card>
+            <TablePagination
+              page={data.pagination.page}
+              totalPages={data.pagination.totalPages}
+              total={data.pagination.total}
+              limit={data.pagination.limit}
+              onPageChange={(page) =>
+                setFilters((prev) => ({ ...prev, page }))
+              }
+              onPageSizeChange={handlePageSizeChange}
+              showingLabel={tCommon("pagination.showing", {
+                from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                to: Math.min(
+                  data.pagination.page * data.pagination.limit,
+                  data.pagination.total,
+                ),
+                total: data.pagination.total,
+              })}
+              perPageLabel={tCommon("pagination.perPage")}
+              allLabel={tCommon("pagination.all")}
+            />
+          </>
+        )}
+      </div>
 
       <AuditLogDetailDialog
         auditLog={selectedLog}

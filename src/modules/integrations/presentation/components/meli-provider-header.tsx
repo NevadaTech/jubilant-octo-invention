@@ -1,8 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Plug } from "lucide-react";
-import { Card, CardContent } from "@/ui/components/card";
 import { Badge } from "@/ui/components/badge";
 import type { IntegrationConnection } from "@/modules/integrations/domain/entities/integration-connection.entity";
 
@@ -19,40 +17,47 @@ export function MeliProviderHeader({ connections }: MeliProviderHeaderProps) {
   const needsReauth = connections.filter((c) => c.needsReauth).length;
 
   return (
-    <Card>
-      <CardContent className="flex items-center gap-4 p-5">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-warning-100 dark:bg-warning-900/30">
-          <Plug className="h-6 w-6 text-warning-600 dark:text-warning-400" />
-        </div>
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold">
-            {t("providers.mercadolibre.name")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t("providers.mercadolibre.description")}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary">
-            {t("stats.totalConnections", { count: total })}
+    <div className="flex flex-col gap-3 rounded-xl border border-border bg-card px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 className="text-lg font-semibold text-foreground">
+          {t("providers.mercadolibre.name")}
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          {t("providers.mercadolibre.description")}
+        </p>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge
+          variant="outline"
+          className="rounded-full border-transparent bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground"
+        >
+          {t("stats.totalConnections", { count: total })}
+        </Badge>
+        {connected > 0 && (
+          <Badge
+            variant="outline"
+            className="rounded-full border-transparent bg-success-100 px-2.5 py-0.5 text-xs font-semibold text-success-800"
+          >
+            {t("stats.connected", { count: connected })}
           </Badge>
-          {connected > 0 && (
-            <Badge variant="success">
-              {t("stats.connected", { count: connected })}
-            </Badge>
-          )}
-          {withErrors > 0 && (
-            <Badge variant="destructive">
-              {t("stats.withErrors", { count: withErrors })}
-            </Badge>
-          )}
-          {needsReauth > 0 && (
-            <Badge variant="warning">
-              {t("stats.needsReauth", { count: needsReauth })}
-            </Badge>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+        )}
+        {withErrors > 0 && (
+          <Badge
+            variant="outline"
+            className="rounded-full border-transparent bg-error-100 px-2.5 py-0.5 text-xs font-semibold text-destructive"
+          >
+            {t("stats.withErrors", { count: withErrors })}
+          </Badge>
+        )}
+        {needsReauth > 0 && (
+          <Badge
+            variant="outline"
+            className="rounded-full border-transparent bg-warning-100 px-2.5 py-0.5 text-xs font-semibold text-warning-800"
+          >
+            {t("stats.needsReauth", { count: needsReauth })}
+          </Badge>
+        )}
+      </div>
+    </div>
   );
 }

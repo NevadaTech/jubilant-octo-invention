@@ -2,20 +2,14 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, MoreHorizontal, Pencil, Trash2, Building2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Badge } from "@/ui/components/badge";
+import { Card, CardContent } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
 import { Input } from "@/ui/components/input";
+import { Label } from "@/ui/components/label";
 import { TablePagination } from "@/ui/components/table-pagination";
 import { SortableHeader } from "@/ui/components/sortable-header";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/ui/components/dropdown-menu";
+import { PageHeader } from "@/ui/layout/page-header";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +26,14 @@ import {
 } from "@/modules/companies/presentation/hooks/use-companies";
 import type { CompanyFilters } from "@/modules/companies/application/dto/company.dto";
 import { CompanyForm } from "./company-form";
+import {
+  CatalogEmpty,
+  CatalogStatus,
+  catalogDangerAction,
+  catalogFilterLabel,
+  catalogPanel,
+  catalogTextAction,
+} from "@/modules/inventory/presentation/components/products/catalog-chrome";
 
 export function CompanyList() {
   const t = useTranslations("inventory.companies");
@@ -81,7 +83,7 @@ export function CompanyList() {
 
   if (isError) {
     return (
-      <Card>
+      <Card className="shadow-none">
         <CardContent className="py-10 text-center">
           <p className="text-destructive">{t("error.loading")}</p>
         </CardContent>
@@ -91,180 +93,186 @@ export function CompanyList() {
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle>{t("list.title")}</CardTitle>
-            <Button onClick={openCreate}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t("actions.new")}
-            </Button>
+      <div className="space-y-4">
+        <PageHeader
+          title={t("list.title")}
+          description={t("description")}
+          action={<Button onClick={openCreate}>{t("actions.new")}</Button>}
+        />
+
+        <div className="space-y-1 sm:w-64">
+          <Label htmlFor="company-search" className={catalogFilterLabel}>
+            {tCommon("search")}
+          </Label>
+          <Input
+            id="company-search"
+            placeholder={t("filters.search")}
+            value={filters.search || ""}
+            onChange={(e) => updateFilters({ search: e.target.value, page: 1 })}
+            className="h-10"
+          />
+        </div>
+
+        {isLoading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }, (_, i) => `skeleton-${i}`).map((key) => (
+              <Skeleton key={key} className="h-16 w-full" />
+            ))}
           </div>
-          <div className="mt-2">
-            <Input
-              placeholder={t("filters.search")}
-              value={filters.search || ""}
-              onChange={(e) =>
-                updateFilters({ search: e.target.value, page: 1 })
-              }
-              className="max-w-sm"
+        ) : !data?.data.length ? (
+          <div className={catalogPanel}>
+            <CatalogEmpty
+              title={t("empty.title")}
+              description={t("empty.description")}
+              action={<Button onClick={openCreate}>{t("actions.new")}</Button>}
             />
           </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 5 }, (_, i) => `skeleton-${i}`).map(
-                (key) => (
-                  <Skeleton key={key} className="h-16 w-full" />
-                ),
-              )}
-            </div>
-          ) : !data?.data.length ? (
-            <div className="py-10 text-center">
-              <Building2 className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-semibold">{t("empty.title")}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t("empty.description")}
-              </p>
-              <Button className="mt-4" onClick={openCreate}>
-                <Plus className="mr-2 h-4 w-4" />
-                {t("actions.new")}
-              </Button>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                      <SortableHeader
-                        label={t("fields.name")}
-                        field="name"
-                        currentSortBy={filters.sortBy}
-                        currentSortOrder={filters.sortOrder}
-                        onSort={handleSort}
-                      />
-                      <SortableHeader
-                        label={t("fields.code")}
-                        field="code"
-                        currentSortBy={filters.sortBy}
-                        currentSortOrder={filters.sortOrder}
-                        onSort={handleSort}
-                      />
-                      <SortableHeader
-                        label={t("fields.products")}
-                        field="productCount"
-                        currentSortBy={filters.sortBy}
-                        currentSortOrder={filters.sortOrder}
-                        onSort={handleSort}
-                      />
-                      <SortableHeader
-                        label={t("fields.status")}
-                        field="isActive"
-                        currentSortBy={filters.sortBy}
-                        currentSortOrder={filters.sortOrder}
-                        onSort={handleSort}
-                      />
-                      <th className="pb-3 text-right">{tCommon("actions")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.data.map((company) => (
-                      <tr key={company.id} className="border-b">
-                        <td className="py-4 pr-4">
-                          <div>
-                            <p className="font-medium">{company.name}</p>
-                            {company.description && (
-                              <p className="text-sm text-muted-foreground truncate max-w-xs">
-                                {company.description}
-                              </p>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-4 pr-4">
-                          <code className="text-sm bg-muted px-2 py-1 rounded">
-                            {company.code}
-                          </code>
-                        </td>
-                        <td className="py-4 pr-4">{company.productCount}</td>
-                        <td className="py-4 pr-4">
-                          <Badge
-                            variant={company.isActive ? "success" : "secondary"}
+        ) : (
+          <>
+            <div className={`${catalogPanel} hidden lg:block`}>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border bg-muted/70 text-left text-xs font-semibold text-muted-foreground">
+                    <SortableHeader
+                      label={t("fields.name")}
+                      field="name"
+                      currentSortBy={filters.sortBy}
+                      currentSortOrder={filters.sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
+                    <SortableHeader
+                      label={t("fields.code")}
+                      field="code"
+                      currentSortBy={filters.sortBy}
+                      currentSortOrder={filters.sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
+                    <SortableHeader
+                      label={t("fields.products")}
+                      field="productCount"
+                      currentSortBy={filters.sortBy}
+                      currentSortOrder={filters.sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
+                    <SortableHeader
+                      label={t("fields.status")}
+                      field="isActive"
+                      currentSortBy={filters.sortBy}
+                      currentSortOrder={filters.sortOrder}
+                      onSort={handleSort}
+                      className="px-4 py-3"
+                    />
+                    <th className="px-4 py-3">{tCommon("actions")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.data.map((company) => (
+                    <tr key={company.id} className="border-b border-border last:border-b-0">
+                      <td className="px-4 py-3">
+                        <p className="text-sm font-semibold text-foreground">{company.name}</p>
+                        {company.description ? (
+                          <p className="max-w-xs truncate text-sm text-muted-foreground">
+                            {company.description}
+                          </p>
+                        ) : null}
+                      </td>
+                      <td className="px-4 py-3 font-mono text-sm text-foreground">{company.code}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
+                        <span>{company.productCount}</span>{" "}
+                        {t("fields.products").toLowerCase()}
+                      </td>
+                      <td className="px-4 py-3">
+                        <CatalogStatus tone={company.isActive ? "success" : "muted"}>
+                          {company.isActive ? t("status.active") : t("status.inactive")}
+                        </CatalogStatus>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <button type="button" className={catalogTextAction} onClick={() => openEdit(company.id)}>
+                            {t("actions.edit")}
+                          </button>
+                          <button
+                            type="button"
+                            className={`${catalogDangerAction} disabled:pointer-events-none disabled:opacity-40`}
+                            onClick={() => {
+                              setCompanyToDelete(company.id);
+                              setDeleteDialogOpen(true);
+                            }}
+                            disabled={company.productCount > 0}
                           >
-                            {company.isActive
-                              ? t("status.active")
-                              : t("status.inactive")}
-                          </Badge>
-                        </td>
-                        <td className="py-4 text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => openEdit(company.id)}
-                              >
-                                <Pencil className="mr-2 h-4 w-4" />
-                                {t("actions.edit")}
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setCompanyToDelete(company.id);
-                                  setDeleteDialogOpen(true);
-                                }}
-                                disabled={company.productCount > 0}
-                                className="text-destructive focus:text-destructive"
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                {tCommon("delete")}
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                            {tCommon("delete")}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              <TablePagination
-                page={data.pagination.page}
-                totalPages={data.pagination.totalPages}
-                total={data.pagination.total}
-                limit={data.pagination.limit}
-                onPageChange={(p) => updateFilters({ page: p })}
-                onPageSizeChange={(size) =>
-                  updateFilters({ limit: size, page: 1 })
-                }
-                showingLabel={tCommon("pagination.showing", {
-                  from: (data.pagination.page - 1) * data.pagination.limit + 1,
-                  to: Math.min(
-                    data.pagination.page * data.pagination.limit,
-                    data.pagination.total,
-                  ),
-                  total: data.pagination.total,
-                })}
-                perPageLabel={tCommon("pagination.perPage")}
-                allLabel={tCommon("pagination.all")}
-              />
-            </>
-          )}
-        </CardContent>
-      </Card>
+            <div className="space-y-3 lg:hidden">
+              {data.data.map((company) => (
+                <article key={company.id} className="space-y-2 rounded-xl border border-border bg-card p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="font-semibold text-foreground">
+                      {company.name} · <span className="font-mono">{company.code}</span>
+                    </p>
+                    <CatalogStatus tone={company.isActive ? "success" : "muted"}>
+                      {company.isActive ? t("status.active") : t("status.inactive")}
+                    </CatalogStatus>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {company.productCount} {t("fields.products").toLowerCase()}
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <button type="button" className={catalogTextAction} onClick={() => openEdit(company.id)}>
+                      {t("actions.edit")}
+                    </button>
+                    <button
+                      type="button"
+                      className={`${catalogDangerAction} disabled:pointer-events-none disabled:opacity-40`}
+                      onClick={() => {
+                        setCompanyToDelete(company.id);
+                        setDeleteDialogOpen(true);
+                      }}
+                      disabled={company.productCount > 0}
+                    >
+                      {tCommon("delete")}
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <TablePagination
+              page={data.pagination.page}
+              totalPages={data.pagination.totalPages}
+              total={data.pagination.total}
+              limit={data.pagination.limit}
+              onPageChange={(p) => updateFilters({ page: p })}
+              onPageSizeChange={(size) => updateFilters({ limit: size, page: 1 })}
+              showingLabel={tCommon("pagination.showing", {
+                from: (data.pagination.page - 1) * data.pagination.limit + 1,
+                to: Math.min(data.pagination.page * data.pagination.limit, data.pagination.total),
+                total: data.pagination.total,
+              })}
+              perPageLabel={tCommon("pagination.perPage")}
+              allLabel={tCommon("pagination.all")}
+            />
+          </>
+        )}
+      </div>
 
       <CompanyForm open={formOpen} onOpenChange={setFormOpen} editId={editId} />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
+        <AlertDialogContent className="shadow-none">
+          <AlertDialogHeader className="text-left">
             <AlertDialogTitle>{t("delete.title")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("delete.description")}
-            </AlertDialogDescription>
+            <AlertDialogDescription>{t("delete.description")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>

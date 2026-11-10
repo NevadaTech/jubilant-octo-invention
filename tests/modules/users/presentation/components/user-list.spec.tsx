@@ -7,8 +7,12 @@ import { User } from "@/modules/users/domain/entities/user.entity";
 
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
-  useTranslations: () => (key: string, params?: Record<string, unknown>) =>
-    params ? `${key}:${JSON.stringify(params)}` : key,
+  useTranslations: () => {
+    const t = (key: string, params?: Record<string, unknown>) =>
+      params ? `${key}:${JSON.stringify(params)}` : key;
+    t.has = () => false;
+    return t;
+  },
 }));
 
 vi.mock("@/shared/presentation/components/permission-gate", () => ({
@@ -507,6 +511,10 @@ describe("UserList", () => {
     const items = screen.getAllByTestId("dropdown-item");
     const lockItem = items.find((i) => i.textContent?.includes("actions.lock"));
     fireEvent.click(lockItem!);
+    const confirm = screen
+      .getAllByRole("button", { name: "actions.lock" })
+      .at(-1);
+    fireEvent.click(confirm!);
     await waitFor(() => {
       expect(mockChangeStatusMutateAsync).toHaveBeenCalledWith({
         id: "user-1",
@@ -529,6 +537,10 @@ describe("UserList", () => {
     const items = screen.getAllByTestId("dropdown-item");
     const lockItem = items.find((i) => i.textContent?.includes("actions.lock"));
     fireEvent.click(lockItem!);
+    const confirm = screen
+      .getAllByRole("button", { name: "actions.lock" })
+      .at(-1);
+    fireEvent.click(confirm!);
     await waitFor(() => {
       expect(mockChangeStatusMutateAsync).toHaveBeenCalled();
     });

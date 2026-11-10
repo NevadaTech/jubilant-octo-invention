@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { CheckCircle } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
+import { FormField } from "@/ui/components/form-field";
 import {
   Dialog,
   DialogContent,
@@ -59,41 +59,50 @@ export function TransferReceiveModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            {t("receive.title")}
-          </DialogTitle>
-          <DialogDescription>{t("receive.description")}</DialogDescription>
+          <DialogTitle>{t("receive.title")}</DialogTitle>
+          <DialogDescription>
+            {transfer.fromWarehouseName} → {transfer.toWarehouseName}.{" "}
+            {t("receive.description")}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-3 text-sm font-medium text-muted-foreground border-b pb-2">
-            <span className="col-span-1">{t("fields.product")}</span>
-            <span className="text-right">{t("fields.quantity")}</span>
-            <span className="text-right">{t("fields.receivedQuantity")}</span>
+          <div className="grid gap-3 text-[13px] font-semibold sm:grid-cols-[minmax(0,1fr)_140px_160px]">
+            <span>{t("fields.product")}</span>
+            <span>{t("fields.quantity")}</span>
+            <span>{t("fields.receivedQuantity")}</span>
           </div>
-
           {transfer.lines.map((line) => (
-            <div key={line.id} className="grid grid-cols-3 gap-3 items-center">
-              <div className="col-span-1">
-                <p className="text-sm font-medium leading-tight">
+            <div
+              key={line.id}
+              className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px_160px]"
+            >
+              <div className="flex min-w-0 flex-col justify-center gap-0.5">
+                <p className="text-sm font-semibold text-foreground">
                   {line.productName}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="font-mono text-sm text-muted-foreground">
                   {line.productSku}
                 </p>
               </div>
-              <p className="text-right text-sm font-medium">{line.quantity}</p>
-              <Input
-                type="number"
-                min="0"
-                max={line.quantity}
-                value={quantities[line.id] ?? line.quantity}
-                onChange={(e) => handleQuantityChange(line.id, e.target.value)}
-                className="text-right h-8"
-              />
+              <Input className="h-10" value={line.quantity} readOnly />
+              <FormField>
+                <Input
+                  id={`received-${line.id}`}
+                  type="number"
+                  min="0"
+                  max={line.quantity}
+                  className="h-10"
+                  aria-label={t("fields.receivedQuantity")}
+                  value={quantities[line.id] ?? line.quantity}
+                  onChange={(e) => handleQuantityChange(line.id, e.target.value)}
+                />
+              </FormField>
             </div>
           ))}
+          <p className="rounded-lg bg-warning-100 px-3 py-2 text-sm text-warning-800 dark:bg-warning-900/30 dark:text-warning-300">
+            {t("receive.description")}
+          </p>
         </div>
 
         <DialogFooter>

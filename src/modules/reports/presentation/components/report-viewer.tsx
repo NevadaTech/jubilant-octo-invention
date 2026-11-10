@@ -3,11 +3,12 @@
 import { useState, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
-import { ArrowLeft, RefreshCw, Clock, Database } from "lucide-react";
+import { Clock, Database } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Badge } from "@/ui/components/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { Card, CardContent } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
+import { PageHeader } from "@/ui/layout/page-header";
 import { ReportFiltersForm } from "./report-filters-form";
 import { ReportTable } from "./report-table";
 import { ReportSummaryBar } from "./report-summary-bar";
@@ -53,64 +54,44 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
     ? new Date(report.metadata.generatedAt).toLocaleString(locale)
     : null;
 
-  return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex items-start gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            asChild
-            className="mt-0.5 shrink-0"
-            aria-label={t("backToReports")}
-          >
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <Link href={`/${locale}/dashboard/reports?tab=${category}` as any}>
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight">{title}</h1>
-              {report?.fromCache && (
-                <Badge variant="secondary" className="gap-1 text-xs">
-                  <Database className="h-3 w-3" />
-                  {t("fromCache")}
-                </Badge>
-              )}
-            </div>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {description}
-            </p>
-            {generatedAt && (
-              <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-                <Clock className="h-3 w-3" />
-                {generatedAt}
-              </p>
-            )}
-          </div>
-        </div>
+  const stockCards = type === "AVAILABLE_INVENTORY";
 
-        {report && (
-          <div className="flex shrink-0 items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => refetch()}
-              className="gap-2"
-            >
-              <RefreshCw className="h-3.5 w-3.5" />
-              {tCommon("tryAgain")}
-            </Button>
-            <ReportExportButton
-              type={type}
-              parameters={queryParams}
-              reportTitle={title}
-              disabled={isLoading}
-            />
-          </div>
-        )}
+  return (
+    <div className="space-y-4">
+      <Link
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        href={`/${locale}/dashboard/reports?tab=${category}` as any}
+        className="text-sm font-semibold text-primary"
+      >
+        {t("backToReports")}
+      </Link>
+
+      <PageHeader
+        title={title}
+        description={description}
+        action={
+          <ReportExportButton
+            type={type}
+            parameters={queryParams}
+            reportTitle={title}
+            disabled={isLoading || !report}
+          />
+        }
+      />
+
+      <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        {generatedAt ? (
+          <p className="flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" />
+            {generatedAt}
+          </p>
+        ) : null}
+        {report?.fromCache ? (
+          <Badge variant="secondary" className="gap-1 text-xs font-semibold">
+            <Database className="h-3 w-3" />
+            {t("fromCache")}
+          </Badge>
+        ) : null}
       </div>
 
       {/* Filters */}
@@ -122,11 +103,8 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
 
       {/* Results */}
       {isLoading && (
-        <Card>
-          <CardHeader className="pb-3">
-            <Skeleton className="h-5 w-32" />
-          </CardHeader>
-          <CardContent className="space-y-2">
+        <Card className="rounded-xl">
+          <CardContent className="space-y-2 p-4">
             <Skeleton className="h-8 w-full" />
             {Array.from({ length: 6 }).map((_, i) => (
               // eslint-disable-next-line @eslint-react/no-array-index-key
@@ -159,20 +137,15 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
 
       {report && !isLoading && (
         <div className="space-y-4">
-          {/* Record count + export (on mobile) */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <p className="text-sm text-muted-foreground">
               {t("recordsFound", {
                 count: report.metadata.totalRecords.toLocaleString(locale),
               })}
             </p>
-            <div className="flex sm:hidden">
-              <ReportExportButton
-                type={type}
-                parameters={queryParams}
-                reportTitle={title}
-              />
-            </div>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              {tCommon("tryAgain")}
+            </Button>
           </div>
 
           {/* Summary */}
@@ -181,21 +154,13 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
           )}
 
           {/* Table */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-muted-foreground">
-                {title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ReportTable
-                columns={report.columns}
-                rows={report.rows}
-                locale={locale}
-                currency={currency}
-              />
-            </CardContent>
-          </Card>
+          <ReportTable
+            columns={report.columns}
+            rows={report.rows}
+            locale={locale}
+            currency={currency}
+            mobileCards={stockCards}
+          />
         </div>
       )}
     </div>

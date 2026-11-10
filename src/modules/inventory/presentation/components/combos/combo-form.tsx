@@ -7,12 +7,13 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Lock } from "lucide-react";
 import { Button } from "@/ui/components/button";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { Textarea } from "@/ui/components/textarea";
 import { FormField } from "@/ui/components/form-field";
 import { CurrencyInput } from "@/ui/components/currency-input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import { Card, CardContent } from "@/ui/components/card";
 import {
   Select,
   SelectContent,
@@ -115,13 +116,10 @@ export function ComboForm({ comboId }: ComboFormProps) {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>
-          {isEditing ? t("form.editTitle") : t("form.createTitle")}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="space-y-4">
+      <PageHeader title={isEditing ? t("form.editTitle") : t("form.createTitle")} />
+      <Card className="shadow-none">
+        <CardContent className="p-6">
         {isLoadingCombo && isEditing ? (
           <div className="flex items-center justify-center py-8">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -130,7 +128,7 @@ export function ComboForm({ comboId }: ComboFormProps) {
           <form onSubmit={handleSubmit(onSubmit)}>
             <fieldset disabled={isSubmitting} className="space-y-4">
               {mutationError && (
-                <div className="rounded-md bg-error-100 p-3 text-sm text-error-700 dark:bg-error-900/20 dark:text-error-400">
+                <div className="rounded-lg bg-error-100 p-3 text-sm text-destructive">
                   {(
                     mutationError as Error & {
                       response?: { data?: { message?: string } };
@@ -146,6 +144,7 @@ export function ComboForm({ comboId }: ComboFormProps) {
                     <Input
                       id="sku"
                       placeholder={t("form.skuPlaceholder")}
+                      className="h-10 font-mono"
                       disabled={isEditing}
                       {...register("sku")}
                     />
@@ -239,5 +238,6 @@ export function ComboForm({ comboId }: ComboFormProps) {
         )}
       </CardContent>
     </Card>
+    </div>
   );
 }

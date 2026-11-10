@@ -74,7 +74,7 @@ export function BrandForm({ open, onOpenChange, editId }: BrandFormProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="shadow-none sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? t("form.editTitle") : t("form.createTitle")}

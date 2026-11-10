@@ -2,10 +2,17 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/ui/components/dialog";
 import { useUnmatchedSkus } from "@/modules/integrations/presentation/hooks/use-integrations";
 import { SkuMappingForm } from "./sku-mapping-form";
 
@@ -15,10 +22,13 @@ interface UnmatchedSkusAlertProps {
 
 export function UnmatchedSkusAlert({ connectionId }: UnmatchedSkusAlertProps) {
   const t = useTranslations("integrations.skuMapping");
+  const tModule = useTranslations("integrations");
   const { data: unmatchedSkus } = useUnmatchedSkus(connectionId);
   const [mappingKey, setMappingKey] = useState<string | null>(null);
 
   if (!unmatchedSkus || unmatchedSkus.length === 0) return null;
+
+  const mappingSku = unmatchedSkus.find((sku) => sku.id === mappingKey) ?? null;
 
   return (
     <Card className="border-warning/50 bg-warning/5">
@@ -46,37 +56,50 @@ export function UnmatchedSkusAlert({ connectionId }: UnmatchedSkusAlertProps) {
                   ({sku.externalOrderId})
                 </span>
               </div>
-              {mappingKey === itemKey ? (
-                <div className="flex-1 ml-4 flex items-end gap-2">
-                  <div className="flex-1">
-                    <SkuMappingForm
-                      connectionId={connectionId}
-                      defaultExternalSku={sku.externalSku}
-                      onSuccess={() => setMappingKey(null)}
-                    />
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 shrink-0"
-                    onClick={() => setMappingKey(null)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setMappingKey(itemKey)}
-                >
-                  {t("mapThis")}
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setMappingKey(itemKey)}
+              >
+                {t("mapThis")}
+              </Button>
             </div>
           );
         })}
       </CardContent>
+
+      <Dialog
+        open={mappingSku !== null}
+        onOpenChange={(open) => {
+          if (!open) setMappingKey(null);
+        }}
+      >
+        <DialogContent className="rounded-2xl sm:max-w-lg">
+          <DialogHeader className="space-y-2 text-left">
+            <p className="text-xs font-semibold text-muted-foreground">
+              {tModule("module")}
+            </p>
+            <DialogTitle className="text-lg font-semibold">
+              {t("title")}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-foreground">
+              {mappingSku
+                ? t("mismatch", { sku: mappingSku.externalSku })
+                : t("unmatchedDescription")}
+            </DialogDescription>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">{t("comboHint")}</p>
+          {mappingSku ? (
+            <SkuMappingForm
+              connectionId={connectionId}
+              defaultExternalSku={mappingSku.externalSku}
+              framed={false}
+              onCancel={() => setMappingKey(null)}
+              onSuccess={() => setMappingKey(null)}
+            />
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

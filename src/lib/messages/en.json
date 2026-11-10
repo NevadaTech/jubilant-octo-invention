@@ -18,9 +18,10 @@
     "previous": "Previous",
     "next": "Next",
     "close": "Close",
-    "accessDenied": "Access Denied",
-    "accessDeniedDescription": "You do not have the required permissions to access this section. Contact your administrator if you believe this is an error.",
-    "backToDashboard": "Back to Dashboard",
+    "accessDenied": "You do not have permission to view this screen",
+    "accessDeniedDescription": "Your {role} role does not include this screen. Ask administration for access.",
+    "accessDeniedUnknownRole": "current",
+    "backToDashboard": "Back to the panel",
     "clearFilters": "Clear filters",
     "selected": "selected",
     "pagination": {
@@ -35,6 +36,16 @@
       "forbidden": "You do not have access to this resource.",
       "serverError": "Server error. Please try again later.",
       "generic": "Authentication failed. Please try again."
+    },
+    "brand": {
+      "name": "Nevada",
+      "purpose": "The organization's inventory, always inside the active company.",
+      "permissionsTitle": "Permissions",
+      "permissionsText": "Each person only acts within their role.",
+      "statesTitle": "States",
+      "statesText": "Draft, published, voided. Nothing is left unfinished.",
+      "auditTitle": "Audit",
+      "auditText": "What happens can be reconstructed."
     },
     "login": {
       "title": "Welcome back",
@@ -55,62 +66,78 @@
     "sessionExpired": "Your session has expired. Please sign in again.",
     "sessionTimeout": {
       "title": "Session Expiring",
-      "description": "Your session will expire in {time} due to inactivity. Would you like to continue?",
+      "description": "Your session closes in {time}. Continue to keep working in Nevada Retail.",
       "extend": "Continue Session",
       "logout": "Log Out"
     },
     "forgotPassword": {
-      "title": "Reset Password",
-      "description": "Enter your organization and email to receive a verification code",
+      "title": "Reset password",
+      "description": "Enter your organization and email to receive a verification code.",
       "organization": "Organization",
       "organizationPlaceholder": "your-organization",
       "enterEmail": "Email",
-      "sendCode": "Send Verification Code",
+      "sendCode": "Send verification code",
       "sending": "Sending...",
-      "checkEmail": "Check Your Email",
-      "checkEmailDescription": "We sent a 6-digit code to your email. Enter it below.",
-      "enterOtp": "Verification Code",
+      "checkEmail": "Check your email",
+      "checkEmailDescription": "We sent a 6-digit code to {email}.",
+      "enterOtp": "Verification code",
       "otpPlaceholder": "000000",
-      "verifyCode": "Verify Code",
+      "verifyCode": "Verify code",
       "verifying": "Verifying...",
       "invalidCode": "Invalid or expired code",
-      "newPassword": "New Password",
-      "confirmPassword": "Confirm Password",
-      "resetPassword": "Reset Password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "requirements": "At least 8 characters, with uppercase, lowercase, a number, and a special character.",
+      "resetPassword": "Reset password",
       "resetting": "Resetting...",
-      "success": "Password Reset Successfully",
-      "successDescription": "Your password has been updated. You can now sign in with your new password.",
-      "backToLogin": "Back to Sign In",
+      "success": "Password reset",
+      "successDescription": "Your password was updated. You can sign in now.",
+      "backToLogin": "Back to sign in",
       "requestNew": "Request a new code",
       "resendIn": "Resend code in {minutes}:{seconds}"
     },
     "forceChangePassword": {
-      "title": "Change Your Password",
+      "title": "Change your password",
       "description": "You must change your temporary password before continuing",
-      "warning": "Your administrator assigned you a temporary password. For security reasons, you must set a new password before accessing the system.",
-      "submit": "Set New Password",
+      "warning": "Your administrator assigned you a temporary password. You must set a new one before signing in.",
+      "submit": "Set new password",
       "submitting": "Updating password..."
     }
   },
   "dashboard": {
     "title": "Dashboard",
     "description": "Overview of your inventory system",
+    "scope": "What needs action in {name}",
+    "scopeAll": "all companies",
+    "attention": {
+      "viewStock": "View stock",
+      "lowStockTitle": "Low stock alerts",
+      "lowStockMeta": "{count, plural, =1 {1 product below the minimum} other {# products below the minimum}}",
+      "lowStockStatus": "Low stock",
+      "combosTitle": "Combos out of stock",
+      "combosMeta": "{count, plural, =1 {1 combo unavailable} other {# combos unavailable}}",
+      "combosStatus": "Out of stock"
+    },
     "metrics": {
       "totalProducts": {
-        "title": "Total Products",
+        "title": "Total products",
+        "short": "Products",
         "description": "{quantity} units in stock"
       },
       "inventoryValue": {
-        "title": "Inventory Value",
-        "description": "Total value across all products"
+        "title": "Inventory value",
+        "short": "Value",
+        "description": "Sum of valued stock"
       },
       "lowStock": {
-        "title": "Low Stock Alerts",
-        "descriptionAlert": "Products require immediate attention",
+        "title": "Low stock alerts",
+        "short": "Low stock",
+        "descriptionAlert": "Products below the minimum",
         "descriptionOk": "All products have sufficient stock"
       },
       "monthlySales": {
-        "title": "Monthly Sales",
+        "title": "Sales this month",
+        "short": "Sales",
         "description": "{count, plural, =0 {No sales} =1 {1 order} other {# orders}} this month"
       },
       "activeCombos": {
@@ -135,7 +162,7 @@
     "charts": {
       "noData": "No data available",
       "salesTrend": {
-        "title": "Sales Trend",
+        "title": "Sales trend",
         "description": "Revenue over the last 7 days",
         "revenue": "Revenue",
         "orders": "Orders"
@@ -167,8 +194,20 @@
         "name": "Name"
       },
       "recentActivity": {
-        "title": "Recent Activity",
+        "title": "Needs attention",
         "description": "Latest transactions across modules",
+        "status": {
+          "DRAFT": "Draft",
+          "CONFIRMED": "Confirmed",
+          "COMPLETED": "Completed",
+          "SHIPPED": "Shipped",
+          "PICKING": "Picking",
+          "POSTED": "Posted",
+          "VOID": "Void",
+          "IN_TRANSIT": "In transit",
+          "RECEIVED": "Received",
+          "CANCELLED": "Cancelled"
+        },
         "justNow": "Just now",
         "minutesAgo": "{count, plural, =1 {1 minute ago} other {# minutes ago}}",
         "hoursAgo": "{count, plural, =1 {1 hour ago} other {# hours ago}}",
@@ -197,6 +236,7 @@
         "minStock": "Minimum Stock",
         "maxStock": "Maximum Stock",
         "status": "Status",
+        "stock": "Stock",
         "company": "Company",
         "brand": "Brand",
         "barcode": "Barcode",
@@ -205,7 +245,8 @@
       },
       "status": {
         "active": "Active",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "lowStock": "Low stock"
       },
       "actions": {
         "new": "New Product",
@@ -259,7 +300,8 @@
         }
       },
       "search": {
-        "placeholder": "Search products..."
+        "placeholder": "Search products...",
+        "byNameOrSku": "Name or SKU"
       },
       "filter": "Filters",
       "filters": {
@@ -299,7 +341,9 @@
         "title": "Reference photo",
         "purpose": "Reference photo used to recognize the product.",
         "empty": "No photo. The product can still be sold and picked.",
+        "none": "No photo",
         "upload": "Upload photo",
+        "change": "Change",
         "remove": "Remove photo",
         "removeTitle": "Remove the photo?",
         "removeDescription": "The product can still be sold and picked.",
@@ -420,6 +464,8 @@
         "quantity": "Total Qty",
         "reserved": "Reserved",
         "available": "Available",
+        "minimum": "Minimum",
+        "status": "Status",
         "avgCost": "Avg Cost",
         "totalValue": "Total Value",
         "lastMovement": "Last Movement",
@@ -451,6 +497,11 @@
       },
       "actions": {
         "setRule": "Set Rule"
+      },
+      "status": {
+        "active": "Active",
+        "low": "Low stock",
+        "out": "Out of stock"
       },
       "reorderRule": {
         "createTitle": "Create Reorder Rule",
@@ -620,6 +671,7 @@
       "form": {
         "createTitle": "Record Stock Movement",
         "createDescription": "Enter the details to record a new inventory movement",
+        "draftNotice": "It stays a draft until you confirm. Confirming updates stock and cannot be undone.",
         "editTitle": "Edit Stock Movement",
         "editDescription": "Update the details of this draft movement",
         "movementInfo": "Movement Details",
@@ -729,7 +781,8 @@
         "timeline": "Status Timeline",
         "backToList": "Back to transfers",
         "notFound": "Transfer Not Found",
-        "notFoundDescription": "The transfer you are looking for does not exist or has been deleted."
+        "notFoundDescription": "The transfer you are looking for does not exist or has been deleted.",
+        "flow": "Flow: Draft → In transit → Received"
       },
       "timeline": {
         "created": "Created",
@@ -785,6 +838,14 @@
       },
       "toast": {
         "error": "An error occurred. Please try again."
+      },
+      "confirmReject": {
+        "title": "Reject transfer",
+        "description": "The transfer will be rejected and the stock will not be received at the destination warehouse."
+      },
+      "confirmCancel": {
+        "title": "Cancel transfer",
+        "description": "This draft transfer will be canceled and will not move into transit."
       },
       "receive": {
         "title": "Confirm Receipt",
@@ -850,7 +911,8 @@
       },
       "requiredCompany": {
         "title": "Select a company to continue",
-        "description": "Choose a specific company in the header selector. Creating sales, movements, transfers, or returns is not allowed while \"All Companies\" is selected."
+        "description": "Sales, movements, transfers, and returns cannot be created while All Companies is selected. Choose a company in the header.",
+        "action": "Choose a company"
       },
       "messages": {
         "created": "Company created successfully",
@@ -1007,7 +1069,8 @@
         "updatedAt": "Last Updated",
         "items": "Combo Items",
         "availability": "Availability",
-        "noAvailability": "No availability data for this combo."
+        "noAvailability": "No availability data for this combo.",
+        "stockLimit": "Combo stock is limited by the component with the fewest units."
       },
       "availability": {
         "title": "Combo Availability",
@@ -1156,7 +1219,8 @@
       "timeline": "Timeline",
       "shippingDetails": "Shipping Details",
       "comboGroup": "Combo: {name}",
-      "fromCombo": "From combo"
+      "fromCombo": "From combo",
+      "backToList": "Back to sales"
     },
     "timeline": {
       "draft": "Draft",
@@ -1212,6 +1276,7 @@
     "swapLine": {
       "title": "Swap Product",
       "description": "Replace a product in this sale line with a different product. Stock will be adjusted automatically.",
+      "currentProduct": "Current product",
       "replacementProduct": "Replacement Product",
       "replacementProductPlaceholder": "Search for a product...",
       "swapQuantity": "Quantity to Swap",
@@ -1274,7 +1339,11 @@
       "status": "Status",
       "shipBlocked": "Complete picking verification before shipping",
       "shipBlockedMessage": "All products must be verified before this sale can be shipped",
-      "photoNote": "The photo does not confirm the line. The code does."
+      "photoNote": "The photo does not confirm the line. The code does.",
+      "scan": "Scan",
+      "noPhoto": "No photo",
+      "pending": "Pending",
+      "verified": "Verified"
     }
   },
   "returns": {
@@ -1361,7 +1430,8 @@
     "detail": {
       "info": "Return Information",
       "lines": "Products",
-      "createdAt": "Created on {date}"
+      "createdAt": "Created on {date}",
+      "backToList": "Back to returns"
     },
     "filters": {
       "type": "Return Type",
@@ -1415,7 +1485,7 @@
       "createdAt": "Created"
     },
     "actions": {
-      "new": "New User",
+      "new": "New user",
       "activate": "Activate",
       "deactivate": "Deactivate",
       "lock": "Lock Account",
@@ -1444,7 +1514,11 @@
     },
     "form": {
       "createTitle": "Create User",
+      "consequence": "First name, last name, email, username, and password. Then Manage Roles assigns the role. From the list: Activate, Deactivate, or Lock Account.",
       "error": "An error occurred while creating the user."
+    },
+    "lock": {
+      "description": "{name} will become Locked. You can also Activate or Deactivate the account from the actions menu."
     },
     "messages": {
       "created": "User created successfully",
@@ -1457,6 +1531,7 @@
     "roles": {
       "title": "Manage Roles",
       "description": "View and manage the roles assigned to this user.",
+      "prompt": "{name}. Select the roles for this account.",
       "assigned": "Assigned Roles",
       "add": "Add Role",
       "selectRole": "Select a role...",
@@ -1502,7 +1577,7 @@
       "custom": "Custom"
     },
     "actions": {
-      "new": "New Role",
+      "new": "New role",
       "edit": "Edit",
       "delete": "Delete",
       "managePermissions": "Manage Permissions",
@@ -1529,6 +1604,8 @@
     },
     "permissions": {
       "title": "Manage Permissions",
+      "heading": "Role {name}",
+      "help": "Permissions are granular. Select only what this role should be able to do.",
       "description": "Select the permissions for this role",
       "module": "Module",
       "selectAll": "Select All",
@@ -1607,6 +1684,8 @@
   "reports": {
     "title": "Reports",
     "description": "Generate and export business intelligence reports",
+    "scope": "Company {company}",
+    "exportExcelAction": "Export Excel",
     "generate": "Generate Report",
     "generating": "Generating...",
     "backToReports": "Back to Reports",
@@ -2161,7 +2240,7 @@
   },
   "audit": {
     "list": {
-      "title": "Activity Log"
+      "title": "Activity log"
     },
     "columns": {
       "timestamp": "Timestamp",
@@ -2220,7 +2299,8 @@
   },
   "imports": {
     "title": "Data Imports",
-    "description": "Import data from external sources",
+    "module": "Imports",
+    "description": "Bulk load from Excel or CSV.",
     "types": {
       "products": "Products",
       "movements": "Movements",
@@ -2258,6 +2338,7 @@
     "upload": {
       "title": "Upload File",
       "description": "Select a CSV or Excel file to import",
+      "dropLabel": "Drop file",
       "dragDrop": "Drag & drop your file here, or click to browse",
       "selectedFile": "Selected file",
       "fileSize": "Size",
@@ -2278,6 +2359,8 @@
       "hasErrors": "Fix the errors below before importing",
       "canProcess": "All rows are valid and ready to be imported",
       "cannotProcess": "Cannot proceed due to validation errors",
+      "fileStep": "{file} · step {step}.",
+      "rowIssue": "Row {row}, {error}.",
       "companyCodeNote": "The 'Company Code' column is optional for multi-company organizations"
     },
     "execute": {
@@ -2420,6 +2503,7 @@
       "prevStep": "Back",
       "runDryRun": "Validate file",
       "runImport": "Import now",
+      "importValid": "Import valid rows",
       "validating": "Validating…",
       "importing": "Importing…",
       "dropHint": "Drop your file anywhere on this area",
@@ -2575,7 +2659,8 @@
     "detail": {
       "info": "Contact Information",
       "notFound": "Contact Not Found",
-      "notFoundDescription": "The contact you are looking for does not exist or has been removed."
+      "notFoundDescription": "The contact you are looking for does not exist or has been removed.",
+      "backToList": "Back to contacts"
     },
     "delete": {
       "title": "Delete Contact",
@@ -2596,6 +2681,9 @@
   },
   "integrations": {
     "title": "Integrations",
+    "module": "Integrations",
+    "back": "Back",
+    "connectError": "Could not connect. Check the account and the token.",
     "description": "Connect external platforms to synchronize orders and inventory",
     "list": {
       "empty": "No integrations connected",
@@ -2777,12 +2865,15 @@
       "typeCombo": "Combo",
       "unmatchedAlert": "Unmatched SKUs",
       "unmatchedDescription": "These external SKUs could not be matched to internal products. Map them to enable order synchronization.",
-      "mapThis": "Map"
+      "mapThis": "Map",
+      "mismatch": "External SKU {sku} does not match.",
+      "comboHint": "It can also be mapped to a combo."
     },
     "failedSyncs": {
       "title": "Failed Syncs",
       "retryOne": "Retry",
       "retryAll": "Retry All",
+      "retryHint": "Retry that row or retry all.",
       "retrySuccess": "Sync retried successfully",
       "retryAllSuccess": "All failed syncs are being retried",
       "empty": "No failed syncs",

@@ -1,48 +1,34 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FileEdit, CheckCircle2, XCircle } from "lucide-react";
 import { Badge } from "@/ui/components/badge";
 import type { ReturnStatus } from "@/modules/returns/domain/entities/return.entity";
 
+const variantByStatus = {
+  DRAFT: "secondary",
+  CONFIRMED: "success",
+  CANCELLED: "error",
+} as const;
+
 interface ReturnStatusBadgeProps {
   status: ReturnStatus;
+  className?: string;
 }
 
-export function ReturnStatusBadge({ status }: ReturnStatusBadgeProps) {
+export function ReturnStatusBadge({
+  status,
+  className,
+}: ReturnStatusBadgeProps) {
   const t = useTranslations("returns.status");
-
-  const config: Record<
-    ReturnStatus,
-    {
-      label: string;
-      variant: "secondary" | "success" | "error";
-      icon: typeof FileEdit;
-    }
-  > = {
-    DRAFT: {
-      label: t("draft"),
-      variant: "secondary",
-      icon: FileEdit,
-    },
-    CONFIRMED: {
-      label: t("confirmed"),
-      variant: "success",
-      icon: CheckCircle2,
-    },
-    CANCELLED: {
-      label: t("cancelled"),
-      variant: "error",
-      icon: XCircle,
-    },
+  const labels: Record<ReturnStatus, string> = {
+    DRAFT: t("draft"),
+    CONFIRMED: t("confirmed"),
+    CANCELLED: t("cancelled"),
   };
 
-  const { label, variant, icon: Icon } = config[status];
-
   return (
-    <Badge variant={variant} className="gap-1">
-      <Icon className="h-3 w-3" />
-      {label}
+    <Badge variant={variantByStatus[status]} className={className}>
+      {labels[status]}
     </Badge>
   );
 }

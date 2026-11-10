@@ -20,6 +20,7 @@ import {
 import { Button } from "@/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
+import { PageHeader } from "@/ui/layout/page-header";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -107,29 +108,18 @@ export function MovementDetail({ movementId }: MovementDetailProps) {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button asChild variant="ghost" size="icon">
-              <Link href="/dashboard/inventory/movements">
-                <ArrowLeft className="h-5 w-5" />
-              </Link>
-            </Button>
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                  {t("detail.title")}
-                </h1>
-                <MovementTypeBadge type={movement.type} />
-                <MovementStatusBadge status={movement.status} />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {t("detail.subtitle", { id: movement.id.slice(0, 8) })}
-              </p>
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div className="space-y-2">
+            <PageHeader
+              title={movement.reference || movement.id.slice(0, 8).toUpperCase()}
+              description={t("detail.subtitle", { id: movement.id.slice(0, 8) })}
+            />
+            <div className="flex flex-wrap items-center gap-2">
+              <MovementTypeBadge type={movement.type} />
+              <MovementStatusBadge status={movement.status} />
             </div>
           </div>
-
-          {/* Actions */}
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {movement.isDraft && (
               <>
                 <Button asChild variant="outline" size="sm">

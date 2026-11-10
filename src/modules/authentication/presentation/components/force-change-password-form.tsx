@@ -3,18 +3,22 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { Loader2, ShieldAlert } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/ui/components/button";
 import { PasswordInput } from "@/ui/components/password-input";
-import { Label } from "@/ui/components/label";
-import { FormField } from "@/ui/components/form-field";
 import {
   changePasswordSchema,
   type ChangePasswordFormValues,
 } from "@/modules/settings/presentation/schemas/change-password.schema";
 import { useChangePassword } from "@/modules/settings/presentation/hooks/use-change-password";
 import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
+import {
+  AuthField,
+  AuthSplit,
+  AuthTitle,
+  authControlClass,
+} from "@/modules/authentication/presentation/components/auth-shell";
 
 export function ForceChangePasswordForm() {
   const t = useTranslations("auth.forceChangePassword");
@@ -48,48 +52,74 @@ export function ForceChangePasswordForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="flex items-start gap-3 rounded-md bg-amber-50 p-3 dark:bg-amber-950/30">
-        <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
-        <p className="text-sm text-amber-800 dark:text-amber-200">
+    <AuthSplit>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <AuthTitle>{t("title")}</AuthTitle>
+
+        <p className="rounded-lg bg-warning-100 p-3 text-sm leading-normal text-warning-600">
           {t("warning")}
         </p>
-      </div>
 
-      <FormField error={errors.currentPassword?.message}>
-        <Label htmlFor="currentPassword">{tPassword("currentPassword")}</Label>
-        <PasswordInput
+        <AuthField
           id="currentPassword"
-          autoComplete="current-password"
-          {...register("currentPassword")}
-        />
-      </FormField>
+          label={tPassword("currentPassword")}
+          error={errors.currentPassword?.message}
+        >
+          <PasswordInput
+            id="currentPassword"
+            autoComplete="current-password"
+            aria-invalid={Boolean(errors.currentPassword)}
+            aria-describedby={
+              errors.currentPassword ? "currentPassword-error" : undefined
+            }
+            className={authControlClass(Boolean(errors.currentPassword))}
+            {...register("currentPassword")}
+          />
+        </AuthField>
 
-      <FormField error={errors.newPassword?.message}>
-        <Label htmlFor="newPassword">{tPassword("newPassword")}</Label>
-        <PasswordInput
+        <AuthField
           id="newPassword"
-          autoComplete="new-password"
-          {...register("newPassword")}
-        />
-        <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+          label={tPassword("newPassword")}
+          error={errors.newPassword?.message}
+        >
+          <PasswordInput
+            id="newPassword"
+            autoComplete="new-password"
+            aria-invalid={Boolean(errors.newPassword)}
+            aria-describedby={
+              errors.newPassword ? "newPassword-error" : undefined
+            }
+            className={authControlClass(Boolean(errors.newPassword))}
+            {...register("newPassword")}
+          />
+        </AuthField>
+
+        <p className="text-[13px] leading-snug text-muted-foreground">
           {tPassword("requirements")}
         </p>
-      </FormField>
 
-      <FormField error={errors.confirmPassword?.message}>
-        <Label htmlFor="confirmPassword">{tPassword("confirmPassword")}</Label>
-        <PasswordInput
+        <AuthField
           id="confirmPassword"
-          autoComplete="new-password"
-          {...register("confirmPassword")}
-        />
-      </FormField>
+          label={tPassword("confirmPassword")}
+          error={errors.confirmPassword?.message}
+        >
+          <PasswordInput
+            id="confirmPassword"
+            autoComplete="new-password"
+            aria-invalid={Boolean(errors.confirmPassword)}
+            aria-describedby={
+              errors.confirmPassword ? "confirmPassword-error" : undefined
+            }
+            className={authControlClass(Boolean(errors.confirmPassword))}
+            {...register("confirmPassword")}
+          />
+        </AuthField>
 
-      <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isPending ? t("submitting") : t("submit")}
-      </Button>
-    </form>
+        <Button type="submit" className="w-full rounded-lg" disabled={isPending}>
+          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {isPending ? t("submitting") : t("submit")}
+        </Button>
+      </form>
+    </AuthSplit>
   );
 }

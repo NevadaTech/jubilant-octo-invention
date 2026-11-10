@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { X } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
@@ -111,15 +110,15 @@ export function CategoryForm() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4">
-        <CardHeader className="flex flex-row items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+      <Card className="mx-4 max-h-[90vh] w-full max-w-lg overflow-y-auto shadow-none">
+        <CardHeader>
           <CardTitle>
             {isEditing ? t("form.editTitle") : t("form.createTitle")}
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={handleClose}>
-            <X className="h-4 w-4" />
-          </Button>
+          {!isEditing ? (
+            <p className="text-sm text-muted-foreground">{t("fields.noParent")}</p>
+          ) : null}
         </CardHeader>
         <CardContent>
           {isLoadingCategory && isEditing ? (
@@ -130,7 +129,7 @@ export function CategoryForm() {
             <form onSubmit={handleSubmit(onSubmit)}>
               <fieldset disabled={isSubmitting} className="space-y-4">
                 {(createCategory.isError || updateCategory.isError) && (
-                  <div className="rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                  <div className="rounded-lg bg-error-100 p-3 text-sm text-destructive">
                     {t("form.error")}
                   </div>
                 )}

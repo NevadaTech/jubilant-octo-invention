@@ -14,8 +14,19 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/ui/components/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/ui/components/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Skeleton } from "@/ui/components/skeleton";
+import { PageHeader } from "@/ui/layout/page-header";
 import {
   useTransfer,
   useUpdateTransferStatus,
@@ -48,21 +59,23 @@ function UserName({ userId }: { userId: string }) {
 
 export function TransferDetail({ transferId }: TransferDetailProps) {
   const t = useTranslations("inventory.transfers");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
   const { data: transfer, isLoading, isError } = useTransfer(transferId);
   const updateStatus = useUpdateTransferStatus();
   const [receiveModalOpen, setReceiveModalOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<
+    "REJECTED" | "CANCELED" | null
+  >(null);
 
   const handleStartTransit = async () => {
     await updateStatus.mutateAsync({ id: transferId, status: "IN_TRANSIT" });
   };
 
-  const handleReject = async () => {
-    await updateStatus.mutateAsync({ id: transferId, status: "REJECTED" });
-  };
-
-  const handleCancel = async () => {
-    await updateStatus.mutateAsync({ id: transferId, status: "CANCELED" });
+  const handleConfirmStatus = async () => {
+    if (!pendingStatus) return;
+    await updateStatus.mutateAsync({ id: transferId, status: pendingStatus });
+    setPendingStatus(null);
   };
 
   if (isLoading) {
@@ -112,27 +125,14 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/dashboard/inventory/transfers">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                {t("detail.title")}
-              </h1>
-              <TransferStatusBadge status={transfer.status} />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {t("detail.subtitle", { id: transfer.id.slice(0, 8) })}
-            </p>
-          </div>
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-2">
+          <PageHeader
+            title={t("detail.title")}
+            description={t("detail.subtitle", { id: transfer.id.slice(0, 8) })}
+          />
+          <TransferStatusBadge status={transfer.status} />
         </div>
-
-        {/* Actions */}
         <div className="flex flex-wrap gap-2">
           {transfer.canStartTransit && (
             <Button
@@ -157,7 +157,7 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
           {transfer.canReject && (
             <Button
               variant="outline"
-              onClick={handleReject}
+              onClick={() => setPendingStatus("REJECTED")}
               disabled={updateStatus.isPending}
             >
               {updateStatus.isPending && (
@@ -169,7 +169,7 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
           {transfer.canCancel && (
             <Button
               variant="destructive"
-              onClick={handleCancel}
+              onClick={() => setPendingStatus("CANCELED")}
               disabled={updateStatus.isPending}
             >
               {updateStatus.isPending && (
@@ -289,6 +289,8 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
         </Card>
       </div>
 
+      <p className="text-sm text-muted-foreground">{t("detail.flow")}</p>
+
       {/* Products Table */}
       <Card>
         <CardHeader>
@@ -351,6 +353,34 @@ export function TransferDetail({ transferId }: TransferDetailProps) {
           onOpenChange={setReceiveModalOpen}
         />
       )}
+
+      <AlertDialog
+        open={pendingStatus !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingStatus(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {pendingStatus === "REJECTED"
+                ? t("confirmReject.title")
+                : t("confirmCancel.title")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingStatus === "REJECTED"
+                ? t("confirmReject.description")
+                : t("confirmCancel.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmStatus}>
+              {tCommon("confirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

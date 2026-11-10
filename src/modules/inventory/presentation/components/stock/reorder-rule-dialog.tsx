@@ -132,31 +132,40 @@ export function ReorderRuleDialog({
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormField error={errors.minQty?.message}>
-            <Label htmlFor="minQty">{t("fields.minQty")}</Label>
+            <Label htmlFor="minQty" className="text-[13px] font-semibold">
+              {t("fields.minQty")}
+            </Label>
             <Input
               id="minQty"
               type="number"
               step="any"
+              className="h-10"
               {...register("minQty", { valueAsNumber: true })}
             />
           </FormField>
 
           <FormField error={errors.maxQty?.message}>
-            <Label htmlFor="maxQty">{t("fields.maxQty")}</Label>
+            <Label htmlFor="maxQty" className="text-[13px] font-semibold">
+              {t("fields.maxQty")}
+            </Label>
             <Input
               id="maxQty"
               type="number"
               step="any"
+              className="h-10"
               {...register("maxQty", { valueAsNumber: true })}
             />
           </FormField>
 
           <FormField error={errors.safetyQty?.message}>
-            <Label htmlFor="safetyQty">{t("fields.safetyQty")}</Label>
+            <Label htmlFor="safetyQty" className="text-[13px] font-semibold">
+              {t("fields.safetyQty")}
+            </Label>
             <Input
               id="safetyQty"
               type="number"
               step="any"
+              className="h-10"
               {...register("safetyQty", { valueAsNumber: true })}
             />
           </FormField>

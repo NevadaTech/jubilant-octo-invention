@@ -7,7 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Plus, Trash2, Loader2 } from "lucide-react";
+import { Plus, Trash2, Loader2 } from "lucide-react";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
 import { CurrencyInput } from "@/ui/components/currency-input";
@@ -166,23 +167,15 @@ export function MovementFormPage({ movementId }: MovementFormPageProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="icon">
-          <Link href={returnTo}>
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            {isEditing ? t("form.editTitle") : t("form.createTitle")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isEditing
-              ? t("form.editDescription")
-              : t("form.createDescription")}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={isEditing ? t("form.editTitle") : t("form.createTitle")}
+        description={
+          isEditing ? t("form.editDescription") : t("form.createDescription")
+        }
+      />
+      {!isEditing ? (
+        <p className="text-sm text-muted-foreground">{t("form.draftNotice")}</p>
+      ) : null}
 
       <CompanyRequiredGuard active={!isEditing}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

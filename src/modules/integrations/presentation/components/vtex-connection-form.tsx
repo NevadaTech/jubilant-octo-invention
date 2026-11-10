@@ -168,7 +168,7 @@ function SharedFormFields({
   return (
     <>
       <FormField error={errors.storeName?.message}>
-        <Label htmlFor="storeName">{t("form.storeName")} *</Label>
+        <Label className="text-[13px] font-semibold" htmlFor="storeName">{t("form.storeName")} *</Label>
         <Input
           id="storeName"
           {...register("storeName")}
@@ -177,7 +177,7 @@ function SharedFormFields({
       </FormField>
 
       <FormField error={errors.appKey?.message}>
-        <Label htmlFor="appKey">
+        <Label className="text-[13px] font-semibold" htmlFor="appKey">
           {t("form.appKey")} {!isEditing && "*"}
         </Label>
         <Input
@@ -193,7 +193,7 @@ function SharedFormFields({
       </FormField>
 
       <FormField error={errors.appToken?.message}>
-        <Label htmlFor="appToken">
+        <Label className="text-[13px] font-semibold" htmlFor="appToken">
           {t("form.appToken")} {!isEditing && "*"}
         </Label>
         <Input
@@ -209,7 +209,7 @@ function SharedFormFields({
       </FormField>
 
       <FormField error={errors.syncStrategy?.message}>
-        <Label>{t("form.syncStrategy")} *</Label>
+        <Label className="text-[13px] font-semibold">{t("form.syncStrategy")} *</Label>
         <Controller
           name="syncStrategy"
           control={control}
@@ -235,7 +235,7 @@ function SharedFormFields({
       </FormField>
 
       <FormField error={errors.syncDirection?.message}>
-        <Label>{t("form.syncDirection")} *</Label>
+        <Label className="text-[13px] font-semibold">{t("form.syncDirection")} *</Label>
         <Controller
           name="syncDirection"
           control={control}
@@ -265,7 +265,7 @@ function SharedFormFields({
       </FormField>
 
       <FormField error={errors.defaultWarehouseId?.message}>
-        <Label>{t("form.warehouse")} *</Label>
+        <Label className="text-[13px] font-semibold">{t("form.warehouse")} *</Label>
         <Controller
           name="defaultWarehouseId"
           control={control}
@@ -293,7 +293,7 @@ function SharedFormFields({
       </FormField>
 
       <FormField>
-        <Label>{t("form.defaultContact")}</Label>
+        <Label className="text-[13px] font-semibold">{t("form.defaultContact")}</Label>
         <Controller
           name="defaultContactId"
           control={control}
@@ -321,7 +321,7 @@ function SharedFormFields({
       </FormField>
 
       <FormField>
-        <Label>{t("form.contactResolutionMode")}</Label>
+        <Label className="text-[13px] font-semibold">{t("form.contactResolutionMode")}</Label>
         <Controller
           name="contactResolutionMode"
           control={control}
@@ -359,7 +359,7 @@ function SharedFormFields({
 
       {multiCompanyEnabled && (
         <FormField>
-          <Label>{t("form.company")}</Label>
+          <Label className="text-[13px] font-semibold">{t("form.company")}</Label>
           <Controller
             name="companyId"
             control={control}
@@ -492,7 +492,7 @@ function VtexCreateForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90vh] flex-col gap-0 p-0 sm:max-w-lg">
+      <DialogContent className="flex max-h-[90vh] flex-col gap-0 rounded-2xl p-0 sm:max-w-lg">
         <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6">
           <DialogTitle>{t("providers.vtex.form.createTitle")}</DialogTitle>
           <DialogDescription>
@@ -510,7 +510,7 @@ function VtexCreateForm({
               <SectionHeading>{t("form.sectionCredentials")}</SectionHeading>
 
               <FormField error={errors.accountName?.message}>
-                <Label htmlFor="accountName">
+                <Label className="text-[13px] font-semibold" htmlFor="accountName">
                   {t("providers.vtex.form.accountName")} *
                 </Label>
                 <Input
@@ -521,7 +521,7 @@ function VtexCreateForm({
               </FormField>
 
               <FormField error={errors.storeName?.message}>
-                <Label htmlFor="storeName">{t("form.storeName")} *</Label>
+                <Label className="text-[13px] font-semibold" htmlFor="storeName">{t("form.storeName")} *</Label>
                 <Input
                   id="storeName"
                   {...register("storeName")}
@@ -531,7 +531,7 @@ function VtexCreateForm({
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <FormField error={errors.appKey?.message}>
-                  <Label htmlFor="appKey">{t("form.appKey")} *</Label>
+                  <Label className="text-[13px] font-semibold" htmlFor="appKey">{t("form.appKey")} *</Label>
                   <Input
                     id="appKey"
                     type="password"
@@ -541,7 +541,7 @@ function VtexCreateForm({
                 </FormField>
 
                 <FormField error={errors.appToken?.message}>
-                  <Label htmlFor="appToken">{t("form.appToken")} *</Label>
+                  <Label className="text-[13px] font-semibold" htmlFor="appToken">{t("form.appToken")} *</Label>
                   <Input
                     id="appToken"
                     type="password"
@@ -556,7 +556,7 @@ function VtexCreateForm({
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <FormField error={errors.syncStrategy?.message}>
-                  <Label>{t("form.syncStrategy")} *</Label>
+                  <Label className="text-[13px] font-semibold">{t("form.syncStrategy")} *</Label>
                   <Controller
                     name="syncStrategy"
                     control={control}
@@ -595,7 +595,7 @@ function VtexCreateForm({
                 </FormField>
 
                 <FormField error={errors.syncDirection?.message}>
-                  <Label>{t("form.syncDirection")} *</Label>
+                  <Label className="text-[13px] font-semibold">{t("form.syncDirection")} *</Label>
                   <Controller
                     name="syncDirection"
                     control={control}
@@ -647,7 +647,7 @@ function VtexCreateForm({
               </div>
 
               <FormField error={errors.defaultWarehouseId?.message}>
-                <Label>{t("form.warehouse")} *</Label>
+                <Label className="text-[13px] font-semibold">{t("form.warehouse")} *</Label>
                 <Controller
                   name="defaultWarehouseId"
                   control={control}
@@ -681,7 +681,7 @@ function VtexCreateForm({
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <FormField>
-                  <Label>{t("form.defaultContact")}</Label>
+                  <Label className="text-[13px] font-semibold">{t("form.defaultContact")}</Label>
                   <Controller
                     name="defaultContactId"
                     control={control}
@@ -718,7 +718,7 @@ function VtexCreateForm({
 
                 {multiCompanyEnabled && (
                   <FormField>
-                    <Label>{t("form.company")}</Label>
+                    <Label className="text-[13px] font-semibold">{t("form.company")}</Label>
                     <Controller
                       name="companyId"
                       control={control}
@@ -759,7 +759,7 @@ function VtexCreateForm({
               </div>
 
               <FormField>
-                <Label>{t("form.contactResolutionMode")}</Label>
+                <Label className="text-[13px] font-semibold">{t("form.contactResolutionMode")}</Label>
                 <Controller
                   name="contactResolutionMode"
                   control={control}
@@ -802,7 +802,7 @@ function VtexCreateForm({
               <SectionHeading>{t("initialSync.title")}</SectionHeading>
 
               <FormField>
-                <Label>{t("actions.syncFromDate")}</Label>
+                <Label className="text-[13px] font-semibold">{t("actions.syncFromDate")}</Label>
                 <DatePicker
                   value={syncFromDate}
                   onChange={setSyncFromDate}
@@ -909,7 +909,7 @@ function VtexEditForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90vh] flex-col gap-0 p-0 sm:max-w-lg">
+      <DialogContent className="flex max-h-[90vh] flex-col gap-0 rounded-2xl p-0 sm:max-w-lg">
         <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6">
           <DialogTitle>{t("form.editTitle")}</DialogTitle>
           <DialogDescription>{t("form.editDescription")}</DialogDescription>

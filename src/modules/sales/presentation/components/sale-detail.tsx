@@ -1,25 +1,12 @@
 "use client";
 
-import { Fragment, useState, useCallback, useMemo } from "react";
+import { Fragment, useCallback, useMemo, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { formatDateTimeMedium } from "@/lib/date";
-import {
-  ArrowLeft,
-  ArrowLeftRight,
-  CheckCircle,
-  XCircle,
-  Package,
-  PackageSearch,
-  Truck,
-  PackageCheck,
-  Loader2,
-  Undo2,
-  ExternalLink,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { PageHeader } from "@/ui/layout/page-header";
 import { Button } from "@/ui/components/button";
 import { Badge } from "@/ui/components/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
 import { Input } from "@/ui/components/input";
 import { Label } from "@/ui/components/label";
 import { Skeleton } from "@/ui/components/skeleton";
@@ -44,18 +31,17 @@ import {
   DialogTrigger,
 } from "@/ui/components/dialog";
 import {
+  useCancelSale,
+  useCompleteSale,
+  useConfirmSale,
   useSale,
   useSaleReturns,
-  useConfirmSale,
-  useCancelSale,
-  useStartPicking,
   useShipSale,
-  useCompleteSale,
+  useStartPicking,
 } from "@/modules/sales/presentation/hooks/use-sales";
 import { useCombos } from "@/modules/inventory/presentation/hooks/use-combos";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { PERMISSIONS } from "@/shared/domain/permissions";
-import { ProductReferenceThumb } from "@/modules/inventory/presentation/components/products/product-reference-photo";
 import { SaleStatusBadge } from "./sale-status-badge";
 import { SaleTimeline } from "./sale-timeline";
 import { SaleSwapDialog } from "./sale-swap-dialog";
@@ -82,11 +68,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
   const startPicking = useStartPicking();
   const shipSale = useShipSale();
   const completeSale = useCompleteSale();
-
   const { config: pickingConfig } = usePickingConfig();
 
-  // Combo grouping: resolve combo names for visual grouping
-  const hasComboLines = sale?.lines.some((l) => l.comboId) ?? false;
+  const hasComboLines = sale?.lines.some((line) => line.comboId) ?? false;
   const { data: combosData } = useCombos({ limit: 100, isActive: true });
 
   const comboNameMap = useMemo(() => {
@@ -97,7 +81,6 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
     return map;
   }, [combosData]);
 
-  // Group sale lines by comboId for visual grouping
   const groupedLines = useMemo(() => {
     if (!sale || !hasComboLines) return null;
 
@@ -111,9 +94,9 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
     for (const line of sale.lines) {
       const comboId = line.comboId ?? null;
       const key = comboId ?? "__standalone__";
-
-      if (groupMap.has(key)) {
-        groups[groupMap.get(key)!].lines.push(line);
+      const existing = groupMap.get(key);
+      if (existing !== undefined) {
+        groups[existing].lines.push(line);
       } else {
         groupMap.set(key, groups.length);
         groups.push({
@@ -124,7 +107,6 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
       }
     }
 
-    // Sort: combos first, standalone last
     groups.sort((a, b) => {
       if (a.comboId && !b.comboId) return -1;
       if (!a.comboId && b.comboId) return 1;
@@ -135,7 +117,6 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
   }, [sale, hasComboLines, comboNameMap]);
 
   const [pickingVerified, setPickingVerified] = useState(true);
-
   const handleVerificationChange = useCallback((canShip: boolean) => {
     setPickingVerified(canShip);
   }, []);
@@ -146,13 +127,12 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
   const [shippingCarrier, setShippingCarrier] = useState("");
   const [shippingNotes, setShippingNotes] = useState("");
 
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat(locale, {
+  const formatCurrency = (amount: number, currency: string) =>
+    new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currency || "COP",
       minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const handleConfirm = async () => {
     try {
@@ -207,663 +187,525 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="flex flex-col gap-4">
         <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-64 w-full rounded-xl" />
       </div>
     );
   }
 
   if (isError || !sale) {
     return (
-      <div className="space-y-6">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/dashboard/sales">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <Card>
-          <CardContent className="py-10 text-center">
-            <p className="text-destructive">{t("error.loading")}</p>
-          </CardContent>
-        </Card>
+      <div className="flex flex-col gap-4">
+        <Link
+          href="/dashboard/sales"
+          className="text-sm font-semibold text-primary"
+        >
+          {t("detail.backToList")}
+        </Link>
+        <p className="rounded-xl border border-border bg-card px-4 py-10 text-center text-destructive">
+          {t("error.loading")}
+        </p>
       </div>
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/dashboard/sales">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                {sale.saleNumber}
-              </h1>
-              <SaleStatusBadge status={sale.status} />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {t("detail.createdAt", {
-                date: formatDateTimeMedium(sale.createdAt, locale),
-              })}
-            </p>
-          </div>
-        </div>
+  const contactLabel = sale.contactName || sale.customerReference;
+  const descriptionParts = [contactLabel, sale.warehouseName].filter(Boolean);
+  const description =
+    descriptionParts.length > 1 ? descriptionParts.join(" · ") : undefined;
+  const lineGroups = groupedLines ?? [
+    { comboId: null, comboName: null, lines: sale.lines },
+  ];
 
-        <div className="flex flex-wrap gap-2">
-          {sale.canConfirm && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button disabled={confirmSale.isPending}>
-                  {confirmSale.isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <CheckCircle className="mr-2 h-4 w-4" />
-                  )}
-                  {t("actions.confirm")}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("confirmSale.title")}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t("confirmSale.description")}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={confirmSale.isPending}>
-                    {tCommon("cancel")}
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleConfirm}
-                    disabled={confirmSale.isPending}
-                  >
-                    {confirmSale.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {confirmSale.isPending
-                      ? tCommon("loading")
-                      : t("actions.confirm")}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-          {sale.canStartPicking && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline" disabled={startPicking.isPending}>
-                  {startPicking.isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <PackageSearch className="mr-2 h-4 w-4" />
-                  )}
-                  {t("actions.startPicking")}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("startPicking.title")}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t("startPicking.description")}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={startPicking.isPending}>
-                    {tCommon("cancel")}
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleStartPicking}
-                    disabled={startPicking.isPending}
-                  >
-                    {startPicking.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {startPicking.isPending
-                      ? tCommon("loading")
-                      : t("actions.startPicking")}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-          {sale.canShip && (
-            <Dialog open={shipDialogOpen} onOpenChange={setShipDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  disabled={shipSale.isPending || !pickingVerified}
-                  title={
-                    !pickingVerified ? t("picking.shipBlocked") : undefined
-                  }
-                >
-                  {shipSale.isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Truck className="mr-2 h-4 w-4" />
-                  )}
-                  {t("actions.shipSale")}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{t("shipSale.title")}</DialogTitle>
-                  <DialogDescription>
-                    {t("shipSale.description")}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="trackingNumber">
-                      {t("fields.trackingNumber")}
-                    </Label>
-                    <Input
-                      id="trackingNumber"
-                      value={trackingNumber}
-                      onChange={(e) => setTrackingNumber(e.target.value)}
-                      placeholder={t("fields.trackingNumberPlaceholder")}
-                      disabled={shipSale.isPending}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="shippingCarrier">
-                      {t("fields.shippingCarrier")}
-                    </Label>
-                    <Input
-                      id="shippingCarrier"
-                      value={shippingCarrier}
-                      onChange={(e) => setShippingCarrier(e.target.value)}
-                      placeholder={t("fields.shippingCarrierPlaceholder")}
-                      disabled={shipSale.isPending}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="shippingNotes">
-                      {t("fields.shippingNotes")}
-                    </Label>
-                    <Input
-                      id="shippingNotes"
-                      value={shippingNotes}
-                      onChange={(e) => setShippingNotes(e.target.value)}
-                      placeholder={t("fields.shippingNotesPlaceholder")}
-                      disabled={shipSale.isPending}
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShipDialogOpen(false)}
-                    disabled={shipSale.isPending}
-                  >
-                    {tCommon("cancel")}
-                  </Button>
-                  <Button onClick={handleShip} disabled={shipSale.isPending}>
-                    {shipSale.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {shipSale.isPending
-                      ? tCommon("loading")
-                      : t("actions.shipSale")}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          )}
-          {sale.canComplete && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button disabled={completeSale.isPending}>
-                  {completeSale.isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <PackageCheck className="mr-2 h-4 w-4" />
-                  )}
-                  {t("actions.completeSale")}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("completeSale.title")}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t("completeSale.description")}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={completeSale.isPending}>
-                    {tCommon("cancel")}
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleComplete}
-                    disabled={completeSale.isPending}
-                  >
-                    {completeSale.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {completeSale.isPending
-                      ? tCommon("loading")
-                      : t("completeSale.confirm")}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-          {sale.canCancel && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" disabled={cancelSale.isPending}>
-                  {cancelSale.isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <XCircle className="mr-2 h-4 w-4" />
-                  )}
-                  {t("actions.cancelSale")}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("cancelSale.title")}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t("cancelSale.description")}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={cancelSale.isPending}>
-                    {tCommon("cancel")}
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleCancel}
-                    disabled={cancelSale.isPending}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    {cancelSale.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {cancelSale.isPending
-                      ? tCommon("loading")
-                      : t("actions.cancelSale")}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-        </div>
-      </div>
-
-      {/* Sale Info + Shipping & Timeline side by side */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Sale Info + Shipping Details Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("detail.info")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("fields.warehouse")}
-                </dt>
-                <dd className="mt-1 font-medium">{sale.warehouseName}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("fields.customer")}
-                </dt>
-                <dd className="mt-1">{sale.customerReference || "-"}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("fields.externalReference")}
-                </dt>
-                <dd className="mt-1 font-mono text-sm">
-                  {sale.externalReference || "-"}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {t("fields.total")}
-                </dt>
-                <dd className="mt-1 text-lg font-bold">
-                  {formatCurrency(sale.totalAmount, sale.currency)}
-                </dd>
-              </div>
-              {sale.contactType && (
-                <div>
-                  <dt className="text-sm font-medium text-muted-foreground">
-                    {t("fields.contactType")}
-                  </dt>
-                  <dd className="mt-1">
-                    <ContactTypeBadge type={sale.contactType as ContactType} />
-                  </dd>
-                </div>
-              )}
-              {sale.integrationProvider && (
-                <div>
-                  <dt className="text-sm font-medium text-muted-foreground">
-                    {t("fields.integrationProvider")}
-                  </dt>
-                  <dd className="mt-1">
-                    <Badge variant="outline">
-                      {sale.integrationProvider === "MERCADOLIBRE"
-                        ? "MercadoLibre"
-                        : sale.integrationProvider}
-                    </Badge>
-                  </dd>
-                </div>
-              )}
-              {sale.note && (
-                <div className="sm:col-span-2">
-                  <dt className="text-sm font-medium text-muted-foreground">
-                    {t("fields.note")}
-                  </dt>
-                  <dd className="mt-1">{sale.note}</dd>
-                </div>
-              )}
-            </dl>
-
-            {/* Shipping Details (inline) */}
-            {(sale.trackingNumber ||
-              sale.shippingCarrier ||
-              sale.shippingNotes) && (
-              <>
-                <div className="border-t pt-4">
-                  <h4 className="mb-3 text-sm font-semibold text-foreground">
-                    {t("detail.shippingDetails")}
-                  </h4>
-                  <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {sale.trackingNumber && (
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          {t("fields.trackingNumber")}
-                        </dt>
-                        <dd className="mt-1 font-mono text-sm">
-                          {sale.trackingNumber}
-                        </dd>
-                      </div>
-                    )}
-                    {sale.shippingCarrier && (
-                      <div>
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          {t("fields.shippingCarrier")}
-                        </dt>
-                        <dd className="mt-1">{sale.shippingCarrier}</dd>
-                      </div>
-                    )}
-                    {sale.shippingNotes && (
-                      <div className="sm:col-span-2">
-                        <dt className="text-sm font-medium text-muted-foreground">
-                          {t("fields.shippingNotes")}
-                        </dt>
-                        <dd className="mt-1">{sale.shippingNotes}</dd>
-                      </div>
-                    )}
-                  </dl>
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Timeline Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("detail.timeline")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SaleTimeline
-              status={sale.status}
-              pickingEnabled={sale.pickingEnabled}
-              createdAt={sale.createdAt}
-              createdByName={sale.createdByName}
-              confirmedAt={sale.confirmedAt}
-              confirmedByName={sale.confirmedByName}
-              pickedAt={sale.pickedAt}
-              pickedByName={sale.pickedByName}
-              shippedAt={sale.shippedAt}
-              shippedByName={sale.shippedByName}
-              completedAt={sale.completedAt}
-              completedByName={sale.completedByName}
-              cancelledAt={sale.cancelledAt}
-              cancelledByName={sale.cancelledByName}
-              returnedAt={sale.returnedAt}
-              returnedByName={sale.returnedByName}
+  const primaryAction = sale.canConfirm ? (
+    <ConfirmDialog
+      pending={confirmSale.isPending}
+      onConfirm={handleConfirm}
+      label={t("actions.confirm")}
+      title={t("confirmSale.title")}
+      description={t("confirmSale.description")}
+      section={t("title")}
+      cancelLabel={tCommon("cancel")}
+      loadingLabel={tCommon("loading")}
+    />
+  ) : sale.canStartPicking ? (
+    <ConfirmDialog
+      pending={startPicking.isPending}
+      onConfirm={handleStartPicking}
+      label={t("actions.startPicking")}
+      title={t("startPicking.title")}
+      description={t("startPicking.description")}
+      section={t("title")}
+      cancelLabel={tCommon("cancel")}
+      loadingLabel={tCommon("loading")}
+    />
+  ) : sale.canShip ? (
+    <Dialog open={shipDialogOpen} onOpenChange={setShipDialogOpen}>
+      <DialogTrigger asChild>
+        <Button
+          className="rounded-lg"
+          disabled={shipSale.isPending || !pickingVerified}
+          title={!pickingVerified ? t("picking.shipBlocked") : undefined}
+        >
+          {shipSale.isPending ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : null}
+          {t("actions.shipSale")}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="rounded-2xl sm:max-w-[500px]">
+        <DialogHeader>
+          <p className="text-xs font-semibold text-primary">{t("title")}</p>
+          <DialogTitle>{t("shipSale.title")}</DialogTitle>
+          <DialogDescription>{t("shipSale.description")}</DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col gap-2.5">
+          <Field label={t("fields.trackingNumber")} id="trackingNumber">
+            <Input
+              id="trackingNumber"
+              value={trackingNumber}
+              onChange={(event) => setTrackingNumber(event.target.value)}
+              placeholder={t("fields.trackingNumberPlaceholder")}
+              disabled={shipSale.isPending}
+              className="h-11 rounded-lg"
             />
-          </CardContent>
-        </Card>
+          </Field>
+          <Field label={t("fields.shippingCarrier")} id="shippingCarrier">
+            <Input
+              id="shippingCarrier"
+              value={shippingCarrier}
+              onChange={(event) => setShippingCarrier(event.target.value)}
+              placeholder={t("fields.shippingCarrierPlaceholder")}
+              disabled={shipSale.isPending}
+              className="h-11 rounded-lg"
+            />
+          </Field>
+          <Field label={t("fields.shippingNotes")} id="shippingNotes">
+            <Input
+              id="shippingNotes"
+              value={shippingNotes}
+              onChange={(event) => setShippingNotes(event.target.value)}
+              placeholder={t("fields.shippingNotesPlaceholder")}
+              disabled={shipSale.isPending}
+              className="h-11 rounded-lg"
+            />
+          </Field>
+        </div>
+        <DialogFooter className="sm:justify-start">
+          <Button
+            variant="outline"
+            onClick={() => setShipDialogOpen(false)}
+            disabled={shipSale.isPending}
+          >
+            {tCommon("cancel")}
+          </Button>
+          <Button onClick={handleShip} disabled={shipSale.isPending}>
+            {shipSale.isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : null}
+            {shipSale.isPending ? tCommon("loading") : t("actions.shipSale")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ) : sale.canComplete ? (
+    <ConfirmDialog
+      pending={completeSale.isPending}
+      onConfirm={handleComplete}
+      label={t("actions.completeSale")}
+      actionLabel={t("completeSale.confirm")}
+      title={t("completeSale.title")}
+      description={t("completeSale.description")}
+      section={t("title")}
+      cancelLabel={tCommon("cancel")}
+      loadingLabel={tCommon("loading")}
+    />
+  ) : null;
+
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        title={sale.saleNumber}
+        description={description}
+        action={primaryAction}
+      />
+
+      <div className="flex flex-wrap items-center gap-2">
+        <SaleStatusBadge status={sale.status} />
+        {sale.contactType ? (
+          <ContactTypeBadge type={sale.contactType as ContactType} />
+        ) : null}
+        {sale.integrationProvider ? (
+          <Badge variant="outline">
+            {sale.integrationProvider === "MERCADOLIBRE"
+              ? "MercadoLibre"
+              : sale.integrationProvider}
+          </Badge>
+        ) : null}
       </div>
 
-      {/* Picking Verification Card */}
-      {sale.isPicking && pickingConfig.mode !== "OFF" && (
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <Fact label={t("fields.customer")}>{contactLabel ?? "-"}</Fact>
+        <Fact label={t("fields.warehouse")}>{sale.warehouseName}</Fact>
+        <Fact label={t("fields.externalReference")}>
+          {sale.externalReference ? (
+            <span className="font-mono">{sale.externalReference}</span>
+          ) : (
+            "-"
+          )}
+        </Fact>
+      </div>
+
+      <section className="flex flex-col gap-2">
+        <h2 className="text-base font-semibold">{t("detail.timeline")}</h2>
+        <SaleTimeline
+          status={sale.status}
+          pickingEnabled={sale.pickingEnabled}
+          createdAt={sale.createdAt}
+          createdByName={sale.createdByName}
+          confirmedAt={sale.confirmedAt}
+          confirmedByName={sale.confirmedByName}
+          pickedAt={sale.pickedAt}
+          pickedByName={sale.pickedByName}
+          shippedAt={sale.shippedAt}
+          shippedByName={sale.shippedByName}
+          completedAt={sale.completedAt}
+          completedByName={sale.completedByName}
+          cancelledAt={sale.cancelledAt}
+          cancelledByName={sale.cancelledByName}
+          returnedAt={sale.returnedAt}
+          returnedByName={sale.returnedByName}
+        />
+      </section>
+
+      {sale.note ? (
+        <p className="text-sm text-foreground">
+          <span>{t("fields.note")}</span>
+          {": "}
+          <span>{sale.note}</span>
+        </p>
+      ) : null}
+
+      {sale.canShip && !pickingVerified ? (
+        <p className="max-w-xl rounded-lg bg-warning-100 px-3 py-3 text-sm text-warning-800 dark:bg-warning-900/30 dark:text-warning-300">
+          {t("picking.shipBlocked")}. {t("picking.shipBlockedMessage")}
+        </p>
+      ) : null}
+
+      {sale.canCancel ? (
+        <ConfirmDialog
+          pending={cancelSale.isPending}
+          onConfirm={handleCancel}
+          label={t("actions.cancelSale")}
+          title={t("cancelSale.title")}
+          description={t("cancelSale.description")}
+          section={t("title")}
+          cancelLabel={tCommon("cancel")}
+          loadingLabel={tCommon("loading")}
+          destructive
+          outline
+        />
+      ) : null}
+
+      {sale.isPicking && pickingConfig.mode !== "OFF" ? (
         <PickingVerificationCard
           lines={sale.lines}
           saleId={sale.id}
+          saleNumber={sale.saleNumber}
           onVerificationChange={handleVerificationChange}
         />
+      ) : null}
+
+      {(sale.trackingNumber || sale.shippingCarrier || sale.shippingNotes) && (
+        <section className="flex max-w-xl flex-col gap-2">
+          <h2 className="text-base font-semibold">
+            {t("detail.shippingDetails")}
+          </h2>
+          {sale.trackingNumber ? (
+            <Fact label={t("fields.trackingNumber")}>
+              <span className="font-mono">{sale.trackingNumber}</span>
+            </Fact>
+          ) : null}
+          {sale.shippingCarrier ? (
+            <Fact label={t("fields.shippingCarrier")}>{sale.shippingCarrier}</Fact>
+          ) : null}
+          {sale.shippingNotes ? (
+            <Fact label={t("fields.shippingNotes")}>{sale.shippingNotes}</Fact>
+          ) : null}
+        </section>
       )}
 
-      {/* Returns Card - shown when sale has returns */}
-      {saleReturns && saleReturns.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Undo2 className="h-5 w-5" />
-              {tReturns("title")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {saleReturns.map((ret) => (
-                <div
-                  key={ret.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
-                  <div>
-                    <p className="font-medium">{ret.returnNumber}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {tReturns(
-                        `types.${ret.type === "RETURN_CUSTOMER" ? "customer" : "supplier"}`,
-                      )}
-                      {" · "}
-                      {tReturns(`status.${ret.status.toLowerCase()}`)}
-                    </p>
-                  </div>
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`/dashboard/returns/${ret.id}`}>
-                      <ExternalLink className="mr-2 h-4 w-4" />
-                      {t("actions.view")}
-                    </Link>
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Swap Dialog */}
-      {swapLine && (
-        <SaleSwapDialog
-          saleId={sale.id}
-          line={swapLine}
-          saleCurrency={sale.currency}
-          open={!!swapLine}
-          onOpenChange={(open) => !open && setSwapLine(null)}
-        />
-      )}
-
-      {/* Lines Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {t("detail.lines")}
-            {sale.totalItems > 0 && ` (${sale.totalItems})`}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {sale.lines.length === 0 ? (
-            <div className="py-8 text-center">
-              <Package className="mx-auto h-10 w-10 text-muted-foreground" />
-              <p className="mt-2 text-muted-foreground">{t("form.noLines")}</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+      <section className="flex flex-col gap-3">
+        <h2 className="text-base font-semibold">
+          {t("detail.lines")}
+          {sale.totalItems > 0 ? ` (${sale.totalItems})` : ""}
+        </h2>
+        {sale.lines.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t("form.noLines")}</p>
+        ) : (
+          <>
+            <div className="hidden overflow-hidden rounded-xl border border-border bg-card lg:block">
+              <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-                    <th className="pb-3 pr-4">{t("fields.product")}</th>
-                    <th className="pb-3 pr-4">{t("fields.quantity")}</th>
-                    <th className="pb-3 pr-4">{t("fields.salePrice")}</th>
-                    <th className="pb-3 pr-4 text-right">
-                      {t("fields.lineTotal")}
-                    </th>
-                    {sale.canSwapLine && (
-                      <th className="pb-3 pl-4 text-right" />
-                    )}
+                  <tr className="bg-muted text-xs font-semibold text-muted-foreground">
+                    <th className="h-10 px-3 text-left">{t("fields.product")}</th>
+                    <th className="h-10 px-3 text-left">{t("fields.quantity")}</th>
+                    <th className="h-10 px-3 text-left">{t("fields.lineTotal")}</th>
+                    {sale.canSwapLine ? <th className="h-10 px-3" /> : null}
                   </tr>
                 </thead>
                 <tbody>
-                  {groupedLines
-                    ? groupedLines.map((group) => (
-                        <Fragment key={group.comboId ?? "__standalone__"}>
-                          {group.comboId && (
-                            <tr className="bg-primary-50/30 dark:bg-primary-900/10">
-                              <td
-                                colSpan={sale.canSwapLine ? 5 : 4}
-                                className="py-2 pr-4"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <Package className="h-4 w-4 text-primary" />
-                                  <span className="text-sm font-semibold text-primary">
-                                    {t("detail.comboGroup", {
-                                      name: group.comboName ?? group.comboId,
-                                    })}
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                          {group.lines.map((line) => (
-                            <tr key={line.id} className="border-b">
-                              <td className="py-3 pr-4">
-                                <div className="flex items-center gap-2">
-                                  <ProductReferenceThumb
-                                    productId={line.productId}
-                                    productName={line.productName}
-                                  />
-                                  <div>
-                                    <p className="font-medium">
-                                      {line.productName}
-                                    </p>
-                                    <p className="text-sm text-muted-foreground">
-                                      {line.productSku}
-                                    </p>
-                                  </div>
-                                  {group.comboId && (
-                                    <Badge
-                                      variant="info"
-                                      className="text-[10px] px-1.5 py-0"
-                                    >
-                                      {t("detail.fromCombo")}
-                                    </Badge>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="py-3 pr-4">{line.quantity}</td>
-                              <td className="py-3 pr-4">
+                  {lineGroups.map((group) => (
+                    <Fragment key={group.comboId ?? "__standalone__"}>
+                      {group.comboId ? (
+                        <tr className="border-t border-border bg-primary/5">
+                          <td
+                            colSpan={sale.canSwapLine ? 4 : 3}
+                            className="px-3 py-2 text-sm font-semibold text-primary"
+                          >
+                            {t("detail.comboGroup", {
+                              name: group.comboName ?? group.comboId,
+                            })}
+                          </td>
+                        </tr>
+                      ) : null}
+                      {group.lines.map((line) => (
+                        <tr key={line.id} className="border-t border-border">
+                          <td className="px-3 py-3">
+                            <p className="font-medium">{line.productName}</p>
+                            <p className="font-mono text-xs text-muted-foreground">
+                              <span>{line.productSku}</span>
+                              {" · "}
+                              <span>
                                 {formatCurrency(line.salePrice, line.currency)}
-                              </td>
-                              <td className="py-3 pr-4 text-right font-medium">
-                                {formatCurrency(line.totalPrice, line.currency)}
-                              </td>
-                              {sale.canSwapLine && (
-                                <td className="py-3 pl-4 text-right">
-                                  <PermissionGate
-                                    permission={PERMISSIONS.SALES_SWAP}
-                                  >
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => setSwapLine(line)}
-                                    >
-                                      <ArrowLeftRight className="mr-1 h-4 w-4" />
-                                      {t("actions.swapLine")}
-                                    </Button>
-                                  </PermissionGate>
-                                </td>
-                              )}
-                            </tr>
-                          ))}
-                        </Fragment>
-                      ))
-                    : sale.lines.map((line) => (
-                        <tr key={line.id} className="border-b">
-                          <td className="py-3 pr-4">
-                            <div className="flex items-center gap-2">
-                              <ProductReferenceThumb
-                                productId={line.productId}
-                                productName={line.productName}
-                              />
-                              <div>
-                                <p className="font-medium">{line.productName}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {line.productSku}
-                                </p>
-                              </div>
-                            </div>
+                              </span>
+                            </p>
+                            {group.comboId ? (
+                              <Badge variant="info" className="mt-1">
+                                {t("detail.fromCombo")}
+                              </Badge>
+                            ) : null}
                           </td>
-                          <td className="py-3 pr-4">{line.quantity}</td>
-                          <td className="py-3 pr-4">
-                            {formatCurrency(line.salePrice, line.currency)}
-                          </td>
-                          <td className="py-3 pr-4 text-right font-medium">
+                          <td className="px-3 py-3">{line.quantity}</td>
+                          <td className="px-3 py-3">
                             {formatCurrency(line.totalPrice, line.currency)}
                           </td>
-                          {sale.canSwapLine && (
-                            <td className="py-3 pl-4 text-right">
-                              <PermissionGate
-                                permission={PERMISSIONS.SALES_SWAP}
-                              >
+                          {sale.canSwapLine ? (
+                            <td className="px-3 py-3 text-right">
+                              <PermissionGate permission={PERMISSIONS.SALES_SWAP}>
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => setSwapLine(line)}
                                 >
-                                  <ArrowLeftRight className="mr-1 h-4 w-4" />
                                   {t("actions.swapLine")}
                                 </Button>
                               </PermissionGate>
                             </td>
-                          )}
+                          ) : null}
                         </tr>
                       ))}
+                    </Fragment>
+                  ))}
                 </tbody>
-                <tfoot>
-                  <tr className="border-t-2">
-                    <td
-                      colSpan={sale.canSwapLine ? 4 : 3}
-                      className="py-3 pr-4 text-right font-bold"
-                    >
-                      {t("fields.total")}
-                    </td>
-                    <td className="py-3 text-right text-lg font-bold">
-                      {formatCurrency(sale.totalAmount, sale.currency)}
-                    </td>
-                  </tr>
-                </tfoot>
               </table>
             </div>
-          )}
-        </CardContent>
-      </Card>
 
-      {/* Swap History */}
+            <ul className="flex flex-col gap-3 lg:hidden">
+              {lineGroups.map((group) => (
+                <Fragment key={group.comboId ?? "cards"}>
+                  {group.comboId ? (
+                    <li className="text-sm font-semibold text-primary">
+                      {t("detail.comboGroup", {
+                        name: group.comboName ?? group.comboId,
+                      })}
+                    </li>
+                  ) : null}
+                  {group.lines.map((line) => (
+                    <li
+                      key={line.id}
+                      className="rounded-xl border border-border bg-card p-3.5"
+                    >
+                      <p className="text-[15px] font-semibold">
+                        {line.productName}
+                      </p>
+                      <p className="text-[13px] text-muted-foreground">
+                        {line.quantity}
+                        {" × "}
+                        {formatCurrency(line.salePrice, line.currency)}
+                      </p>
+                      {sale.canSwapLine ? (
+                        <PermissionGate permission={PERMISSIONS.SALES_SWAP}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="mt-2 px-0"
+                            onClick={() => setSwapLine(line)}
+                          >
+                            {t("actions.swapLine")}
+                          </Button>
+                        </PermissionGate>
+                      ) : null}
+                    </li>
+                  ))}
+                </Fragment>
+              ))}
+            </ul>
+
+            <p className="text-lg font-bold">
+              {t("fields.total")}{" "}
+              <span>{formatCurrency(sale.totalAmount, sale.currency)}</span>
+            </p>
+          </>
+        )}
+      </section>
+
+      {saleReturns && saleReturns.length > 0 ? (
+        <section className="flex flex-col gap-2">
+          <h2 className="text-base font-semibold">{tReturns("title")}</h2>
+          {saleReturns.map((item) => (
+            <Link
+              key={item.id}
+              href={`/dashboard/returns/${item.id}`}
+              className="rounded-xl border border-border bg-card p-3.5"
+            >
+              <span className="font-mono text-sm font-semibold">
+                {item.returnNumber}
+              </span>
+              <span className="block text-[13px] text-muted-foreground">
+                {tReturns(
+                  `types.${item.type === "RETURN_CUSTOMER" ? "customer" : "supplier"}`,
+                )}
+                {" · "}
+                {tReturns(`status.${item.status.toLowerCase()}`)}
+              </span>
+            </Link>
+          ))}
+        </section>
+      ) : null}
+
+      {swapLine ? (
+        <SaleSwapDialog
+          saleId={sale.id}
+          saleNumber={sale.saleNumber}
+          line={swapLine}
+          saleCurrency={sale.currency}
+          open={!!swapLine}
+          onOpenChange={(open) => !open && setSwapLine(null)}
+        />
+      ) : null}
+
       <SaleSwapHistory saleId={sale.id} />
+
+      <Link
+        href="/dashboard/sales"
+        className="text-sm font-semibold text-primary"
+      >
+        {t("detail.backToList")}
+      </Link>
     </div>
+  );
+}
+
+function Field({
+  label,
+  id,
+  children,
+}: {
+  label: string;
+  id: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={id} className="text-[13px] font-semibold">
+        {label}
+      </Label>
+      {children}
+    </div>
+  );
+}
+
+function Fact({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-0.5 rounded-lg border border-border bg-card px-3.5 py-2.5">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-sm font-semibold">{children}</span>
+    </div>
+  );
+}
+
+function ConfirmDialog({
+  pending,
+  onConfirm,
+  label,
+  actionLabel,
+  title,
+  description,
+  section,
+  cancelLabel,
+  loadingLabel,
+  destructive = false,
+  outline = false,
+}: {
+  pending: boolean;
+  onConfirm: () => void;
+  label: string;
+  actionLabel?: string;
+  title: string;
+  description: string;
+  section: string;
+  cancelLabel: string;
+  loadingLabel: string;
+  destructive?: boolean;
+  outline?: boolean;
+}) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant={outline || destructive ? "outline" : "default"}
+          className={
+            destructive
+              ? "w-fit rounded-lg border-destructive text-destructive hover:bg-destructive/10"
+              : "rounded-lg"
+          }
+          disabled={pending}
+        >
+          {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          {label}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent className="rounded-2xl sm:max-w-[500px]">
+        <AlertDialogHeader>
+          <p className="text-xs font-semibold text-primary">{section}</p>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="sm:justify-start">
+          <AlertDialogCancel disabled={pending}>{cancelLabel}</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onConfirm}
+            disabled={pending}
+            className={
+              destructive
+                ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                : undefined
+            }
+          >
+            {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            {pending ? loadingLabel : (actionLabel ?? label)}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

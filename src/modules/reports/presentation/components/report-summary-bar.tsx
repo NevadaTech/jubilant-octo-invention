@@ -45,7 +45,7 @@ export function ReportSummaryBar({ summary, currency }: ReportSummaryBarProps) {
   };
 
   return (
-    <Card className="border-primary/20 bg-primary/5">
+    <Card className="rounded-xl shadow-none">
       <CardContent className="py-3">
         <div className="flex flex-wrap gap-6">
           {entries.map(([key, value]) => (

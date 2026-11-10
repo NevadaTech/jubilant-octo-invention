@@ -2,9 +2,10 @@
 
 import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Input } from "@/ui/components/input";
+import { Label } from "@/ui/components/label";
 import { FormField } from "@/ui/components/form-field";
 import { SearchableSelect } from "@/ui/components/searchable-select";
 import {
@@ -17,19 +18,25 @@ import {
 import { useCreateSkuMapping } from "@/modules/integrations/presentation/hooks/use-integrations";
 import { ProductSearchSelect } from "@/modules/inventory/presentation/components/shared/product-search-select";
 import { useCombos } from "@/modules/inventory/presentation/hooks/use-combos";
+import { cn } from "@/ui/lib/utils";
 
 interface SkuMappingFormProps {
   connectionId: string;
   defaultExternalSku?: string;
   onSuccess?: () => void;
+  onCancel?: () => void;
+  framed?: boolean;
 }
 
 export function SkuMappingForm({
   connectionId,
   defaultExternalSku,
   onSuccess,
+  onCancel,
+  framed = true,
 }: SkuMappingFormProps) {
   const t = useTranslations("integrations.skuMapping");
+  const tCommon = useTranslations("common");
   const createMapping = useCreateSkuMapping(connectionId);
   const { data: combosResult } = useCombos({ limit: 200, isActive: true });
   const combos = combosResult?.data ?? [];
@@ -95,15 +102,37 @@ export function SkuMappingForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-end gap-3 flex-wrap">
-      <FormField error={errors.externalSku} className="flex-1 min-w-[150px]">
+    <form
+      onSubmit={handleSubmit}
+      className={cn(
+        "space-y-4",
+        framed && "rounded-xl border border-border bg-card p-5",
+      )}
+    >
+      {framed ? (
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold text-foreground">{t("title")}</h3>
+          <p className="text-sm text-muted-foreground">{t("comboHint")}</p>
+        </div>
+      ) : null}
+
+      <FormField error={errors.externalSku}>
+        <Label
+          htmlFor={`external-sku-${connectionId}`}
+          className="text-[13px] font-semibold"
+        >
+          {t("externalSku")}
+        </Label>
         <Input
+          id={`external-sku-${connectionId}`}
           value={externalSku}
           onChange={(e) => setExternalSku(e.target.value)}
           placeholder={t("externalSkuPlaceholder")}
         />
       </FormField>
-      <FormField className="w-[160px]">
+
+      <FormField>
+        <Label className="text-[13px] font-semibold">{t("type")}</Label>
         <Select value={mapType} onValueChange={handleMapTypeChange}>
           <SelectTrigger>
             <SelectValue />
@@ -114,8 +143,10 @@ export function SkuMappingForm({
           </SelectContent>
         </Select>
       </FormField>
+
       {mapType === "product" ? (
-        <FormField error={errors.productId} className="flex-1 min-w-[200px]">
+        <FormField error={errors.productId}>
+          <Label className="text-[13px] font-semibold">{t("product")}</Label>
           <ProductSearchSelect
             value={productId}
             onValueChange={setProductId}
@@ -125,7 +156,8 @@ export function SkuMappingForm({
           />
         </FormField>
       ) : (
-        <FormField error={errors.comboId} className="flex-1 min-w-[200px]">
+        <FormField error={errors.comboId}>
+          <Label className="text-[13px] font-semibold">{t("typeCombo")}</Label>
           <SearchableSelect
             options={comboOptions}
             value={comboId}
@@ -136,14 +168,20 @@ export function SkuMappingForm({
           />
         </FormField>
       )}
-      <Button type="submit" size="sm" disabled={createMapping.isPending}>
-        {createMapping.isPending ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Plus className="h-4 w-4" />
-        )}
-        {t("add")}
-      </Button>
+
+      <div className="flex justify-end gap-2">
+        {onCancel ? (
+          <Button type="button" variant="outline" onClick={onCancel}>
+            {tCommon("cancel")}
+          </Button>
+        ) : null}
+        <Button type="submit" disabled={createMapping.isPending}>
+          {createMapping.isPending ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : null}
+          {t("add")}
+        </Button>
+      </div>
     </form>
   );
 }

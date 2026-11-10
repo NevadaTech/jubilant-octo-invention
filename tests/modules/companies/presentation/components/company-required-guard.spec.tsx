@@ -5,6 +5,10 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
+vi.mock("@/modules/companies/presentation/hooks/use-companies", () => ({
+  useCompanies: () => ({ data: { data: [] }, isLoading: false }),
+}));
+
 let mockSelectedCompanyId: string | null = null;
 
 vi.mock("@/modules/companies/infrastructure/store/company.store", () => ({

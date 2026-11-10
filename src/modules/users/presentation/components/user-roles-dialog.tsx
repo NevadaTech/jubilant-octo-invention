@@ -1,16 +1,15 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Shield, X, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Skeleton } from "@/ui/components/skeleton";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
+  DialogTitle,
 } from "@/ui/components/dialog";
 import {
   Select,
@@ -19,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/select";
+import { cn } from "@/ui/lib/utils";
 import { useRoles } from "@/modules/roles/presentation/hooks/use-roles";
 import {
   useAssignRole,
@@ -32,6 +32,14 @@ interface UserRolesDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+function sameIds(left: Set<string>, right: Set<string>) {
+  if (left.size !== right.size) return false;
+  for (const id of left) {
+    if (!right.has(id)) return false;
+  }
+  return true;
+}
+
 export function UserRolesDialog({
   user,
   open,
@@ -40,159 +48,208 @@ export function UserRolesDialog({
   const t = useTranslations("users");
   const tRoles = useTranslations("roles");
   const tCommon = useTranslations("common");
-
-  const displayRoleName = useCallback(
-    (name: string) =>
-      tRoles.has(`names.${name}`) ? tRoles(`names.${name}`) : name,
-    [tRoles],
-  );
-  const [selectKey, setSelectKey] = useState(0);
-  const [removingRoleId, setRemovingRoleId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  const initializedRef = useRef(false);
 
   const { data: allRoles, isLoading: loadingRoles } = useRoles();
   const assignRole = useAssignRole();
   const removeRole = useRemoveRole();
+  const isSaving = assignRole.isPending || removeRole.isPending;
 
-  const userRoleNames = user?.roles ?? [];
+  const displayRoleName = (name: string) =>
+    tRoles.has(`names.${name}`) ? tRoles(`names.${name}`) : name;
 
-  const assignedRoles = (allRoles ?? []).filter((r) =>
-    userRoleNames.includes(r.name),
+  const assignedIds = useMemo(() => {
+    if (!user || !allRoles) return new Set<string>();
+    return new Set(
+      allRoles.filter((role) => user.roles.includes(role.name)).map((role) => role.id),
+    );
+  }, [allRoles, user]);
+
+  useEffect(() => {
+    if (!open) {
+      initializedRef.current = false;
+      return;
+    }
+    if (initializedRef.current || !user || !allRoles) return;
+    setSelected(new Set(assignedIds));
+    initializedRef.current = true;
+  }, [open, user, allRoles, assignedIds]);
+
+  const assignedNames = new Set(user?.roles ?? []);
+  const rows = (allRoles ?? []).filter(
+    (role) =>
+      (role.isActive || assignedNames.has(role.name)) &&
+      (role.name !== "SYSTEM_ADMIN" || assignedNames.has(role.name)),
+  );
+  const hasAssignedRoles = (allRoles ?? []).some((role) =>
+    assignedNames.has(role.name),
   );
   const availableRoles = (allRoles ?? []).filter(
-    (r) =>
-      !userRoleNames.includes(r.name) &&
-      r.isActive &&
-      r.name !== "SYSTEM_ADMIN",
+    (role) =>
+      role.isActive &&
+      role.name !== "SYSTEM_ADMIN" &&
+      !assignedNames.has(role.name),
   );
 
-  const canRemove = userRoleNames.length > 1;
-  const isAdding = assignRole.isPending;
-  const isMutating = isAdding || removeRole.isPending;
+  const toggle = (roleId: string) => {
+    setSelected((current) => {
+      const next = new Set(current);
+      if (next.has(roleId)) {
+        if (next.size === 1) return current;
+        next.delete(roleId);
+      } else {
+        next.add(roleId);
+      }
+      return next;
+    });
+  };
 
-  const handleAdd = async (roleId: string) => {
+  const handleClose = () => {
+    if (isSaving) return;
+    onOpenChange(false);
+  };
+
+  const handleSave = async () => {
     if (!user) return;
-    setSelectKey((k) => k + 1);
     try {
-      await assignRole.mutateAsync({ userId: user.id, data: { roleId } });
+      for (const roleId of selected) {
+        if (!assignedIds.has(roleId)) {
+          await assignRole.mutateAsync({ userId: user.id, data: { roleId } });
+        }
+      }
+      for (const roleId of assignedIds) {
+        if (!selected.has(roleId)) {
+          await removeRole.mutateAsync({ userId: user.id, roleId });
+        }
+      }
+      onOpenChange(false);
     } catch {
       // Error toast handled by hook
     }
   };
 
-  const handleRemove = async (roleId: string) => {
-    if (!user || !canRemove) return;
-    setRemovingRoleId(roleId);
-    try {
-      await removeRole.mutateAsync({ userId: user.id, roleId });
-    } catch {
-      // Error toast handled by hook
-    } finally {
-      setRemovingRoleId(null);
-    }
-  };
+  const unchanged = sameIds(selected, assignedIds);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            {t("roles.title")} — {user?.fullName}
-          </DialogTitle>
-          <DialogDescription>{t("roles.description")}</DialogDescription>
-        </DialogHeader>
+    <Dialog open={open} onOpenChange={(next) => !next && handleClose()}>
+      <DialogContent className="flex max-h-[85vh] max-w-[500px] flex-col gap-2.5 overflow-hidden rounded-2xl p-5 shadow-none sm:rounded-2xl">
+        <p className="text-xs font-semibold text-primary">{t("title")}</p>
+        <DialogTitle className="text-lg font-semibold text-foreground">
+          {t("roles.title")}
+          {user ? ` — ${user.fullName}` : ""}
+        </DialogTitle>
+        <DialogDescription>
+          {user ? t("roles.prompt", { name: user.fullName }) : t("roles.description")}
+        </DialogDescription>
 
-        <div className="flex-1 overflow-y-auto space-y-4">
-          {/* Assigned roles */}
-          <div>
-            <p className="text-sm font-medium mb-2">{t("roles.assigned")}</p>
-            {loadingRoles ? (
-              <div className="space-y-2">
-                {[...Array(2)].map((_, i) => (
-                  // eslint-disable-next-line @eslint-react/no-array-index-key
-                  <Skeleton key={i} className="h-10 w-full" />
-                ))}
-              </div>
-            ) : assignedRoles.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-2">—</p>
-            ) : (
-              <div className="space-y-1">
-                {assignedRoles.map((role) => {
-                  const isRemoving = removingRoleId === role.id;
-                  return (
-                    <div
-                      key={role.id}
-                      className={`flex items-center justify-between rounded-md border px-3 py-2 transition-opacity ${isRemoving ? "opacity-50" : ""}`}
-                    >
-                      <span className="text-sm font-medium">
-                        {displayRoleName(role.name)}
-                      </span>
-                      {canRemove && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          disabled={isMutating}
-                          title={t("roles.remove")}
-                          onClick={() => handleRemove(role.id)}
-                        >
-                          {isRemoving ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <X className="h-4 w-4" />
-                          )}
-                        </Button>
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
+          {loadingRoles ? (
+            <div className="space-y-2">
+              {[0, 1, 2].map((item) => (
+                <Skeleton key={item} className="h-10 w-full" />
+              ))}
+            </div>
+          ) : (
+            <>
+              {hasAssignedRoles ? null : (
+                <p className="text-sm text-muted-foreground">{"\u2014"}</p>
+              )}
+              {rows.map((role) => {
+                const checked = selected.has(role.id);
+                return (
+                  <button
+                    key={role.id}
+                    type="button"
+                    aria-pressed={checked}
+                    disabled={isSaving}
+                    title={
+                      user &&
+                      user.roles.length > 1 &&
+                      user.roles.includes(role.name)
+                        ? t("roles.remove")
+                        : undefined
+                    }
+                    onClick={() => toggle(role.id)}
+                    className={cn(
+                      "flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left",
+                      checked ? "bg-accent" : "bg-background",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "w-6 text-xs font-semibold",
+                        checked ? "text-primary" : "text-muted-foreground",
                       )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-            {!canRemove && assignedRoles.length === 1 && (
-              <p className="text-xs text-muted-foreground mt-1">
-                {t("roles.cannotRemoveLast")}
-              </p>
-            )}
-          </div>
-
-          {/* Add role */}
-          <div>
-            <p className="text-sm font-medium mb-2">{t("roles.add")}</p>
-            {loadingRoles ? (
-              <Skeleton className="h-10 w-full" />
-            ) : availableRoles.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-2">
-                {t("roles.noRolesAvailable")}
-              </p>
-            ) : isAdding ? (
-              <div className="flex items-center gap-2 h-10 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {t("roles.assigning")}
-              </div>
-            ) : (
-              <Select key={selectKey} onValueChange={handleAdd}>
-                <SelectTrigger disabled={isMutating}>
-                  <SelectValue placeholder={t("roles.selectRole")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableRoles.map((role) => (
-                    <SelectItem key={role.id} value={role.id}>
+                    >
+                      {checked ? tCommon("yes") : tCommon("no")}
+                    </span>
+                    <span className="text-sm text-foreground">
                       {displayRoleName(role.name)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
+                    </span>
+                  </button>
+                );
+              })}
+              {availableRoles.length > 0 ? (
+                <Select
+                  onValueChange={(roleId) => {
+                    if (!user || !roleId) return;
+                    setSelected((current) => {
+                      const next = new Set(current);
+                      next.add(roleId);
+                      return next;
+                    });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("roles.add")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableRoles.map((role) => (
+                      <SelectItem key={role.id} value={role.id}>
+                        {displayRoleName(role.name)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="py-2 text-sm text-muted-foreground">
+                  {t("roles.noRolesAvailable")}
+                </p>
+              )}
+            </>
+          )}
+          {selected.size === 1 ? (
+            <p className="text-xs text-muted-foreground">
+              {t("roles.cannotRemoveLast")}
+            </p>
+          ) : null}
         </div>
 
-        <div className="pt-4 border-t flex justify-end">
+        <div className="flex justify-end gap-2 pt-1">
           <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isMutating}
+            type="button"
+            variant="secondary"
+            onClick={handleClose}
+            disabled={isSaving}
           >
             {tCommon("close")}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleClose}
+            disabled={isSaving}
+          >
+            {tCommon("cancel")}
+          </Button>
+          <Button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving || unchanged || selected.size === 0}
+          >
+            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            {isSaving ? tCommon("loading") : tCommon("save")}
           </Button>
         </div>
       </DialogContent>

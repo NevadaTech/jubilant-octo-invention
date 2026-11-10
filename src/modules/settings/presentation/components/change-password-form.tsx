@@ -40,7 +40,7 @@ export function ChangePasswordForm() {
   };
 
   return (
-    <Card className="p-6">
+    <Card className="rounded-xl p-6">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
           {t("title")}

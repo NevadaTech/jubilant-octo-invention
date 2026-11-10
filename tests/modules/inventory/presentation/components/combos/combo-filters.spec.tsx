@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
@@ -20,7 +20,7 @@ describe("ComboFilters", () => {
   });
 
   describe("rendering", () => {
-    it("Given: default filters When: rendering Then: should show name search input", () => {
+    it("Given: default filters When: rendering Then: should show name, sku and status without a click", () => {
       const onFiltersChange = vi.fn();
 
       render(
@@ -33,110 +33,11 @@ describe("ComboFilters", () => {
       expect(
         screen.getByPlaceholderText("search.namePlaceholder"),
       ).toBeInTheDocument();
-    });
-
-    it("Given: default filters When: rendering Then: should show filter button", () => {
-      const onFiltersChange = vi.fn();
-
-      render(
-        <ComboFilters
-          filters={defaultFilters}
-          onFiltersChange={onFiltersChange}
-        />,
-      );
-
-      expect(screen.getByText("filter")).toBeInTheDocument();
-    });
-
-    it("Given: no active filters When: rendering Then: should NOT show clear button", () => {
-      const onFiltersChange = vi.fn();
-
-      render(
-        <ComboFilters
-          filters={defaultFilters}
-          onFiltersChange={onFiltersChange}
-        />,
-      );
-
-      // "clear" (from tCommon('inventory.common.filters')) only shows when active filters exist
-      expect(screen.queryByText("clear")).not.toBeInTheDocument();
-    });
-
-    it("Given: active name filter When: rendering Then: should show clear button", () => {
-      const onFiltersChange = vi.fn();
-
-      render(
-        <ComboFilters
-          filters={{ ...defaultFilters, name: "Starter" }}
-          onFiltersChange={onFiltersChange}
-        />,
-      );
-
-      expect(screen.getByText("clear")).toBeInTheDocument();
-    });
-
-    it("Given: active isActive filter When: rendering Then: should show clear button", () => {
-      const onFiltersChange = vi.fn();
-
-      render(
-        <ComboFilters
-          filters={{ ...defaultFilters, isActive: true }}
-          onFiltersChange={onFiltersChange}
-        />,
-      );
-
-      expect(screen.getByText("clear")).toBeInTheDocument();
-    });
-
-    it("Given: active sku filter When: rendering Then: should show clear button", () => {
-      const onFiltersChange = vi.fn();
-
-      render(
-        <ComboFilters
-          filters={{ ...defaultFilters, sku: "COMBO" }}
-          onFiltersChange={onFiltersChange}
-        />,
-      );
-
-      expect(screen.getByText("clear")).toBeInTheDocument();
-    });
-  });
-
-  describe("toggling advanced filters", () => {
-    it("Given: filters hidden When: clicking filter button Then: should show SKU and status fields", () => {
-      const onFiltersChange = vi.fn();
-
-      render(
-        <ComboFilters
-          filters={defaultFilters}
-          onFiltersChange={onFiltersChange}
-        />,
-      );
-
-      fireEvent.click(screen.getByText("filter"));
-
       expect(
         screen.getByPlaceholderText("search.skuPlaceholder"),
       ).toBeInTheDocument();
-      expect(screen.getByText("status")).toBeInTheDocument();
-    });
-
-    it("Given: filters visible When: clicking filter again Then: should hide SKU field", () => {
-      const onFiltersChange = vi.fn();
-
-      render(
-        <ComboFilters
-          filters={defaultFilters}
-          onFiltersChange={onFiltersChange}
-        />,
-      );
-
-      fireEvent.click(screen.getByText("filter"));
-      fireEvent.click(screen.getByText("filter"));
-
-      expect(
-        screen.queryByPlaceholderText("search.skuPlaceholder"),
-      ).not.toBeInTheDocument();
+      expect(screen.getByText("fields.status")).toBeInTheDocument();
+      expect(screen.queryByText("filter")).not.toBeInTheDocument();
     });
   });
 
@@ -194,7 +95,7 @@ describe("ComboFilters", () => {
   });
 
   describe("sku search (debounced)", () => {
-    it("Given: advanced filters shown When: user types SKU Then: should call onFiltersChange with sku", () => {
+    it("Given: sku field visible When: user types SKU Then: should call onFiltersChange with sku", () => {
       const onFiltersChange = vi.fn();
 
       render(
@@ -203,7 +104,6 @@ describe("ComboFilters", () => {
           onFiltersChange={onFiltersChange}
         />,
       );
-      fireEvent.click(screen.getByText("filter"));
 
       fireEvent.change(screen.getByPlaceholderText("search.skuPlaceholder"), {
         target: { value: "COMBO" },
@@ -215,8 +115,30 @@ describe("ComboFilters", () => {
     });
   });
 
+  describe("status change", () => {
+    it("Given: status select visible When: choosing active Then: should call onFiltersChange with isActive true", () => {
+      const onFiltersChange = vi.fn();
+
+      render(
+        <ComboFilters
+          filters={defaultFilters}
+          onFiltersChange={onFiltersChange}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("combobox"));
+      fireEvent.click(screen.getByRole("option", { name: "status.active" }));
+
+      expect(onFiltersChange).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10,
+        isActive: true,
+      });
+    });
+  });
+
   describe("clear filters", () => {
-    it("Given: active filters When: clicking clear Then: should reset filters preserving limit", () => {
+    it("Given: active filters When: clearing name Then: should reset name and page while keeping the rest", () => {
       const onFiltersChange = vi.fn();
 
       render(
@@ -232,14 +154,67 @@ describe("ComboFilters", () => {
         />,
       );
 
-      fireEvent.click(screen.getByText("clear"));
+      fireEvent.change(screen.getByPlaceholderText("search.namePlaceholder"), {
+        target: { value: "" },
+      });
 
       expect(onFiltersChange).toHaveBeenCalledWith({
         page: 1,
         limit: 25,
-        isActive: undefined,
+        isActive: true,
         name: undefined,
+        sku: "SKU",
+      });
+    });
+
+    it("Given: active filters When: clearing sku Then: should reset sku and page while keeping the rest", () => {
+      const onFiltersChange = vi.fn();
+
+      render(
+        <ComboFilters
+          filters={{
+            page: 3,
+            limit: 25,
+            isActive: true,
+            name: "Starter",
+            sku: "SKU",
+          }}
+          onFiltersChange={onFiltersChange}
+        />,
+      );
+
+      fireEvent.change(screen.getByPlaceholderText("search.skuPlaceholder"), {
+        target: { value: "" },
+      });
+
+      expect(onFiltersChange).toHaveBeenCalledWith({
+        page: 1,
+        limit: 25,
+        isActive: true,
+        name: "Starter",
         sku: undefined,
+      });
+    });
+
+    it("Given: active status When: choosing all statuses Then: should reset isActive", () => {
+      const onFiltersChange = vi.fn();
+
+      render(
+        <ComboFilters
+          filters={{ ...defaultFilters, isActive: true }}
+          onFiltersChange={onFiltersChange}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("combobox"));
+      fireEvent.click(
+        screen.getByRole("option", { name: "filters.allStatuses" }),
+      );
+
+      expect(onFiltersChange).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10,
+        isActive: undefined,
       });
     });
   });

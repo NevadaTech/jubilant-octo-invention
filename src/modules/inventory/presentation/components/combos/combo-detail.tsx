@@ -3,21 +3,20 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import {
-  Layers,
-  Edit,
-  ArrowLeft,
-  Tag,
-  DollarSign,
-  Calendar,
-  Ban,
-  Loader2,
-  Warehouse,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/ui/components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
-import { Badge } from "@/ui/components/badge";
-import { ConfirmDeleteDialog } from "@/ui/components/confirm-delete-dialog";
+import { Card, CardContent } from "@/ui/components/card";
+import { PageHeader } from "@/ui/layout/page-header";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/ui/components/alert-dialog";
 import { PermissionGate } from "@/shared/presentation/components/permission-gate";
 import { PERMISSIONS } from "@/shared/domain/permissions";
 import {
@@ -25,6 +24,11 @@ import {
   useDeactivateCombo,
   useComboAvailability,
 } from "@/modules/inventory/presentation/hooks/use-combos";
+import {
+  CatalogStatus,
+  catalogPanel,
+  catalogTextAction,
+} from "../products/catalog-chrome";
 import { formatDate } from "@/lib/date";
 
 interface ComboDetailProps {
@@ -39,28 +43,17 @@ function formatCurrency(amount: number, currency = "COP"): string {
   }).format(amount);
 }
 
-function DetailItem({
-  icon: Icon,
+function FactRow({
   label,
   value,
 }: {
-  icon: React.ElementType;
   label: string;
   value: React.ReactNode;
 }) {
   return (
-    <div className="flex items-start gap-3">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
-        <Icon className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
-      </div>
-      <div>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          {label}
-        </p>
-        <div className="font-medium text-neutral-900 dark:text-neutral-100">
-          {value}
-        </div>
-      </div>
+    <div className="flex items-center justify-between gap-4">
+      <dt className="text-sm text-muted-foreground">{label}</dt>
+      <dd className="text-sm font-medium text-foreground">{value}</dd>
     </div>
   );
 }
@@ -119,13 +112,11 @@ export function ComboDetail({ comboId }: ComboDetailProps) {
       <Card>
         <CardContent className="py-8">
           <div className="text-center">
-            <Layers className="mx-auto mb-4 h-12 w-12 text-neutral-400" />
             <p className="text-destructive">
               {error?.message || t("detail.notFound")}
             </p>
             <Button asChild variant="outline" className="mt-4">
               <Link href="/dashboard/inventory/combos">
-                <ArrowLeft className="mr-2 h-4 w-4" />
                 {t("detail.backToList")}
               </Link>
             </Button>
@@ -139,224 +130,174 @@ export function ComboDetail({ comboId }: ComboDetailProps) {
     (a) => a.sku === combo.sku,
   );
 
+  const availableTotal = comboAvailability?.availability?.reduce(
+    (sum, row) => sum + row.available,
+    0,
+  );
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/dashboard/inventory/combos">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-            <Layers className="h-6 w-6 text-primary-600 dark:text-primary-400" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-              {combo.name}
-            </h1>
-            <p className="text-sm text-muted-foreground">{combo.sku}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant={combo.isActive ? "success" : "secondary"}>
-            {combo.isActive ? t("status.active") : t("status.inactive")}
-          </Badge>
-          <PermissionGate permission={PERMISSIONS.COMBOS_DELETE}>
-            {combo.isActive && (
-              <Button
-                variant="outline"
-                onClick={() => setConfirmOpen(true)}
-                disabled={deactivateCombo.isPending}
-              >
-                {deactivateCombo.isPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Ban className="mr-2 h-4 w-4" />
-                )}
-                {t("actions.deactivate")}
+    <div className="space-y-4">
+      <PageHeader
+        title={combo.name}
+        description={combo.sku}
+        action={
+          <div className="flex flex-wrap items-center gap-2">
+            <PermissionGate permission={PERMISSIONS.COMBOS_UPDATE}>
+              <Button asChild variant="outline">
+                <Link href={`/dashboard/inventory/combos/${comboId}/edit`}>
+                  {tCommon("edit")}
+                </Link>
               </Button>
-            )}
-          </PermissionGate>
-          <PermissionGate permission={PERMISSIONS.COMBOS_UPDATE}>
-            <Button asChild>
-              <Link href={`/dashboard/inventory/combos/${comboId}/edit`}>
-                <Edit className="mr-2 h-4 w-4" />
-                {tCommon("edit")}
-              </Link>
-            </Button>
-          </PermissionGate>
-        </div>
+            </PermissionGate>
+            <PermissionGate permission={PERMISSIONS.COMBOS_DELETE}>
+              {combo.isActive ? (
+                <Button
+                  variant="outline"
+                  className="text-destructive"
+                  onClick={() => setConfirmOpen(true)}
+                  disabled={deactivateCombo.isPending}
+                >
+                  {deactivateCombo.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : null}
+                  {t("actions.deactivate")}
+                </Button>
+              ) : null}
+            </PermissionGate>
+          </div>
+        }
+      />
+      <CatalogStatus tone={combo.isActive ? "success" : "muted"}>
+        {combo.isActive ? t("status.active") : t("status.inactive")}
+      </CatalogStatus>
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        <p>
+          <span>{t("fields.price")}</span>{" "}
+          <span>{formatCurrency(combo.price, combo.currency)}</span>
+        </p>
+        {availableTotal !== undefined ? (
+          <p>
+            <span>{t("fields.available")}</span> <span>{availableTotal}</span>
+          </p>
+        ) : null}
       </div>
 
-      {/* Description */}
-      {combo.description && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t("detail.description")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-neutral-600 dark:text-neutral-300">
-              {combo.description}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      {combo.description ? (
+        <section className="rounded-xl border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-foreground">
+            {t("detail.description")}
+          </h2>
+          <p className="mt-2 text-sm text-foreground">{combo.description}</p>
+        </section>
+      ) : null}
 
-      {/* Details Grid */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Pricing */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t("detail.pricing")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <DetailItem
-              icon={DollarSign}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <section className="space-y-3 rounded-xl border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-foreground">{t("detail.pricing")}</h2>
+          <dl className="space-y-3">
+            <FactRow
               label={t("fields.price")}
               value={formatCurrency(combo.price, combo.currency)}
             />
-            <DetailItem
-              icon={Tag}
-              label={t("fields.currency")}
-              value={combo.currency}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Dates */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t("detail.dates")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <DetailItem
-              icon={Calendar}
+            <FactRow label={t("fields.currency")} value={combo.currency} />
+          </dl>
+        </section>
+        <section className="space-y-3 rounded-xl border border-border bg-card p-4">
+          <h2 className="text-sm font-semibold text-foreground">{t("detail.dates")}</h2>
+          <dl className="space-y-3">
+            <FactRow
               label={t("detail.createdAt")}
               value={formatDate(combo.createdAt, locale)}
             />
-            <DetailItem
-              icon={Calendar}
+            <FactRow
               label={t("detail.updatedAt")}
               value={formatDate(combo.updatedAt, locale)}
             />
-          </CardContent>
-        </Card>
+          </dl>
+        </section>
       </div>
 
-      {/* Items Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{t("detail.items")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border text-left text-sm font-medium text-muted-foreground">
-                  <th className="px-4 py-3">{t("fields.productName")}</th>
-                  <th className="px-4 py-3">{t("fields.productSku")}</th>
-                  <th className="px-4 py-3">{t("fields.quantity")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {combo.items.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b border-neutral-200 dark:border-neutral-700"
-                  >
-                    <td className="px-4 py-3 text-sm font-medium text-foreground">
-                      {item.productName || item.productId}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground">
-                      {item.productSku || "—"}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-foreground">
-                      {item.quantity}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <section className={`${catalogPanel} p-4`}>
+        <h2 className="text-sm font-semibold text-foreground">{t("detail.items")}</h2>
+        <ul className="mt-3 divide-y divide-border">
+          {combo.items.map((item) => (
+            <li key={item.id} className="flex items-center justify-between gap-4 py-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  {item.productName || item.productId}
+                </p>
+                <p className="font-mono text-sm text-muted-foreground">
+                  {item.productSku || "—"}
+                </p>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                <span>{t("fields.quantity")}</span>{" "}
+                <span>{item.quantity}</span>
+              </p>
+            </li>
+          ))}
+        </ul>
+        <p className="text-sm text-muted-foreground">{t("detail.stockLimit")}</p>
+      </section>
+
+      <section className="space-y-3 rounded-xl border border-border bg-card p-4">
+        <h2 className="text-sm font-semibold text-foreground">{t("detail.availability")}</h2>
+        {isLoadingAvailability ? (
+          <div className="space-y-3">
+            {[...Array(2)].map((_, i) => (
+              <div
+                // eslint-disable-next-line @eslint-react/no-array-index-key
+                key={i}
+                className="h-12 animate-pulse rounded bg-muted"
+              />
+            ))}
           </div>
-        </CardContent>
-      </Card>
+        ) : comboAvailability?.availability?.length ? (
+          <ul className="divide-y divide-border">
+            {comboAvailability.availability.map((wh) => (
+              <li key={wh.warehouseId} className="flex items-center justify-between py-3">
+                <span className="text-sm text-foreground">{wh.warehouseName}</span>
+                <CatalogStatus tone={wh.available > 0 ? "success" : "danger"}>
+                  {wh.available}
+                </CatalogStatus>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground">{t("detail.noAvailability")}</p>
+        )}
+      </section>
 
-      {/* Availability Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{t("detail.availability")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoadingAvailability ? (
-            <div className="space-y-3">
-              {/* eslint-disable @eslint-react/no-array-index-key */}
-              {[...Array(2)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-12 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700"
-                />
-              ))}
-              {/* eslint-enable @eslint-react/no-array-index-key */}
-            </div>
-          ) : comboAvailability?.availability?.length ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border text-left text-sm font-medium text-muted-foreground">
-                    <th className="px-4 py-3">{t("fields.warehouse")}</th>
-                    <th className="px-4 py-3">{t("fields.available")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {comboAvailability.availability.map((wh) => (
-                    <tr
-                      key={wh.warehouseId}
-                      className="border-b border-neutral-200 dark:border-neutral-700"
-                    >
-                      <td className="px-4 py-3 text-sm text-foreground">
-                        <div className="flex items-center gap-2">
-                          <Warehouse className="h-4 w-4 text-neutral-400" />
-                          {wh.warehouseName}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={
-                            wh.available > 0
-                              ? "font-medium text-success-600 dark:text-success-400"
-                              : "font-medium text-destructive"
-                          }
-                        >
-                          {wh.available}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              {t("detail.noAvailability")}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      <Link href="/dashboard/inventory/combos" className={catalogTextAction}>
+        {t("detail.backToList")}
+      </Link>
 
-      {/* Deactivate Confirmation */}
-      <ConfirmDeleteDialog
-        open={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        onConfirm={() => {
-          deactivateCombo.mutate(comboId);
-          setConfirmOpen(false);
-        }}
-        title={t("confirm.deactivate.title")}
-        description={t("confirm.deactivate.description")}
-        isLoading={deactivateCombo.isPending}
-      />
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent className="shadow-none">
+          <AlertDialogHeader className="text-left">
+            <AlertDialogTitle>{t("confirm.deactivate.title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("confirm.deactivate.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deactivateCombo.isPending}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deactivateCombo.isPending}
+              onClick={(event) => {
+                event.preventDefault();
+                deactivateCombo.mutate(comboId);
+                setConfirmOpen(false);
+              }}
+            >
+              {t("actions.deactivate")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

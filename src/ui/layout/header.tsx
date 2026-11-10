@@ -26,11 +26,14 @@ export function DashboardHeader({ className }: DashboardHeaderProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-border bg-card px-6",
+        "sticky top-0 z-20 hidden h-16 items-center justify-between gap-4 border-b border-border bg-card px-6 lg:flex",
         className,
       )}
     >
-      <div className="flex min-w-0 items-center pl-28 lg:pl-0">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="text-[13px] text-muted-foreground">
+          {t("navigation.company")}
+        </span>
         <GlobalCompanySelector />
       </div>
 
@@ -60,7 +63,8 @@ export function DashboardHeader({ className }: DashboardHeaderProps) {
 
         <Button
           type="button"
-          variant="outline"
+          variant="link"
+          className="h-auto px-0 font-semibold"
           onClick={() => logout()}
           disabled={isLoading}
         >

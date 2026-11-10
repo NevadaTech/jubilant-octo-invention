@@ -10,7 +10,7 @@ export function MultiCompanyToggle() {
   const { multiCompanyEnabled } = useOrgSettings();
 
   return (
-    <Card>
+    <Card className="max-w-[560px] rounded-xl">
       <CardHeader>
         <CardTitle className="text-lg">{t("multiCompany.title")}</CardTitle>
       </CardHeader>
