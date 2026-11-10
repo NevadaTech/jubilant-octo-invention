@@ -348,6 +348,7 @@
         "removeTitle": "Remove the photo?",
         "removeDescription": "The product can still be sold and picked.",
         "error": "The photo could not be uploaded. The previous one stays.",
+        "loadError": "The photo could not be loaded.",
         "invalidType": "The photo must be JPEG, PNG, or WebP.",
         "tooLarge": "The photo cannot be larger than 5 MB.",
         "alt": "Photo of {name}",

@@ -3,6 +3,7 @@ import type { Product } from "@/modules/inventory/domain/entities/product.entity
 import type {
   ProductRepositoryPort,
   PaginatedResult,
+  ProductImageSource,
   ProductImageUploadResult,
 } from "@/modules/inventory/application/ports/product.repository.port";
 import type {
@@ -16,6 +17,17 @@ import type {
   ProductFilters,
 } from "@/modules/inventory/application/dto/product.dto";
 import { ProductMapper } from "@/modules/inventory/application/mappers/product.mapper";
+
+function signedProductImageUrl(body: unknown): string | null {
+  if (!body || typeof body !== "object") return null;
+  const record = body as { data?: { url?: unknown }; url?: unknown };
+  const nested = record.data?.url;
+  if (typeof nested === "string" && nested.startsWith("https://")) return nested;
+  if (typeof record.url === "string" && record.url.startsWith("https://")) {
+    return record.url;
+  }
+  return null;
+}
 
 interface ApiResponse<T> {
   data: T;
@@ -185,13 +197,28 @@ export class ProductApiAdapter implements ProductRepositoryPort {
     return ProductMapper.toDomain(dto);
   }
 
-  async fetchImage(productId: string): Promise<Blob | null> {
+  async fetchImage(productId: string): Promise<ProductImageSource | null> {
+    try {
+      const response = await apiClient.get<unknown>(
+        `${this.basePath}/${productId}/image-url`,
+      );
+      const url = signedProductImageUrl(response.data);
+      if (url) {
+        return { kind: "remote", src: url };
+      }
+    } catch (error) {
+      if (this.isNotFoundError(error)) {
+        return null;
+      }
+      throw error;
+    }
+
     try {
       const response = await apiClient.get<Blob>(
         `${this.basePath}/${productId}/image`,
         { responseType: "blob" },
       );
-      return response.data;
+      return { kind: "inline", blob: response.data };
     } catch (error) {
       if (this.isNotFoundError(error)) {
         return null;
