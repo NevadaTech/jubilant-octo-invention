@@ -478,7 +478,10 @@
       },
       "filters": {
         "lowStock": "Low Stock",
-        "allWarehouses": "All Warehouses"
+        "allWarehouses": "All Warehouses",
+        "brand": "Brand",
+        "allBrands": "All Brands",
+        "searchBrand": "Search brand..."
       },
       "pagination": {
         "showing": "Showing {from} to {to} of {total} items"

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { StockTable } from "@/modules/inventory/presentation/components/stock/stock-table";
 import { Stock } from "@/modules/inventory/domain/entities/stock.entity";
 
@@ -17,11 +17,19 @@ let mockQueryState: {
   error: Error | null;
 } = { data: undefined, isLoading: false, isError: false, error: null };
 
+const setStockFilters = vi.hoisted(() => vi.fn());
+
 vi.mock("@/modules/inventory/presentation/hooks", () => ({
   useStock: () => mockQueryState,
   useStockFilters: () => ({ page: 1, limit: 20, search: "" }),
-  useSetStockFilters: () => vi.fn(),
+  useSetStockFilters: () => setStockFilters,
   useWarehouses: () => ({ data: { data: [] } }),
+}));
+
+vi.mock("@/modules/brands/presentation/hooks/use-brands", () => ({
+  useBrands: () => ({
+    data: { data: [{ id: "brand-1", name: "Acme" }] },
+  }),
 }));
 
 vi.mock(
@@ -36,7 +44,17 @@ vi.mock("@/ui/components/sortable-header", () => ({
 }));
 
 vi.mock("@/ui/components/multi-select", () => ({
-  MultiSelect: () => <div data-testid="multi-select" />,
+  MultiSelect: ({
+    onValueChange,
+    selectedLabel,
+  }: {
+    onValueChange: (value: string[]) => void;
+    selectedLabel?: string;
+  }) => (
+    <button type="button" onClick={() => onValueChange(["brand-1"])}>
+      {selectedLabel}
+    </button>
+  ),
 }));
 
 vi.mock("@/modules/companies/infrastructure/store/company.store", () => ({
@@ -79,6 +97,7 @@ function makeStock(
 
 describe("StockTable", () => {
   beforeEach(() => {
+    setStockFilters.mockClear();
     mockQueryState = {
       data: undefined,
       isLoading: false,
@@ -492,5 +511,23 @@ describe("StockTable", () => {
 
     expect(screen.getByText("Only Barcode")).toBeDefined();
     expect(screen.getByText("7501234567890")).toBeDefined();
+  });
+
+  it("Given: a brand is selected When: the brand filter changes Then: should set brandIds and reset the page", () => {
+    mockQueryState = {
+      data: { data: [makeStock()] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+
+    render(<StockTable />);
+
+    fireEvent.click(screen.getByRole("button", { name: "filters.brand" }));
+
+    expect(setStockFilters).toHaveBeenCalledWith({
+      brandIds: ["brand-1"],
+      page: 1,
+    });
   });
 });

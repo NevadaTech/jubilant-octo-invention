@@ -83,6 +83,22 @@ describe("StockApiAdapter", () => {
       });
     });
 
+    it("Given: brandIds filter When: findAll is called Then: should pass comma-joined brandId", async () => {
+      vi.mocked(apiClient.get).mockResolvedValue({
+        data: { data: [], pagination: mockPagination },
+        status: 200,
+        headers: {},
+      });
+
+      await adapter.findAll({
+        brandIds: ["brand-1", "brand-2"],
+      });
+
+      expect(apiClient.get).toHaveBeenCalledWith("/inventory/stock", {
+        params: { brandId: "brand-1,brand-2" },
+      });
+    });
+
     it("Given: productId and lowStock filters When: findAll is called Then: should include them in params", async () => {
       vi.mocked(apiClient.get).mockResolvedValue({
         data: { data: [], pagination: mockPagination },

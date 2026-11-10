@@ -54,6 +54,7 @@ export interface StockListResponseDto {
 export interface StockFilters {
   productId?: string;
   warehouseIds?: string[];
+  brandIds?: string[];
   companyId?: string;
   search?: string;
   lowStock?: boolean;
