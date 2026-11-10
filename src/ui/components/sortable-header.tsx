@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { cn } from "@/ui/lib/utils";
 
 interface SortableHeaderProps {
   label: string;
@@ -33,7 +34,10 @@ export function SortableHeader({
 
   return (
     <th
-      className={`pb-3 pr-4 cursor-pointer select-none hover:text-foreground transition-colors ${className}`}
+      className={cn(
+        "cursor-pointer select-none pb-3 pr-4 transition-colors hover:text-foreground",
+        className,
+      )}
       onClick={handleClick}
     >
       <div className="flex items-center gap-1">
