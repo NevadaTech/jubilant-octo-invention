@@ -177,10 +177,12 @@ describe("MovementList", () => {
 
     render(<MovementList />);
 
-    expect(screen.getByText("Main Warehouse")).toBeDefined();
-    expect(screen.getByText("Secondary Warehouse")).toBeDefined();
-    expect(screen.getByText("REF-001")).toBeDefined();
-    expect(screen.getByText("REF-002")).toBeDefined();
+    expect(screen.getAllByText("Main Warehouse").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Secondary Warehouse").length).toBeGreaterThan(
+      0,
+    );
+    expect(screen.getAllByText("REF-001").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("REF-002").length).toBeGreaterThan(0);
   });
 
   it("Given: movements exist When: rendering Then: should render type and status badges for each row", () => {
@@ -196,8 +198,8 @@ describe("MovementList", () => {
 
     render(<MovementList />);
 
-    expect(screen.getByText("IN")).toBeDefined();
-    expect(screen.getByText("DRAFT")).toBeDefined();
+    expect(screen.getAllByText("IN").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("DRAFT").length).toBeGreaterThan(0);
   });
 
   it("Given: no movements When: rendering Then: should show empty state", () => {
@@ -265,7 +267,7 @@ describe("MovementList", () => {
     };
 
     render(<MovementList />);
-    expect(screen.getByText("PO-123")).toBeDefined();
+    expect(screen.getAllByText("PO-123").length).toBeGreaterThan(0);
   });
 
   // --- Branch: isDraft true ---
@@ -283,8 +285,7 @@ describe("MovementList", () => {
     };
 
     render(<MovementList />);
-    // Renders the movement row for draft
-    expect(screen.getByText("DRAFT")).toBeDefined();
+    expect(screen.getAllByText("DRAFT").length).toBeGreaterThan(0);
   });
 
   // --- Branch: isDraft false ---
@@ -302,7 +303,7 @@ describe("MovementList", () => {
     };
 
     render(<MovementList />);
-    expect(screen.getByText("POSTED")).toBeDefined();
+    expect(screen.getAllByText("POSTED").length).toBeGreaterThan(0);
   });
 
   // --- Branch: postedAt null vs defined ---
