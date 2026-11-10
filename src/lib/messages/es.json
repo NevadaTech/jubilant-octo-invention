@@ -478,7 +478,10 @@
       },
       "filters": {
         "lowStock": "Stock Bajo",
-        "allWarehouses": "Todas las Bodegas"
+        "allWarehouses": "Todas las Bodegas",
+        "brand": "Marca",
+        "allBrands": "Todas las Marcas",
+        "searchBrand": "Buscar marca..."
       },
       "pagination": {
         "showing": "Mostrando {from} a {to} de {total} items"

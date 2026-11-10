@@ -17,6 +17,7 @@ import {
   useSetStockFilters,
   useWarehouses,
 } from "@/modules/inventory/presentation/hooks";
+import { useBrands } from "@/modules/brands/presentation/hooks/use-brands";
 import type { StockFilters } from "@/modules/inventory/application/dto/stock.dto";
 import { ReorderRuleDialog } from "./reorder-rule-dialog";
 import type { Stock } from "@/modules/inventory/domain/entities/stock.entity";
@@ -219,6 +220,7 @@ export function StockTable() {
   };
 
   const { data: warehousesData } = useWarehouses({ limit: 100 });
+  const { data: brandsData } = useBrands({ isActive: true, limit: 100 });
 
   const warehouseOptions = useMemo(
     () =>
@@ -227,6 +229,15 @@ export function StockTable() {
         label: wh.name,
       })) ?? [],
     [warehousesData],
+  );
+
+  const brandOptions = useMemo(
+    () =>
+      brandsData?.data.map((brand) => ({
+        value: brand.id,
+        label: brand.name,
+      })) ?? [],
+    [brandsData],
   );
 
   const handleSort = (field: string, order: "asc" | "desc" | undefined) => {
@@ -313,7 +324,7 @@ export function StockTable() {
           }
         />
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <div className="flex flex-col gap-1 sm:col-span-2">
             <Label className="text-xs font-semibold text-muted-foreground">
               {tCommon("search")}
@@ -344,6 +355,25 @@ export function StockTable() {
               options={warehouseOptions}
               allLabel={t("filters.allWarehouses")}
               selectedLabel={t("fields.warehouse")}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label className="text-xs font-semibold text-muted-foreground">
+              {t("filters.brand")}
+            </Label>
+            <MultiSelect
+              value={filters.brandIds ?? []}
+              onValueChange={(values) =>
+                setFilters({
+                  brandIds: values.length > 0 ? values : undefined,
+                  page: 1,
+                })
+              }
+              options={brandOptions}
+              allLabel={t("filters.allBrands")}
+              selectedLabel={t("filters.brand")}
+              searchable
+              searchPlaceholder={t("filters.searchBrand")}
             />
           </div>
           <div className="flex flex-col justify-end gap-1">
