@@ -348,6 +348,7 @@
         "removeTitle": "¿Quitar la foto?",
         "removeDescription": "El producto se puede vender y picar igual.",
         "error": "No se pudo subir la foto. La anterior se mantiene.",
+        "loadError": "No se pudo cargar la foto.",
         "invalidType": "La foto debe ser JPEG, PNG o WebP.",
         "tooLarge": "La foto no puede pasar de 5 MB.",
         "alt": "Foto de {name}",

@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
 } from "@/ui/components/alert-dialog";
 import { usePermissions } from "@/modules/authentication/presentation/hooks/use-permissions";
+import { productImageViewSrc } from "@/modules/inventory/application/ports/product.repository.port";
 import {
   useDeleteProductImage,
   useProductImage,
@@ -61,8 +62,11 @@ export function ProductReferenceThumb({
   imageUrl?: string | null;
 }) {
   const t = useTranslations("inventory.products.photo");
-  const image = useProductImage(productId, imageUrl !== null);
-  const src = useObjectUrl(image.data);
+  const image = useProductImage(productId, Boolean(imageUrl));
+  const src = productImageViewSrc(
+    image.data,
+    useObjectUrl(image.data?.kind === "inline" ? image.data.blob : null),
+  );
 
   if (!imageUrl) {
     return (
@@ -103,7 +107,10 @@ export function ProductReferencePhoto({
   const image = useProductImage(productId, Boolean(imageUrl));
   const upload = useUploadProductImage();
   const remove = useDeleteProductImage();
-  const src = useObjectUrl(image.data);
+  const src = productImageViewSrc(
+    image.data,
+    useObjectUrl(image.data?.kind === "inline" ? image.data.blob : null),
+  );
   const inputRef = useRef<HTMLInputElement>(null);
   const [localError, setLocalError] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -137,7 +144,11 @@ export function ProductReferencePhoto({
           alt={t("alt", { name: productName })}
           className="size-[180px] shrink-0 rounded-xl border border-border object-cover"
         />
-      ) : imageUrl && !image.isError ? (
+      ) : imageUrl && image.isError ? (
+        <div className="flex size-[180px] shrink-0 items-center justify-center rounded-xl bg-muted px-3 text-center text-sm text-muted-foreground">
+          {t("loadError")}
+        </div>
+      ) : imageUrl ? (
         <div className="size-[180px] shrink-0 animate-pulse rounded-xl bg-muted" />
       ) : (
         <div className="flex size-[180px] shrink-0 items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
@@ -146,7 +157,7 @@ export function ProductReferencePhoto({
       )}
       <div className="space-y-3">
         <p className="text-sm text-muted-foreground">
-          {src ? t("purpose") : t("empty")}
+          {src ? t("purpose") : imageUrl && image.isError ? t("loadError") : t("empty")}
         </p>
         {localError ? (
           <p

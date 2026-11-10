@@ -13,13 +13,25 @@ export interface ProductImageUploadResult {
   updatedAt: string;
 }
 
+export type ProductImageSource =
+  | { kind: "remote"; src: string }
+  | { kind: "inline"; blob: Blob };
+
+export function productImageViewSrc(
+  source: ProductImageSource | null | undefined,
+  blobUrl: string | null,
+): string | null {
+  if (!source) return null;
+  return source.kind === "remote" ? source.src : blobUrl;
+}
+
 export interface ProductRepositoryPort {
   findAll(filters?: ProductFilters): Promise<PaginatedResult<Product>>;
   findById(id: string): Promise<Product | null>;
   lookupByCode(code: string): Promise<Product | null>;
   create(data: CreateProductDto): Promise<Product>;
   update(id: string, data: UpdateProductDto): Promise<Product>;
-  fetchImage(productId: string): Promise<Blob | null>;
+  fetchImage(productId: string): Promise<ProductImageSource | null>;
   uploadImage(productId: string, file: File): Promise<ProductImageUploadResult>;
   deleteImage(productId: string): Promise<void>;
 }

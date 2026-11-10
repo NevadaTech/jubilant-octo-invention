@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/ui/lib/utils";
+import { productImageViewSrc } from "@/modules/inventory/application/ports/product.repository.port";
 import { useProductImage } from "@/modules/inventory/presentation/hooks/use-products";
 
 function useObjectUrl(blob: Blob | null | undefined): string | null {
@@ -35,7 +36,10 @@ export function PickingLinePhoto({
   const t = useTranslations("sales.picking");
   const tPhoto = useTranslations("inventory.products.photo");
   const image = useProductImage(productId, Boolean(productId));
-  const src = useObjectUrl(image.data);
+  const src = productImageViewSrc(
+    image.data,
+    useObjectUrl(image.data?.kind === "inline" ? image.data.blob : null),
+  );
   const frame =
     size === "thumb"
       ? "size-16 shrink-0 text-xs"

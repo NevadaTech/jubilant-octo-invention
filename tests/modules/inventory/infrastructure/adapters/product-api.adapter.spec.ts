@@ -291,6 +291,52 @@ describe("ProductApiAdapter", () => {
       vi.mocked(apiClient.get).mockRejectedValue({ response: { status: 404 } });
 
       await expect(adapter.fetchImage("prod-001")).resolves.toBeNull();
+      expect(apiClient.get).toHaveBeenCalledWith(
+        "/inventory/products/prod-001/image-url",
+      );
+    });
+
+    it("Given: ImageKit signed the photo When: fetchImage is called Then: should return that url without downloading the bytes", async () => {
+      vi.mocked(apiClient.get).mockResolvedValue({
+        data: {
+          data: {
+            url: "https://ik.imagekit.io/nevada/products/org/prod-001.png?ik-s=sig",
+          },
+        },
+        status: 200,
+        headers: {},
+      });
+
+      await expect(adapter.fetchImage("prod-001")).resolves.toEqual({
+        kind: "remote",
+        src: "https://ik.imagekit.io/nevada/products/org/prod-001.png?ik-s=sig",
+      });
+      expect(apiClient.get).toHaveBeenCalledTimes(1);
+    });
+
+    it("Given: storage has no direct url When: fetchImage is called Then: should download the blob", async () => {
+      const blob = new Blob([new Uint8Array([1, 2, 3])], { type: "image/png" });
+      vi.mocked(apiClient.get)
+        .mockResolvedValueOnce({
+          data: { data: { url: null } },
+          status: 200,
+          headers: {},
+        })
+        .mockResolvedValueOnce({
+          data: blob,
+          status: 200,
+          headers: {},
+        });
+
+      await expect(adapter.fetchImage("prod-001")).resolves.toEqual({
+        kind: "inline",
+        blob,
+      });
+      expect(apiClient.get).toHaveBeenNthCalledWith(
+        2,
+        "/inventory/products/prod-001/image",
+        { responseType: "blob" },
+      );
     });
 
     it("Given: a stored photo When: deleteImage is called Then: should DELETE the photo", async () => {
