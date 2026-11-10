@@ -17,7 +17,7 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}${__impeccableLiveDev};
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob:;
+  img-src 'self' data: blob: https://ik.imagekit.io;
   font-src 'self' data:;
   connect-src 'self' ${apiUrl} *.sentry.io${__impeccableLiveDev};
   object-src 'none';
