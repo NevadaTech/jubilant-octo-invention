@@ -61,10 +61,10 @@ export function ProductReferenceThumb({
   imageUrl?: string | null;
 }) {
   const t = useTranslations("inventory.products.photo");
-  const image = useProductImage(productId, imageUrl !== null);
+  const image = useProductImage(productId, Boolean(imageUrl));
   const src = useObjectUrl(image.data);
 
-  if (!imageUrl) {
+  if (!imageUrl || image.isError) {
     return (
       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-muted px-1 text-center text-[10px] font-semibold leading-tight text-muted-foreground">
         {t("none")}
@@ -137,7 +137,11 @@ export function ProductReferencePhoto({
           alt={t("alt", { name: productName })}
           className="size-[180px] shrink-0 rounded-xl border border-border object-cover"
         />
-      ) : imageUrl && !image.isError ? (
+      ) : imageUrl && image.isError ? (
+        <div className="flex size-[180px] shrink-0 items-center justify-center rounded-xl bg-muted px-3 text-center text-sm text-muted-foreground">
+          {t("loadError")}
+        </div>
+      ) : imageUrl ? (
         <div className="size-[180px] shrink-0 animate-pulse rounded-xl bg-muted" />
       ) : (
         <div className="flex size-[180px] shrink-0 items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
@@ -146,7 +150,7 @@ export function ProductReferencePhoto({
       )}
       <div className="space-y-3">
         <p className="text-sm text-muted-foreground">
-          {src ? t("purpose") : t("empty")}
+          {src ? t("purpose") : imageUrl && image.isError ? t("loadError") : t("empty")}
         </p>
         {localError ? (
           <p

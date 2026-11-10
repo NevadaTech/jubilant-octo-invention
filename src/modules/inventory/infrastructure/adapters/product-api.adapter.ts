@@ -1,4 +1,5 @@
 import { apiClient } from "@/shared/infrastructure/http";
+import { TokenService } from "@/modules/authentication/infrastructure/services/token.service";
 import type { Product } from "@/modules/inventory/domain/entities/product.entity";
 import type {
   ProductRepositoryPort,
@@ -186,18 +187,31 @@ export class ProductApiAdapter implements ProductRepositoryPort {
   }
 
   async fetchImage(productId: string): Promise<Blob | null> {
-    try {
-      const response = await apiClient.get<Blob>(
-        `${this.basePath}/${productId}/image`,
-        { responseType: "blob" },
-      );
-      return response.data;
-    } catch (error) {
-      if (this.isNotFoundError(error)) {
-        return null;
-      }
-      throw error;
+    if (!/^[A-Za-z0-9_-]+$/.test(productId)) {
+      return null;
     }
+
+    const headers: Record<string, string> = {};
+    const accessToken = TokenService.getAccessToken();
+    const organizationSlug = TokenService.getOrganizationSlug();
+    const organizationId = TokenService.getOrganizationId();
+    const user = TokenService.getUser();
+    if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+    if (organizationSlug) headers["X-Organization-Slug"] = organizationSlug;
+    if (organizationId) headers["X-Organization-ID"] = organizationId;
+    if (user?.id) headers["X-User-ID"] = user.id;
+
+    const response = await fetch(
+      `/api/inventory/products/${productId}/image`,
+      { credentials: "include", headers },
+    );
+    if (response.status === 404) {
+      return null;
+    }
+    if (!response.ok) {
+      throw new Error(`Product image request failed: ${response.status}`);
+    }
+    return response.blob();
   }
 
   async uploadImage(

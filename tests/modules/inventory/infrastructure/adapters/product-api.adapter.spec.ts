@@ -288,9 +288,32 @@ describe("ProductApiAdapter", () => {
     });
 
     it("Given: the product has no photo When: fetchImage is called Then: should return null", async () => {
-      vi.mocked(apiClient.get).mockRejectedValue({ response: { status: 404 } });
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({ status: 404, ok: false }),
+      );
 
       await expect(adapter.fetchImage("prod-001")).resolves.toBeNull();
+      expect(fetch).toHaveBeenCalledWith(
+        "/api/inventory/products/prod-001/image",
+        expect.objectContaining({ credentials: "include" }),
+      );
+      vi.unstubAllGlobals();
+    });
+
+    it("Given: a stored photo When: fetchImage is called Then: should read the blob from the same-origin proxy", async () => {
+      const blob = new Blob([new Uint8Array([1, 2, 3])], { type: "image/png" });
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          status: 200,
+          ok: true,
+          blob: vi.fn().mockResolvedValue(blob),
+        }),
+      );
+
+      await expect(adapter.fetchImage("prod-001")).resolves.toBe(blob);
+      vi.unstubAllGlobals();
     });
 
     it("Given: a stored photo When: deleteImage is called Then: should DELETE the photo", async () => {
