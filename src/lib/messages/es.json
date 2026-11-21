@@ -187,9 +187,19 @@
       },
       "inventoryShare": {
         "title": "Dinero por producto",
-        "description": "Valor en pesos de lo que hay en stock y qué porcentaje del inventario es cada producto. Si el movimiento no tiene costo, se usa el precio de venta.",
+        "description": "Los 10 productos con más valor en stock. El porcentaje es sobre el total del inventario. Si no hay costo, se usa el precio de venta.",
         "units": "{count} unidades",
-        "other": "Otros productos",
+        "unitsLabel": "Unidades",
+        "product": "Producto",
+        "sku": "SKU",
+        "brand": "Marca",
+        "value": "Valor",
+        "share": "Porcentaje",
+        "search": "Buscar producto, SKU o marca",
+        "showing": "{shown} de {total}",
+        "noMatches": "Ningún producto coincide con la búsqueda",
+        "showMore": "Ver más",
+        "showLess": "Ver menos",
         "noData": "Todavía no hay stock valorado"
       },
       "topCombos": {
@@ -1705,6 +1715,10 @@
     "noDataDescription": "Intenta ajustar los filtros o el rango de fechas",
     "fromCache": "En caché",
     "exportFormat": "Formato de exportación",
+    "tabs": {
+      "table": "Tabla",
+      "chart": "Gráfico"
+    },
     "chart": {
       "moneyTitle": "Dinero de lo filtrado",
       "moneyDescription": "Cada barra es el valor en pesos y el porcentaje sobre el total de este reporte. Filtra por marca para ver cuánto dinero hay de una sola marca.",

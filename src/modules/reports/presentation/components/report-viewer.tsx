@@ -7,6 +7,7 @@ import { Clock, Database } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Badge } from "@/ui/components/badge";
 import { Card, CardContent } from "@/ui/components/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/components/tabs";
 import { Skeleton } from "@/ui/components/skeleton";
 import { PageHeader } from "@/ui/layout/page-header";
 import { ReportFiltersForm } from "./report-filters-form";
@@ -154,16 +155,24 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
             <ReportSummaryBar summary={report.summary} currency={currency} />
           )}
 
-          <ReportChart rows={report.rows} currency={currency} />
-
-          {/* Table */}
-          <ReportTable
-            columns={report.columns}
-            rows={report.rows}
-            locale={locale}
-            currency={currency}
-            mobileCards={stockCards}
-          />
+          <Tabs defaultValue="table">
+            <TabsList>
+              <TabsTrigger value="table">{t("tabs.table")}</TabsTrigger>
+              <TabsTrigger value="chart">{t("tabs.chart")}</TabsTrigger>
+            </TabsList>
+            <TabsContent value="table">
+              <ReportTable
+                columns={report.columns}
+                rows={report.rows}
+                locale={locale}
+                currency={currency}
+                mobileCards={stockCards}
+              />
+            </TabsContent>
+            <TabsContent value="chart">
+              <ReportChart rows={report.rows} currency={currency} />
+            </TabsContent>
+          </Tabs>
         </div>
       )}
     </div>

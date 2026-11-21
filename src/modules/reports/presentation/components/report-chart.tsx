@@ -82,11 +82,21 @@ function ChartBars({
 
 export function ReportChart({ rows, currency }: ReportChartProps) {
   const t = useTranslations("reports.chart");
+  const tReports = useTranslations("reports");
   const locale = useLocale();
   const model = buildReportChart(rows);
-  if (!model) return null;
+  if (!model) {
+    return (
+      <Card className="rounded-xl shadow-none">
+        <CardContent className="flex h-32 items-center justify-center text-sm text-muted-foreground">
+          {tReports("noData")}
+        </CardContent>
+      </Card>
+    );
+  }
 
-  const itemTitle = model.kind === "money" ? t("moneyTitle") : t("quantityTitle");
+  const itemTitle =
+    model.kind === "money" ? t("moneyTitle") : t("quantityTitle");
   const itemDescription =
     model.kind === "money" ? t("moneyDescription") : t("quantityDescription");
 
