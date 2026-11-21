@@ -113,6 +113,126 @@ export function sanitizeFilename(filename: string): string {
   return safe.replace(/\.{2,}/g, ".").slice(0, 200);
 }
 
+const MONEY_KEYS = [
+  "totalValue",
+  "stockValue",
+  "totalRevenue",
+  "revenue",
+  "totalAmount",
+  "totalCost",
+  "grossMargin",
+  "totalValueReturned",
+] as const;
+
+const QUANTITY_KEYS = [
+  "quantity",
+  "totalQuantitySold",
+  "totalItems",
+  "totalQuantityReturned",
+] as const;
+
+const ITEM_LABELS = [
+  "productName",
+  "name",
+  "sku",
+  "warehouseName",
+  "customerName",
+  "type",
+] as const;
+
+export interface ReportChartPoint {
+  label: string;
+  value: number;
+  share: number;
+  isOther?: boolean;
+}
+
+export interface ReportChartModel {
+  kind: "money" | "quantity";
+  points: ReportChartPoint[];
+  brandPoints: ReportChartPoint[] | null;
+}
+
+function numericValue(value: unknown): number {
+  const amount = Number(value);
+  return Number.isFinite(amount) ? amount : 0;
+}
+
+function firstPresentKey(
+  rows: Record<string, unknown>[],
+  keys: readonly string[],
+): string | null {
+  return keys.find((key) => rows.some((row) => numericValue(row[key]) !== 0)) ?? null;
+}
+
+function toPoints(totals: Map<string, number>): ReportChartPoint[] {
+  const sorted = [...totals.entries()].sort((a, b) => b[1] - a[1]);
+  const total = sorted.reduce((sum, [, value]) => sum + value, 0);
+  if (total <= 0) return [];
+
+  const top = sorted.slice(0, 8);
+  const rest = sorted.slice(8).reduce((sum, [, value]) => sum + value, 0);
+  const points: ReportChartPoint[] = top.map(([label, value]) => ({
+    label,
+    value,
+    share: (value / total) * 100,
+  }));
+  if (rest > 0) {
+    points.push({
+      label: "",
+      value: rest,
+      share: (rest / total) * 100,
+      isOther: true,
+    });
+  }
+  return points;
+}
+
+function aggregate(
+  rows: Record<string, unknown>[],
+  labelKey: string,
+  valueKey: string,
+): Map<string, number> {
+  const totals = new Map<string, number>();
+  for (const row of rows) {
+    const rawLabel = row[labelKey];
+    const label = typeof rawLabel === "string" ? rawLabel.trim() : "";
+    if (!label) continue;
+    totals.set(label, (totals.get(label) ?? 0) + numericValue(row[valueKey]));
+  }
+  return totals;
+}
+
+/** Groups report rows into bars with a share of the filtered total. */
+export function buildReportChart(
+  rows: Record<string, unknown>[],
+): ReportChartModel | null {
+  if (rows.length === 0) return null;
+
+  const moneyKey = firstPresentKey(rows, MONEY_KEYS);
+  const quantityKey = firstPresentKey(rows, QUANTITY_KEYS);
+  const valueKey = moneyKey ?? quantityKey;
+  if (!valueKey) return null;
+
+  const labelKey = ITEM_LABELS.find((key) =>
+    rows.some((row) => typeof row[key] === "string" && String(row[key]).trim()),
+  );
+  if (!labelKey) return null;
+
+  const points = toPoints(aggregate(rows, labelKey, valueKey));
+  if (points.length === 0) return null;
+
+  const brandPoints = moneyKey
+    ? toPoints(aggregate(rows, "brandName", moneyKey))
+    : [];
+
+  return {
+    kind: moneyKey ? "money" : "quantity",
+    points,
+    brandPoints: brandPoints.length > 1 ? brandPoints : null,
+  };
+}
+
 export function downloadBlob(blob: Blob, filename: string) {
   const safeFilename = sanitizeFilename(filename);
   const url = URL.createObjectURL(blob);

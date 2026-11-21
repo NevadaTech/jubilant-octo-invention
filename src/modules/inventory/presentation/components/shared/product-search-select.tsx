@@ -259,6 +259,7 @@ export function ProductSearchSelect({
                         <span className="text-xs text-muted-foreground">
                           {product.sku}
                           {product.barcode ? ` · ${product.barcode}` : ""}
+                          {` · Stock ${product.totalStock ?? 0}`}
                         </span>
                       </div>
                     </div>

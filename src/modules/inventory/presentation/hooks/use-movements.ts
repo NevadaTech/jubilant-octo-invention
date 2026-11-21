@@ -12,6 +12,8 @@ import type {
 } from "@/modules/inventory/application/dto/stock-movement.dto";
 import { stockKeys } from "./stock.keys";
 import { movementKeys } from "./movement.keys";
+import { productKeys } from "./product.keys";
+import { dashboardKeys } from "@/modules/dashboard/presentation/hooks/dashboard.keys";
 
 export { movementKeys } from "./movement.keys";
 
@@ -100,6 +102,8 @@ export function usePostMovement() {
       queryClient.invalidateQueries({ queryKey: movementKeys.detail(id) });
       // Also invalidate stock queries since posting affects stock levels
       queryClient.invalidateQueries({ queryKey: stockKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
       toast.success(t("messages.posted"));
     },
     onError: (error) => {
@@ -120,6 +124,8 @@ export function useVoidMovement() {
       queryClient.invalidateQueries({ queryKey: movementKeys.detail(id) });
       // Also invalidate stock queries since voiding reverses stock changes
       queryClient.invalidateQueries({ queryKey: stockKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
       toast.success(t("messages.voided"));
     },
     onError: (error) => {

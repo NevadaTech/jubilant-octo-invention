@@ -12,6 +12,7 @@ import { PageHeader } from "@/ui/layout/page-header";
 import { ReportFiltersForm } from "./report-filters-form";
 import { ReportTable } from "./report-table";
 import { ReportSummaryBar } from "./report-summary-bar";
+import { ReportChart } from "./report-chart";
 import { ReportExportButton } from "./report-export-button";
 import { useReportView } from "@/modules/reports/presentation/hooks/use-reports";
 import type {
@@ -152,6 +153,8 @@ export function ReportViewer({ type, title, description }: ReportViewerProps) {
           {report.summary && Object.keys(report.summary).length > 0 && (
             <ReportSummaryBar summary={report.summary} currency={currency} />
           )}
+
+          <ReportChart rows={report.rows} currency={currency} />
 
           {/* Table */}
           <ReportTable

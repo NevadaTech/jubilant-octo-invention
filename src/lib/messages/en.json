@@ -185,6 +185,13 @@
         "value": "Value",
         "units": "Units"
       },
+      "inventoryShare": {
+        "title": "Money by product",
+        "description": "Peso value of what is in stock and the share of inventory each product represents. When a movement has no cost, the sale price is used.",
+        "units": "{count} units",
+        "other": "Other products",
+        "noData": "No valued stock yet"
+      },
       "topCombos": {
         "title": "Top Combos",
         "description": "Best selling combos by revenue",
@@ -1698,6 +1705,15 @@
     "noDataDescription": "Try adjusting the filters or date range",
     "fromCache": "Cached",
     "exportFormat": "Export Format",
+    "chart": {
+      "moneyTitle": "Money in this view",
+      "moneyDescription": "Each bar is the peso value and its share of this report. Filter by brand to see how much money belongs to one brand.",
+      "quantityTitle": "Quantities in this view",
+      "quantityDescription": "Each bar is the quantity and its share of this report.",
+      "brandTitle": "Money by brand",
+      "brandDescription": "How much of the filtered inventory value belongs to each brand.",
+      "other": "Other"
+    },
     "categories": {
       "inventory": "Inventory",
       "sales": "Sales",
