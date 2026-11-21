@@ -116,11 +116,6 @@ export function DashboardContent() {
     <div className="space-y-4">
       <DashboardMetricsGrid metrics={metrics} />
 
-      <InventoryShareChart
-        data={metrics.inventoryShare ?? []}
-        currency={metrics.inventory.currency}
-      />
-
       <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <RecentActivityFeed
           data={metrics.recentActivity}
@@ -169,6 +164,11 @@ export function DashboardContent() {
           currency={metrics.sales.currency}
         />
       )}
+
+      <InventoryShareChart
+        data={metrics.inventoryShare ?? []}
+        currency={metrics.inventory.currency}
+      />
     </div>
   );
 }

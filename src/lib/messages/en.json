@@ -187,9 +187,19 @@
       },
       "inventoryShare": {
         "title": "Money by product",
-        "description": "Peso value of what is in stock and the share of inventory each product represents. When a movement has no cost, the sale price is used.",
+        "description": "The 10 products with the highest stock value. The percentage is each product's share of total inventory value. When there is no cost, the sale price is used.",
         "units": "{count} units",
-        "other": "Other products",
+        "unitsLabel": "Units",
+        "product": "Product",
+        "sku": "SKU",
+        "brand": "Brand",
+        "value": "Value",
+        "share": "Percent",
+        "search": "Search product, SKU or brand",
+        "showing": "{shown} of {total}",
+        "noMatches": "No product matches the search",
+        "showMore": "See more",
+        "showLess": "See less",
         "noData": "No valued stock yet"
       },
       "topCombos": {
@@ -1705,6 +1715,10 @@
     "noDataDescription": "Try adjusting the filters or date range",
     "fromCache": "Cached",
     "exportFormat": "Export Format",
+    "tabs": {
+      "table": "Table",
+      "chart": "Chart"
+    },
     "chart": {
       "moneyTitle": "Money in this view",
       "moneyDescription": "Each bar is the peso value and its share of this report. Filter by brand to see how much money belongs to one brand.",
