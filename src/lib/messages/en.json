@@ -189,17 +189,6 @@
         "title": "Money by product",
         "description": "The 10 products with the highest stock value. The percentage is each product's share of total inventory value. When there is no cost, the sale price is used.",
         "units": "{count} units",
-        "unitsLabel": "Units",
-        "product": "Product",
-        "sku": "SKU",
-        "brand": "Brand",
-        "value": "Value",
-        "share": "Percent",
-        "search": "Search product, SKU or brand",
-        "showing": "{shown} of {total}",
-        "noMatches": "No product matches the search",
-        "showMore": "See more",
-        "showLess": "See less",
         "noData": "No valued stock yet"
       },
       "topCombos": {

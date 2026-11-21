@@ -44,7 +44,7 @@ function ChartBars({
         <p className="text-sm text-muted-foreground">{description}</p>
       </CardHeader>
       <CardContent>
-        <ul className="space-y-3">
+        <ul className="max-h-[32rem] space-y-3 overflow-auto">
           {points.map((point) => {
             const label = point.isOther ? otherLabel : point.label;
             const width = Math.max(0, Math.min(point.share, 100));

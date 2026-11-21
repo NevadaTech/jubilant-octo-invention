@@ -189,17 +189,6 @@
         "title": "Dinero por producto",
         "description": "Los 10 productos con más valor en stock. El porcentaje es sobre el total del inventario. Si no hay costo, se usa el precio de venta.",
         "units": "{count} unidades",
-        "unitsLabel": "Unidades",
-        "product": "Producto",
-        "sku": "SKU",
-        "brand": "Marca",
-        "value": "Valor",
-        "share": "Porcentaje",
-        "search": "Buscar producto, SKU o marca",
-        "showing": "{shown} de {total}",
-        "noMatches": "Ningún producto coincide con la búsqueda",
-        "showMore": "Ver más",
-        "showLess": "Ver menos",
         "noData": "Todavía no hay stock valorado"
       },
       "topCombos": {
