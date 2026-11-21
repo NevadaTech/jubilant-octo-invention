@@ -130,6 +130,10 @@ vi.mock("@/modules/reports/presentation/components/report-summary-bar", () => ({
   ReportSummaryBar: () => <div data-testid="report-summary-bar" />,
 }));
 
+vi.mock("@/modules/reports/presentation/components/report-chart", () => ({
+  ReportChart: () => <div data-testid="report-chart" />,
+}));
+
 vi.mock(
   "@/modules/reports/presentation/components/report-export-button",
   () => ({

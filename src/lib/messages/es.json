@@ -185,6 +185,13 @@
         "value": "Valor",
         "units": "Unidades"
       },
+      "inventoryShare": {
+        "title": "Dinero por producto",
+        "description": "Valor en pesos de lo que hay en stock y qué porcentaje del inventario es cada producto. Si el movimiento no tiene costo, se usa el precio de venta.",
+        "units": "{count} unidades",
+        "other": "Otros productos",
+        "noData": "Todavía no hay stock valorado"
+      },
       "topCombos": {
         "title": "Top Combos",
         "description": "Combos más vendidos por ingresos",
@@ -1698,6 +1705,15 @@
     "noDataDescription": "Intenta ajustar los filtros o el rango de fechas",
     "fromCache": "En caché",
     "exportFormat": "Formato de exportación",
+    "chart": {
+      "moneyTitle": "Dinero de lo filtrado",
+      "moneyDescription": "Cada barra es el valor en pesos y el porcentaje sobre el total de este reporte. Filtra por marca para ver cuánto dinero hay de una sola marca.",
+      "quantityTitle": "Cantidades de lo filtrado",
+      "quantityDescription": "Cada barra es la cantidad y el porcentaje sobre el total de este reporte.",
+      "brandTitle": "Dinero por marca",
+      "brandDescription": "Cuánto dinero del inventario filtrado corresponde a cada marca.",
+      "other": "Otros"
+    },
     "categories": {
       "inventory": "Inventario",
       "sales": "Ventas",

@@ -6,6 +6,7 @@ import { RefreshCw } from "lucide-react";
 import { useDashboardMetrics } from "@/modules/dashboard/presentation/hooks/use-dashboard-metrics";
 import { useOrgSettings } from "@/shared/presentation/hooks/use-org-settings";
 import { DashboardMetricsGrid } from "./dashboard-metrics-grid";
+import { InventoryShareChart } from "./inventory-share-chart";
 import { StatCardSkeleton } from "./stat-card-skeleton";
 import { ChartSkeleton } from "./chart-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/card";
@@ -114,6 +115,11 @@ export function DashboardContent() {
   return (
     <div className="space-y-4">
       <DashboardMetricsGrid metrics={metrics} />
+
+      <InventoryShareChart
+        data={metrics.inventoryShare ?? []}
+        currency={metrics.inventory.currency}
+      />
 
       <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <RecentActivityFeed

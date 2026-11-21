@@ -37,6 +37,14 @@ export interface DashboardMetricsDto {
     quantity: number;
     value: number;
   }>;
+  inventoryShare?: Array<{
+    name: string;
+    sku: string;
+    brandName: string | null;
+    quantity: number;
+    value: number;
+    sharePercent: number;
+  }>;
   recentActivity: Array<{
     type: string;
     reference: string;

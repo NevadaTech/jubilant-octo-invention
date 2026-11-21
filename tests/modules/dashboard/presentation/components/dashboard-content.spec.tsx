@@ -7,6 +7,7 @@ import { DashboardContent } from "@/modules/dashboard/presentation/components/da
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string, params?: Record<string, unknown>) =>
     params ? `${key}:${JSON.stringify(params)}` : key,
+  useLocale: () => "es",
 }));
 
 const mockRefetch = vi.fn();

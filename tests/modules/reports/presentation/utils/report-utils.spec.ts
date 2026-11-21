@@ -7,6 +7,7 @@ import {
   formatCellValue,
   formatSummaryKey,
   downloadBlob,
+  buildReportChart,
 } from "@/modules/reports/presentation/utils/report-utils";
 import type { ReportTypeValue } from "@/modules/reports/application/dto/report.dto";
 
@@ -287,6 +288,34 @@ describe("report-utils", () => {
       expect(clickSpy).toHaveBeenCalledOnce();
       expect(removeChildSpy).toHaveBeenCalledWith(anchor);
       expect(revokeObjectURLSpy).toHaveBeenCalledWith("blob:mock-url");
+    });
+  });
+
+  describe("buildReportChart", () => {
+    it("Given rows of one brand, When building the chart, Then money and share are of that brand", () => {
+      const model = buildReportChart([
+        { productName: "A", brandName: "Acme", totalValue: 75 },
+        { productName: "B", brandName: "Acme", totalValue: 25 },
+      ]);
+
+      expect(model?.kind).toBe("money");
+      expect(model?.points).toEqual([
+        { label: "A", value: 75, share: 75 },
+        { label: "B", value: 25, share: 25 },
+      ]);
+      expect(model?.brandPoints).toBeNull();
+    });
+
+    it("Given several brands, When building the chart, Then brand bars show each brand's money", () => {
+      const model = buildReportChart([
+        { productName: "A", brandName: "Acme", totalValue: 60 },
+        { productName: "B", brandName: "Norte", totalValue: 40 },
+      ]);
+
+      expect(model?.brandPoints).toEqual([
+        { label: "Acme", value: 60, share: 60 },
+        { label: "Norte", value: 40, share: 40 },
+      ]);
     });
   });
 });
