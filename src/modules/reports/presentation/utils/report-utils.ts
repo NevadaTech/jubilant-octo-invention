@@ -170,22 +170,11 @@ function toPoints(totals: Map<string, number>): ReportChartPoint[] {
   const total = sorted.reduce((sum, [, value]) => sum + value, 0);
   if (total <= 0) return [];
 
-  const top = sorted.slice(0, 8);
-  const rest = sorted.slice(8).reduce((sum, [, value]) => sum + value, 0);
-  const points: ReportChartPoint[] = top.map(([label, value]) => ({
+  return sorted.map(([label, value]) => ({
     label,
     value,
     share: (value / total) * 100,
   }));
-  if (rest > 0) {
-    points.push({
-      label: "",
-      value: rest,
-      share: (rest / total) * 100,
-      isOther: true,
-    });
-  }
-  return points;
 }
 
 function aggregate(

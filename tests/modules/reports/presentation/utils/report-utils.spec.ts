@@ -317,5 +317,17 @@ describe("report-utils", () => {
         { label: "Norte", value: 40, share: 40 },
       ]);
     });
+
+    it("Given more than eight products, When building the chart, Then every product is listed", () => {
+      const rows = Array.from({ length: 9 }, (_, index) => ({
+        productName: `Product ${index + 1}`,
+        totalValue: index + 1,
+      }));
+
+      const model = buildReportChart(rows);
+
+      expect(model?.points).toHaveLength(9);
+      expect(model?.points.some((point) => point.isOther)).toBe(false);
+    });
   });
 });
