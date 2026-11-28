@@ -47,7 +47,7 @@ npm run dev
 #### `NEXT_PUBLIC_API_URL`
 
 - **Descripción:** URL base del backend API
-- **Usado en:** Todas las llamadas HTTP a la API
+- **Usado en:** Destino del proxy BFF `/api/proxy` (servidor), `server-fetch.ts` de los server components, llamadas no autenticadas de recuperacion de contraseña y `connect-src` del CSP. El cliente axios del navegador no la usa: llama a `/api/proxy/<path>` en el mismo origen.
 - **Ejemplos:**
   - `http://localhost:8080` (desarrollo local)
   - `https://api.staging.example.com` (staging)
@@ -55,7 +55,8 @@ npm run dev
 - **Tipo:** URL válida
 - **Requerido:** ✅ Sí
 - **Expuesto al navegador:** ✅ Sí (NEXT*PUBLIC*)
-- **Nota:** Si usas CORS, asegúrate que el backend acepta requests desde `NEXT_PUBLIC_APP_URL`
+- **Nota:** Las llamadas autenticadas salen del servidor Next.js (proxy), no del navegador; CORS del backend solo afecta a las llamadas no autenticadas de recuperacion de contraseña, que deben aceptarse desde `NEXT_PUBLIC_APP_URL`
+- **Nota:** Las subidas pasan por el proxy, por eso el frontend limita los archivos a 4 MB (Vercel limita el body de las funciones a ~4.5 MB)
 
 #### `NEXT_PUBLIC_API_TIMEOUT`
 

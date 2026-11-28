@@ -66,11 +66,10 @@ export class AuthApiAdapter implements AuthRepositoryPort {
     }
 
     const expiresAt = new Date(data.accessTokenExpiresAt);
-    // Refresh token is in HttpOnly cookie; access token is returned for direct backend calls
-    const tokens = Tokens.create(data.accessToken, "httponly", expiresAt);
+    // Both tokens live in HttpOnly cookies; only the expiry reaches the browser
+    const tokens = Tokens.create("httponly", "httponly", expiresAt);
 
-    // Store access token, user, and organization data
-    TokenService.setAccessToken(data.accessToken);
+    // Store user, organization data and expiry (never the token)
     TokenService.setUser(data.user);
     TokenService.setOrganizationSlug(organizationSlug);
     TokenService.setExpiresAt(data.accessTokenExpiresAt);
@@ -138,10 +137,7 @@ export class AuthApiAdapter implements AuthRepositoryPort {
     }
 
     const expiresAt = new Date(data.accessTokenExpiresAt);
-    // Store new access token and expiry
-    if (data.accessToken) {
-      TokenService.setAccessToken(data.accessToken);
-    }
+    // The refreshed token is in the HttpOnly cookie; store only the expiry
     TokenService.setExpiresAt(data.accessTokenExpiresAt);
 
     // Update stored user with latest data (including orgSettings)
@@ -152,7 +148,7 @@ export class AuthApiAdapter implements AuthRepositoryPort {
       }
     }
 
-    return Tokens.create(data.accessToken || "httponly", "httponly", expiresAt);
+    return Tokens.create("httponly", "httponly", expiresAt);
   }
 
   async requestPasswordReset(

@@ -111,31 +111,34 @@ describe("TokenService", () => {
   });
 
   describe("setTokens", () => {
-    it("Given: valid tokens When: calling setTokens Then: should store accessToken and expiry", () => {
+    it("Given: valid tokens When: calling setTokens Then: should store only the expiry, never the access token", () => {
       const expiresAt = new Date(Date.now() + 3600000).toISOString();
       TokenService.setTokens({
         accessToken: "access-tok",
         expiresAt,
       });
 
-      expect(localStorage.setItem).toHaveBeenCalledWith(
+      expect(localStorage.setItem).not.toHaveBeenCalledWith(
         ACCESS_TOKEN_KEY,
-        "access-tok",
+        expect.anything(),
       );
       expect(localStorage.setItem).toHaveBeenCalledWith(EXPIRES_KEY, expiresAt);
     });
   });
 
-  describe("setAccessToken / getAccessToken", () => {
-    it("Given: an access token When: setting and getting Then: should round-trip correctly", () => {
-      TokenService.setAccessToken("my-access-token");
-      const result = TokenService.getAccessToken();
-      expect(result).toBe("my-access-token");
+  describe("access token is never readable from JavaScript", () => {
+    it("Given: the service When: inspected Then: should expose no access-token getter or setter", () => {
+      expect("getAccessToken" in TokenService).toBe(false);
+      expect("setAccessToken" in TokenService).toBe(false);
     });
 
-    it("Given: no access token stored When: calling getAccessToken Then: should return null", () => {
-      const result = TokenService.getAccessToken();
-      expect(result).toBeNull();
+    it("Given: a token left by an older build When: calling clearLegacyAccessToken Then: should remove it from localStorage", () => {
+      localStorage.setItem(ACCESS_TOKEN_KEY, "stale-token");
+
+      TokenService.clearLegacyAccessToken();
+
+      expect(localStorage.removeItem).toHaveBeenCalledWith(ACCESS_TOKEN_KEY);
+      expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBeNull();
     });
   });
 

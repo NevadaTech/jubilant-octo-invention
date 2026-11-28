@@ -53,7 +53,7 @@ authentication/
 │   ├── adapters/
 │   │   └── auth-api.adapter.ts     # POST /auth/login, /auth/refresh, /auth/logout
 │   └── services/
-│       └── token.service.ts        # localStorage + cookies management
+│       └── token.service.ts        # Session metadata (user, org, expiry); tokens stay in HttpOnly cookies
 └── presentation/
     ├── store/
     │   └── auth.store.ts           # Zustand: user, isAuthenticated, isHydrated
@@ -500,11 +500,11 @@ Bulk data import from Excel (.xlsx) and CSV files. Supports five import types wi
 
 ### Import Types
 
-| Type      | Code        | Description                                     |
-| --------- | ----------- | ----------------------------------------------- |
-| Products  | `PRODUCTS`  | Import product catalog (SKU, name, price, etc.) |
-| Movements | `MOVEMENTS` | Import stock movements (IN/OUT/ADJUST)          |
-| Transfers | `TRANSFERS` | Import transfer records between warehouses      |
+| Type      | Code        | Description                                             |
+| --------- | ----------- | ------------------------------------------------------- |
+| Products  | `PRODUCTS`  | Import product catalog (SKU, name, price, etc.)         |
+| Movements | `MOVEMENTS` | Import stock movements (IN/OUT/ADJUST)                  |
+| Transfers | `TRANSFERS` | Import transfer records between warehouses              |
 | Sales     | `SALES`     | Import operational sales (group by invoice and confirm) |
 | Returns   | `RETURNS`   | Import return records (pending)                         |
 
@@ -515,6 +515,8 @@ Bulk data import from Excel (.xlsx) and CSV files. Supports five import types wi
 2. Review       ->  User inspects errors, corrects file if needed
 3. Execute      ->  POST /imports/execute  ->  Records created in database
 ```
+
+Import files are limited to 4 MB in the frontend: uploads go through the BFF proxy, and Vercel caps function request bodies at ~4.5 MB.
 
 **Phase 1 -- Preview**: The backend parses the file, validates each row (required fields, data types, foreign key references), and returns a preview with:
 

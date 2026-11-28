@@ -63,7 +63,8 @@ Frontend for the **Nevada Inventory System**, a multi-tenant inventory managemen
 - JWT-based login (access + refresh tokens)
 - Automatic token renewal on 401 responses
 - RBAC with 80+ granular permissions
-- HttpOnly / Secure / SameSite=Strict cookies via BFF API routes
+- HttpOnly / Secure / SameSite=Lax cookies via BFF API routes
+- Same-origin API proxy (`/api/proxy`) attaches the token server-side -- JavaScript never sees it
 - Session timeout with idle detection (15 min idle, 2 min warning dialog)
 - `<PermissionGate>` and `<RequirePermission>` components for UI-level access control
 - Sidebar navigation filtered by user permissions
@@ -123,6 +124,7 @@ Frontend for the **Nevada Inventory System**, a multi-tenant inventory managemen
 - Excel and CSV file import for bulk data loading
 - Template download for correct formatting
 - Validation and error reporting during import
+- Files up to 4 MB (Vercel caps function request bodies at ~4.5 MB)
 
 ### Administration
 
@@ -397,7 +399,7 @@ This frontend consumes the REST API from the **improved-parakeet** backend:
 
 ### Required Headers
 
-All authenticated requests include the following headers:
+Browser requests go to the same-origin BFF proxy `/api/proxy/<path>`, which reads the HttpOnly access-token cookie and forwards them to `${NEXT_PUBLIC_API_URL}/<path>`. Every authenticated request reaching the backend includes the following headers (`Authorization` is added by the proxy, never by browser code):
 
 | Header                | Description                     |
 | --------------------- | ------------------------------- |
@@ -414,8 +416,9 @@ The application implements multiple layers of security:
 
 | Layer                       | Implementation                                                                 |
 | --------------------------- | ------------------------------------------------------------------------------ |
-| **Token storage**           | HttpOnly / Secure / SameSite=Strict cookies -- no tokens in JavaScript         |
+| **Token storage**           | HttpOnly / Secure / SameSite=Lax cookies -- no tokens in JavaScript            |
 | **BFF routes**              | `src/app/api/auth/{login,refresh,logout}/route.ts` proxy authentication calls  |
+| **BFF API proxy**           | `/api/proxy/[...path]` adds Bearer server-side; CSRF check, header allow-list  |
 | **Content Security Policy** | `strict-dynamic` for scripts, `unsafe-inline` for styles (Tailwind)            |
 | **Session timeout**         | 15-minute idle detection with 2-minute warning dialog before forced logout     |
 | **Permission gates**        | `<PermissionGate>` and `<RequirePermission>` components enforce RBAC in the UI |

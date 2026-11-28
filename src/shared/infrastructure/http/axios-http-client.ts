@@ -12,10 +12,15 @@ import type {
   HttpResponse,
 } from "@/shared/application/ports/http-client.port";
 
+/** Same-origin BFF proxy that attaches the access token server-side. */
+const BFF_PROXY_BASE_URL = "/api/proxy";
+
 /**
  * Axios HTTP Client Adapter
- * Auth tokens are sent as HttpOnly cookies via the BFF proxy.
- * Organization headers are still injected from client-side storage.
+ * Requests go to the same-origin BFF proxy (`/api/proxy`), which reads the
+ * HttpOnly access-token cookie and forwards to the backend with a Bearer
+ * header. JavaScript never sees the token. Organization headers are still
+ * injected from client-side storage.
  */
 export class AxiosHttpClient implements HttpClientPort {
   private readonly instance: AxiosInstance;
@@ -23,7 +28,7 @@ export class AxiosHttpClient implements HttpClientPort {
 
   constructor(config?: HttpClientConfig) {
     this.instance = axios.create({
-      baseURL: config?.baseURL ?? env.NEXT_PUBLIC_API_URL,
+      baseURL: config?.baseURL ?? BFF_PROXY_BASE_URL,
       timeout: config?.timeout ?? env.NEXT_PUBLIC_API_TIMEOUT,
       withCredentials: true,
       headers: {
@@ -32,21 +37,17 @@ export class AxiosHttpClient implements HttpClientPort {
       },
     });
 
+    TokenService.clearLegacyAccessToken();
     this.setupInterceptors();
   }
 
   private setupInterceptors(): void {
-    // Request interceptor — add auth + org headers
+    // Request interceptor — add org headers (auth is added by the BFF proxy)
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        const accessToken = TokenService.getAccessToken();
         const organizationSlug = TokenService.getOrganizationSlug();
         const organizationId = TokenService.getOrganizationId();
         const user = TokenService.getUser();
-
-        if (accessToken) {
-          config.headers["Authorization"] = `Bearer ${accessToken}`;
-        }
 
         if (organizationSlug) {
           config.headers["X-Organization-Slug"] = organizationSlug;
@@ -126,20 +127,15 @@ export class AxiosHttpClient implements HttpClientPort {
           headers["X-Organization-Slug"] = organizationSlug;
         }
 
-        const refreshResponse = await fetch(
-          `${env.NEXT_PUBLIC_APP_URL}/api/auth/refresh`,
-          {
-            method: "POST",
-            headers,
-            credentials: "include",
-          },
-        );
+        const refreshResponse = await fetch("/api/auth/refresh", {
+          method: "POST",
+          headers,
+          credentials: "include",
+        });
 
         if (refreshResponse.ok) {
+          // The refreshed token is already in the HttpOnly cookie.
           const result = await refreshResponse.json();
-          if (result.data?.accessToken) {
-            TokenService.setAccessToken(result.data.accessToken);
-          }
           if (result.data?.accessTokenExpiresAt) {
             TokenService.setExpiresAt(result.data.accessTokenExpiresAt);
           }

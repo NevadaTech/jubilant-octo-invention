@@ -55,12 +55,11 @@ vi.mock("@/modules/authentication/infrastructure/mappers/user.mapper", () => ({
 
 // --- Helpers ---
 
-// BFF login response (refreshToken stripped, accessToken included for direct backend calls)
+// BFF login response (both tokens stay in HttpOnly cookies)
 const mockBffLoginResponse = {
   success: true,
   message: "Login successful",
   data: {
-    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock-access-token",
     user: {
       id: "user-1",
       email: "test@example.com",
@@ -116,16 +115,15 @@ describe("AuthApiAdapter", () => {
       );
     });
 
-    it("Given: successful login When: response is OK Then: should store accessToken, user, and org slug via TokenService", async () => {
-      await adapter.login({
+    it("Given: successful login When: response is OK Then: should store user, org slug and expiry but no access token", async () => {
+      const result = await adapter.login({
         organizationSlug: "acme",
         email: "test@example.com",
         password: "password123",
       });
 
-      expect(mockSetAccessToken).toHaveBeenCalledWith(
-        mockBffLoginResponse.data.accessToken,
-      );
+      expect(mockSetAccessToken).not.toHaveBeenCalled();
+      expect(result.tokens.accessToken).toBe("httponly");
       expect(mockSetUser).toHaveBeenCalledWith(mockBffLoginResponse.data.user);
       expect(mockSetOrganizationSlug).toHaveBeenCalledWith("acme");
       expect(mockSetExpiresAt).toHaveBeenCalledWith("2026-12-31T23:59:59.000Z");
@@ -247,12 +245,11 @@ describe("AuthApiAdapter", () => {
   });
 
   describe("refreshToken", () => {
-    it("Given: valid session When: refreshToken is called Then: should POST to BFF /api/auth/refresh and store new accessToken", async () => {
+    it("Given: valid session When: refreshToken is called Then: should POST to BFF /api/auth/refresh and store only the new expiry", async () => {
       mockGetOrganizationSlug.mockReturnValue("acme");
       const refreshResponse = {
         success: true,
         data: {
-          accessToken: "new-access-token",
           accessTokenExpiresAt: "2027-06-01T00:00:00.000Z",
         },
       };
@@ -273,9 +270,9 @@ describe("AuthApiAdapter", () => {
           credentials: "include",
         }),
       );
-      expect(mockSetAccessToken).toHaveBeenCalledWith("new-access-token");
+      expect(mockSetAccessToken).not.toHaveBeenCalled();
       expect(mockSetExpiresAt).toHaveBeenCalledWith("2027-06-01T00:00:00.000Z");
-      expect(tokens.accessToken).toBe("new-access-token");
+      expect(tokens.accessToken).toBe("httponly");
     });
 
     it("Given: refresh fails When: response is not OK Then: should clear session and throw", async () => {

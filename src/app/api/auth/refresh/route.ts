@@ -51,10 +51,9 @@ export async function POST(request: NextRequest) {
       data.refreshTokenExpiresAt,
     );
 
-    // Return data WITHOUT refreshToken but WITH accessToken + accessTokenExpiresAt
-    // (browser needs accessToken for direct backend API calls and the
-    // expiry timestamp to schedule proactive refresh).
-    const { refreshToken: _rt, ...rest } = data;
+    // Return the expiry (the browser schedules refresh with it) but no token:
+    // both tokens stay in HttpOnly cookies.
+    const { refreshToken: _rt, accessToken: _at, ...rest } = data;
     return NextResponse.json({
       success: true,
       data: rest,

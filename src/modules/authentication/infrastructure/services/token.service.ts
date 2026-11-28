@@ -58,7 +58,8 @@ function secureCookieFlag(): string {
 
 /**
  * TokenService — manages session metadata in localStorage.
- * Actual auth tokens are stored in HttpOnly cookies via the BFF API routes.
+ * Both auth tokens live only in HttpOnly cookies set by the BFF API routes;
+ * browser API calls go through the same-origin `/api/proxy` route.
  * This service only stores: user data, org info, and token expiry timestamp.
  */
 export class TokenService {
@@ -199,24 +200,15 @@ export class TokenService {
   }
 
   /**
-   * Access token is stored in localStorage for direct backend API calls.
-   * Refresh token is NEVER stored client-side — it lives in HttpOnly cookies.
+   * Removes an access token that older builds stored in localStorage.
+   * Tokens are never stored client-side anymore.
    */
-  static setAccessToken(token: string): void {
+  static clearLegacyAccessToken(): void {
     if (!isClient()) return;
     try {
-      localStorage.setItem(ACCESS_TOKEN_KEY, token);
-    } catch (error) {
-      logger.error("Failed to store access token:", error);
-    }
-  }
-
-  static getAccessToken(): string | null {
-    if (!isClient()) return null;
-    try {
-      return localStorage.getItem(ACCESS_TOKEN_KEY);
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
     } catch {
-      return null;
+      // Storage unavailable — nothing to clear
     }
   }
 
@@ -225,12 +217,12 @@ export class TokenService {
     return null;
   }
 
+  /** Stores only the expiry; the tokens themselves stay in HttpOnly cookies. */
   static setTokens(tokens: {
     accessToken: string;
     refreshToken?: string;
     expiresAt: string;
   }): void {
-    this.setAccessToken(tokens.accessToken);
     this.setExpiresAt(tokens.expiresAt);
   }
 
