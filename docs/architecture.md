@@ -195,13 +195,17 @@ interface PaginatedResult<T> {
 **API Adapters**: Implement ports using `apiClient` (Axios singleton):
 
 ```typescript
-// apiClient automatically adds:
-// - Authorization: Bearer {token}
+// apiClient calls the same-origin BFF proxy (baseURL: /api/proxy) and adds:
 // - X-Organization-Slug
 // - X-Organization-ID
 // - X-User-ID
-const apiClient = new AxiosHttpClient(baseURL);
+// It never sends Authorization: the proxy adds it server-side.
+const apiClient = new AxiosHttpClient();
 ```
+
+**BFF API proxy** (`src/app/api/proxy/[...path]/route.ts`, core in `src/shared/infrastructure/http/api-proxy.ts`): `/api/proxy/<path>` reads the HttpOnly `nevada_access_token` cookie and forwards the request to `${NEXT_PUBLIC_API_URL}/<path>` with `Authorization: Bearer <token>`. Only allow-listed headers are forwarded (`Accept`, `Accept-Language`, `Content-Type`, `X-Organization-Slug`, `X-Organization-ID`, `X-User-ID`, `X-API-Version`); the backend status, body, `Content-Type` and `Content-Disposition` are returned. It responds 403 to POST/PUT/PATCH/DELETE without a same-origin `Origin` header (CSRF), 400 to unsafe paths, 401 when the cookie is missing and 502 when the backend is unreachable. Server components keep using `server-fetch.ts`, which reads the cookie directly.
+
+Uploads (imports, product images) are limited to 4 MB in the frontend because Vercel caps function request bodies at ~4.5 MB.
 
 **Zustand Stores**: Module-local state (filters, modals):
 
@@ -304,8 +308,9 @@ const createProduct = useMutation({
 ```
 1. User enters org slug + email + password
 2. useLogin() -> authRepository.login()
-3. API returns: { accessToken, refreshToken, expiresAt, user }
-4. TokenService.setTokens() -> localStorage + cookie
+3. BFF /api/auth/login sets both tokens as HttpOnly cookies and returns
+   { accessTokenExpiresAt, user } (no tokens)
+4. TokenService stores user, organization and expiry in localStorage
 5. useAuthStore.login() -> updates user + isAuthenticated
 6. Router redirects to /dashboard (or callbackUrl)
 ```
@@ -314,7 +319,7 @@ const createProduct = useMutation({
 
 ```
 1. AuthHydration component -> useAuthStore.hydrate()
-2. Check if token exists and is valid
+2. Check if the stored session (expiry + user) is valid
 3. If token expires soon (<60s), perform refresh
 4. GET /users/me to fetch current user
 5. isHydrated = true (unblocks routes)
@@ -325,8 +330,8 @@ const createProduct = useMutation({
 ```
 1. Request receives 401
 2. AxiosHttpClient interceptor detects the 401
-3. POST /auth/refresh with refreshToken
-4. Updates tokens in localStorage + cookie
+3. POST /api/auth/refresh (BFF) with the HttpOnly refresh cookie
+4. BFF rotates both HttpOnly cookies; only the new expiry is stored
 5. Retries the original request
 6. If multiple simultaneous 401s, they share a single refresh
 ```
@@ -337,7 +342,7 @@ const createProduct = useMutation({
 1. Token expires or refresh fails
 2. Interceptor emits 'auth:session-expired' event
 3. AuthHydration listens for the event
-4. forceLogout() -> clears tokens + redirects to /login
+4. forceLogout() -> clears session data + redirects to /login
 5. Toast: "Your session has expired"
 ```
 
@@ -346,21 +351,21 @@ const createProduct = useMutation({
 ```typescript
 // src/modules/authentication/infrastructure/services/token.service.ts
 class TokenService {
-  static setTokens(access, refresh, expiresAt): void;
-  static getAccessToken(): string | null;
-  static getRefreshToken(): string | null;
-  static clearTokens(): void;
+  static setExpiresAt(expiresAt: string): void;
+  static isTokenAboutToExpire(thresholdMs?: number): boolean;
+  static clearSession(): void;
+  static clearLegacyAccessToken(): void;
   static setUser(user: StoredUser): void;
   static getUser(): StoredUser | null;
-  static setOrganization(org): void;
-  static getOrganization(): StoredOrg | null;
+  static setOrganizationSlug(slug: string): void;
+  static setOrganizationId(orgId: string): void;
 }
 ```
 
-Tokens are stored in:
+Token storage:
 
-- **localStorage**: for the JavaScript client
-- **Cookie**: for the Next.js middleware (`proxy.ts`)
+- **HttpOnly cookies**: access and refresh tokens, set by the BFF routes; read server-side by the API proxy, `server-fetch.ts` and the Next.js `proxy.ts`
+- **localStorage**: only user, organization and token expiry -- never a token (a legacy `nevada_access_token` key is purged)
 
 ---
 
@@ -644,6 +649,6 @@ import { cn } from '@/ui/lib/utils';
 
 **Context**: The application needs to store JWT access and refresh tokens securely in the browser.
 
-**Decision**: Tokens are stored in HttpOnly, Secure, SameSite=Strict cookies via BFF (Backend-for-Frontend) API routes (`src/app/api/auth/{login,refresh,logout}/route.ts`). The `TokenService` in localStorage only stores non-sensitive data (user profile, organization info, token expiry timestamp) -- never the tokens themselves in production.
+**Decision**: Tokens are stored in HttpOnly, Secure, SameSite=Lax cookies via BFF (Backend-for-Frontend) API routes (`src/app/api/auth/{login,refresh,logout}/route.ts`). The `TokenService` in localStorage only stores non-sensitive data (user profile, organization info, token expiry timestamp) -- never the tokens themselves. Browser API calls go through the same-origin BFF proxy (`/api/proxy/<path>`), which attaches `Authorization: Bearer` server-side.
 
-**Rationale**: HttpOnly cookies are inaccessible to JavaScript, which eliminates the most common XSS token-theft vector. The `Secure` flag ensures cookies are only sent over HTTPS. `SameSite=Strict` mitigates CSRF attacks. The BFF pattern keeps the token exchange server-side so that raw tokens never appear in client-side code. This approach is recommended by OWASP for SPAs that communicate with their own backend.
+**Rationale**: HttpOnly cookies are inaccessible to JavaScript, which eliminates the most common XSS token-theft vector. The `Secure` flag ensures cookies are only sent over HTTPS. `SameSite=Lax` plus a same-origin `Origin` check on mutating proxy requests mitigates CSRF attacks. The BFF pattern keeps the token exchange server-side so that raw tokens never appear in client-side code. This approach is recommended by OWASP for SPAs that communicate with their own backend.

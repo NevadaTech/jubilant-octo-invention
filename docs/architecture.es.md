@@ -195,13 +195,17 @@ interface PaginatedResult<T> {
 **API Adapters**: Implementan los puertos usando `apiClient` (Axios singleton):
 
 ```typescript
-// apiClient agrega automaticamente:
-// - Authorization: Bearer {token}
+// apiClient llama al proxy BFF del mismo origen (baseURL: /api/proxy) y agrega:
 // - X-Organization-Slug
 // - X-Organization-ID
 // - X-User-ID
-const apiClient = new AxiosHttpClient(baseURL);
+// Nunca envia Authorization: el proxy lo agrega del lado del servidor.
+const apiClient = new AxiosHttpClient();
 ```
+
+**Proxy BFF de la API** (`src/app/api/proxy/[...path]/route.ts`, nucleo en `src/shared/infrastructure/http/api-proxy.ts`): `/api/proxy/<path>` lee la cookie HttpOnly `nevada_access_token` y reenvia la request a `${NEXT_PUBLIC_API_URL}/<path>` con `Authorization: Bearer <token>`. Solo reenvia headers permitidos (`Accept`, `Accept-Language`, `Content-Type`, `X-Organization-Slug`, `X-Organization-ID`, `X-User-ID`, `X-API-Version`) y devuelve el status, body, `Content-Type` y `Content-Disposition` del backend. Responde 403 a POST/PUT/PATCH/DELETE sin header `Origin` del mismo origen (CSRF), 400 a rutas inseguras, 401 si falta la cookie y 502 si el backend no responde. Los server components siguen usando `server-fetch.ts`, que lee la cookie directamente.
+
+Las subidas de archivos (importaciones, imagenes de productos) se limitan a 4 MB en el frontend porque Vercel limita el body de las funciones a ~4.5 MB.
 
 **Zustand Stores**: Estado local de cada modulo (filtros, modals):
 
@@ -304,8 +308,9 @@ const createProduct = useMutation({
 ```
 1. Usuario ingresa org slug + email + password
 2. useLogin() -> authRepository.login()
-3. API retorna: { accessToken, refreshToken, expiresAt, user }
-4. TokenService.setTokens() -> localStorage + cookie
+3. BFF /api/auth/login guarda ambos tokens en cookies HttpOnly y retorna
+   { accessTokenExpiresAt, user } (sin tokens)
+4. TokenService guarda usuario, organizacion y expiracion en localStorage
 5. useAuthStore.login() -> actualiza user + isAuthenticated
 6. Router redirige a /dashboard (o callbackUrl)
 ```
@@ -314,7 +319,7 @@ const createProduct = useMutation({
 
 ```
 1. AuthHydration component -> useAuthStore.hydrate()
-2. Verificar si existe token y es valido
+2. Verificar si la sesion guardada (expiracion + usuario) es valida
 3. Si el token expira pronto (<60s), hacer refresh
 4. GET /users/me para obtener usuario actual
 5. isHydrated = true (desbloquea las rutas)
@@ -325,8 +330,8 @@ const createProduct = useMutation({
 ```
 1. Request recibe 401
 2. Interceptor de AxiosHttpClient detecta el 401
-3. POST /auth/refresh con refreshToken
-4. Actualiza tokens en localStorage + cookie
+3. POST /api/auth/refresh (BFF) con la cookie HttpOnly de refresh
+4. El BFF rota ambas cookies HttpOnly; solo se guarda la nueva expiracion
 5. Reintenta la request original
 6. Si multiples 401s simultaneos, comparten un solo refresh
 ```
@@ -337,7 +342,7 @@ const createProduct = useMutation({
 1. Token expira o refresh falla
 2. Interceptor emite evento 'auth:session-expired'
 3. AuthHydration escucha el evento
-4. forceLogout() -> limpia tokens + redirige a /login
+4. forceLogout() -> limpia datos de sesion + redirige a /login
 5. Toast: "Tu sesion ha expirado"
 ```
 
@@ -346,21 +351,21 @@ const createProduct = useMutation({
 ```typescript
 // src/modules/authentication/infrastructure/services/token.service.ts
 class TokenService {
-  static setTokens(access, refresh, expiresAt): void;
-  static getAccessToken(): string | null;
-  static getRefreshToken(): string | null;
-  static clearTokens(): void;
+  static setExpiresAt(expiresAt: string): void;
+  static isTokenAboutToExpire(thresholdMs?: number): boolean;
+  static clearSession(): void;
+  static clearLegacyAccessToken(): void;
   static setUser(user: StoredUser): void;
   static getUser(): StoredUser | null;
-  static setOrganization(org): void;
-  static getOrganization(): StoredOrg | null;
+  static setOrganizationSlug(slug: string): void;
+  static setOrganizationId(orgId: string): void;
 }
 ```
 
-Los tokens se almacenan en:
+Almacenamiento de tokens:
 
-- **localStorage**: para el cliente JavaScript
-- **Cookie**: para el middleware de Next.js (`proxy.ts`)
+- **Cookies HttpOnly**: access y refresh token, creadas por las rutas BFF; las leen del lado del servidor el proxy de la API, `server-fetch.ts` y el `proxy.ts` de Next.js
+- **localStorage**: solo usuario, organizacion y expiracion del token -- nunca un token (se elimina la clave heredada `nevada_access_token`)
 
 ---
 
@@ -644,6 +649,6 @@ import { cn } from '@/ui/lib/utils';
 
 **Contexto**: La aplicacion necesita almacenar tokens JWT de acceso y refresco de forma segura en el navegador.
 
-**Decision**: Los tokens se almacenan en cookies HttpOnly, Secure, SameSite=Strict a traves de rutas BFF (Backend-for-Frontend) de la API (`src/app/api/auth/{login,refresh,logout}/route.ts`). El `TokenService` en localStorage solo almacena datos no sensibles (perfil de usuario, informacion de organizacion, timestamp de expiracion del token) -- nunca los tokens en si mismos en produccion.
+**Decision**: Los tokens se almacenan en cookies HttpOnly, Secure, SameSite=Lax a traves de rutas BFF (Backend-for-Frontend) de la API (`src/app/api/auth/{login,refresh,logout}/route.ts`). El `TokenService` en localStorage solo almacena datos no sensibles (perfil de usuario, informacion de organizacion, timestamp de expiracion del token) -- nunca los tokens en si mismos. Las llamadas a la API desde el navegador pasan por el proxy BFF del mismo origen (`/api/proxy/<path>`), que agrega `Authorization: Bearer` del lado del servidor.
 
-**Justificacion**: Las cookies HttpOnly son inaccesibles para JavaScript, lo cual elimina el vector mas comun de robo de tokens por XSS. El flag `Secure` asegura que las cookies solo se envien sobre HTTPS. `SameSite=Strict` mitiga ataques CSRF. El patron BFF mantiene el intercambio de tokens del lado del servidor para que los tokens crudos nunca aparezcan en el codigo del lado del cliente. Este enfoque es recomendado por OWASP para SPAs que se comunican con su propio backend.
+**Justificacion**: Las cookies HttpOnly son inaccesibles para JavaScript, lo cual elimina el vector mas comun de robo de tokens por XSS. El flag `Secure` asegura que las cookies solo se envien sobre HTTPS. `SameSite=Lax` junto con el chequeo de `Origin` del mismo origen en las requests mutantes del proxy mitiga ataques CSRF. El patron BFF mantiene el intercambio de tokens del lado del servidor para que los tokens crudos nunca aparezcan en el codigo del lado del cliente. Este enfoque es recomendado por OWASP para SPAs que se comunican con su propio backend.

@@ -31,8 +31,9 @@ export async function POST(request: NextRequest) {
       ...rest
     } = result.data;
 
-    // Store refresh token in HttpOnly cookie (protected from JS access)
-    // Access token is returned to the browser for API requests to the backend
+    // Both tokens live only in HttpOnly cookies (protected from JS access).
+    // Browser API calls go through the same-origin /api/proxy route, which
+    // reads the access-token cookie server-side.
     // Cookie maxAge is derived from the backend-issued expiry timestamps so
     // the browser keeps the cookies alive exactly as long as the JWT is valid.
     await setAuthCookies(
@@ -42,11 +43,10 @@ export async function POST(request: NextRequest) {
       refreshTokenExpiresAt,
     );
 
-    // Return data WITH accessToken + accessTokenExpiresAt (needed by the
-    // browser TokenService to schedule refresh) but WITHOUT refreshToken.
+    // Return the expiry (the browser schedules refresh with it) but no token.
     return NextResponse.json({
       ...result,
-      data: { ...rest, accessToken, accessTokenExpiresAt },
+      data: { ...rest, accessTokenExpiresAt },
     });
   } catch {
     return NextResponse.json(

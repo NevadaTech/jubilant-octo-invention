@@ -66,6 +66,7 @@ Frontend del **Nevada Inventory System**, un sistema de gestion de inventarios m
 - Renovacion automatica de tokens en respuestas 401
 - RBAC con 80+ permisos granulares y componentes `<PermissionGate>` y `<RequirePermission>`
 - Rutas BFF (Backend For Frontend) para manejo seguro de cookies
+- Proxy de API del mismo origen (`/api/proxy`) que agrega el token del lado del servidor -- JavaScript nunca lo ve
 - Timeout de sesion: 15 minutos de inactividad con ventana de advertencia de 2 minutos
 - Content Security Policy con `strict-dynamic`
 - Sidebar filtrado por permisos del usuario
@@ -130,6 +131,7 @@ Frontend del **Nevada Inventory System**, un sistema de gestion de inventarios m
 - Importacion masiva desde archivos Excel (.xlsx) y CSV
 - Plantillas descargables por tipo de entidad
 - Validacion previa con reporte de errores
+- Archivos de hasta 4 MB (Vercel limita el body de las funciones a ~4.5 MB)
 - Soporte para productos, categorias, bodegas, contactos y mas
 
 ### Administracion
@@ -410,7 +412,7 @@ Este frontend consume la API REST del backend **improved-parakeet**:
 
 ### Headers Requeridos
 
-Todas las peticiones autenticadas incluyen:
+Las peticiones del navegador van al proxy BFF del mismo origen `/api/proxy/<path>`, que lee la cookie HttpOnly del access token y las reenvia a `${NEXT_PUBLIC_API_URL}/<path>`. Toda peticion autenticada que llega al backend incluye (`Authorization` lo agrega el proxy, nunca el codigo del navegador):
 
 | Header                | Descripcion                    |
 | --------------------- | ------------------------------ |
@@ -438,11 +440,13 @@ La aplicacion implementa multiples capas de seguridad:
 
 ### Cookies HttpOnly
 
-Los tokens JWT (access y refresh) se almacenan exclusivamente en cookies HttpOnly/Secure/SameSite=Strict. Ningun token es accesible desde JavaScript del lado del cliente.
+Los tokens JWT (access y refresh) se almacenan exclusivamente en cookies HttpOnly/Secure/SameSite=Lax. Ningun token es accesible desde JavaScript del lado del cliente.
 
 ### Rutas BFF (Backend For Frontend)
 
 Las operaciones de autenticacion pasan por rutas API internas de Next.js (`src/app/api/auth/`) que gestionan las cookies de forma segura en el servidor.
+
+El resto de llamadas a la API pasan por el proxy `/api/proxy/[...path]`, que lee la cookie HttpOnly y agrega `Authorization: Bearer` del lado del servidor. Solo reenvia headers permitidos y rechaza con 403 las mutaciones (POST/PUT/PATCH/DELETE) sin header `Origin` del mismo origen (CSRF).
 
 ### Content Security Policy
 

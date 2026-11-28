@@ -28,6 +28,7 @@ const { mockAxiosInstance, mockTokenService } = vi.hoisted(() => {
     clearTokens: vi.fn(),
     hasValidToken: vi.fn(),
     hasValidSession: vi.fn(),
+    clearLegacyAccessToken: vi.fn(),
   };
 
   return { mockAxiosInstance, mockTokenService };
@@ -89,10 +90,10 @@ describe("AxiosHttpClient", () => {
   // ── Construction ────────────────────────────────────────────────────
 
   describe("constructor", () => {
-    it("Given: no custom config When: creating a client Then: should create an axios instance with env defaults and withCredentials", () => {
+    it("Given: no custom config When: creating a client Then: should target the same-origin BFF proxy with withCredentials", () => {
       expect(axios.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          baseURL: "http://localhost:8080",
+          baseURL: "/api/proxy",
           timeout: 30000,
           withCredentials: true,
           headers: expect.objectContaining({
@@ -120,6 +121,10 @@ describe("AxiosHttpClient", () => {
           }),
         }),
       );
+    });
+
+    it("Given: client creation When: constructed Then: should purge any access token left in localStorage by older builds", () => {
+      expect(mockTokenService.clearLegacyAccessToken).toHaveBeenCalled();
     });
 
     it("Given: client creation When: interceptors are set up Then: should register both request and response interceptors", () => {
@@ -233,7 +238,7 @@ describe("AxiosHttpClient", () => {
   // ── Request interceptor (auth + org headers) ──────────────────────
 
   describe("request interceptor", () => {
-    it("Given: access token and org data When: a request is intercepted Then: should inject Authorization and org headers", () => {
+    it("Given: org data When: a request is intercepted Then: should inject org headers and never an Authorization header", () => {
       mockTokenService.getAccessToken.mockReturnValue("my-access-token");
       mockTokenService.getOrganizationSlug.mockReturnValue("acme-corp");
       mockTokenService.getOrganizationId.mockReturnValue("org-123");
@@ -243,7 +248,8 @@ describe("AxiosHttpClient", () => {
       const config = { headers: {} as Record<string, string> };
       const result = interceptor(config) as { headers: Record<string, string> };
 
-      expect(result.headers.Authorization).toBe("Bearer my-access-token");
+      expect(result.headers.Authorization).toBeUndefined();
+      expect(mockTokenService.getAccessToken).not.toHaveBeenCalled();
       expect(result.headers["X-Organization-Slug"]).toBe("acme-corp");
       expect(result.headers["X-Organization-ID"]).toBe("org-123");
       expect(result.headers["X-User-ID"]).toBe("user-1");
@@ -439,9 +445,10 @@ describe("AxiosHttpClient", () => {
         // May reject depending on mock setup
       }
 
-      // The refresh endpoint should have been called
+      // The refresh endpoint is same-origin (relative) so the cookie lands on
+      // the origin the user is on (preview deployments, www vs apex)
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/auth/refresh"),
+        "/api/auth/refresh",
         expect.objectContaining({ method: "POST", credentials: "include" }),
       );
     });
@@ -541,7 +548,7 @@ describe("AxiosHttpClient", () => {
       );
     });
 
-    it("Given: refresh succeeds with accessToken and expiresAt When: handling 401 Then: should store both values", async () => {
+    it("Given: refresh succeeds with expiresAt When: handling 401 Then: should store only the expiry, never a token", async () => {
       const mockFetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () =>
@@ -570,15 +577,13 @@ describe("AxiosHttpClient", () => {
         // may reject
       }
 
-      expect(mockTokenService.setAccessToken).toHaveBeenCalledWith(
-        "fresh-token",
-      );
+      expect(mockTokenService.setAccessToken).not.toHaveBeenCalled();
       expect(mockTokenService.setExpiresAt).toHaveBeenCalledWith(
         "2026-12-31T23:59:59Z",
       );
     });
 
-    it("Given: refresh succeeds with only accessToken (no expiresAt) When: handling 401 Then: should only store accessToken", async () => {
+    it("Given: refresh succeeds without expiresAt When: handling 401 Then: should store nothing", async () => {
       const mockFetch = vi.fn().mockResolvedValue({
         ok: true,
         json: () =>
@@ -603,9 +608,7 @@ describe("AxiosHttpClient", () => {
         // may reject
       }
 
-      expect(mockTokenService.setAccessToken).toHaveBeenCalledWith(
-        "another-token",
-      );
+      expect(mockTokenService.setAccessToken).not.toHaveBeenCalled();
       expect(mockTokenService.setExpiresAt).not.toHaveBeenCalled();
     });
 

@@ -356,7 +356,7 @@
         "error": "The photo could not be uploaded. The previous one stays.",
         "loadError": "The photo could not be loaded.",
         "invalidType": "The photo must be JPEG, PNG, or WebP.",
-        "tooLarge": "The photo cannot be larger than 5 MB.",
+        "tooLarge": "The photo cannot be larger than 4 MB.",
         "alt": "Photo of {name}",
         "uploaded": "Photo updated",
         "removed": "Photo removed"
@@ -2366,7 +2366,7 @@
       "selectedFile": "Selected file",
       "fileSize": "Size",
       "removeFile": "Remove file",
-      "maxSize": "Maximum file size: 10MB",
+      "maxSize": "Maximum file size: 4MB",
       "acceptedFormats": "Accepted formats: CSV, XLSX, XLS"
     },
     "preview": {
@@ -2402,7 +2402,7 @@
       "FAILED": "Failed"
     },
     "errors": {
-      "fileTooLarge": "File size exceeds 10MB limit",
+      "fileTooLarge": "File size exceeds 4MB limit",
       "invalidFileType": "Invalid file type. Accepted: CSV, XLSX, XLS",
       "noFile": "Please select a file",
       "importFailed": "Import failed: {error}"

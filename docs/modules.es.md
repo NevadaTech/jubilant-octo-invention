@@ -53,7 +53,7 @@ authentication/
 │   ├── adapters/
 │   │   └── auth-api.adapter.ts     # POST /auth/login, /auth/refresh, /auth/logout
 │   └── services/
-│       └── token.service.ts        # localStorage + cookies management
+│       └── token.service.ts        # Metadatos de sesion (usuario, org, expiracion); tokens en cookies HttpOnly
 └── presentation/
     ├── store/
     │   └── auth.store.ts           # Zustand: user, isAuthenticated, isHydrated
@@ -515,6 +515,8 @@ Importacion masiva de datos desde archivos Excel (.xlsx) y CSV. Soporta cinco ti
 2. Revisar        ->  El usuario inspecciona errores, corrige el archivo si es necesario
 3. Ejecutar       ->  POST /imports/execute  ->  Registros creados en la base de datos
 ```
+
+Los archivos de importacion se limitan a 4 MB en el frontend: las subidas pasan por el proxy BFF y Vercel limita el body de las funciones a ~4.5 MB.
 
 **Fase 1 -- Vista previa**: El backend parsea el archivo, valida cada fila (campos requeridos, tipos de datos, referencias de claves foraneas) y retorna una vista previa con:
 

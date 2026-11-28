@@ -21,8 +21,8 @@ import {
   useUploadProductImage,
 } from "@/modules/inventory/presentation/hooks/use-products";
 import { PERMISSIONS } from "@/shared/domain/permissions";
+import { MAX_UPLOAD_BYTES } from "@/shared/domain/upload-limits";
 
-const MAX_PRODUCT_IMAGE_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 function useObjectUrl(blob: Blob | null | undefined): string | null {
@@ -121,7 +121,7 @@ export function ProductReferencePhoto({
       setLocalError(t("invalidType"));
       return;
     }
-    if (file.size > MAX_PRODUCT_IMAGE_BYTES) {
+    if (file.size > MAX_UPLOAD_BYTES) {
       setLocalError(t("tooLarge"));
       return;
     }

@@ -356,7 +356,7 @@
         "error": "No se pudo subir la foto. La anterior se mantiene.",
         "loadError": "No se pudo cargar la foto.",
         "invalidType": "La foto debe ser JPEG, PNG o WebP.",
-        "tooLarge": "La foto no puede pasar de 5 MB.",
+        "tooLarge": "La foto no puede pasar de 4 MB.",
         "alt": "Foto de {name}",
         "uploaded": "Foto actualizada",
         "removed": "Foto quitada"
@@ -2366,7 +2366,7 @@
       "selectedFile": "Archivo seleccionado",
       "fileSize": "Tamano",
       "removeFile": "Eliminar archivo",
-      "maxSize": "Tamano maximo de archivo: 10MB",
+      "maxSize": "Tamano maximo de archivo: 4MB",
       "acceptedFormats": "Formatos aceptados: CSV, XLSX, XLS"
     },
     "preview": {
@@ -2402,7 +2402,7 @@
       "FAILED": "Fallido"
     },
     "errors": {
-      "fileTooLarge": "El archivo excede el limite de 10MB",
+      "fileTooLarge": "El archivo excede el limite de 4MB",
       "invalidFileType": "Tipo de archivo invalido. Aceptados: CSV, XLSX, XLS",
       "noFile": "Por favor selecciona un archivo",
       "importFailed": "La importacion fallo: {error}"
