@@ -6,7 +6,7 @@ import {
 
 describe("Import Schemas", () => {
   describe("importFileSchema", () => {
-    it("Given: a valid CSV file under 10MB When: parsing Then: should pass validation", () => {
+    it("Given: a valid CSV file under 4MB When: parsing Then: should pass validation", () => {
       const file = new File(["csv content"], "data.csv", { type: "text/csv" });
 
       const result = importFileSchema.safeParse({ file });
@@ -34,8 +34,17 @@ describe("Import Schemas", () => {
       expect(result.success).toBe(true);
     });
 
-    it("Given: a file exceeding 10MB When: parsing Then: should fail validation", () => {
-      const bigContent = new Uint8Array(11 * 1024 * 1024);
+    it("Given: a file of exactly 4MB When: parsing Then: should pass validation", () => {
+      const content = new Uint8Array(4 * 1024 * 1024);
+      const file = new File([content], "limit.csv", { type: "text/csv" });
+
+      const result = importFileSchema.safeParse({ file });
+
+      expect(result.success).toBe(true);
+    });
+
+    it("Given: a file exceeding 4MB by one byte When: parsing Then: should fail validation", () => {
+      const bigContent = new Uint8Array(4 * 1024 * 1024 + 1);
       const file = new File([bigContent], "big.csv", { type: "text/csv" });
 
       const result = importFileSchema.safeParse({ file });

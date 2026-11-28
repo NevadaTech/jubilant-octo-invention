@@ -7,6 +7,7 @@ import { Upload, X, CloudUpload } from "lucide-react";
 import { Button } from "@/ui/components/button";
 import { Label } from "@/ui/components/label";
 import { cn } from "@/ui/lib/utils";
+import { MAX_UPLOAD_BYTES } from "@/shared/domain/upload-limits";
 
 interface FileDropzoneProps {
   onFileSelect: (file: File | null) => void;
@@ -15,12 +16,10 @@ interface FileDropzoneProps {
   disabled?: boolean;
 }
 
-const DEFAULT_MAX_SIZE = 10 * 1024 * 1024;
-
 export function FileDropzone({
   onFileSelect,
   accept = ".csv,.xlsx,.xls",
-  maxSize = DEFAULT_MAX_SIZE,
+  maxSize = MAX_UPLOAD_BYTES,
   disabled,
 }: FileDropzoneProps) {
   const t = useTranslations("imports.upload");

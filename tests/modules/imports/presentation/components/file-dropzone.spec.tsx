@@ -40,6 +40,40 @@ describe("FileDropzone", () => {
     expect(screen.getByText("products.csv")).toBeDefined();
   });
 
+  it("rejects a file of 4MB + 1 byte with the maxSize error", () => {
+    const onSelect = vi.fn();
+    render(<FileDropzone onFileSelect={onSelect} />);
+
+    const input = document.querySelector(
+      'input[type="file"]',
+    ) as HTMLInputElement;
+    const file = new File([new Uint8Array(4 * 1024 * 1024 + 1)], "big.csv", {
+      type: "text/csv",
+    });
+
+    fireEvent.change(input, { target: { files: [file] } });
+
+    expect(screen.getByRole("alert").textContent).toBe("maxSize");
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("accepts a file of exactly 4MB", () => {
+    const onSelect = vi.fn();
+    render(<FileDropzone onFileSelect={onSelect} />);
+
+    const input = document.querySelector(
+      'input[type="file"]',
+    ) as HTMLInputElement;
+    const file = new File([new Uint8Array(4 * 1024 * 1024)], "limit.csv", {
+      type: "text/csv",
+    });
+
+    fireEvent.change(input, { target: { files: [file] } });
+
+    expect(onSelect).toHaveBeenCalledWith(file);
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
   it("shows the supports hint text", () => {
     render(<FileDropzone onFileSelect={vi.fn()} />);
     // The dropzone uses imports.wizardFlow.supports now.

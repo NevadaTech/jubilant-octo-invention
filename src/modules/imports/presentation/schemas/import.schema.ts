@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { ImportType } from "@/modules/imports/domain/entities";
+import { MAX_UPLOAD_BYTES } from "@/shared/domain/upload-limits";
 
 export const IMPORT_TYPES: { value: ImportType; labelKey: string }[] = [
   { value: "PRODUCTS", labelKey: "imports.types.products" },
@@ -10,13 +11,12 @@ export const IMPORT_TYPES: { value: ImportType; labelKey: string }[] = [
   { value: "SALES", labelKey: "imports.types.sales" },
 ];
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_EXTENSIONS = [".csv", ".xlsx", ".xls"];
 
 export const importFileSchema = z.object({
   file: z
     .instanceof(File)
-    .refine((file) => file.size <= MAX_FILE_SIZE, {
+    .refine((file) => file.size <= MAX_UPLOAD_BYTES, {
       message: "imports.errors.fileTooLarge",
     })
     .refine(
